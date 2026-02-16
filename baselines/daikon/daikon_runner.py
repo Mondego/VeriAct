@@ -1,14 +1,13 @@
 import json
 import os
 from pathlib import Path
-from pydoc import classname
 import shutil
 import subprocess
 import threading
 import time
 from typing import List
-from utils import load_json, write_to_file, read_from_file
-from logger import create_logger
+from baselines.utils.file_utility import load_json, read_from_file, write_to_file
+from baselines.utils.logger import create_logger
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
@@ -153,9 +152,7 @@ class Daikon:
     def run(self):
         self._prepare_task_environment()
         test_count = len(self.test_inputs)
-
         os.chdir(self.out_dir)
-
         command = ["./daikon.sh", self.class_name, str(test_count)]
         self.logger.info(f"Running Daikon with command: {command} for {self.run_id}")
         success = self._run_command_in_popen(command, self.timeout * 2)
@@ -252,7 +249,6 @@ class DaikonWorker:
 
         finally:
             _logger.info(f"Finished Daikon for {task['id']} (Thread ID: {_thread_id})")
-            daikon._clean_up()
             os.chdir(_BASE_DIR)  # change back to base directory after processing
 
 

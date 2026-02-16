@@ -26,7 +26,6 @@ def load_jsonl(file):
             data.append(json.loads(line))
     return data
 
-
 def dump_jsonl(file_name, data):
     with open(file_name, "w") as j:
         for item in data: 

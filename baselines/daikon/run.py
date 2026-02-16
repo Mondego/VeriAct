@@ -1,8 +1,7 @@
 import os
 import sys
 import argparse
-from daikon.daikon_runner import DaikonRunner
-
+from baselines.daikon.daikon_runner import DaikonRunner
 
 
 def _retrive_input_arguments():

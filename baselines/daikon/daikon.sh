@@ -6,8 +6,8 @@ if [ $# -ne 2 ]; then
 fi
 
 
-class_name=$1 # hard coded the class name, you can change it to your class name
-test_class_name="${class_name}Test" # hard coded the test class name, you can change it to your test class name
+class_name=$1 
+test_class_name="${class_name}Test"
 numberOfTest=$2
 
 echo $numberOfTest
