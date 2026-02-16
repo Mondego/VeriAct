@@ -1,0 +1,132 @@
+ESC/Java version VERSION
+ModParsingErrors.java:9: Error: JML does not allow empty clause sequences
+        |} // ERROR -- empty section
+        ^
+ModParsingErrors.java:15: Error: There is no opening {| to match this closing |}
+        |}              // ERROR - no opening {|
+        ^
+ModParsingErrors.java:30: Error: Misplaced normal_behavior keyword
+                normal_behavior    // ERROR -- out of order
+                ^
+ModParsingErrors.java:38: Error: Example keywords may be used only in the for_example section
+                normal_example     // ERROR - example in implies secti ...
+                ^
+ModParsingErrors.java:41: Error: Behavior keywords may not be in the for_example section
+                exceptional_behavior   // ERROR - behavior in examples ...
+                ^
+ModParsingErrors.java:51: Error: Misplaced behavior keyword
+                        behavior        // ERROR - misplaced
+                        ^
+ModParsingErrors.java:62: Error: JML does not allow empty clause sequences
+                |}              // ERROR -- empty sequence
+                ^
+ModParsingErrors.java:63: Error: There is no opening {| to match this closing |}
+        |}                      // ERROR -- no matching |}
+        ^
+ModParsingErrors.java:69: Error: JML does not allow empty clause sequences
+        also                    // ERROR - empty sequence
+        ^
+ModParsingErrors.java:78: Error: Expected a closing |}
+                pure            // ERROR - expected closing |}
+                ^
+ModParsingErrors.java:76: Associated declaration: 
+                {|
+                ^
+ModParsingErrors.java:85: Error: A signals clause is not allowed in a normal_behavior section
+                signals(Exception) true; // ERROR -- no signals in nor ...
+                ^
+ModParsingErrors.java:83: Associated declaration: 
+        /*@ normal_behavior
+            ^
+ModParsingErrors.java:88: Error: A ensures clause is not allowed in a exceptional_behavior section
+                ensures true;     // ERROR -- no ensures in exceptiona ...
+                ^
+ModParsingErrors.java:86: Associated declaration: 
+        also exceptional_behavior
+             ^
+ModParsingErrors.java:102: Error: Model programs may not be in the examples section
+                model_program { } // ERROR - no model program in examp ...
+                ^
+ModParsingErrors.java:102: Error: JML does not allow empty clause sequences
+                model_program { } // ERROR - no model program in examp ...
+                ^
+ModParsingErrors.java:110: Error: Model programs may not be nested
+                model_program {} // ERROR - no nested model program
+                ^
+ModParsingErrors.java:121: Error: Model programs may not be combined with other clauses
+                model_program{} // ERROR
+                ^
+ModParsingErrors.java:123: Error: A model_program may not be combined with other clauses
+                model_program {} // ERROR
+                ^
+    [TIME]
+
+ModParsingErrors ...
+ModParsingErrors.java:46: Caution: No initial also expected since there are no overridden or refined methods
+        /*@ also behavior        // ERROR -- no also
+            ^
+ModParsingErrors.java:95: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+        void ppp();  // ERROR - needs an also
+             ^
+ModParsingErrors.java:130: Associated declaration: 
+        void ppp();
+        ^
+    [TIME]
+
+ModParsingErrors: m7() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m7a() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m8() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m9() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m10() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m11() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m12() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m12a() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m13() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m14() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: ppp() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m15() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m16() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: m17() ...
+    [TIME]  passed immediately
+
+ModParsingErrors: ModParsingErrors() ...
+    [TIME]  ok
+  [TIME total]
+
+ModParsingJJ ...
+    [TIME]
+
+ModParsingJJ: ppp() ...
+    [TIME]  passed immediately
+
+ModParsingJJ: ModParsingJJ() ...
+    [TIME]  ok
+  [TIME total]
+2 cautions
+17 errors

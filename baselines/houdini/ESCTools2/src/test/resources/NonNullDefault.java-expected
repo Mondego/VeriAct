@@ -1,0 +1,5 @@
+ESC/Java version VERSION
+src|test|resources|NonNullDefault.java:5: Fatal error: Expected an identifier, found MODIFIERPRAGMA
+class /*@ non_null_by_default @*/ NonNullDefault {
+      ^
+1 error

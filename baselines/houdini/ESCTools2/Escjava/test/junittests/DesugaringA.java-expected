@@ -1,0 +1,242 @@
+ESC/Java version VERSION
+  Prover started:TIME
+    [TIME]
+
+DesugaringA ...
+Desugared specifications for DesugaringA.m
+   requires (\lblneg Pre:0.7.1 p) || (\lblneg Pre:0.10.1 r) && (\lblneg Pre:0.11.1 t)
+   ensures \old(p) ==> q
+   modifies \everything if \old(p)
+   ensures \old(r && t) ==> s
+   modifies \everything if \old(r && t)
+Desugared specifications for DesugaringA.mm
+   requires (\lblneg Pre:0.17.2 p) || (\lblneg Pre:0.17.2 p) && (\lblneg Pre:0.21.3 s) || (\lblneg Pre:0.17.2 p) && (\lblneg Pre:0.25.4 t)
+   ensures \old(p) ==> q
+   modifies \everything if \old(p)
+   ensures \old(p && s) ==> t
+   modifies \everything if \old(p && s)
+   ensures \old(p && t) ==> s
+   modifies \everything if \old(p && t)
+Desugared specifications for DesugaringA.m3
+   requires true
+   ensures \old(p) ==> q
+   modifies \everything if \old(p)
+   ensures r
+   modifies \everything if true
+Desugared specifications for DesugaringA.m4
+   requires true
+   modifies \everything if true
+Desugared specifications for DesugaringA.m5
+   non_null 
+   requires true
+   ensures \result != null
+   modifies \everything if true
+Desugared specifications for DesugaringA.m6
+   requires (\lblneg NonNull:0.47.15 o:47.34 != null)
+   modifies \everything if \old(o:47.34 != null)
+Desugared specifications for DesugaringA.m13
+   requires (\lblneg Pre:0.50.2 p) || (\lblneg Pre:0.52.2 q)
+   ensures \old(p) ==> false
+   modifies \everything if \old(p)
+   signals (java.lang.Exception)\old(q) ==> false
+   modifies \everything if \old(q)
+Desugared specifications for DesugaringA.ppp
+   requires (\lblneg Pre:0.58.2 p)
+   ensures \old(p) ==> q
+   modifies \everything if \old(p)
+Desugared specifications for DesugaringA.ppp1
+Desugared specifications for DesugaringA.ppp2
+Desugared specifications for JJ.ppp
+   requires true
+   modifies \everything if true
+Desugared specifications for JJ.ppp1
+   requires (\lblneg Pre:0.72.5 pp)
+   ensures \old(pp) ==> qq
+   modifies \everything if \old(pp)
+Desugared specifications for JJ.ppp2
+   requires true
+   modifies \everything if true
+Desugared specifications for Object.Object
+   requires true
+   modifies \nothing if true
+Desugared specifications for Object.registerNatives
+   requires true
+   modifies \everything if true
+Desugared specifications for Object.getClass
+   requires true
+   modifies \nothing if true
+   ensures \result != null
+Desugared specifications for Object.hashCode
+   requires true
+   modifies \nothing if true
+Desugared specifications for Object.equals
+   requires true
+   modifies \nothing if true
+   ensures obj:5.. == null ==> ! \result
+Desugared specifications for Object.clone
+   requires true
+   modifies \nothing if true
+   ensures \result != null
+   ensures \typeof(\result) == \typeof(this)
+   ensures \result.owner == null
+   ensures (this instanceof Cloneable)
+   signals (java.lang.CloneNotSupportedException)! (this instanceof Cloneable)
+Desugared specifications for Object.toString
+   requires true
+   modifies \nothing if true
+   ensures \result != null
+Desugared specifications for Object.notify
+   requires true
+   modifies \everything if true
+Desugared specifications for Object.notifyAll
+   requires true
+   modifies \everything if true
+Desugared specifications for Object.wait
+   requires true
+   modifies \everything if true
+Desugared specifications for Object.wait
+   requires (\lblneg Pre:4.53.8 0 <= timeout:5..) && (\lblneg Pre:4.54.8 0 <= nanos:5.. && nanos:5.. <= 999999)
+   modifies \everything if \old(0 <= timeout:5.. && 0 <= nanos:5.. && nanos:5.. <= 999999)
+Desugared specifications for Object.wait
+   requires true
+   modifies \everything if true
+Desugared specifications for Object.finalize
+   requires true
+   modifies \everything if true
+Desugared specifications for Object.<clinit>
+   requires true
+   modifies \everything if true
+Desugared specifications for JJ.JJ
+   requires true
+   modifies \nothing if true
+Desugared specifications for DesugaringA.DesugaringA
+   requires true
+   modifies \nothing if true
+Desugared specifications for Exception.Exception
+   requires true
+   modifies this.* if true
+   pure 
+Desugared specifications for Exception.Exception
+   requires true
+   modifies this.* if true
+   pure 
+Desugared specifications for Exception.Exception
+   requires true
+   modifies this.* if true
+   pure 
+Desugared specifications for Exception.Exception
+   requires true
+   modifies this.* if true
+   pure 
+Desugared specifications for Throwable.Throwable
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.Throwable
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.Throwable
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.Throwable
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.getMessage
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.getLocalizedMessage
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.getCause
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.initCause
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.toString
+Desugared specifications for Throwable.printStackTrace
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.printStackTrace
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.printStackTraceAsCause
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.printStackTrace
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.printStackTraceAsCause
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.fillInStackTrace
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.getStackTrace
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.getOurStackTrace
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.setStackTrace
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.getStackTraceDepth
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.getStackTraceElement
+   requires true
+   modifies \everything if true
+Desugared specifications for Throwable.writeObject
+   requires true
+   modifies \everything if true
+    [TIME]
+
+DesugaringA: m() ...
+    [TIME]  passed immediately
+
+DesugaringA: mm() ...
+    [TIME]  passed immediately
+
+DesugaringA: m3() ...
+    [TIME]  passed immediately
+
+DesugaringA: m4() ...
+    [TIME]  passed immediately
+
+DesugaringA: m5() ...
+    [TIME]  passed immediately
+
+DesugaringA: m6(java.lang.Object) ...
+    [TIME]  passed immediately
+
+DesugaringA: m13() ...
+    [TIME]  passed immediately
+
+DesugaringA: ppp() ...
+    [TIME]  passed immediately
+
+DesugaringA: ppp1() ...
+    [TIME]  passed immediately
+
+DesugaringA: ppp2() ...
+    [TIME]  passed immediately
+
+DesugaringA: DesugaringA() ...
+    [TIME]  passed
+  [TIME total]
+
+JJ ...
+    [TIME]
+
+JJ: ppp() ...
+    [TIME]  passed immediately
+
+JJ: ppp1() ...
+    [TIME]  passed immediately
+
+JJ: ppp2() ...
+    [TIME]  passed immediately
+
+JJ: JJ() ...
+    [TIME]  passed
+  [TIME total]

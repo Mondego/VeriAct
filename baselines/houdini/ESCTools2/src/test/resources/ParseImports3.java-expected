@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|ParseImports3.java: Caution: Using given file as the .java file, even though it is not the java file for ParseImports3 on the classpath
+    [TIME]
+
+ParseImports3 ...
+src|test|resources|ParseImports3.java:1: Error: No such type: sub.ParseImportHelper
+import sub.ParseImportHelper;
+       ^
+src|test|resources|ParseImports3.java:1: Error: No such type: sub.ParseImportHelper
+import sub.ParseImportHelper;
+       ^
+src|test|resources|ParseImports3.java:4: Fatal error: Can't find type named "ParseImportHelper"
+        ParseImportHelper x;
+        ^
+1 caution
+3 errors

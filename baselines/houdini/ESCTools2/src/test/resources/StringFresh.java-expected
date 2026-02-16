@@ -1,0 +1,30 @@
+ESC/Java version VERSION
+src|test|resources|StringFresh.java: Caution: Using given file as the .java file, even though it is not the java file for StringFresh on the classpath
+    [TIME]
+
+StringFresh ...
+src|test|resources|StringFresh.java:8: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+//@ ensures (st + stt) !=null;
+                ^
+src|test|resources|StringFresh.java:9: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+//@ ensures (st + stt) != st;
+                ^
+src|test|resources|StringFresh.java:10: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+//@ ensures (st + stt) != (st + stt);
+                ^
+src|test|resources|StringFresh.java:10: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+//@ ensures (st + stt) != (st + stt);
+                              ^
+src|test|resources|StringFresh.java:18: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+        ss = s + o;
+               ^
+src|test|resources|StringFresh.java:19: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+        sss = s + o;
+                ^
+src|test|resources|StringFresh.java:54: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+        String ss = s + s;
+                      ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+7 errors

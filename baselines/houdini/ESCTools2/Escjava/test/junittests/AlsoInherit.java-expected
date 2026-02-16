@@ -1,0 +1,70 @@
+ESC/Java version VERSION
+AlsoInherit.java:19: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+        //@ also_ensures true;  // OBSOLETE
+            ^
+AlsoInherit.java:22: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+        //@ also_exsures (Exception) true; // OBSOLETE
+            ^
+    [TIME]
+
+AlsoInherit ...
+AlsoInherit.java:6: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+        public void m();  // ERROR - no also
+                    ^
+AlsoInherit.java:29: Associated declaration: 
+        public void m();
+               ^
+AlsoInherit.java:15: Caution: No initial also expected since there are no overridden or refined methods
+        //@ also                // ERROR - should not have an also
+            ^
+AlsoInherit.java:20: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+        public void p();        // ERROR - should have an also
+                    ^
+AlsoInherit.java:35: Associated declaration: 
+        public void p();
+               ^
+AlsoInherit.java:31: Caution: No initial also expected since there are no overridden or refined methods
+        //@ also                // ERROR - no also expected
+            ^
+  Prover started:TIME
+    [TIME]
+
+AlsoInherit: m() ...
+    [TIME]  passed immediately
+
+AlsoInherit: n() ...
+    [TIME]  passed immediately
+
+AlsoInherit: malso() ...
+    [TIME]  passed immediately
+
+AlsoInherit: nalso() ...
+    [TIME]  passed immediately
+
+AlsoInherit: p() ...
+    [TIME]  passed immediately
+
+AlsoInherit: pp() ...
+    [TIME]  passed immediately
+
+AlsoInherit: AlsoInherit() ...
+    [TIME]  passed
+  [TIME total]
+
+Parent ...
+    [TIME]
+
+Parent: m() ...
+    [TIME]  passed immediately
+
+Parent: malso() ...
+    [TIME]  passed immediately
+
+Parent: p() ...
+    [TIME]  passed immediately
+
+Parent: Parent() ...
+    [TIME]  passed
+  [TIME total]
+4 cautions
+2 errors

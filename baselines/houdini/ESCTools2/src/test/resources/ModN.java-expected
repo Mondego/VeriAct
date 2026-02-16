@@ -1,0 +1,90 @@
+ESC/Java version VERSION
+src|test|resources|ModN.java: Caution: Using given file as the .java file, even though it is not the java file for ModN on the classpath
+    [TIME]
+
+ModN ...
+  Prover started:TIME
+    [TIME]
+
+ModN: mok() ...
+    [TIME]  passed
+
+ModN: m() ...
+------------------------------------------------------------------------
+src|test|resources|ModN.java:18: Warning: Possible violation of modifies clause (Modifies)
+                j = 0;
+                ^
+Associated declaration is "src|test|resources|ModN.java", line 16, col 5:
+        //@ modifies i,k;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModN: mm() ...
+------------------------------------------------------------------------
+src|test|resources|ModN.java:26: Warning: Possible violation of modifies clause (Modifies)
+                k = 0;
+                ^
+Associated declaration is "src|test|resources|ModN.java", line 21, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModN: mmm() ...
+------------------------------------------------------------------------
+src|test|resources|ModN.java:34: Warning: Possible violation of modifies clause (Modifies)
+                m = 0;
+                ^
+Associated declaration is "src|test|resources|ModN.java", line 29, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModN: p() ...
+------------------------------------------------------------------------
+src|test|resources|ModN.java:45: Warning: Possible violation of modifies clause (Modifies)
+                if (i == 0) j = 0;
+                            ^
+Associated declaration is "src|test|resources|ModN.java", line 41, col 5:
+        //@ modifies k;
+            ^
+Execution trace information:
+    Executed else branch in "src|test|resources|ModN.java", line 43, col 2.
+    Executed else branch in "src|test|resources|ModN.java", line 44, col 2.
+    Executed then branch in "src|test|resources|ModN.java", line 45, col 14.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModN: pp() ...
+------------------------------------------------------------------------
+src|test|resources|ModN.java:54: Warning: Possible violation of modifies clause (Modifies)
+                if (i==0) k=0;
+                          ^
+Associated declaration is "src|test|resources|ModN.java", line 49, col 5:
+        //@ modifies j;
+            ^
+Execution trace information:
+    Executed then branch in "src|test|resources|ModN.java", line 54, col 12.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModN: pa() ...
+------------------------------------------------------------------------
+src|test|resources|ModN.java:62: Warning: Possible violation of modifies clause (Modifies)
+                a = null;
+                ^
+Associated declaration is "src|test|resources|ModN.java", line 60, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModN: ModN() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+6 warnings

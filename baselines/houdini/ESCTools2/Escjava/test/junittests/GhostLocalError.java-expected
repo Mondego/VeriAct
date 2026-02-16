@@ -1,0 +1,26 @@
+ESC/Java version VERSION
+GhostLocalError.java:7: Error: Model variables are not allowed here
+                //@ model int aa; // ERROR
+                    ^
+GhostLocalError.java:10: Error: Model variables are not allowed here
+                //@ final model int aaa; // ERROR 
+                          ^
+GhostLocalError.java:13: Error: Model variables are not allowed here
+                //@ final non_null model int aaaa; // ERROR 
+                                   ^
+GhostLocalError.java:22: Error: Expected a declaration within the annotation following the ghost keyword
+                //@ ghost               // ERROR
+                    ^
+GhostLocalError.java:23: Fatal error: Expected an identifier, found EOF
+                //@ ghost int           // ERROR
+                                               ^
+GhostLocalError.java:24: Fatal error: Expected an identifier, found EOF
+                //@ ghost X             // ERROR
+                                               ^
+GhostLocalError.java:25: Fatal error: Unexpected token ';' in Primary expression
+                //@ ghost int z =;      // ERROR
+                                 ^
+GhostLocalError.java:26: Fatal error: Unexpected token '++', expected 'IDENT'
+                a++;                    // FIXME - does not restart we ...
+                 ^
+8 errors

@@ -1,0 +1,47 @@
+ESC/Java version VERSION
+src|test|resources|Unch.java: Caution: Using given file as the .java file, even though it is not the java file for Unch on the classpath
+    [TIME]
+
+Unch ...
+  Prover started:TIME
+    [TIME]
+
+Unch: m(int) ...
+    [TIME]  passed immediately
+
+Unch: mm() ...
+    [TIME]  passed
+
+Unch: mm1() ...
+------------------------------------------------------------------------
+src|test|resources|Unch.java:19: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(a[1]); // FAILS
+                    ^
+Associated declaration is "src|test|resources|Unch.java", line 19, col 27:
+                //@ assert \not_modified(a[1]); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unch: mn() ...
+    [TIME]  passed immediately
+
+Unch: mnn() ...
+    [TIME]  passed
+
+Unch: mnn1() ...
+------------------------------------------------------------------------
+src|test|resources|Unch.java:38: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(x.n); // FAILS
+                    ^
+Associated declaration is "src|test|resources|Unch.java", line 38, col 27:
+                //@ assert \not_modified(x.n); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unch: Unch() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

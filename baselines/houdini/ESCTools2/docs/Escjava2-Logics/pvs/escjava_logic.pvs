@@ -1,0 +1,19 @@
+% The ESC/Java2 unsorted logic.
+%
+% This is the unsorted logic used by ESC/Java2.
+%
+% $Id$
+%
+% Copyright (C) 2005 Joe Kiniry, Cesare Tinelli, Patrice Chalin, and
+% Clement Hurlin
+%
+% This is the canonical unsorted logic which is meant to be
+% semantically equivalent to the original Simplify logic but usable
+% for basic program verification in PVS.
+
+escjava_logic : THEORY
+  BEGIN
+    IMPORTING escjava_simplify,
+              escjava_java_semantics,
+              escjava_jml_semantics
+  END escjava_logic

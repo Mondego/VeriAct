@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|ParseWhen.java: Caution: Using given file as the .java file, even though it is not the java file for ParseWhen on the classpath
+    [TIME]
+
+ParseWhen ...
+  Prover started:TIME
+    [TIME]
+
+ParseWhen: m() ...
+    [TIME]  passed immediately
+
+ParseWhen: n() ...
+    [TIME]  passed immediately
+
+ParseWhen: ParseWhen() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

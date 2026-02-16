@@ -1,0 +1,56 @@
+ESC/Java version VERSION
+    [TIME]
+
+NonNullBad ...
+NonNullBad.java:18: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void m(/*@ non_null */ Object o, /*@ non_null */ Object ...
+                          ^
+NonNullBad.java:23: Associated declaration: 
+        public void m(Object o, /*@ non_null */ Object oo, Object ooo) ...
+                      ^
+NonNullBad.java:5: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void m(/*@ non_null */ Object o,
+                          ^
+NonNullBad.java:23: Associated declaration: 
+        public void m(Object o, /*@ non_null */ Object oo, Object ooo) ...
+                      ^
+NonNullBad.java:7: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+                        /*@ non_null */ Object ooo);
+                            ^
+NonNullBad.java:23: Associated declaration: 
+        public void m(Object o, /*@ non_null */ Object oo, Object ooo) ...
+                                                           ^
+  Prover started:TIME
+    [TIME]
+
+NonNullBad: m(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+
+NonNullBad: NonNullBad() ...
+    [TIME]  passed
+  [TIME total]
+
+NonNullBadS ...
+    [TIME]
+
+NonNullBadS: m(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+
+NonNullBadS: NonNullBadS() ...
+    [TIME]  passed
+  [TIME total]
+
+NonNullBadI ...
+    [TIME]
+
+NonNullBadI: m(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+NonNullBadII ...
+    [TIME]
+
+NonNullBadII: m(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+3 cautions

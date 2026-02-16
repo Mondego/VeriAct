@@ -1,0 +1,4 @@
+C.java:4: Fatal error: Variable declarations are not legal in this context.
+      int i;
+      ^
+1 error

@@ -1,0 +1,29 @@
+ESC/Java version VERSION
+    [TIME]
+
+Bug1 ...
+  Prover started:TIME
+    [TIME]
+
+Bug1: m(java.util.Collection) ...
+------------------------------------------------------------------------
+Bug1.java:10: Warning: Possible assignment of null to variable declared non_null (NonNull)
+   a = c.toArray(a);
+                ^
+Associated declaration is "ESCTOOLS_ROOT|specs|java|util|Collection.spec", line 186, col 41:
+    /*@ non_null @*/ Object[] toArray(/*@non_null*/ Object[] a) throws ...
+                                         ^
+------------------------------------------------------------------------
+Bug1.java:11: Warning: Possible unexpected exception (Exception)
+  }
+  ^
+Execution trace information:
+    Routine call returned exceptionally in "Bug1.java", line 10, col 9.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Bug1: Bug1() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

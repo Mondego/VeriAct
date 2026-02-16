@@ -1,0 +1,470 @@
+#!/bin/sh -f
+# ESC/Java forward annotation wizard
+# Copyright (c) 1999, Compaq Computer Corporation
+# Change history:
+#   14 Jul 1999  rustan & flanagan  Created
+#   28 Jul 1999  flanagan           Modified
+#   02 Aug 1999  burrows & flanagan Converted to sh
+#   31 Aug 1999  rustan & flanagan  Added warnings to "removed" pragmas
+#   22 Nov 1999  rustan & flanagan  Used assumers sets
+#   24 Nov 1999  rustan & flanagan  Fixed bugs
+#   10 Jan 2000  rustan & yuanyu    Fixed arguments to "sort"
+#    7 Feb 2000  rustan             Added "-annotateOnly" switch
+#   19 May 2000  rustan & flanagan  New command-line interface
+#   22 May 2000  rustan & flanagan  Completed new command-line interface
+#   27 May 2000  rustan             Added use of -routineIndirect option
+#   27 Feb 2001  rustan             Changes in classpath/bootclasspath to
+#                                   make it consistent with shoudini
+#    1 Mar 2001  rustan & flanagan  changed (fixed) egrep to grep -F
+#    8 Mar 2001  rustan & freund    call tool2html instead of old escj2html
+
+
+ulimit -s 32000
+VERSION="Houdini version 1.1.4, 8 Mar 2001"
+echo ${VERSION}
+
+COMMANDLINE="$*"
+
+
+if [ "x${ESCJ}" = "x" -o "x${ESCJAVA_ROOT}" = "x" ]; then
+  echo "Error: Must first source setup in Escjava directory"
+  exit 1
+fi
+
+USAGE_MSG="Usage: houdini [-bootclasspath p] [-classpath p] [-annotateOnly] [-continue iter] [-reannotate] [-noAssumers] [-inpath path] [-progGuesser guesser] [-libGuesser guesser] outdir programIndirectionFile [libIndirectionFile]"
+
+
+##  Parse command line  #################################
+
+if [ 2 -le $# ]; then
+  if [ "x$1" = "x-bootclasspath" ]; then
+    BOOTCLASSPATH="$2"
+    shift
+    shift
+  fi
+fi
+
+if [ 2 -le $# ]; then
+  if [ "x$1" = "x-classpath" ]; then
+    CLASSPATH="$2"
+    shift
+    shift
+  fi
+fi
+
+if [ "x${BOOTCLASSPATH}" = "x" ]; then
+  BCL_PATH_ARG=
+else
+  BCL_PATH_ARG="-bootclasspath ${BOOTCLASSPATH}"
+fi
+if [ "x${CLASSPATH}" = "x" ]; then
+  CL_PATH_ARG=
+else
+  CL_PATH_ARG="-classpath ${CLASSPATH}"
+fi
+PATH_ARG="${BCL_PATH_ARG} ${CL_PATH_ARG}"
+
+annotateOnly="false"
+if [ 1 -le $# ]; then
+  if [ "x$1" = "x-annotateOnly" ]; then
+	annotateOnly="true"
+	shift
+  fi
+fi
+
+continue="false"
+iter=0
+if [ 2 -le $# ]; then
+  if [ "x$1" = "x-continue" ]; then
+    iter="$2"
+    continue="true"
+    shift
+    shift
+  fi
+fi
+
+reannotate="false"
+if [ 1 -le $# ]; then
+  if [ "x$1" = "x-reannotate" ]; then
+	reannotate="true"
+	shift
+  fi
+fi
+   
+useAssumers="true"
+if [ 1 -le $# ]; then
+  if [ "x$1" = "x-noAssumers" ]; then
+	useAssumers="false"
+	shift
+  fi
+fi
+
+INPATH="."
+if [ 2 -le $# ]; then
+  if [ "x$1" = "x-inpath" ]; then
+    INPATH="`echo $2 | sed -e 's/:/ /g'`"
+    shift
+    shift
+  fi
+fi
+   
+PROG_GUESSER="Standard"
+if [ 2 -le $# ]; then
+  if [ "x$1" = "x-progGuesser" ]; then
+    PROG_GUESSER="$2"
+    shift
+    shift
+  fi
+fi
+   
+LIB_GUESSER="Library"
+if [ 2 -le $# ]; then
+  if [ "x$1" = "x-libGuesser" ]; then
+    LIB_GUESSER="$2"
+    shift
+    shift
+  fi
+fi
+
+if [ 2 = $# -o 3 = $# ]; then
+  OUTDIR="$1"
+  PROG_INDIRECT_FILE="$2"
+  if [ 3 = $# ]; then
+    LIB_INDIRECT_FILE="$3"
+  else
+    LIB_INDIRECT_FILE=""
+  fi
+else
+  echo ${USAGE_MSG}
+  exit 1
+fi
+
+##  Configuration  #################################
+
+NOWARN_FLAGS="-nowarn Null -nowarn ZeroDiv -nowarn ArrayStore -nowarn Cast -nowarn CLeak -nowarn IndexNegative -nowarn IndexTooBig -nowarn ILeak -nowarn Deadlock -nowarn ModExt -nowarn Modifies -nowarn NegSize -nowarn Unenforcable -nowarn Exception -nowarn Writable"
+ESCJ_FLAGS="${NOWARN_FLAGS} -loopFallThru -noPeepOptGCAssertFalse -assertContinue -strongAssertPostNever"
+ESCJ_FLAGS_FINALRUN="-counterexample"
+PROVER_CC_LIMIT=1000
+export PROVER_CC_LIMIT
+
+ANNOTATION_VISITOR="${JAVA} -classpath ${ESC_CLASSPATH} houdini.Main ${PATH_ARG}"
+ANNOTATION_INSERTER="${JAVA} -classpath ${ESC_CLASSPATH} escwizard.AnnotationInserter"
+
+# Test run the AnnotationInserter (to make sure the classpath is set up
+# correctly, before wasting even more CPU cycles)
+if ${ANNOTATION_INSERTER} -ping; then
+  : nothing
+else
+  echo "houdini: Error: escwizard.AnnotationInserter not available"
+  exit 1
+fi
+
+
+##  Sanity checks  #################################
+
+LOGDIR="`pwd`/${OUTDIR}/log"
+LOGFILE="${LOGDIR}/houdini.log"
+
+if [ "${reannotate}" = "true" ]; then
+  if [ -f "${LOGDIR}/annotation.checkpoint" ]; then
+    echo "houdini: Error: cannot reannotate when check point file ${LOGDIR}/annotation.checkpoint exists; delete this file first if you really think you know what you are doing"
+    exit 1
+  fi
+fi
+
+if [ "${continue}" = "true" ]; then
+  if [ "${reannotate}" = "true" ]; then
+    : nothing
+  elif [ ! -f "${LOGDIR}/annotation.checkpoint" ]; then
+    echo "houdini: Error: cannot find check point file ${LOGDIR}/annotation.checkpoint"
+    exit 1
+  fi
+else
+
+  if [ -e "${OUTDIR}" ]; then
+    echo "houdini: Error: outdir ${OUTDIR} already exists"
+    exit 1
+  fi
+  mkdir ${OUTDIR}
+  if [ $? != 0 ]; then
+    echo "houdini: Error: could not create outdir ${OUTDIR}"
+    exit 1
+  fi
+
+  mkdir ${OUTDIR}/src-original
+  mkdir ${OUTDIR}/src-annotated
+  # mkdir ${OUTDIR}/src-instrumented
+  # mkdir ${OUTDIR}/class-instrumented
+  mkdir ${OUTDIR}/log
+  mkdir ${OUTDIR}/html
+  # mkdir ${OUTDIR}/vcs
+
+  if [ ! -e "${PROG_INDIRECT_FILE}" ]; then
+    echo "houdini: Error: program source indirection file ${PROG_INDIRECT_FILE} does not exist"
+    exit 1
+  fi
+  cp "${PROG_INDIRECT_FILE}" "${LOGDIR}/progIndirectFiles"
+
+  if [ "x${LIB_INDIRECT_FILE}" != "x" ]; then
+    if [ ! -e "${LIB_INDIRECT_FILE}" ]; then
+      echo "houdini: Error: library source indirection file ${LIB_INDIRECT_FILE} does not exist"
+      exit 1
+    fi
+    cp "${LIB_INDIRECT_FILE}" "${LOGDIR}/libIndirectFiles"
+  else
+    # create an empty file
+    echo | grep "kill empty line" > "${LOGDIR}/libIndirectFiles"
+  fi
+fi
+
+PROG_INDIRECT_FILE="${LOGDIR}/progIndirectFiles"
+LIB_INDIRECT_FILE="${LOGDIR}/libIndirectFiles"
+
+sourcefiles="`cat ${PROG_INDIRECT_FILE} ${LIB_INDIRECT_FILE}`"
+
+
+echo "##########################################################" >> ${LOGFILE}
+echo "${VERSION}" >> ${LOGFILE}
+echo "`date`: Start" >> ${LOGFILE}
+echo "Command-line arguments: ${COMMANDLINE}" >> ${LOGFILE}
+echo "The machine is: `hostname`" >> ${LOGFILE}
+printenv | grep -E "ESCJ|PROVER_|CLASSPATH|SIMPLIFY" | xargs echo Environment variables: >> ${LOGFILE}
+
+if [ "${continue}" = "false" ]; then
+  # Copy program and library source files
+  echo "`date`: Copying files..." | tee -a ${LOGFILE}
+  for f in $sourcefiles; do
+    for p in $INPATH; do
+      if [ -e "${p}/${f}" ]; then
+        # We want to create the directory prefix of "${OUTDIR}/src-original/${f}".
+        # To do that, we create "${OUTDIR}/src-original/${f}" as a directory,
+        # using the mkdir "-p" flag, and then use rmdir to remove the last part
+        # of this directory name.
+        mkdir -p "${OUTDIR}/src-original/${f}"
+        rmdir "${OUTDIR}/src-original/${f}"
+	echo "Copying ${p}/${f} to ${OUTDIR}/src-original/${f}" >> ${LOGFILE}
+        cp "${p}/${f}" "${OUTDIR}/src-original/${f}"
+        break
+      fi
+    done
+    if [ ! -e "${OUTDIR}/src-original/${f}" ]; then
+      echo "houdini: Error: failed to find or copy source file ${f}" |
+        tee -a ${LOGFILE}
+      exit 1
+    fi
+  done
+fi
+
+# After the following "cd", we must only do relative "cd" commands
+cd ${OUTDIR}
+
+if [ "${continue}" = "false" -o "${reannotate}" = "true" ]; then
+  # Create candidate annotation set
+  echo "`date`: Create candidate annotation set..." | tee -a ${LOGFILE}
+
+  cd src-original
+
+  if ${ANNOTATION_VISITOR} -guesser ${PROG_GUESSER} \
+       -f ${PROG_INDIRECT_FILE} > ${LOGDIR}/annotations.instr; then
+    : nothing
+  else
+    echo "houdini: Error: failed to run annotation visitor for program files (${LOGDIR}/annotations.instr)" |
+      tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  if ${ANNOTATION_VISITOR} -guesser ${LIB_GUESSER} \
+       -f ${LIB_INDIRECT_FILE} >> ${LOGDIR}/annotations.instr; then
+    : nothing
+  else
+    echo "houdini: Error: failed to run annotation visitor for library files (${LOGDIR}/annotations.instr)" |
+      tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  # create ...wizardUpdate.tmp files containing the annotations
+  if ${ANNOTATION_INSERTER} ${LOGDIR}/annotations.instr \
+       -f ${PROG_INDIRECT_FILE} -f ${LIB_INDIRECT_FILE}; then
+    : nothing
+  else
+    echo "houdini: Error: failed to insert initial annotations (${LOGDIR}/annotations.instr)" |
+      tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  # Create the directory structure in src-annotated
+  for f in `find . -type d`; do
+    mkdir -p ../src-annotated/${f}
+  done
+
+  # Move the annotated files into src-annotated
+  for f in $sourcefiles; do
+    if [ -e "${f}.wizardUpdate.tmp" ]; then
+      mv "${f}.wizardUpdate.tmp" "../src-annotated/${f}"
+    else
+      cp "${f}" "../src-annotated/${f}"
+    fi
+  done
+
+  echo "`date`: Annotation completed" |
+    tee -a ${LOGDIR}/annotation.checkpoint ${LOGFILE}
+
+  cd ..
+fi
+
+if [ "$annotateOnly" = "true" ]; then
+  echo "`date`: Done" | tee -a ${LOGFILE}
+  exit 0
+fi
+
+
+##  Iterative part  #################################
+
+isMajorIteration="true"
+cp ${PROG_INDIRECT_FILE} ${LOGDIR}/filesToCheck.${iter}.txt
+routinesFlag=
+printAssumersFlag=
+if [ "${useAssumers}" = "true" ]; then
+  if [ "${iter}" = 0 ]; then
+    printAssumersFlag="-printAssumers"
+  fi
+fi
+
+cd src-annotated
+
+while true; do
+  if [ "$isMajorIteration" = "true" ]; then
+    echo "`date`: Major Iteration ${iter}" | tee -a ${LOGFILE}
+  else
+    echo "`date`: Iteration ${iter}" | tee -a ${LOGFILE}
+  fi
+
+  cntProgAnn="`cat ${PROG_INDIRECT_FILE} | xargs cat | ${ESCJAVA_ROOT}/java/escjava/getAllPragmas.lim | wc -l`"
+  cntLibAnn="`cat ${LIB_INDIRECT_FILE} | xargs cat | ${ESCJAVA_ROOT}/java/escjava/getAllPragmas.lim | wc -l`"
+  echo "Annotations remaining: ${cntProgAnn} program, ${cntLibAnn} library" |
+    tee -a ${LOGFILE}
+
+  # run escjava on each of filesToCheck
+  ESCOUT=${LOGDIR}/escjava.${iter}.out
+  echo "`date`: escjava run ${iter}" | tee ${ESCOUT} >> ${LOGFILE}
+
+  escjavaCommand="${ESCJ} ${PATH_ARG} ${ESCJ_FLAGS} ${printAssumersFlag} ${routinesFlag} -f ${LOGDIR}/filesToCheck.${iter}.txt"
+  echo Calling: ${escjavaCommand} | tee -a ${ESCOUT} >> ${LOGFILE}
+
+  ${escjavaCommand} >> ${ESCOUT} 2>&1
+  if [ $? != 0 ]; then
+    echo "`date`: Failed to run escjava" |
+      tee -a ${ESCOUT} ${LOGFILE}
+    exit 1
+  fi
+
+  echo "`date`: escjava finished" | tee -a ${ESCOUT} >> ${LOGFILE}
+
+  grep "s]  passed" ${ESCOUT} | wc -l |
+    xargs echo Passed: >> ${LOGFILE}
+  grep "s]  failed" ${ESCOUT} | wc -l |
+    xargs echo Failed: >> ${LOGFILE}
+  grep "s]  skipped" ${ESCOUT} | wc -l |
+    xargs echo Skipped: >> ${LOGFILE}
+  grep "s]  timed out" ${ESCOUT} | wc -l |
+    xargs echo Timed out: >> ${LOGFILE}
+  grep "Warning:" ${ESCOUT} | wc -l |
+    xargs echo Warnings: >> ${LOGFILE}
+  grep "Error:" ${ESCOUT} | wc -l |
+    xargs echo Errors: >> ${LOGFILE}
+  grep "Fatal error:" ${ESCOUT} | wc  -l |
+    xargs echo Fatal errors: >> ${LOGFILE}
+
+  grep "Fatal error:" ${ESCOUT}
+  if [ $? = 0 ]; then
+    echo "houdini: Error: escjava returned fatal error" | tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  if [ "x${printAssumersFlag}" != "x" ]; then
+    grep ASSUMERS: ${ESCOUT} | \
+         sed -e 's/^ASSUMERS: //' > "${LOGDIR}/assumersdb.txt"
+    printAssumersFlag=
+  fi
+
+  ${ESCJAVA_ROOT}/java/houdini/GetAssocDecls.perl \
+    < ${ESCOUT} |
+    sort -u -k 1,1 -k 2,2n -k 3,3nr > "${LOGDIR}/assocdecls.${iter}.txt"
+
+  rm -f "${LOGDIR}/annremoved.${iter}.txt"
+  for f in $sourcefiles; do
+    ${ESCJAVA_ROOT}/java/houdini/AnnotationRemover.perl $f \
+      < "${LOGDIR}/assocdecls.${iter}.txt" \
+      >> "${LOGDIR}/annremoved.${iter}.txt"
+    if [ $? = 2 ]; then
+      echo "`date`: Failed to run annotation remover" | tee -a ${LOGFILE}
+      exit 1
+    fi
+  done
+
+  cat "${LOGDIR}/assocdecls.${iter}.txt" | wc -l |
+    xargs echo "Unique associated declarations:" >> ${LOGFILE}
+  cat "${LOGDIR}/annremoved.${iter}.txt" | wc -l |
+    xargs echo "Annotations removed:" >> ${LOGFILE}
+
+  nextIter=`expr $iter + 1`
+  if [ $useAssumers = "true" ]; then
+    sed -e 's/^\([^ ]*\) \([0-9]*\) .*$/ \1:\2:/' \
+      < "${LOGDIR}/annremoved.${iter}.txt" \
+      > "${LOGDIR}/annremovedRegExp"
+    echo "This line will keep grep from getting an empty file, which would match everything" \
+      >> "${LOGDIR}/annremovedRegExp"
+    grep -F -f "${LOGDIR}/annremovedRegExp" "${LOGDIR}/assumersdb.txt" \
+      > "${LOGDIR}/nextAssumers.${iter}.txt"
+    sed -e 's/^\(.*\)|\(.*)\).*$/\1/' "${LOGDIR}/nextAssumers.${iter}.txt" |
+      sort -u > ${LOGDIR}/filesToCheck.${nextIter}.txt
+    sed -e 's/^\(.*\)|\(.*)\).*$/\2/' "${LOGDIR}/nextAssumers.${iter}.txt" \
+      > ${LOGDIR}/routinesToCheck.${nextIter}.txt
+    routinesFlag="-routineIndirect ${LOGDIR}/routinesToCheck.${nextIter}.txt"
+  else
+    sed -e 's/^\([^ ]*\) .*$/\1/' "${LOGDIR}/annremoved.${iter}.txt" |
+      sort -u > ${LOGDIR}/filesToCheck.${nextIter}.txt
+  fi
+
+  iter=${nextIter}
+  if [ -s "${LOGDIR}/filesToCheck.${iter}.txt" ]; then
+    isMajorIteration="false"
+  elif [ "$isMajorIteration" = "true" ]; then
+    break
+  else
+    isMajorIteration="true"
+    cp ${PROG_INDIRECT_FILE} ${LOGDIR}/filesToCheck.${iter}.txt
+    routinesFlag=
+  fi
+done
+
+echo "`date`, Reached fixpoint after ${iter} iterations" | tee -a ${LOGFILE}
+cd ..
+
+
+# Convert to HTML
+
+cd src-annotated
+
+ESCOUT=${LOGDIR}/escjava.final.out
+echo "`date`: Final escjava run" | tee ${ESCOUT} >> ${LOGFILE}
+escjavaCommand="${ESCJ} ${PATH_ARG} ${ESCJ_FLAGS_FINALRUN} -f ${PROG_INDIRECT_FILE}"
+echo Calling: ${escjavaCommand} | tee -a ${ESCOUT} >> ${LOGFILE}
+${escjavaCommand} >> ${ESCOUT} 2>&1
+if [ $? != 0 ]; then
+  echo "`date`: Failed to run escjava" |
+    tee -a ${ESCOUT} ${LOGFILE}
+  exit 1
+fi
+echo "`date`: escjava finished" | tee -a ${ESCOUT} >> ${LOGFILE}
+
+TOOL_CLASSPATH="${ESC_CLASSPATH}" PATH_ARG="${PATH_ARG}" \
+  ${JAVAFE_ROOT}/java/tohtml/tool2html ${ESCOUT} . ../html '@'
+
+cd ..
+
+
+# All done
+
+echo "`date`: Done" | tee -a ${LOGFILE}
+exit 0

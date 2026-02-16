@@ -1,0 +1,31 @@
+Exsures.java:11: Warning: Possible unexpected exception (Exception)
+  }
+  ^
+Exsures.java:94: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Exsures.java", line 82, col 6:
+  //@ exsures (SomeException se) se.f <= \old(ff);
+      ^
+Exsures.java:198: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Exsures.java", line 121, col 6:
+  //@ exsures (Throwable t) super0 == super1;
+      ^
+Exsures2.java:11: Warning: Possible unexpected exception (Exception)
+  }
+  ^
+Exsures2.java:94: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Exsures2.java", line 82, col 6:
+  //@ exsures (SomeException se) se.f <= \old(ff);
+      ^
+Exsures2.java:198: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Exsures2.java", line 121, col 6:
+  //@ exsures (Throwable ) super0 == super1;
+      ^
+6 warnings

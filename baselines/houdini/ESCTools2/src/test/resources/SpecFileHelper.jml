@@ -1,0 +1,6 @@
+// Just a helper file that is used by other tests
+public class SpecFileHelper {
+
+	//@ requires false;
+	public void m();
+}

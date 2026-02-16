@@ -1,0 +1,194 @@
+ESC/Java version VERSION
+    [TIME]
+
+Monitored ...
+  Prover started:TIME
+    [TIME]
+
+Monitored: m() ...
+------------------------------------------------------------------------
+Monitored.java:37: Warning: Possible race condition (Race)
+                i = 0;  // ERROR - needs this, o
+                  ^
+Associated declaration is "Monitored.java", line 32, col 27:
+        //@ monitors_for i = this,o;
+                                  ^
+------------------------------------------------------------------------
+Monitored.java:37: Warning: Possible race condition (Race)
+                i = 0;  // ERROR - needs this, o
+                  ^
+Associated declaration is "Monitored.java", line 32, col 22:
+        //@ monitors_for i = this,o;
+                             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: mm() ...
+------------------------------------------------------------------------
+Monitored.java:41: Warning: Possible race condition (Race)
+                i=0;    // ERROR - needs o
+                 ^
+Associated declaration is "Monitored.java", line 32, col 27:
+        //@ monitors_for i = this,o;
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: m4() ...
+------------------------------------------------------------------------
+Monitored.java:45: Warning: Possible race condition (Race)
+                synchronized(o) { i=0; }  // ERROR - needs this
+                                   ^
+Associated declaration is "Monitored.java", line 32, col 22:
+        //@ monitors_for i = this,o;
+                             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: mmm() ...
+    [TIME]  passed
+
+Monitored: mmii() ...
+------------------------------------------------------------------------
+Monitored.java:53: Warning: Possible race condition (Race)
+                ii=0; // ERROR - needs o
+                  ^
+Associated declaration is "Monitored.java", line 15, col 18:
+        //@ monitored_by o;
+                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: mmiiok() ...
+    [TIME]  passed
+
+Monitored: m5() ...
+------------------------------------------------------------------------
+Monitored.java:62: Warning: Possible race condition (Race)
+                k = 0; // ERROR -- needs o
+                  ^
+Associated declaration is "Monitored.java", line 31, col 22:
+        //@ monitors_for k = o;
+                             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: mz() ...
+------------------------------------------------------------------------
+Monitored.java:66: Warning: Possible race condition (Race)
+                z = 0; // ERROR -- needs o
+                  ^
+Associated declaration is "Monitored.java", line 34, col 23:
+        //@ monitors_for z <- o;
+                              ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: mj() ...
+------------------------------------------------------------------------
+Monitored.java:69: Warning: Possible race condition (Race)
+        static void mj() { j = 0; } //@ nowarn Modifies;  // ERROR - n ...
+                             ^
+Associated declaration is "Monitored.java", line 18, col 6:
+        //-@ monitored
+             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: mjj() ...
+------------------------------------------------------------------------
+Monitored.java:70: Warning: Possible race condition (Race)
+        static void mjj() { jj = 0; } //@ nowarn Modifies;  // ERROR - ...
+                               ^
+Associated declaration is "Monitored.java", line 21, col 19:
+        //-@ monitored_by Monitored.class;
+                          ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: mjjj() ...
+------------------------------------------------------------------------
+Monitored.java:71: Warning: Possible race condition (Race)
+        static void mjjj() { jjj = 0; } //@ nowarn Modifies;  // ERROR ...
+                                 ^
+Associated declaration is "Monitored.java", line 33, col 24:
+        //@ monitors_for jjj = Monitored.class;
+                               ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: smj() ...
+    [TIME]  passed
+
+Monitored: smjj() ...
+    [TIME]  passed
+
+Monitored: smjjj() ...
+    [TIME]  passed
+
+Monitored: r() ...
+------------------------------------------------------------------------
+Monitored.java:79: Warning: Possible race condition (Race)
+                int p = i; // ERROR
+                        ^
+Associated declaration is "Monitored.java", line 11, col 5:
+        //@ monitored
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: r2() ...
+    [TIME]  passed
+
+Monitored: r3() ...
+    [TIME]  passed
+
+Monitored: r4() ...
+    [TIME]  passed
+
+Monitored: rj() ...
+------------------------------------------------------------------------
+Monitored.java:92: Warning: Possible race condition (Race)
+        static void rj() { int p = j; } // ERROR
+                                   ^
+Associated declaration is "Monitored.java", line 18, col 6:
+        //-@ monitored
+             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: rjj() ...
+------------------------------------------------------------------------
+Monitored.java:93: Warning: Possible race condition (Race)
+        static void rjj() { int p = jj; } // ERROR
+                                    ^
+Associated declaration is "Monitored.java", line 21, col 6:
+        //-@ monitored_by Monitored.class;
+             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: rjjj() ...
+------------------------------------------------------------------------
+Monitored.java:94: Warning: Possible race condition (Race)
+        static void rjjj() { int p = jjj; } // ERROR
+                                     ^
+Associated declaration is "Monitored.java", line 33, col 5:
+        //@ monitors_for jjj = Monitored.class;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Monitored: srj() ...
+    [TIME]  passed
+
+Monitored: srjj() ...
+    [TIME]  passed
+
+Monitored: srjjj() ...
+    [TIME]  passed
+
+Monitored: Monitored() ...
+    [TIME]  passed
+  [TIME total]
+14 warnings

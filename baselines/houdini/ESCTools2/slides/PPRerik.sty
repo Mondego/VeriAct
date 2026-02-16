@@ -1,0 +1,99 @@
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesPackage{PPRerik}
+
+\RequirePackage{semhelv}
+
+\IfFileExists{pst-grad}{\RequirePackage{pst-grad}}{\RequirePackage{gradient}}
+
+\newrgbcolor{Bluish}{0.6 0.6 1.0}
+\newrgbcolor{Purple}{0.7 0.3 0.8}
+\newrgbcolor{Pinkish}{0.85 0.75 1.00}
+\newrgbcolor{Emph}{0.9 0.0 0.0}
+\newrgbcolor{Head}{0.1 0.1 0.8}
+\newrgbcolor{Text}{0 0 0}
+\newrgbcolor{Bold}{0.4 0 0.4}
+
+\newcommand{\emphbox}[1]{\centerline{\psshadowbox[%
+     fillstyle=solid,fillcolor=Yellowish, framearc=0.2,framesep=2mm]{%
+     \parbox{4.5in}{#1}}}}
+
+
+\FontTitle{\usefont{T1}{phv}{b}{n}\fontsize{14.4pt}{13pt}\selectfont}{%
+  \usefont{T1}{phv}{b}{sl}\fontsize{14.4pt}{12pt}\selectfont}
+\FontText{\usefont{T1}{phv}{b}{n}\fontsize{11pt}{10pt}\selectfont}{%
+  \usefont{T1}{phv}{m}{sl}\fontsize{13pt}{12pt}\selectfont}
+%\FontTitle{\usefont{T1}{phv}{b}{sl}\fontsize{13pt}{12pt}\selectfont}{%
+%  \usefont{T1}{phv}{b}{sl}\fontsize{14.4pt}{12pt}\selectfont}
+%\FontText{\usefont{T1}{phv}{b}{sl}\fontsize{12pt}{11pt}\selectfont}{%
+%  \usefont{T1}{phv}{m}{sl}\fontsize{13pt}{12pt}\selectfont}
+%\FontTitle{\usefont{T1}{phv}{b}{sl}\fontsize{13pt}{12pt}\selectfont}{%
+%  \usefont{T1}{phv}{b}{sl}\fontsize{14.4pt}{12pt}\selectfont}
+%\FontText{\usefont{T1}{phv}{m}{n}\fontsize{13pt}{12pt}\selectfont}{%
+%  \usefont{T1}{phv}{m}{n}\fontsize{13pt}{12pt}\selectfont}
+%\FontTitle{\usefont{T1}{phv}{b}{sl}\fontsize{14.4pt}{12pt}\selectfont}{%
+%  \usefont{T1}{phv}{b}{sl}\fontsize{14.4pt}{12pt}\selectfont}
+%\FontText{\usefont{T1}{phv}{m}{n}\fontsize{13pt}{12pt}\selectfont}{%
+%  \usefont{T1}{phv}{m}{n}\fontsize{13pt}{12pt}\selectfont}
+%\FontTitle{%
+%  \usefont{T1}{ptm}{b}{sf}\fontsize{20.74pt}{20pt}\selectfont\Head}{%
+%  \usefont{T1}{ptm}{b}{sf}\fontsize{20.74pt}{20pt}\selectfont\Head}
+%\FontText{%
+%  \usefont{T1}{ptm}{m}{sf}\fontsize{14.4pt}{13pt}\selectfont\Text}{%
+%  \usefont{T1}{ptm}{m}{sf}\fontsize{14.4pt}{13pt}\selectfont\Text}
+
+
+%\def\labelitemi{\ensuremath{\blacktriangleright}}
+
+% Positioning of the title of a slide, top right
+
+\newcommand{\slidetitle}[1]{%
+  \rput[rb](11.6,3.6){%
+    \parbox{9cm}{\begin{flushright}\fontTitle{{\red #1}}\end{flushright}}}}
+
+\LogoPosition{-.7,-.1}
+
+\def\TWRFrame#1{%
+  \psframe[linestyle=none,fillstyle=gradient,
+  gradbegin=gris1, gradend=gris2,gradmidpoint=0.9]%
+  (-1.2,-1.4)(-0.8,8.8 )
+  \psframe[linestyle=none,fillstyle=gradient,
+  gradbegin=gris1, gradend=gris2,gradmidpoint=0.2]%
+  (-1.2,2)(-0.4,8.8)
+  \psframe[linestyle=none,fillstyle=gradient,
+  gradbegin=gris2,gradend=gris4,gradmidpoint=0.4]%
+  (-1.2,7.9)(1.2,8.8)
+  \psframe[linestyle=none,fillstyle=gradient,
+  gradbegin=gris2,gradend=gris3,gradmidpoint=0.2]%
+  (-1.2,5)(0.8,8.8)
+  \psframe[linestyle=none,fillstyle=gradient,
+  gradbegin=gris1, gradend=gris2,gradmidpoint=0.2]%
+  (-1.2,4)(0.5,8.8)
+  \psframe[linestyle=none,fillstyle=gradient,gradangle=90,
+  gradbegin=black,gradend=gris2,gradmidpoint=0.7]%
+  (-1.2,7)(11.6,7.1)
+  \PutLogo % Mandatory
+  {#1}}
+
+
+\renewcommand{\slideleftmargin}{-1.9in}
+
+\newcommand{\PlainFrame}[1]{%
+  \ifcolorBG
+  \psframe[fillstyle=gradient,gradbegin=Bluish,
+  gradend=Pinkish,gradmidpoint=1]%
+  (-1.2,7)(11.6,7.1)
+  %(-2,-2)(12.5,9.5)                              %           (-2,-1)(10,14)
+  \fi
+  %\PutLogo % Mandatory
+  {#1}}
+
+\NewSlideStyle{t}{6,2.4}{PlainFrame}
+%\PDFCroppingBox{10 40 594 840}
+\PDFCroppingBox{10 40 594 880}
+
+\endinput
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

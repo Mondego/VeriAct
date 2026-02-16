@@ -1,0 +1,291 @@
+# -*- mode: makefile; -*-
+
+## This file is part of the 2007 revision of JavaFE
+## author: David Cok - 1 May 2003
+## author: Joe Kiniry
+##
+## Modified 2007, Mobius Project, Systems Research Group, University College Dublin
+##
+## This file contains variable definitions common to the Makefiles in
+## various subdirectories of the ESC tools.  These should not need to
+## be modified by the user (those variables are in Makefile.local).
+## Many of these variables are initialized with ?= so that they can be
+## preset by environment variables, if customization is needed.  The
+## definitions here mostly reflect the directory organization of the
+## ESC tools; changing them will likely break something.
+
+## Please tell us if you find that something needs to be changed for
+## your platform!
+
+## This include file contains any user-customized definitions.
+export TOP ?= .
+ifneq ($(wildcard ${TOP}/Makefile.*local),)
+  include ${TOP}/Makefile.local
+endif
+
+## Set up Java path and file separators on a per-platform basis.
+ifdef COMSPEC
+     export SEP = \\
+     export PSEP = ;
+else
+     export SEP = /
+     export PSEP = :
+endif
+
+## Define a function to canonicalize paths that are parameters
+## to native programs (e.g., "javac"). Use the *Lots version if 
+## cygpath is complaining about having too many arguments.
+ifdef COMSPEC
+  canonicalize = `cygpath -pwa "$(1)"`
+  canonicalizeLots = `echo "$(1)" | xargs -e cygpath -w`
+else
+  canonicalize = $(1)
+  canonicalizeLots = $(1)
+endif
+
+## Define a multi-platform diff
+
+ifdef COMSPEC
+    export DIFF = diff --strip-trailing-cr
+else
+    export DIFF = diff -w
+endif
+
+################################################################################
+## Check if JAVAFE_ROOT is set
+
+ifndef JAVAFE_ROOT
+  $(error You must have JAVAFE_ROOT defined, either as an environment variable or in the file Makefile.local in the same directory as Makefile.defs)
+endif
+
+##########################################################################
+## Specifications
+
+## Where we put all of our jar files
+export JAR_FILES = ${JAVAFE_ROOT}/jars
+
+## You need to have some specs defined.  Use either 
+##   a) ${JAR_FILES}/jmlspecs.jar from a JML release (not currently
+##      recommended as they are rather complex specifications)
+##   b) ${JAR_FILES}/escspecs.jar, which is a jar of (c)
+##   c) ${JAVAFE_ROOT}/specs, which is a set of specs designed for Esc/java
+##   d) ${JAVAFE_ROOT}/original-specs, the specs that shipped with the
+##      original Compaq SRC ESC/Java release (very lightweight and incomplete)
+export JML2_SPECS_JAR := ${JAR_FILES}/jmlspecs.jar
+export JAVAFE_SPECS_JAR := ${JAR_FILES}/javafespecs.jar
+export JAVAFE_SPECS := ${JAVAFE_ROOT}/specs
+
+##########################################################################
+## Definitions of Java tools.
+## Override these by defining them in Makefile.local or as environment
+## variables.
+
+export JAVA ?= java
+export JAVAC ?= javac 
+export JAVAC_FLAGS ?= -g -source 1.4
+export JAVADOC ?= javadoc -J-mx200m -source 1.4 -breakiterator -quiet
+export JMLDOC ?= jmldoc
+export JML ?= jml
+export JMLC ?= jmlc
+export JMLC_FLAGS ?=-Q --source 1.4
+export DEBUGGER_FLAGS ?= -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y
+export JAVA_REMOTE_DEBUG = $(JAVA) $(DEBUGGER_FLAGS)
+
+export JDK_14_SOURCES ?= ${JAVA_HOME}/src
+
+# export ESCJ ?= ${ESCJ_ROOT}/escj -nowarn Modifies
+export ESCJ ?= escj -nowarn Modifies
+
+##########################################################################
+## Definitions of other tools.
+## Override these by defining them in Makefile.local or as environment
+## variables.
+
+export TEXI2PDF ?= texi2pdf
+
+##########################################################################
+## Variables that define the release.  They will be used to build
+## archives for distribution.  They are used to create the Version.java
+## file, which is used by Main.java to provide a version string.
+
+export JAVAFE_PROJECT ?= JavaFE
+export JAVAFE_VERSION ?= CURRENT
+
+export COPYRIGHT = 'Javafe<br />&copy; 2010 IT University of Copenhagen<br />&copy; 2007,2008,2009,2010 Joseph Kiniry<br/>&copy; 2003,2004,2005,2006 David Cok and Joseph Kiniry<br />&copy; 2005,2006,2007,2008,2009 University College Dublin<br />&copy; 2003,2004 Radboud University Nijmegen<br />&copy; 1999,2000 Compaq Computer Corporation<br />&copy; 1997,1998,1999 Digital Equipment Corporation<br />All Rights Reserved'
+
+##########################################################################
+## The following definitions are used in various Makefiles and should
+## be common for all users and environments.  (at least those environments
+## that have '/' as the path separator.
+## These are defined here rather than in the Makefiles for the individual
+## packages because the tools are used by each other (e.g. all tools use
+## Javafe).
+
+## Where we create API documentation and the stylesheets and copyright
+## information files we use for such.
+export JAVADOC_GEN_DIR = ${JAVAFE_ROOT}/docs/api
+export JMLDOC_GEN_DIR = ${JAVAFE_ROOT}/docs/jmlapi
+export DOCS_STYLESHEET = ${JAVAFE_ROOT}/docs/javafe.css
+
+## Definitions for Utils
+export UTILS_SOURCE_DIR = ${JAVAFE_ROOT}/Utils
+export UTILS_CLASSFILES = ${JAVAFE_ROOT}/Utils
+
+## Byte Code Engineering Library
+export BCEL_LIB ?= ${JAVAFE_ROOT}/Utils/BCEL/bcel-5.2/bcel-5.2.jar
+
+## Pertinent definitions for Javafe
+export JAVAFE_SOURCE_DIR = ${JAVAFE_ROOT}/Javafe/java
+export JAVAFE_CLASSFILES = ${JAVAFE_ROOT}/Javafe/classfiles
+export JAVAFE_CLASSFILES4RAC = ${JAVAFE_ROOT}/Javafe/classfiles4rac
+
+# This is the path needed to run Javafe (only used for testing)
+export JAVAFE_CLASSPATH = ${JAVAFE_CLASSFILES}:${UTILS_CLASSFILES}:${BCEL_LIB}
+export JAVAFE_CLASSPATH_CAN = ${call canonicalize,${JAVAFE_CLASSPATH}}
+
+# Source paths to the JDK sources for extended testing
+export JDK_PRE14_SOURCES ?= /usr/local/Java/src/jdk-1.1 /usr/local/Java/src/jdk-1.2 /usr/local/Java/src/jdk-1.3
+export JDK_14_SOURCES ?= /usr/local/Java/src/jdk-1.4
+
+################################################################################
+## Pertinent locations for building a release
+
+# Do something like this when you build a release:
+#   JAVAFE_VERSION=2.0.b5 make releases
+export JAVAFE_RELEASE_DATE ?= `date "+%d-%m-%y"`
+
+# Temp directory for constructing releases
+export RELTEMP ?= ${JAVAFE_ROOT}/release-temp
+
+# Temp directory for testing releases
+export RELTEST ?= ${JAVAFE_ROOT}/release-test
+
+# Directory in which to put final binary and patch tar files (but nothing else)
+export RELDIR  ?= ${JAVAFE_ROOT}/release
+
+# Variables relevant to names of release files
+export RELDIR ?= ${JAVAFE_ROOT}/releases
+export RELNAME ?= ${JAVAFE_PROJECT}-${JAVAFE_VERSION}
+export RELNAME-DATE ?= ${RELNAME}-${JAVAFE_RELEASE_DATE}
+export RELJAR  ?= ${JAR_FILES}/Javafe${JAVAFE_VERSION}.jar
+export RELSRCJAR  ?= ${JAR_FILES}/Javafe${JAVAFE_VERSION}src.jar
+export RELCODENAME ?= "Mobius PVE Architectural Decomposition Release"
+export RELTAR  ?= ${RELNAME-DATE}-binary
+export RELSRCTAR  ?= ${RELNAME-DATE}-source
+export RELPATCHTAR  ?= ${RELNAME-DATE}-patch
+export RELCLASSPATH = ${RELDIR}/${RELJAR}
+
+################################################################################
+## Packages
+
+export UTILS_PACKAGE_LIST = junitutils
+
+export JAVAFE_PACKAGE_LIST = \
+	javafe javafe.ast javafe.parser  \
+	javafe.reader javafe.genericfile javafe.filespace \
+	javafe.tc javafe.util \
+
+export JAVAFE_PACKAGE_PATHS = \
+	javafe javafe/ast javafe/parser  \
+	javafe/reader javafe/genericfile javafe/filespace \
+	javafe/tc javafe/util \
+
+export PACKAGE_LIST = \
+	  ${UTILS_PACKAGE_LIST} $(JAVAFE_PACKAGE_LIST)
+
+################################################################################
+## JUnit
+
+## The location of the JUnit library as obtained from the JUnit
+## project You can override this default setting in Makefile.local or
+## in your environment.
+export JUNIT_LIB ?= ${JAVAFE_ROOT}/Utils/junit.jar
+export JUNIT_SOURCEPATH ?= /usr/local/Java/junit/src
+
+################################################################################
+## Ant
+
+## The location of the Ant jar, a part of the Jakarta Ant project.
+## You can override this default setting in Makefile.local or in your
+## environment.
+export ANT_LIB ?= ${JAVAFE_ROOT}/Utils/ant.jar
+export ANT_SOURCEPATH ?= /usr/local/Java/jakarta-ant/src
+
+## This contains items needed for compiling/running JUnit tests, but
+## not for compiling or running the tools themselves.
+export JUNIT_UTILS_PATH = ${JAVAFE_ROOT}/Utils:${JUNIT_LIB}:${ANT_LIB}:${BCEL_LIB}
+
+################################################################################
+## The classpath needed to build all of ESC/Java2.
+
+## This is the path needed to build Javafe
+export JAVAFE_BUILD_CLASSPATH = ${JAVAFE_CLASSFILES}:${UTILS_CLASSFILES}:${BCEL_LIB}:${JUNIT_LIB}:${ANT_LIB}:${XMLRPC_LIB}
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+## The stuff from here on needs cleaning up (FIXME)
+
+######################### locations #########################
+ 
+ 
+################################################################################
+## Classpaths
+
+## FIXME -- check which of these are actually needed - they come from
+## the setup file so some are for execution.
+
+# A colon-separated list of directories that contain the source code
+# for the whole of JavaFE
+export SOURCEPATH = ${JAVAFE_SOURCE_DIR}:${UTILS_SOURCE_DIR}
+
+#
+# Need to sources here because we can't read binary inner classes;
+# need the binaries because don't have source for sun.* classes...
+#
+export JDKSPEC = ${JDKSPEC_ROOT}
+
+################################################################################
+## Path adjustments necesssary when using RAC generated classes ...
+
+ifneq ($(USE_RAC),)
+  # Ensure that ${JML_RUNTIME_JAR} actually exists ..
+  ifeq ($(wildcard ${JML_RUNTIME_JAR}),)
+    ifneq ($(wildcard ${JAR_FILES}/jmlruntime.jar),)
+      export JML_RUNTIME_JAR = ${JAR_FILES}/jmlruntime.jar
+    endif
+    ifneq ($(wildcard ${JML_CLASSROOT}/bin/jmlruntime.jar),)
+      export JML_RUNTIME_JAR = ${JML_CLASSROOT}/bin/jmlruntime.jar
+    endif
+    ifeq ($(wildcard ${JML_RUNTIME_JAR}),)
+      $(error Cannot find jmlruntime.jar.  Check setting of JML_RUNTIME_JAR)
+    endif
+  endif
+USE_RACC:=
+RAC_CLASSES=$(JAVAFE_CLASSFILES4RAC):$(JML_RUNTIME_JAR)
+CLASSPATH:=${RAC_CLASSES}:${CLASSPATH}
+JAVAFE_CLASSPATH:=${RAC_CLASSES}:${JAVAFE_CLASSPATH}
+endif
+
+
+################################################################################
+## Paths and parameters necessary for CVC JNI compillation
+## Variables should be (re)defined in Makefile.local
+## JNI header file location
+export JDK_INCLUDE_DIR ?= ${JAVA_HOME}/include
+## OS-specific JNI header files
+export JDK_INCLUDE_OS ?= ${JDK_INCLUDE}/linux
+## JNI javah binary location
+export JAVAH ?= ${JAVA_HOME}/bin/javah
+## Preferred C++ compiler
+export CC ?= g++
+## Library directory of CVC installed
+export CVC_LIB_DIR ?= /usr/local/lib
+## Include directory of CVC install (default)
+export CVC_INCLUDE_DIR ?= /usr/local/include/cvcl
+export LD_LIBRARY_PATH = ${JAVAFE_ROOT}/libs
+
+export TEXINPUTS := .:${TEXINPUTS}
+
+# End of file

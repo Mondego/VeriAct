@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+NonNullElements ...
+  Prover started:TIME
+    [TIME]
+
+NonNullElements: m() ...
+    [TIME]  passed
+
+NonNullElements: NonNullElements() ...
+    [TIME]  passed
+  [TIME total]

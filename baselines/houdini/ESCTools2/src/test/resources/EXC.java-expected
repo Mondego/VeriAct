@@ -1,0 +1,56 @@
+ESC/Java version VERSION
+src|test|resources|EXC.java: Caution: Using given file as the .java file, even though it is not the java file for EXC on the classpath
+    [TIME]
+
+P ...
+  Prover started:TIME
+    [TIME]
+
+P: getProperty(java.lang.Object) ...
+    [TIME]  passed immediately
+
+P: P() ...
+    [TIME]  passed
+  [TIME total]
+
+EXC ...
+    [TIME]
+
+EXC: main(P) ...
+------------------------------------------------------------------------
+src|test|resources|EXC.java:35: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // SHOULD FAIL
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|EXC.java", line 30, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EXC: m(P) ...
+------------------------------------------------------------------------
+src|test|resources|EXC.java:45: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // SHOULD FAIL
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|EXC.java", line 41, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EXC: mm(P) ...
+------------------------------------------------------------------------
+src|test|resources|EXC.java:55: Warning: Possible assertion failure (Assert)
+      //@ assert e instanceof ArithmeticException; // SHOULD FAIL
+          ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|EXC.java", line 52, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EXC: EXC() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+3 warnings

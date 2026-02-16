@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|MultipleDecl.java: Caution: Using given file as the .java file, even though it is not the java file for MultipleDecl on the classpath
+    [TIME]
+
+MultipleDecl ...
+  Prover started:TIME
+    [TIME]
+
+MultipleDecl: m() ...
+    [TIME]  passed immediately
+
+MultipleDecl: MultipleDecl() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

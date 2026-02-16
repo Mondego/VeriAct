@@ -1,0 +1,17 @@
+ESC/Java version VERSION
+GhostMethod.java:4: Error: A method may not be declared ghost
+        //@ public ghost int n();
+                   ^
+    [TIME]
+
+GhostMethod ...
+  Prover started:TIME
+    [TIME]
+
+GhostMethod: GhostMethod() ...
+    [TIME]  passed
+
+GhostMethod: n() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 error

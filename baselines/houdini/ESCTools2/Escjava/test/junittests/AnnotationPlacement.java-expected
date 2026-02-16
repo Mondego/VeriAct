@@ -1,0 +1,39 @@
+ESC/Java version VERSION
+    [TIME]
+
+AnnotationPlacement ...
+  Prover started:TIME
+    [TIME]
+
+AnnotationPlacement: m() ...
+    [TIME]  passed
+
+AnnotationPlacement: mm() ...
+------------------------------------------------------------------------
+AnnotationPlacement.java:10: Warning: Method declared non_null may return null (NonNullResult)
+        { return null; }        
+                       ^
+Associated declaration is "AnnotationPlacement.java", line 9, col 25:
+        public Object mm() //-@ non_null pure
+                                ^
+Execution trace information:
+    Executed return in "AnnotationPlacement.java", line 10, col 3.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AnnotationPlacement: p(java.lang.Object, java.lang.Object) ...
+    [TIME]  passed
+
+AnnotationPlacement: AnnotationPlacement() ...
+------------------------------------------------------------------------
+AnnotationPlacement.java:13: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        public Object ff=null /*-@ non_null */;
+                        ^
+Associated declaration is "AnnotationPlacement.java", line 13, col 28:
+        public Object ff=null /*-@ non_null */;
+                                   ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+2 warnings

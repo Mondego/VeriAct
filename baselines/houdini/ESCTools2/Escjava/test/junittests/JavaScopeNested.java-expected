@@ -1,0 +1,8 @@
+ESC/Java version VERSION
+    [TIME]
+
+JavaScopeNested ...
+JavaScopeNested.java:10: Fatal error: Can't find type named "JSN.I"
+                JSN.I i = null;
+                ^
+1 error

@@ -1,0 +1,43 @@
+ESC/Java version VERSION
+src|test|resources|TestCharacter2.java: Caution: Using given file as the .java file, even though it is not the java file for TestCharacter2 on the classpath
+    [TIME]
+
+TestCharacter2 ...
+  Prover started:TIME
+    [TIME]
+
+TestCharacter2: testWhiteSpaceConsistent() ...
+------------------------------------------------------------------------
+src|test|resources|TestCharacter2.java:5: Warning: Possible assertion failure (Assert)
+        //@ assert false;  // TEST FOR CONSISTENCY - 1
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+TestCharacter2: testWhiteSpace() ...
+------------------------------------------------------------------------
+src|test|resources|TestCharacter2.java:11: Warning: Code marked as unreachable may possibly be reached (Reachable)
+            //@ unreachable;  // TEST FOR CONSISTENCY - 2
+                ^
+Execution trace information:
+    Executed then branch in "src|test|resources|TestCharacter2.java", line 9, col 41.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+TestCharacter2: testGetType() ...
+------------------------------------------------------------------------
+src|test|resources|TestCharacter2.java:19: Warning: Possible assertion failure (Assert)
+            //@ assert (Character.getType(ch) == Character.SPACE_SEPAR ...
+                ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "src|test|resources|TestCharacter2.java", line 17, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+TestCharacter2: TestCharacter2() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+3 warnings

@@ -1,0 +1,21 @@
+public class max {
+
+    //@ requires n > 0 && n == a.length;
+    //@ ensures (\forall int k;  0 <= k && k < n; \result >= a[k]);
+    //@ ensures (\exists int k;  0 <= k && k < n; \result == a[k]);
+    int arraymax(int[] a, int n) {
+        int i = 1;
+        int max = a[0];
+        //@ maintaining 1 <= i && i <= n;
+        // >>>INFILL<<<	
+        while (i < n) {
+            // Beginning of loop
+            if (max < a[i])
+                max = a[i];
+            i = i + 1;
+            // End of loop: Loop invariant comes here
+        }
+        return max;
+    }  
+}
+

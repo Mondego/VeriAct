@@ -1,0 +1,52 @@
+Here are the instructions for compiling Calvin on Unix platforms such 
+as Linux, BSD, and Solaris.  To compile Calvin on Windows, you need to 
+appropriately modify the files "setup", "simplify", and "calvin_script" 
+in this directory.  If you have problems, send email to Shaz Qadeer 
+(shaz.qadeer@hp.com, qadeer@cs.williams.edu).
+
+0. First download Javafe from the Compaq Software Download website.  
+   For the remainder of this document, I will denote the directory 
+   in which you put Javafe as <dir>. 
+
+1. Add the following method to the class StackVector in the file 
+   <dir>/Javafe/java/javafe/util/StackVector.java and compile Javafe.
+    
+    /**
+     ** Returns the contents of all the vectors on the stack as a single
+     ** vector.<p>
+     **/
+    public Vector stackContents() {
+        Vector vec = new Vector();
+        for (int i = 0; i < elementCount; i++) {
+            Object o = elements[i];
+            if (o != null) {
+                vec.addElement(o);
+            }
+        }
+        return vec;
+    }
+
+2. Place the Calvin directory in <dir>.
+
+3. cd <dir>/Calvin.
+
+4. Edit the environment variable JDKBINARIES in the file "setup" to point
+   to the rt.jar file in the Java distribution on your computer.  Calvin 
+   should work with JDK 1.2 (perhaps also with JDK1.3).
+
+5. Edit the environment variable ESCJ_SIMPLIFY in the file "simplify" to 
+   point to the appropriate Simplify executable in the directory 
+   <dir>/Calvin/release/master/bin/. 
+
+6. Start a new tcsh.
+
+7. Execute the following commands in <dir>/Calvin:
+       source setup
+       gmake escjava
+
+8. There are two examples.  The Apprentice example is in the directory 
+   <dir>/Calvin/java/escjava/test/apprentice/ and the ProducerConsumer
+   example is in the directory 
+   <dir>/Calvin/java/escjava/test/producer-consumer/.  Each of these
+   directories also contain a file "script" for running Calvin.  
+   Calvin can be run by "source script". 

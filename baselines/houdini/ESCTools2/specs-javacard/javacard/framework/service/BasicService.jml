@@ -1,0 +1,204 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id$
+ *
+ */
+
+package javacard.framework.service;
+
+import javacard.framework.APDU;
+import javacard.framework.ISO7816;
+
+public class BasicService implements Service {
+
+  /*@
+    public normal_behavior
+      requires true;
+      ensures true;
+      assignable \nothing;
+  @*/
+  public BasicService();
+
+  /*@ also 
+    public normal_behavior
+      requires apdu != null;
+      ensures !\result;
+      assignable apdu._buffer[*];
+  @*/
+  public boolean processDataIn(APDU apdu);
+
+  /*@ also 
+    public normal_behavior
+      requires apdu != null;
+      ensures !\result;
+      assignable apdu._buffer[*];
+  @*/
+  public boolean processCommand(APDU apdu);
+
+  /*@ also
+    public normal_behavior
+      requires apdu != null;
+      ensures !\result;
+      assignable apdu._buffer[*];
+  @*/
+  public boolean processDataOut(APDU apdu);
+
+  /*@
+    public behavior 
+      requires apdu != null;
+      requires apdu.getCurrentState() == APDU.STATE_INITIAL
+        || apdu.getCurrentState() == APDU.STATE_FULL_INCOMING;
+      ensures \result >= 0;
+      signals (ServiceException se) se.getReason() == ServiceException.COMMAND_DATA_TOO_LONG;
+      signals_only ServiceException;
+      assignable apdu._buffer[*], apdu._apduState, apdu._Lc;
+  @*/
+  public short receiveInData(APDU apdu) throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      requires apdu.getCurrentState() >= APDU.STATE_INITIAL;
+      ensures apdu.getCurrentState() >= APDU.STATE_OUTGOING;
+      assignable apdu._apduState;
+  @*/
+  public void setProcessed(APDU apdu) throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      ensures true;
+      assignable \nothing;
+  @*/
+  public boolean isProcessed(APDU apdu);
+
+  /*@
+    public normal_behavior
+      requires apdu.getCurrentState() >= APDU.STATE_OUTGOING;
+      requires apdu != null;
+      requires length >= 0 && length <= 256;
+      ensures true;
+      assignable apdu._buffer[ISO7816.OFFSET_LC];
+  @*/
+  public void setOutputLength(
+    APDU apdu, short length) throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      requires apdu.getCurrentState() >= APDU.STATE_OUTGOING;
+      ensures \result >= 0 && \result <= 256;
+      assignable \nothing;
+  @*/
+  public short getOutputLength(APDU apdu) throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      ensures true;
+      assignable apdu._buffer[ISO7816.OFFSET_P1],
+        apdu._buffer[ISO7816.OFFSET_P2];
+  @*/
+  public void setStatusWord(APDU apdu, short sw);
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      requires apdu.getCurrentState() >= APDU.STATE_OUTGOING;
+      ensures true;
+      assignable \nothing;
+  @*/
+  public short getStatusWord(APDU apdu) throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      requires apdu.getCurrentState() >= APDU.STATE_INITIAL;
+      ensures true;
+      assignable apdu._apduState, apdu._buffer[ISO7816.OFFSET_LC],
+         apdu._buffer[ISO7816.OFFSET_P1],
+	 apdu._buffer[ISO7816.OFFSET_P2];
+  @*/
+  public boolean fail(APDU apdu, short sw)
+    throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      requires apdu.getCurrentState() >= APDU.STATE_INITIAL;
+      ensures true;
+      assignable apdu._apduState,
+         apdu._buffer[ISO7816.OFFSET_P1],
+	 apdu._buffer[ISO7816.OFFSET_P2];
+  @*/
+  public boolean succeed(APDU apdu) throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      requires apdu.getCurrentState() >= APDU.STATE_INITIAL;
+      ensures true;
+      assignable apdu._apduState,
+         apdu._buffer[ISO7816.OFFSET_P1],
+	 apdu._buffer[ISO7816.OFFSET_P2];
+  @*/
+  public boolean succeedWithStatusWord(
+    APDU apdu, short sw) throws ServiceException;
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      ensures \result == apdu._buffer[ISO7816.OFFSET_CLA];
+      assignable \nothing;
+  @*/
+  public byte getCLA(APDU apdu);
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      ensures \result == apdu._buffer[ISO7816.OFFSET_INS];
+      assignable \nothing;
+  @*/
+  public byte getINS(APDU apdu);
+
+
+  /*@
+    public normal_behavior 
+      requires apdu != null;
+      requires apdu.getCurrentState() == APDU.STATE_INITIAL
+        || apdu.getCurrentState() == APDU.STATE_FULL_INCOMING;
+      ensures \result == apdu._buffer[ISO7816.OFFSET_P1];
+    assignable \nothing;
+   @*/
+  public byte getP1(APDU apdu)
+           throws ServiceException;
+
+  /*@
+    public normal_behavior 
+      requires apdu != null;
+      requires apdu.getCurrentState() == APDU.STATE_INITIAL
+        || apdu.getCurrentState() == APDU.STATE_FULL_INCOMING;
+      ensures \result == apdu._buffer[ISO7816.OFFSET_P2];
+    assignable \nothing;
+   @*/
+  public byte getP2(APDU apdu)
+           throws ServiceException;
+
+  /*@
+    public normal_behavior 
+      requires true;
+      ensures true;
+    assignable \nothing;
+   @*/
+  public /*@pure@*/ boolean selectingApplet();
+
+} 

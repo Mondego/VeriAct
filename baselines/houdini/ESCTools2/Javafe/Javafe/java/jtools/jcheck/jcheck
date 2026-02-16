@@ -1,0 +1,23 @@
+#!/bin/csh -f
+
+# The base JDK 1.0.2 classpath:
+set base=/proj/cra/pkg/jdk1.0.2/classes:/proj/cra/pkg/jdk1.0.2/lib/classes.zip
+
+# Get current java class path or ".:$base" if none specified:
+set old=.:$base
+if ($?CLASSPATH) then
+    set old="${CLASSPATH}:${base}"
+endif
+
+# The class path needed to find JCheck and its associated classes:
+setenv CLASSPATH /udir/mdl/Javafe/classes:/udir/mdl/Javafe/classes/java_util_zip.jar:/proj/cra/pkg/jdk1.0.2/classes:/proj/cra/pkg/jdk1.0.2/lib/classes.zip
+
+# Quote our arguments so empty arguments will pass through safely:
+set arguments = ""
+set i=1
+while ($i <= $#argv)
+    set arguments = ($arguments \'$argv[$i]\')
+    @ i++
+end
+
+eval /proj/system/bin/java jtools.jcheck.JCheck -classpath "'$old'" $arguments

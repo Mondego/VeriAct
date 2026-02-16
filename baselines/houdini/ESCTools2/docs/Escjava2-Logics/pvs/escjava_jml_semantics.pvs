@@ -1,0 +1,29 @@
+escjava_jml_semantics : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem
+
+    % === Define typeof for primitive types - DRCok
+    typeof : [ S -> S ]
+
+    typeof_char : AXIOM
+      FORALL (x : S): is(x, T_char) IFF typeof(x) = T_char
+    typeof_byte : AXIOM
+      FORALL (x : S): is(x, T_byte) IFF typeof(x) = T_byte
+    typeof_short : AXIOM
+      FORALL (x : S): is(x, T_short) IFF typeof(x) = T_short
+    typeof_int : AXIOM
+      FORALL (x : S): is(x, T_int) IFF typeof(x) = T_int
+    typeof_long : AXIOM
+      FORALL (x : S): is(x, T_long) IFF typeof(x) = T_long
+    typeof_float : AXIOM
+      FORALL (x : S): is(x, T_float) IFF typeof(x) = T_float
+    typeof_double : AXIOM
+      FORALL (x : S): is(x, T_double) IFF typeof(x) = T_double
+
+    % === ESCJ 8: Section 2.3
+
+    typeof_reference_definition : AXIOM
+      FORALL (x, t : S): t <= T_java_lang_Object IMPLIES
+                         x = t IFF (x = java_null OR typeof(x) <= t)
+
+  END escjava_jml_semantics

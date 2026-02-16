@@ -1,0 +1,37 @@
+escjava_java_lock_semantics : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem,
+              escjava_java_field_representation,
+	      escjava_java_integral_ops
+
+    LS : S
+
+    % === ESCJ 8: Section 4
+
+    % 'as' trick in use.
+    asLockSet : [ S -> S ]
+    max : [ S -> S ]
+    max_of_a_lockset_is_a_lockset : AXIOM
+      FORALL (s : S): select(asLockSet(s), max(asLockSet(s))) = bool_true
+
+    % null is in lockset (not in ESCJ 8)
+    null_is_in_lockset : AXIOM
+      FORALL (s : S): select(asLockSet(s), java_null) = bool_true
+
+%     lockLE (x, y : S): bool = x <= y
+%     lockLT (x, y : S): bool = x < y
+
+    lockLE (x, y : S): S = integralLE(x, y)
+    lockLT (x, y : S): S = integralLT(x, y)
+
+    % all locks in lockset are below max(lockset) (not in ESCJ 8)
+    all_locks_in_lockset_are_below_max_lockset : AXIOM
+      FORALL (s, mu : S): select(asLockSet(s), mu) = bool_true IMPLIES
+                          lockLE(mu, max(asLockSet(s))) = bool_true
+
+    % null precedes all objects in locking order (not in ESCJ 8)
+    null_precedes_all_objects : AXIOM
+      FORALL (x : S): typeof(x) <= T_java_lang_Object IMPLIES
+                      lockLE(java_null, x) = bool_true
+
+  END escjava_java_lock_semantics

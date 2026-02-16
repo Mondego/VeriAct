@@ -1,0 +1,122 @@
+DUMP java.lang.Object
+ Java fields
+ Hidden Java fields
+ Jml fields
+    objectState "..|..|..|specs|java|lang|Object.spec", line 12, col 30
+    owner "..|..|..|specs|java|lang|Object.spec", line 19, col 21
+ Jml hidden fields
+ DUMP-END
+DUMP java.lang.<the root interface>
+ Java fields
+ Hidden Java fields
+ Jml fields
+    objectState "..|..|..|specs|java|lang|Object.spec", line 12, col 30
+    owner "..|..|..|specs|java|lang|Object.spec", line 19, col 21
+ Jml hidden fields
+ DUMP-END
+DUMP ScopeII
+ Java fields
+    j "Scope.java", line 33, col 7
+    jj "Scope.java", line 34, col 7
+ Hidden Java fields
+ Jml fields
+    objectState "..|..|..|specs|java|lang|Object.spec", line 12, col 30
+    owner "..|..|..|specs|java|lang|Object.spec", line 19, col 21
+ Jml hidden fields
+ DUMP-END
+DUMP ScopeS
+ Java fields
+    i "Scope.java", line 40, col 8
+    gsi "Scope.java", line 41, col 8
+    dupj "Scope.java", line 42, col 15
+    dupm "Scope.java", line 43, col 15
+    priv "Scope.java", line 44, col 9
+    j "Scope.java", line 33, col 7
+    jj "Scope.java", line 34, col 7
+ Hidden Java fields
+ Jml fields
+    ggi "Scope.java", line 45, col 17
+    dup "Scope.java", line 46, col 17
+    gpriv "Scope.java", line 47, col 18
+    dupmm "Scope.java", line 48, col 17
+    objectState "..|..|..|specs|java|lang|Object.spec", line 12, col 30
+    owner "..|..|..|specs|java|lang|Object.spec", line 19, col 21
+ Jml hidden fields
+ DUMP-END
+DUMP ScopeI
+ Java fields
+    dupj "Scope.java", line 26, col 15
+    dupmm "Scope.java", line 29, col 8
+    j "Scope.java", line 33, col 7
+    jj "Scope.java", line 34, col 7
+ Hidden Java fields
+ Jml fields
+    dup "Scope.java", line 27, col 18
+    dupm "Scope.java", line 28, col 18
+    objectState "..|..|..|specs|java|lang|Object.spec", line 12, col 30
+    owner "..|..|..|specs|java|lang|Object.spec", line 19, col 21
+ Jml hidden fields
+ DUMP-END
+DUMP Scope
+ Java fields
+    i "Scope.java", line 5, col 8
+    j "Scope.java", line 6, col 8
+    sj "Scope.java", line 7, col 15
+    k "Scope.java", line 9, col 8
+    si "Scope.java", line 16, col 8
+    zz "Scope.java", line 19, col 8
+    zzz "Scope.java", line 20, col 8
+    gsi "Scope.java", line 41, col 8
+    dupj "Scope.java", line 42, col 15
+    dupm "Scope.java", line 43, col 15
+    jj "Scope.java", line 34, col 7
+    dupj "Scope.java", line 26, col 15
+    dupmm "Scope.java", line 29, col 8
+ Hidden Java fields
+    i "Scope.java", line 40, col 8
+    priv "Scope.java", line 44, col 9
+    j "Scope.java", line 33, col 7
+ Jml fields
+    k "Scope.java", line 3, col 10
+    gi "Scope.java", line 11, col 14
+    i "Scope.java", line 12, col 14
+    gsi "Scope.java", line 13, col 14
+    ggi "Scope.java", line 14, col 14
+    z "Scope.java", line 18, col 18
+    zzzz "Scope.java", line 21, col 18
+    z5 "Scope.java", line 22, col 18
+    dup "Scope.java", line 46, col 17
+    dupmm "Scope.java", line 48, col 17
+    objectState "..|..|..|specs|java|lang|Object.spec", line 12, col 30
+    owner "..|..|..|specs|java|lang|Object.spec", line 19, col 21
+    dup "Scope.java", line 27, col 18
+ Jml hidden fields
+    ggi "Scope.java", line 45, col 17
+    gpriv "Scope.java", line 47, col 18
+ Jml dup fields
+    dupm "Scope.java", line 28, col 18
+ DUMP-END
+Scope.java:3: Error: Another field named 'k' already exists in this type
+//@     model int k; // ERROR - duplicates a java field
+                  ^
+Scope.java:9: Associated declaration: 
+        public int k; // ERROR - duplicates a jml model field
+                   ^
+Scope.java:12: Error: Another field named 'i' already exists in this type
+        ghost public int i; // ERROR - duplicates a java field
+                         ^
+Scope.java:5: Associated declaration: 
+        public int i; // ERROR - duplicates a jml ghost field
+                   ^
+Scope.java:18: Error: Ambiguous field for type Scope
+        //@ ghost public int z = dup; // ERROR - dup is in two jml par ...
+                                 ^
+Scope.java:19: Error: Ambiguous field for type Scope
+        public int zz = dupj; // ERROR - dupj is in two java parents
+                        ^
+Scope.java:21: Error: Ambiguous field for type Scope
+        //@ ghost public int zzzz = dupm; // ERROR - is in a java and  ...
+                                    ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+5 errors

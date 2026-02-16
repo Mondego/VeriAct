@@ -1,0 +1,31 @@
+jcf13  FAILS  Static initialization
+jcf15  OK    Static initialization
+jcf16  COMPILE-ERROR  Static initialization
+jcf17  COMPILE_ERROR
+jcf28  OK
+jcf29  OK
+jcf31  OK
+jcf33  OK
+jcf34  OK
+jcf41  FAILS Null reference
+jcf43  OK
+jcf47  OK
+jcf54  FAILS Null reference
+jcf55  FAILS Modify information
+jcf63  OK
+jcf65  OK
+jcf66  OK
+jcf67  OK
+jcf68  FAILS Null reference
+jcf74  FAILS Null reference
+jcf78  OK
+jcf79  FAILS Null reference
+jcf80  FAILS
+jcf82  FAILS
+jcf85  FAILS
+jcf86  FAILS
+jcf90  FAILS
+jcf91  OK
+jcf92  OK
+jcf93  FAILS
+jcf97  FAILS

@@ -1,0 +1,390 @@
+/udir/flanagan/Escjava/escjava -classpath .:/udir/stata/src/jdk-alpha/src/share/java/:/udir/stata/src/jdk-alpha/src/share/sun/:/udir/stata/src/jdk-alpha/src/solaris/sun/ -v -ptb -pgc -pvc -pjt Modifiers1.java Modifiers2.java SpecExprs1.java TypeDeclElemPragmas1.java
+[parsing Modifiers1.java]
+[parsing Modifiers2.java]
+[parsing SpecExprs1.java]
+[parsing TypeDeclElemPragmas1.java]
+[calling Simplify on command ;----------------------------------------------------------------------
+; "Universal", or class-independant part, of the background predicate
+
+; === ESCJ 8: Section 0.4
+    
+(BG_PUSH (FORALL (m i x) (EQ (select (store m i x) i) x)))
+
+(BG_PUSH (FORALL (m i j x) 
+		 (IMPLIES (NEQ i j)
+			  (EQ (select (store m i x) j)
+			      (select m j)))))
+
+; === ESCJ 8: Section 1.1
+
+(DEFPRED (<: t0 t1))
+
+(BG_PUSH (FORALL (t) (<: t t)))
+	
+(BG_PUSH (FORALL (t0 t1 t2)
+		 (IMPLIES (AND (<: t0 t1) (<: t1 t2))
+			  (<: t0 t2))))
+
+(BG_PUSH (FORALL (t0 t1)
+		 (IMPLIES (AND (<: t0 t1) (<: t1 t0))
+			  (EQ t0 t1))))
+
+; === ESCJ 8: Section 1.3
+    
+(BG_PUSH (FORALL (t) (<: (array t) |java.lang.Cloneable|)))
+    
+(BG_PUSH (FORALL (t) (EQ (elemType (array t)) t)))
+
+(BG_PUSH (FORALL (t0 t1) 
+		 (EQ (<: t0 (array t1))
+		     (<: (elemType t0) t1))))
+
+; === ESCJ 8: Section 2.1
+
+(DEFPRED (is x t))
+
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (is (cast x t) t)))
+     
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (IMPLIES (is x t) (EQ (cast x t) x))))
+     
+; === ESCJ 8: Section 2.2
+
+(BG_PUSH (DISTINCT |@false| |@true|))
+
+; === ESCJ 8: Section 2.2.1
+
+(BG_PUSH (FORALL (x) (IFF (is x char) (AND (<= 0 x) (<= x 65535)))))
+(BG_PUSH (FORALL (x) (IFF (is x char) (AND (<= -128 x) (<= x 127)))))
+(BG_PUSH (FORALL (x) (IFF (is x char) (AND (<= -32768 x) (<= x 32767)))))
+
+; === ESCJ 8: Section 2.3
+      
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (is x t))
+	 (IMPLIES (<: t |java.lang.Object|)
+		  (IFF (is x t)
+		       (OR (EQ x null) (<: (typeof x) t))))))
+
+; === ESCJ 8: Section 2.4
+
+(BG_PUSH
+ (FORALL (f t x) (PATS (select (asField f t) x))
+	 (is (select (asField f t) x) t)))
+
+; === ESCJ 8: Section 2.5
+
+(BG_PUSH
+ (FORALL (e a i) (PATS (select (select (asElems e) a) i))
+	 (is (select (asElems e) a)
+	     (elemType (typeof a)))))
+
+; === ESCJ 8: Section 3.0
+
+(DEFPRED (isAllocated x aa) (< (vAllocTime x) aa))
+
+; === ESCJ 8: Section 3.1
+
+(BG_PUSH
+ (FORALL (x f aa) (PATS (isAllocated (select f x) aa))
+	 (IMPLIES (AND (< (fClosedTime f) aa)
+		       (isAllocated x aa))
+		  (isAllocated (select f x) aa))))
+
+; === ESCJ 8: Section 3.2
+
+(BG_PUSH
+ (FORALL (a e i aa) (PATS (isAllocated (select (select e a) i) aa))
+	 (IMPLIES (AND (< (eClosedTime e) aa)
+		       (isAllocated a aa))
+		  (isAllocated (select (select e a) i) aa))))
+ 
+; === ESCJ 8: Section 4 
+; Not implemented 
+; Spec not up-to-date with intent
+
+; === ESCJ 8: Section 5.0
+
+(BG_PUSH
+ (FORALL (a) 
+	 (PATS (arrayLength a))
+	 (AND (<= 0 (arrayLength a))
+	      (is (arrayLength a) int))))
+
+; === ESCJ 8: Section 5.1
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (EQ (+ (* (integralDiv i j) j) (integralMod i j))
+	     i)))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< 0 j)
+		  (AND (<= 0 (integralMod i j))
+		       (< (integralMod i j) j)))))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< j 0)
+		  (AND (< j (integralMod i j))
+		       (<= (integralMod i j) 0)))))
+
+(BG_PUSH
+ (FORALL (i j) 
+	 (PATS (integralMod (+ i j) j))
+	 (EQ (integralMod (+ i j) j) 
+	     (integralMod i j))))
+
+(BG_PUSH
+ (FORALL (i j)
+	 (PATS (integralMod (+ j i) j))
+	 (EQ (integralMod (+ j i) j) 
+	     (integralMod i j))))
+
+; === ESCJ 8: Section 5.3
+
+(BG_PUSH
+ (FORALL (x y)
+	 (PATS (termConditional |@true| x y))
+	 (EQ (termConditional |@true| x y) x)))
+
+(BG_PUSH
+ (FORALL (b x y)
+	 (PATS (termConditional b x y))
+	 (IMPLIES (NEQ b |@true|)
+		  (EQ (termConditional |@true| x y) x))))
+
+;----------------------------------------------------------------------
+; End of Universal background predicate
+;----------------------------------------------------------------------
+]
+[Simplify: command done]
+Processing Modifiers1
+[Superlink resolving Modifiers1]
+[checkCompilationUnit: checking for Modifiers1.java]
+[Superlink resolving java.lang.Object]
+[parsing /udir/stata/src/jdk-alpha/src/share/java//java/lang/Object.java]
+[checkCompilationUnit: checking for /udir/stata/src/jdk-alpha/src/share/java//java/lang/Object.java]
+[prepping Modifiers1]
+[prepping java.lang.Object]
+[typechecking Modifiers1]
+=== Source code with types ===
+public 
+class Modifiers1
+{
+   public Object mu1 /*@ monitored */;
+
+   public Object mu2 /*@ monitored */;
+
+   /*@ axiom (/*boolean*/ (/*java.lang.Object*/ mu1) < (/*java.lang.Object*/ mu2))  */
+   public int v1 /*@ writeable_deferred */ /*@ monitored_by (/*java.lang.Object*/ mu1)  */;
+
+   public int v2 /*@ monitored_by (/*java.lang.Object*/ mu1)  */ /*@ monitored_by (/*java.lang.Object*/ mu2)  */ /*@ defined_if (/*boolean*/ (/*int*/ 10) < (/*int*/ v1))  */;
+
+   public int update(Modifiers1 v1)
+    /*@ requires (/*boolean*/ (/*boolean*/ (/*java.lang.Object*/ min((/*lockset*/ UnknownTag<185>))) == (/*java.lang.Object*/ mu1)) & (/*boolean*/ (/*int*/ 10) < (/*int*/ (/*Modifiers1*/ v1).v1)))  */
+    /*@ modifies (/*int*/ (/*Modifiers1*/ this).v1)  */
+    /*@ modifies (/*int*/ v2)  */
+    /*@ ensures (/*boolean*/ (/*boolean*/ ((/*boolean*/ (/*int*/ RES) == (/*int*/ PRE((/*int*/ (/*Modifiers1*/ this).v1)))))) & (/*boolean*/ ((/*boolean*/ (/*int*/ (/*Modifiers1*/ this).v1) == (/*int*/ (/*Modifiers1*/ v1).v1)))))  */ 
+   {
+      int result = (/*int*/ (/*Modifiers1*/ this).v1);
+      (/*int*/ (/*int*/ (/*Modifiers1*/ this).v1) = (/*int*/ (/*Modifiers1*/ v1).v1));
+      synchronized ((/*java.lang.Object*/ mu2)) {
+         (/*int*/ (/*int*/ v2) = (/*int*/ 10));
+      }
+      return (/*int*/ result);
+   }
+
+   public int find(int[] a, int el)
+    /*@ requires (/*boolean*/ (exists int i; (/*boolean*/ (/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ i)) & (/*boolean*/ (/*int*/ i) < (/*int*/ (/*int[]*/ a).length))) & (/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ i)]) == (/*int*/ el)))))  */
+    /*@ ensures (/*boolean*/ (/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ RES)) & (/*boolean*/ (/*int*/ RES) < (/*int*/ (/*int[]*/ a).length))) & (/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ RES)]) == (/*int*/ el)))  */ 
+   {
+      int result = (/*int*/ 0) /*@ uninitialized */;
+      for(int i; (/*boolean*/ (/*int*/ i) < (/*int*/ (/*int[]*/ a).length)); (/*int*/ (/*int*/ i)++)) if ((/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ i)]) == (/*int*/ el))) (/*int*/ (/*int*/ result) = (/*int*/ i));
+      return (/*int*/ result);
+   }
+
+   public Modifiers1()
+   {
+      super();
+   }
+}
+Contributors for Modifiers1
+    java.lang.Object
+    Modifiers1
+=== Type-Specfic Background Predicate ===
+(AND 
+(<: |Modifiers1| |java.lang.Object|))
+===
+[calling Simplify on command (BG_PUSH (AND 
+(<: |Modifiers1| |java.lang.Object|)))]
+[Simplify: command done]
+  Verification condition is: (EQ A B)
+[calling Simplify on (EQ A B)]
+[Simplify: formula may be invalid; counterexample context is:
+(UNKNOWN)]
+Error: Modifiers1 failed to verify because:
+(UNKNOWN)
+[calling Simplify on command (BG_POP)]
+[Simplify: command done]
+Processing Modifiers2
+[Superlink resolving Modifiers2]
+[checkCompilationUnit: checking for Modifiers2.java]
+[prepping Modifiers2]
+[typechecking Modifiers2]
+=== Source code with types ===
+public 
+class Modifiers2
+extends Modifiers1
+{
+   int v3;
+
+   public int update(Modifiers1 v1)
+    /*@ also_modifies (/*int*/ v3)  */
+    /*@ also_ensures (/*boolean*/ (/*int*/ v3) == (/*int*/ (/*Modifiers2*/ this).v1))  */ 
+   {
+      (/*int*/ (/*int*/ v3) = (/*int*/ (/*Modifiers2*/ this).v1));
+      return (/*int*/ super.update((/*Modifiers1*/ v1)));
+   }
+
+   public Modifiers2()
+   {
+      super();
+   }
+}
+Contributors for Modifiers2
+    Modifiers2
+    Modifiers1
+=== Type-Specfic Background Predicate ===
+(AND 
+(<: |Modifiers2| |Modifiers1|)
+(<: |Modifiers1| |java.lang.Object|))
+===
+[calling Simplify on command (BG_PUSH (AND 
+(<: |Modifiers2| |Modifiers1|)
+(<: |Modifiers1| |java.lang.Object|)))]
+[Simplify: command done]
+  Verification condition is: (EQ A B)
+[calling Simplify on (EQ A B)]
+[Simplify: formula may be invalid; counterexample context is:
+(UNKNOWN)]
+Error: Modifiers2 failed to verify because:
+(UNKNOWN)
+[calling Simplify on command (BG_POP)]
+[Simplify: command done]
+Processing SpecExprs1
+[Superlink resolving SpecExprs1]
+[checkCompilationUnit: checking for SpecExprs1.java]
+[prepping SpecExprs1]
+[typechecking SpecExprs1]
+=== Source code with types ===
+public abstract 
+class SpecExprs1
+{
+   public SpecExprs1[][] a1;
+
+   /*@ invariant (/*boolean*/ ((/*typecode*/ typeof((/*SpecExprs1[][]*/ a1))) <: (/*typecode*/ type(java.lang.Object[][]))))  */
+   /*@ invariant (/*boolean*/ ((/*typecode*/ elemType((/*typecode*/ typeof((/*SpecExprs1[][]*/ a1))))) <: (/*typecode*/ type(java.lang.Object[]))))  */
+   /*@ invariant (/*boolean*/ (/*typecode*/ elemType((/*typecode*/ typeof((/*SpecExprs1[][]*/ a1))))) == (/*typecode*/ type(Modifiers1[])))  */
+   /*@ invariant (/*boolean*/ (forall int i; (/*boolean*/ (forall int j; (/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ i)) && (/*boolean*/ (/*int*/ i) < (/*int*/ (/*SpecExprs1[][]*/ a1).length)))))))  */
+   /*@ invariant (/*boolean*/ (forall int i; (/*boolean*/ (forall int j; (/*boolean*/ ((/*boolean*/ (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ i)) && (/*boolean*/ (/*int*/ i) < (/*int*/ (/*SpecExprs1[][]*/ a1).length))))) & (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ j)) && (/*boolean*/ (/*int*/ j) < (/*int*/ (/*SpecExprs1[]*/ (/*SpecExprs1[][]*/ a1)[(/*int*/ i)]).length)))))) ==> (/*boolean*/ (/*SpecExprs1*/ (/*SpecExprs1[]*/ (/*SpecExprs1[][]*/ a1)[(/*int*/ i)])[(/*int*/ j)]) instanceof SpecExprs1)))))))  */
+   public abstract void m1()
+    /*@ modifies (/*SpecExprs1[]*/ (/*SpecExprs1*/ this).a1[*])  */ ;
+
+   public abstract void m2(Object a1)
+    /*@ ensures (/*boolean*/ (/*boolean*/ fresh((/*java.lang.Object*/ a1))) & (/*boolean*/ fresh((/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1))))  */
+    /*@ ensures (/*boolean*/ (/*int*/ (/*SpecExprs1[][]*/ PRE((/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1))).length) == (/*int*/ (/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1).length))  */
+    /*@ ensures (/*boolean*/ (forall int i; (/*boolean*/ ((/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ i) <= (/*int*/ 0)) & (/*boolean*/ (/*int*/ i) < (/*int*/ (/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1).length))))) ==> (/*boolean*/ (/*SpecExprs1[]*/ (/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1)[(/*int*/ i)]) == (/*SpecExprs1[]*/ (/*SpecExprs1[][]*/ PRE((/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1)))[(/*int*/ i)]))))))  */ ;
+
+   public abstract void m3()
+    /*@ requires (/*boolean*/ (/*lockset*/ UnknownTag<185>)[(/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1)])  */ ;
+
+   public abstract void m4(Object o)
+    /*@ requires (/*boolean*/ (/*java.lang.Object*/ o) < (/*java.lang.Object*/ min((/*lockset*/ UnknownTag<185>))))  */ ;
+
+   public abstract int[] permute(int[] a1, int[] a2)
+    /*@ requires (/*boolean*/ (forall int i; (/*boolean*/ (forall int j; (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ i)) && (/*boolean*/ (/*int*/ i) < (/*int*/ (/*int[]*/ a1).length))))) & (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ j)) && (/*boolean*/ (/*int*/ j) < (/*int*/ (/*int[]*/ a2).length)))))) & (/*boolean*/ (/*int*/ (/*int[]*/ a1)[(/*int*/ i)]) == (/*int*/ (/*int[]*/ a2)[(/*int*/ j)]))) ==> (/*boolean*/ (/*int*/ i) == (/*int*/ j))))))))  */
+    /*@ ensures (/*boolean*/ fresh((/*int[]*/ RES)))  */
+    /*@ ensures (/*boolean*/ (/*int*/ (/*int[]*/ RES).length) == (/*int*/ (LBLPOS label1 (/*int*/ (/*int[]*/ a1).length))))  */
+    /*@ ensures (/*boolean*/ (forall int i; (/*boolean*/ ((/*boolean*/ (LBLNEG label2 (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ i)) && (/*boolean*/ (/*int*/ i) < (/*int*/ (/*int[]*/ a1).length))))))) ==> (/*boolean*/ (exists int j; (/*boolean*/ ((/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ j)) && (/*boolean*/ (/*int*/ j) < (/*int*/ (/*int[]*/ a2).length))))) ==> (/*boolean*/ (/*int*/ (/*int[]*/ a1)[(/*int*/ i)]) == (/*int*/ (/*int[]*/ a2)[(/*int*/ j)]))))))))))  */ ;
+
+   public abstract void m5(SpecExprs1 other, int j)
+    /*@ modifies (/*SpecExprs1[][]*/ (/*SpecExprs1*/ other).a1)  */
+    /*@ modifies (/*SpecExprs1[]*/ (/*SpecExprs1[][]*/ a1)[(/*int*/ j)])  */ ;
+
+   public abstract void m6(SpecExprs1 other, int j)
+    /*@ requires (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ j)) && (/*boolean*/ (/*int*/ j) < (/*int*/ (/*SpecExprs1[][]*/ a1).length)))))  */
+    /*@ modifies (/*SpecExprs1*/ (/*SpecExprs1*/ other).a1[*][*])  */
+    /*@ modifies (/*SpecExprs1*/ (/*SpecExprs1[][]*/ (/*SpecExprs1*/ this).a1)[(/*int*/ j)][*])  */ ;
+
+   public abstract void m7(SpecExprs1 other, int j)
+    /*@ requires (/*boolean*/ (forall int i; (/*boolean*/ ((/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ i)) && (/*boolean*/ (/*int*/ i) < (/*int*/ (/*SpecExprs1[][]*/ a1).length))))) ==> (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ j)) && (/*boolean*/ (/*int*/ j) < (/*int*/ (/*SpecExprs1[]*/ (/*SpecExprs1[][]*/ a1)[(/*int*/ i)]).length)))))))))  */
+    /*@ modifies (/*SpecExprs1[]*/ (/*SpecExprs1*/ other).a1[*])  */
+    /*@ modifies (/*SpecExprs1*/ (/*SpecExprs1[]*/ a1[*])[(/*int*/ j)])  */ ;
+
+   public SpecExprs1()
+   {
+      super();
+   }
+}
+Contributors for SpecExprs1
+    java.lang.Object
+    SpecExprs1
+=== Type-Specfic Background Predicate ===
+(AND 
+(<: |SpecExprs1| |java.lang.Object|))
+===
+[calling Simplify on command (BG_PUSH (AND 
+(<: |SpecExprs1| |java.lang.Object|)))]
+[Simplify: command done]
+  Verification condition is: (EQ A B)
+[calling Simplify on (EQ A B)]
+[Simplify: formula may be invalid; counterexample context is:
+(UNKNOWN)]
+Error: SpecExprs1 failed to verify because:
+(UNKNOWN)
+[calling Simplify on command (BG_POP)]
+[Simplify: command done]
+Processing TypeDeclElemPragmas1
+[Superlink resolving TypeDeclElemPragmas1]
+[checkCompilationUnit: checking for TypeDeclElemPragmas1.java]
+[prepping TypeDeclElemPragmas1]
+[typechecking TypeDeclElemPragmas1]
+=== Source code with types ===
+public abstract 
+class TypeDeclElemPragmas1
+extends Modifiers1
+{
+   /*@ still_deferred v2  */
+   /*@ axiom (/*boolean*/ (/*int*/ 0) < (/*int*/ 1))  */
+   /*@ invariant (/*boolean*/ (/*int*/ 10) < (/*int*/ v2))  */
+   public TypeDeclElemPragmas1()
+   {
+      super();
+   }
+}
+Contributors for TypeDeclElemPragmas1
+    Modifiers1
+=== Type-Specfic Background Predicate ===
+(AND 
+(<: |Modifiers1| |java.lang.Object|))
+===
+[calling Simplify on command (BG_PUSH (AND 
+(<: |Modifiers1| |java.lang.Object|)))]
+[Simplify: command done]
+  Verification condition is: (EQ A B)
+[calling Simplify on (EQ A B)]
+[Simplify: formula may be invalid; counterexample context is:
+(UNKNOWN)]
+Error: TypeDeclElemPragmas1 failed to verify because:
+(UNKNOWN)
+[calling Simplify on command (BG_POP)]
+[Simplify: command done]
+4 errors

@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+    [TIME]
+
+JmlAssert ...
+  Prover started:TIME
+    [TIME]
+
+JmlAssert: trivial() ...
+    [TIME]  passed
+
+JmlAssert: constant_boolean_expression() ...
+    [TIME]  passed
+
+JmlAssert: assert_matches_precondition(int) ...
+    [TIME]  passed
+
+JmlAssert: assert_weaker_than_precondition(int) ...
+    [TIME]  passed
+
+JmlAssert: constant_arithmetic(int, int) ...
+    [TIME]  passed
+
+JmlAssert: non_trivial_arithmetic(int, int) ...
+    [TIME]  passed
+
+JmlAssert: JmlAssert() ...
+    [TIME]  passed
+  [TIME total]

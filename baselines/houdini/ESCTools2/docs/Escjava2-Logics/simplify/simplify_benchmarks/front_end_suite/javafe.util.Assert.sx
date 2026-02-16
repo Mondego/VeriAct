@@ -1,0 +1,639 @@
+(PROMPT_OFF)
+;----------------------------------------------------------------------
+; "Universal", or class-independent part, of the background predicate
+
+; === ESCJ 8: Section 0.4
+    
+(BG_PUSH (FORALL (m i x) (EQ (select (store m i x) i) x)))
+
+(BG_PUSH (FORALL (m i j x) 
+		 (IMPLIES (NEQ i j)
+			  (EQ (select (store m i x) j)
+			      (select m j)))))
+
+; === ESCJ 8: Section 1.1
+
+(DEFPRED (<: t0 t1))
+
+; <: reflexive
+(BG_PUSH 
+  (FORALL (t)
+    (PATS (<: t t))
+    (<: t t)))
+
+; a special case, for which the above may not fire
+
+(BG_PUSH (<: |T_java.lang.Object| |T_java.lang.Object|))
+
+; <: transitive	
+(BG_PUSH 
+  (FORALL (t0 t1 t2)
+    (PATS (MPAT (<: t0 t1) (<: t1 t2)))
+    (IMPLIES (AND (<: t0 t1) (<: t1 t2))
+      (<: t0 t2))))
+
+;anti-symmetry
+(BG_PUSH
+ (FORALL
+  (t0 t1)
+  (PATS (MPAT (<: t0 t1) (<: t1 t0)))
+  (IMPLIES (AND (<: t0 t1) (<: t1 t0)) (EQ t0 t1))))
+
+; primitive types are final
+
+(BG_PUSH (FORALL (t) (PATS (<: t |T_boolean|))
+	(IMPLIES (<: t |T_boolean|) (EQ t |T_boolean|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_char|))
+	(IMPLIES (<: t |T_char|) (EQ t |T_char|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_byte|))
+	(IMPLIES (<: t |T_byte|) (EQ t |T_byte|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_short|))
+	(IMPLIES (<: t |T_short|) (EQ t |T_short|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_int|))
+	(IMPLIES (<: t |T_int|) (EQ t |T_int|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_long|))
+	(IMPLIES (<: t |T_long|) (EQ t |T_long|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_float|))
+	(IMPLIES (<: t |T_float|) (EQ t |T_float|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_double|))
+	(IMPLIES (<: t |T_double|) (EQ t |T_double|))))
+
+; (New as of 12 Dec 2000)
+; primitive types have no proper supertypes
+
+(BG_PUSH (FORALL (t) (PATS (<: |T_boolean| t))
+	(IMPLIES (<: |T_boolean| t) (EQ t |T_boolean|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_char| t))
+	(IMPLIES (<: |T_char| t) (EQ t |T_char|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_byte| t))
+	(IMPLIES (<: |T_byte| t) (EQ t |T_byte|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_short| t))
+	(IMPLIES (<: |T_short| t) (EQ t |T_short|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_int| t))
+	(IMPLIES (<: |T_int| t) (EQ t |T_int|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_long| t))
+	(IMPLIES (<: |T_long| t) (EQ t |T_long|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_float| t))
+	(IMPLIES (<: |T_float| t) (EQ t |T_float|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_double| t))
+	(IMPLIES (<: |T_double| t) (EQ t |T_double|))))
+
+; === ESCJ 8: Section 1.2
+
+(BG_PUSH
+  (FORALL (t0 t1 t2)
+    (PATS (<: t0 (asChild t1 t2)))
+    (IMPLIES
+      (<: t0 (asChild t1 t2))
+      (EQ (classDown t2 t0) (asChild t1 t2)))))
+
+; === ESCJ 8: Section 1.3
+    
+; new
+
+(BG_PUSH 
+  (<: |T_java.lang.Cloneable| |T_java.lang.Object|))
+
+(BG_PUSH
+  (FORALL (t)
+    (PATS (array t))
+    (<: (array t) |T_java.lang.Cloneable|)))
+    
+(BG_PUSH
+  (FORALL (t)
+    (PATS (elemtype (array t)))
+    (EQ (elemtype (array t)) t)))
+
+(BG_PUSH
+  (FORALL (t0 t1) 
+    (PATS (<: t0 (array t1)))
+    (IFF (<: t0 (array t1))
+      (AND
+	(EQ t0 (array (elemtype t0)))
+	(<: (elemtype t0) t1)))))
+
+; === ESCJ 8: Section 2.1
+
+(DEFPRED (is x t))
+
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (is (cast x t) t)))
+     
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (IMPLIES (is x t) (EQ (cast x t) x))))
+     
+; === ESCJ 8: Section 2.2
+
+(BG_PUSH (DISTINCT |bool$false| |@true|))
+
+; === ESCJ 8: Section 2.2.1
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_char|)) 
+	   (IFF (is x |T_char|) (AND (<= 0 x) (<= x 65535)))))
+(BG_PUSH (FORALL (x)
+	   (PATS (is x |T_byte|))
+	   (IFF (is x |T_byte|) (AND (<= -128 x) (<= x 127)))))
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_short|))
+	   (IFF (is x |T_short|) (AND (<= -32768 x) (<= x 32767)))))
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_int|))
+	   (IFF (is x |T_int|) (AND (<= intFirst x) (<= x intLast)))))
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_long|))
+	   (IFF (is x |T_long|) (AND (<= longFirst x) (<= x longLast)))))
+
+(BG_PUSH (< longFirst intFirst))
+(BG_PUSH (< intFirst -1000000))
+(BG_PUSH (< 1000000 intLast))
+(BG_PUSH (< intLast longLast))
+
+; === ESCJ 8: Section 2.3
+      
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (MPAT (<: t |T_java.lang.Object|) (is x t)))
+	 (IMPLIES (<: t |T_java.lang.Object|)
+		  (IFF (is x t)
+		       (OR (EQ x null) (<: (typeof x) t))))))
+
+; === ESCJ 8: Section 2.4
+
+(BG_PUSH
+ (FORALL (f t x) (PATS (select (asField f t) x))
+	 (is (select (asField f t) x) t)))
+
+; === ESCJ 8: Section 2.5
+
+(BG_PUSH
+ (FORALL (e a i) (PATS (select (select (asElems e) a) i))
+	 (is (select (select (asElems e) a) i)
+	     (elemtype (typeof a)))))
+
+; === ESCJ 8: Section 3.0
+
+(DEFPRED (isAllocated x a0) (< (vAllocTime x) a0))
+
+; === ESCJ 8: Section 3.1
+
+(BG_PUSH
+ (FORALL (x f a0) (PATS (isAllocated (select f x) a0))
+	 (IMPLIES (AND (< (fClosedTime f) a0)
+		       (isAllocated x a0))
+		  (isAllocated (select f x) a0))))
+
+; === ESCJ 8: Section 3.2
+
+(BG_PUSH
+ (FORALL (a e i a0) (PATS (isAllocated (select (select e a) i) a0))
+	 (IMPLIES (AND (< (eClosedTime e) a0)
+		       (isAllocated a a0))
+		  (isAllocated (select (select e a) i) a0))))
+ 
+; === ESCJ 8: Section 4 
+
+; max(lockset) is in lockset
+
+(BG_PUSH
+ (FORALL (S)
+  (PATS (select (asLockSet S) (max (asLockSet S))))
+  (EQ
+   (select (asLockSet S) (max (asLockSet S)))
+   |@true|)))
+
+; null is in lockset (not in ESCJ 8)
+
+(BG_PUSH
+ (FORALL (S)
+  (PATS (asLockSet S))
+  (EQ (select (asLockSet S) null) |@true|)))
+
+(DEFPRED (lockLE x y) (<= x y))
+
+(DEFPRED (lockLT x y) (< x y))
+
+; all locks in lockset are below max(lockset) (not in ESCJ 8)
+
+(BG_PUSH
+ (FORALL (S mu)
+  (IMPLIES
+   (EQ (select (asLockSet S) mu) |@true|)
+   (lockLE mu (max (asLockSet S))))))
+
+; null precedes all objects in locking order (not in ESCJ 8)
+
+(BG_PUSH
+  (FORALL (x)
+    (PATS (lockLE null x) (lockLT null x) (lockLE x null) (lockLT x null))
+    (IMPLIES
+      (<: (typeof x) |T_java.lang.Object|)
+      (lockLE null x))))
+
+
+; === ESCJ 8: Section 5.0
+
+(BG_PUSH
+ (FORALL (a) 
+	 (PATS (arrayLength a))
+	 (AND (<= 0 (arrayLength a))
+	      (is (arrayLength a) |T_int|))))
+
+(DEFPRED (arrayFresh a a0 b0 e s T v))
+
+(BG_PUSH
+  (FORALL (a a0 b0 e n s T v)
+    (PATS (arrayFresh a a0 b0 e (arrayShapeMore n s) T v))
+    (IFF
+      (arrayFresh a a0 b0 e (arrayShapeMore n s) T v)
+      (AND
+	(<= a0 (vAllocTime a))
+	(isAllocated a b0)
+	(NEQ a null)
+	(EQ (typeof a) T)
+	(EQ (arrayLength a) n)
+	(FORALL (i)
+	  (PATS (select (select e a) i))
+	  (AND
+	    (arrayFresh (select (select e a) i) a0 b0 e s (elemtype T) v)
+	    (EQ (arrayParent (select (select e a) i)) a)
+	    (EQ (arrayPosition (select (select e a) i)) i)))))))
+
+(BG_PUSH
+  (FORALL (a a0 b0 e n T v)
+    (PATS (arrayFresh a a0 b0 e (arrayShapeOne n) T v))
+    (IFF
+      (arrayFresh a a0 b0 e (arrayShapeOne n) T v)
+      (AND
+	(<= a0 (vAllocTime a))
+	(isAllocated a b0)
+	(NEQ a null)
+	(EQ (typeof a) T)
+	(EQ (arrayLength a) n)
+	(FORALL (i)
+	  (PATS (select (select e a) i))
+	  (AND
+	    (EQ (select (select e a) i) v)))))))
+
+
+; === code to ensure that (isNewArray x) ==> x has no invariants
+
+
+; arrayType is distinct from all types with invariants (due to the
+; generated type-distinctness axiom)
+
+(BG_PUSH
+  (EQ arrayType (asChild arrayType |T_java.lang.Object|)))
+
+(BG_PUSH
+   (FORALL (t)
+      (PATS (array t))
+      (<: (array t) arrayType)))
+
+(BG_PUSH
+  (FORALL (s)
+	  (PATS (isNewArray s))
+	  (IMPLIES (EQ |@true| (isNewArray s))
+		   (<: (typeof s) arrayType))))
+
+; === ESCJ 8: Section 5.1
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j) (integralDiv i j))
+	 (EQ (+ (* (integralDiv i j) j) (integralMod i j))
+	     i)))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< 0 j)
+		  (AND (<= 0 (integralMod i j))
+		       (< (integralMod i j) j)))))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< j 0)
+		  (AND (< j (integralMod i j))
+		       (<= (integralMod i j) 0)))))
+
+(BG_PUSH
+ (FORALL (i j) 
+	 (PATS (integralMod (+ i j) j))
+	 (EQ (integralMod (+ i j) j) 
+	     (integralMod i j))))
+
+(BG_PUSH
+ (FORALL (i j)
+	 (PATS (integralMod (+ j i) j))
+	 (EQ (integralMod (+ j i) j) 
+	     (integralMod i j))))
+
+; to prevent a matching loop
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (* (integralDiv (* x y) y) y))
+  (EQ (* (integralDiv (* x y) y) y) (* x y))))
+
+
+; === ESCJ 8: Section 5.2
+
+(DEFPRED (boolAnd a b)
+  (AND
+    (EQ a |@true|) 
+    (EQ b |@true|)))
+
+(DEFPRED (boolEq a b)
+  (IFF
+    (EQ a |@true|)
+    (EQ b |@true|)))
+
+(DEFPRED (boolImplies a b)
+  (IMPLIES
+    (EQ a |@true|)
+    (EQ b |@true|)))
+    
+(DEFPRED (boolNE a b)
+  (NOT (IFF
+	 (EQ a |@true|)
+	 (EQ b |@true|))))
+
+(DEFPRED (boolNot a)
+  (NOT (EQ a |@true|)))
+
+(DEFPRED (boolOr a b)
+  (OR
+    (EQ a |@true|)
+    (EQ b |@true|)))
+
+; Not in ESCJ8, but should be
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralEQ x y))
+    (IFF
+      (EQ (integralEQ x y) |@true|)
+      (EQ x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (stringCat x y))
+    (AND (NEQ (stringCat x y) null)
+         (<: (typeof (stringCat x y)) |T_java.lang.String|))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralGE x y))
+    (IFF
+      (EQ (integralGE x y) |@true|)
+      (>= x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralGT x y))
+    (IFF
+      (EQ (integralGT x y) |@true|)
+      (> x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralLE x y))
+    (IFF
+      (EQ (integralLE x y) |@true|)
+      (<= x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralLT x y))
+    (IFF
+      (EQ (integralLT x y) |@true|)
+      (< x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralNE x y))
+    (IFF
+      (EQ (integralNE x y) |@true|)
+      (NEQ x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (refEQ x y))
+    (IFF
+      (EQ (refEQ x y) |@true|)
+      (EQ x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (refNE x y))
+    (IFF
+      (EQ (refNE x y) |@true|)
+      (NEQ x y))))
+
+; === ESCJ 8: Section 5.3
+
+(BG_PUSH
+ (FORALL (x y)
+	 (PATS (termConditional |@true| x y))
+	 (EQ (termConditional |@true| x y) x)))
+
+(BG_PUSH
+ (FORALL (b x y)
+	 (PATS (termConditional b x y))
+	 (IMPLIES (NEQ b |@true|)
+		  (EQ (termConditional b x y) y))))
+
+; === Implementation of nonnullelements; not in ESCJ 8 (yet?):
+
+(DEFPRED (nonnullelements x e)
+   (AND (NEQ x null)
+	(FORALL (i)
+	   (IMPLIES (AND (<= 0 i)
+			 (< i (arrayLength x)))
+		    (NEQ (select (select e x) i) null)))))
+
+
+; === Axioms about classLiteral; not in ESCJ 8 (yet?):
+
+(BG_PUSH
+ (FORALL (t)
+	 (PATS (classLiteral t))
+	 (AND (NEQ (classLiteral t) null)
+	      (is (classLiteral t) |T_java.lang.Class|)
+              (isAllocated (classLiteral t) alloc))))
+
+
+; === Axioms about properties of integral &, |, and /
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralAnd x y))
+  (IMPLIES
+   (OR (<= 0 x) (<= 0 y))
+   (<= 0 (integralAnd x y)))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralAnd x y))
+  (IMPLIES
+   (<= 0 x)
+   (<= (integralAnd x y) x))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralAnd x y))
+  (IMPLIES
+   (<= 0 y)
+   (<= (integralAnd x y) y))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralOr x y))
+  (IMPLIES
+   (AND (<= 0 x) (<= 0 y))
+   (AND (<= x (integralOr x y)) (<= y (integralOr x y))))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralDiv x y))
+  (IMPLIES
+   (AND (<= 0 x) (< 0 y))
+   (AND (<= 0 (integralDiv x y)) (<= (integralDiv x y) x)))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralXor x y))
+  (IMPLIES
+   (AND (<= 0 x) (<= 0 y))
+   (<= 0 (integralXor x y)))))
+
+(BG_PUSH
+ (FORALL (n)
+  (PATS (intShiftL 1 n))
+  (IMPLIES
+   (AND (<= 0 n) (< n 31))
+   (<= 1 (intShiftL 1 n)))))
+
+(BG_PUSH
+ (FORALL (n)
+  (PATS (longShiftL 1 n))
+  (IMPLIES
+   (AND (<= 0 n) (< n 63))
+   (<= 1 (longShiftL 1 n)))))
+
+; === Temporary kludge to speed up distinguishing small integers:
+
+(BG_PUSH
+ (DISTINCT -10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9
+	   10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+	   30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49
+	   50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69
+	   70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89
+	   90 91 92 93 94 95 96 97 98 99
+	   100 101 102 103 104 105 106 107 108 109
+	   110 111 112 113 114 115 116 117 118 119
+	   120 121 122 123 124 125 126 127 128 129
+	   130 131 132 133 134 135 136 137 138 139
+	   140 141 142 143 144 145 146 147 148 149
+	   150 151 152 153 154 155 156 157 158 159
+	   160 161 162 163 164 165 166 167 168 169
+	   170 171 172 173 174 175 176 177 178 179
+	   180 181 182 183 184 185 186 187 188 189
+	   190 191 192 193 194 195 196 197 198 199
+	   200 201 202 203 204 205 206 207 208 209
+	   210 211 212 213 214 215 216 217 218 219
+	   220 221 222 223 224 225 226 227 228 229
+	   230 231 232 233 234 235 236 237 238 239
+	   240 241 242 243 244 245 246 247 248 249
+	   250 251 252 253 254 255 256 257 258 259
+	   260 261 262 263 264 265 266 267 268 269
+	   270 271 272 273 274 275 276 277 278 279
+	   280 281 282 283 284 285 286 287 288 289
+	   290 291 292 293 294 295 296 297 298 299
+	   300 301 302 303 304 305 306 307 308 309
+	   310 311 312 313 314 315 316 317 318 319
+	   320 321 322 323 324 325 326 327 328 329
+	   330 331 332 333 334 335 336 337 338 339
+	   340 341 342 343 344 345 346 347 348 349
+	   350 351 352 353 354 355 356 357 358 359
+	   360 361 362 363 364 365 366 367 368 369
+	   370 371 372 373 374 375 376 377 378 379
+	   380 381 382 383 384 385 386 387 388 389
+	   390 391 392 393 394 395 396 397 398 399))
+
+;----------------------------------------------------------------------
+; End of Universal background predicate
+;----------------------------------------------------------------------
+(PROMPT_ON)
+
+
+(BG_PUSH (AND 
+(<: |T_java.lang.Exception| |T_java.lang.Throwable|)
+(EQ |T_java.lang.Exception| (asChild |T_java.lang.Exception| |T_java.lang.Throwable|))
+(<: |T_java.lang.String| |T_java.lang.Object|)
+(EQ |T_java.lang.String| (asChild |T_java.lang.String| |T_java.lang.Object|))
+(FORALL (t) (PATS (<: t |T_java.lang.String|)) (IFF (<: t |T_java.lang.String|) (EQ t |T_java.lang.String|)))
+(<: |T_java.lang.String| |T_java.io.Serializable|)
+(<: |T_java.lang.String| |T_java.lang.Comparable|)
+(<: |T_javafe.util.NotImplementedException| |T_java.lang.RuntimeException|)
+(EQ |T_javafe.util.NotImplementedException| (asChild |T_javafe.util.NotImplementedException| |T_java.lang.RuntimeException|))
+(<: |T_java.lang.Throwable| |T_java.lang.Object|)
+(EQ |T_java.lang.Throwable| (asChild |T_java.lang.Throwable| |T_java.lang.Object|))
+(<: |T_java.lang.Throwable| |T_java.io.Serializable|)
+(<: |T_java.io.Serializable| |T_java.lang.Object|)
+(<: |T_java.lang.Comparable| |T_java.lang.Object|)
+(<: |T_javafe.util.Assert| |T_java.lang.Object|)
+(EQ |T_javafe.util.Assert| (asChild |T_javafe.util.Assert| |T_java.lang.Object|))
+(<: |T_javafe.util.AssertionFailureException| |T_java.lang.RuntimeException|)
+(EQ |T_javafe.util.AssertionFailureException| (asChild |T_javafe.util.AssertionFailureException| |T_java.lang.RuntimeException|))
+(<: |T_java.lang.RuntimeException| |T_java.lang.Exception|)
+(EQ |T_java.lang.RuntimeException| (asChild |T_java.lang.RuntimeException| |T_java.lang.Exception|))
+(DISTINCT arrayType |T_boolean| |T_char| |T_byte| |T_short| |T_int| |T_long| |T_float| |T_double| |T_.TYPE| |T_java.lang.Exception| |T_java.lang.String| |T_javafe.util.NotImplementedException| |T_java.lang.Throwable| |T_java.io.Serializable| |T_java.lang.Comparable| |T_javafe.util.Assert| |T_javafe.util.AssertionFailureException| |T_java.lang.Object| |T_java.lang.RuntimeException|)))
+
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.fail.14.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |msg:15.35| |T_java.lang.String|)) (EQ |@true| (isAllocated |msg:15.35| alloc)) (OR (AND (< alloc |after@16.7-16.7|) (NEQ |RES-16.7:16.7| null) (NOT (EQ |@true| (isAllocated |RES-16.7:16.7| alloc))) (EQ |@true| (is |RES-16.7:16.7| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-16.7:16.7| |after@16.7-16.7|)) (EQ |EC-16.7:16.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-16.7:16.7|) null) (EQ (typeof |RES-16.7:16.7|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@16.1| (NEQ |RES-16.7:16.7| null)))) (AND (< alloc |after@16.7-16.7|) (NEQ |RES-16.7:16.7| null) (NOT (EQ |@true| (isAllocated |RES-16.7:16.7| alloc))) (EQ |@true| (is |RES-16.7:16.7| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-16.7:16.7| |after@16.7-16.7|)) (EQ |EC-16.7:16.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-16.7:16.7|) null) (EQ (typeof |RES-16.7:16.7|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@16.1| (NEQ |RES-16.7:16.7| null)) (LBLPOS |trace.Throw^0,16.1| (EQ |@true| |@true|)) (EQ |ecThrow| |ecReturn|) (NOT (LBLNEG |Post:14.8@17.4| (NOT (EQ |ecThrow| |ecReturn|)))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.notFalse.19.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |b:20.40| T_boolean)) (EQ |@true| |b:20.40|) (OR (AND (NOT (EQ |@true| |b:20.40|)) (LBLPOS |trace.Then^0,21.10| (EQ |@true| |@true|)) (< alloc |after@21.16-21.16|) (NEQ |RES-21.16:21.16| null) (NOT (EQ |@true| (isAllocated |RES-21.16:21.16| alloc))) (EQ |@true| (is |RES-21.16:21.16| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-21.16:21.16| |after@21.16-21.16|)) (EQ |EC-21.16:21.16| |ecReturn|) (EQ (select |owner:4.35.28| |RES-21.16:21.16|) null) (EQ (typeof |RES-21.16:21.16|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@21.10| (NEQ |RES-21.16:21.16| null)))) (AND (OR (AND (EQ |@true| |b:20.40|) (LBLPOS |trace.Else^2,21.1| (EQ |@true| |@true|)) (EQ EC |ecReturn|)) (AND (NOT (EQ |@true| |b:20.40|)) (LBLPOS |trace.Then^0,21.10| (EQ |@true| |@true|)) (< alloc |after@21.16-21.16|) (NEQ |RES-21.16:21.16| null) (NOT (EQ |@true| (isAllocated |RES-21.16:21.16| alloc))) (EQ |@true| (is |RES-21.16:21.16| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-21.16:21.16| |after@21.16-21.16|)) (EQ |EC-21.16:21.16| |ecReturn|) (EQ (select |owner:4.35.28| |RES-21.16:21.16|) null) (EQ (typeof |RES-21.16:21.16|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@21.10| (NEQ |RES-21.16:21.16| null)) (LBLPOS |trace.Throw^1,21.10| (EQ |@true| |@true|)) (EQ EC |ecThrow|))) (NOT (LBLNEG |Exception@22.4| (EQ EC |ecReturn|))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.notFalse.24.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |b:25.40| T_boolean)) (EQ |@true| (is |msg:25.50| |T_java.lang.String|)) (EQ |@true| (isAllocated |msg:25.50| alloc)) (EQ |@true| |b:25.40|) (OR (AND (NOT (EQ |@true| |b:25.40|)) (LBLPOS |trace.Then^0,26.10| (EQ |@true| |@true|)) (< alloc |after@26.16-26.16|) (NEQ |RES-26.16:26.16| null) (NOT (EQ |@true| (isAllocated |RES-26.16:26.16| alloc))) (EQ |@true| (is |RES-26.16:26.16| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-26.16:26.16| |after@26.16-26.16|)) (EQ |EC-26.16:26.16| |ecReturn|) (EQ (select |owner:4.35.28| |RES-26.16:26.16|) null) (EQ (typeof |RES-26.16:26.16|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@26.10| (NEQ |RES-26.16:26.16| null)))) (AND (OR (AND (EQ |@true| |b:25.40|) (LBLPOS |trace.Else^2,26.1| (EQ |@true| |@true|)) (EQ EC |ecReturn|)) (AND (NOT (EQ |@true| |b:25.40|)) (LBLPOS |trace.Then^0,26.10| (EQ |@true| |@true|)) (< alloc |after@26.16-26.16|) (NEQ |RES-26.16:26.16| null) (NOT (EQ |@true| (isAllocated |RES-26.16:26.16| alloc))) (EQ |@true| (is |RES-26.16:26.16| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-26.16:26.16| |after@26.16-26.16|)) (EQ |EC-26.16:26.16| |ecReturn|) (EQ (select |owner:4.35.28| |RES-26.16:26.16|) null) (EQ (typeof |RES-26.16:26.16|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@26.10| (NEQ |RES-26.16:26.16| null)) (LBLPOS |trace.Throw^1,26.10| (EQ |@true| |@true|)) (EQ EC |ecThrow|))) (NOT (LBLNEG |Exception@27.4| (EQ EC |ecReturn|))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.notNull.29.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |obj:30.38| |T_java.lang.Object|)) (EQ |@true| (isAllocated |obj:30.38| alloc)) (NEQ |obj:30.38| null) (OR (AND (EQ |obj:30.38| null) (LBLPOS |trace.Then^0,31.18| (EQ |@true| |@true|)) (< alloc |after@31.24-31.24|) (NEQ |RES-31.24:31.24| null) (NOT (EQ |@true| (isAllocated |RES-31.24:31.24| alloc))) (EQ |@true| (is |RES-31.24:31.24| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-31.24:31.24| |after@31.24-31.24|)) (EQ |EC-31.24:31.24| |ecReturn|) (EQ (select |owner:4.35.28| |RES-31.24:31.24|) null) (EQ (typeof |RES-31.24:31.24|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@31.18| (NEQ |RES-31.24:31.24| null)))) (AND (OR (AND (NOT (EQ |obj:30.38| null)) (LBLPOS |trace.Else^2,31.1| (EQ |@true| |@true|)) (EQ EC |ecReturn|)) (AND (EQ |obj:30.38| null) (LBLPOS |trace.Then^0,31.18| (EQ |@true| |@true|)) (< alloc |after@31.24-31.24|) (NEQ |RES-31.24:31.24| null) (NOT (EQ |@true| (isAllocated |RES-31.24:31.24| alloc))) (EQ |@true| (is |RES-31.24:31.24| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-31.24:31.24| |after@31.24-31.24|)) (EQ |EC-31.24:31.24| |ecReturn|) (EQ (select |owner:4.35.28| |RES-31.24:31.24|) null) (EQ (typeof |RES-31.24:31.24|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@31.18| (NEQ |RES-31.24:31.24| null)) (LBLPOS |trace.Throw^1,31.18| (EQ |@true| |@true|)) (EQ EC |ecThrow|))) (NOT (LBLNEG |Exception@32.4| (EQ EC |ecReturn|))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.notNull.34.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |obj:35.38| |T_java.lang.Object|)) (EQ |@true| (isAllocated |obj:35.38| alloc)) (EQ |@true| (is |msg:35.50| |T_java.lang.String|)) (EQ |@true| (isAllocated |msg:35.50| alloc)) (NEQ |obj:35.38| null) (OR (AND (EQ |obj:35.38| null) (LBLPOS |trace.Then^0,36.18| (EQ |@true| |@true|)) (< alloc |after@36.24-36.24|) (NEQ |RES-36.24:36.24| null) (NOT (EQ |@true| (isAllocated |RES-36.24:36.24| alloc))) (EQ |@true| (is |RES-36.24:36.24| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-36.24:36.24| |after@36.24-36.24|)) (EQ |EC-36.24:36.24| |ecReturn|) (EQ (select |owner:4.35.28| |RES-36.24:36.24|) null) (EQ (typeof |RES-36.24:36.24|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@36.18| (NEQ |RES-36.24:36.24| null)))) (AND (OR (AND (NOT (EQ |obj:35.38| null)) (LBLPOS |trace.Else^2,36.1| (EQ |@true| |@true|)) (EQ EC |ecReturn|)) (AND (EQ |obj:35.38| null) (LBLPOS |trace.Then^0,36.18| (EQ |@true| |@true|)) (< alloc |after@36.24-36.24|) (NEQ |RES-36.24:36.24| null) (NOT (EQ |@true| (isAllocated |RES-36.24:36.24| alloc))) (EQ |@true| (is |RES-36.24:36.24| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-36.24:36.24| |after@36.24-36.24|)) (EQ |EC-36.24:36.24| |ecReturn|) (EQ (select |owner:4.35.28| |RES-36.24:36.24|) null) (EQ (typeof |RES-36.24:36.24|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@36.18| (NEQ |RES-36.24:36.24| null)) (LBLPOS |trace.Throw^1,36.18| (EQ |@true| |@true|)) (EQ EC |ecThrow|))) (NOT (LBLNEG |Exception@37.4| (EQ EC |ecReturn|))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.precondition.39.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (OR (AND (< alloc |after@41.7-41.7|) (NEQ |RES-41.7:41.7| null) (NOT (EQ |@true| (isAllocated |RES-41.7:41.7| alloc))) (EQ |@true| (is |RES-41.7:41.7| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-41.7:41.7| |after@41.7-41.7|)) (EQ |EC-41.7:41.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-41.7:41.7|) null) (EQ (typeof |RES-41.7:41.7|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@41.1| (NEQ |RES-41.7:41.7| null)))) (AND (< alloc |after@41.7-41.7|) (NEQ |RES-41.7:41.7| null) (NOT (EQ |@true| (isAllocated |RES-41.7:41.7| alloc))) (EQ |@true| (is |RES-41.7:41.7| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-41.7:41.7| |after@41.7-41.7|)) (EQ |EC-41.7:41.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-41.7:41.7|) null) (EQ (typeof |RES-41.7:41.7|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@41.1| (NEQ |RES-41.7:41.7| null)) (LBLPOS |trace.Throw^0,41.1| (EQ |@true| |@true|)) (EQ |ecThrow| |ecReturn|) (NOT (LBLNEG |Post:39.8@42.4| (NOT (EQ |ecThrow| |ecReturn|))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.precondition.44.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |msg:45.43| |T_java.lang.String|)) (EQ |@true| (isAllocated |msg:45.43| alloc)) (OR (AND (EQ |msg@46.7-46.7:5.8.35| (stringCat |S_46.37| |msg:45.43|)) (< alloc |after@46.7-46.7|) (NEQ |RES-46.7:46.7| null) (NOT (EQ |@true| (isAllocated |RES-46.7:46.7| alloc))) (EQ |@true| (is |RES-46.7:46.7| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-46.7:46.7| |after@46.7-46.7|)) (EQ |EC-46.7:46.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-46.7:46.7|) null) (EQ (typeof |RES-46.7:46.7|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@46.1| (NEQ |RES-46.7:46.7| null)))) (AND (EQ |msg@46.7-46.7:5.8.35| (stringCat |S_46.37| |msg:45.43|)) (< alloc |after@46.7-46.7|) (NEQ |RES-46.7:46.7| null) (NOT (EQ |@true| (isAllocated |RES-46.7:46.7| alloc))) (EQ |@true| (is |RES-46.7:46.7| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-46.7:46.7| |after@46.7-46.7|)) (EQ |EC-46.7:46.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-46.7:46.7|) null) (EQ (typeof |RES-46.7:46.7|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@46.1| (NEQ |RES-46.7:46.7| null)) (LBLPOS |trace.Throw^0,46.1| (EQ |@true| |@true|)) (EQ |ecThrow| |ecReturn|) (NOT (LBLNEG |Post:44.8@47.4| (NOT (EQ |ecThrow| |ecReturn|)))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|) (NEQ |S_46.37| null) (EQ (typeof |S_46.37|) |T_java.lang.String|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.precondition.49.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |b:50.44| T_boolean)) (EQ |@true| |b:50.44|) (OR (AND (NOT (EQ |@true| |b:50.44|)) (LBLPOS |trace.Then^0,51.10| (EQ |@true| |@true|)) (< alloc |after@51.16-51.16|) (NEQ |RES-51.16:51.16| null) (NOT (EQ |@true| (isAllocated |RES-51.16:51.16| alloc))) (EQ |@true| (is |RES-51.16:51.16| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-51.16:51.16| |after@51.16-51.16|)) (EQ |EC-51.16:51.16| |ecReturn|) (EQ (select |owner:4.35.28| |RES-51.16:51.16|) null) (EQ (typeof |RES-51.16:51.16|) |T_javafe.util.AssertionFailureException|) (NOT (LBLNEG |Null@51.10| (NEQ |RES-51.16:51.16| null)))) (AND (OR (AND (EQ |@true| |b:50.44|) (LBLPOS |trace.Else^2,51.1| (EQ |@true| |@true|)) (EQ EC |ecReturn|)) (AND (NOT (EQ |@true| |b:50.44|)) (LBLPOS |trace.Then^0,51.10| (EQ |@true| |@true|)) (< alloc |after@51.16-51.16|) (NEQ |RES-51.16:51.16| null) (NOT (EQ |@true| (isAllocated |RES-51.16:51.16| alloc))) (EQ |@true| (is |RES-51.16:51.16| |T_javafe.util.AssertionFailureException|)) (EQ |@true| (isAllocated |RES-51.16:51.16| |after@51.16-51.16|)) (EQ |EC-51.16:51.16| |ecReturn|) (EQ (select |owner:4.35.28| |RES-51.16:51.16|) null) (EQ (typeof |RES-51.16:51.16|) |T_javafe.util.AssertionFailureException|) (LBLNEG |Null@51.10| (NEQ |RES-51.16:51.16| null)) (LBLPOS |trace.Throw^1,51.10| (EQ |@true| |@true|)) (EQ EC |ecThrow|))) (NOT (LBLNEG |Exception@52.4| (EQ EC |ecReturn|))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.notImplemented.54.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (OR (AND (< alloc |after@56.7-56.7|) (NEQ |RES-56.7:56.7| null) (NOT (EQ |@true| (isAllocated |RES-56.7:56.7| alloc))) (EQ |@true| (is |RES-56.7:56.7| |T_javafe.util.NotImplementedException|)) (EQ |@true| (isAllocated |RES-56.7:56.7| |after@56.7-56.7|)) (EQ |EC-56.7:56.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-56.7:56.7|) null) (EQ (typeof |RES-56.7:56.7|) |T_javafe.util.NotImplementedException|) (NOT (LBLNEG |Null@56.1| (NEQ |RES-56.7:56.7| null)))) (AND (< alloc |after@56.7-56.7|) (NEQ |RES-56.7:56.7| null) (NOT (EQ |@true| (isAllocated |RES-56.7:56.7| alloc))) (EQ |@true| (is |RES-56.7:56.7| |T_javafe.util.NotImplementedException|)) (EQ |@true| (isAllocated |RES-56.7:56.7| |after@56.7-56.7|)) (EQ |EC-56.7:56.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-56.7:56.7|) null) (EQ (typeof |RES-56.7:56.7|) |T_javafe.util.NotImplementedException|) (LBLNEG |Null@56.1| (NEQ |RES-56.7:56.7| null)) (LBLPOS |trace.Throw^0,56.1| (EQ |@true| |@true|)) (EQ |ecThrow| |ecReturn|) (NOT (LBLNEG |Post:54.8@57.4| (NOT (EQ |ecThrow| |ecReturn|))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.notImplemented.59.4| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |s:60.45| |T_java.lang.String|)) (EQ |@true| (isAllocated |s:60.45| alloc)) (OR (AND (EQ |s@61.7-61.7:12.14.47| (stringCat |S_61.35| |s:60.45|)) (< alloc |after@61.7-61.7|) (NEQ |RES-61.7:61.7| null) (NOT (EQ |@true| (isAllocated |RES-61.7:61.7| alloc))) (EQ |@true| (is |RES-61.7:61.7| |T_javafe.util.NotImplementedException|)) (EQ |@true| (isAllocated |RES-61.7:61.7| |after@61.7-61.7|)) (EQ |EC-61.7:61.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-61.7:61.7|) null) (EQ (typeof |RES-61.7:61.7|) |T_javafe.util.NotImplementedException|) (NOT (LBLNEG |Null@61.1| (NEQ |RES-61.7:61.7| null)))) (AND (EQ |s@61.7-61.7:12.14.47| (stringCat |S_61.35| |s:60.45|)) (< alloc |after@61.7-61.7|) (NEQ |RES-61.7:61.7| null) (NOT (EQ |@true| (isAllocated |RES-61.7:61.7| alloc))) (EQ |@true| (is |RES-61.7:61.7| |T_javafe.util.NotImplementedException|)) (EQ |@true| (isAllocated |RES-61.7:61.7| |after@61.7-61.7|)) (EQ |EC-61.7:61.7| |ecReturn|) (EQ (select |owner:4.35.28| |RES-61.7:61.7|) null) (EQ (typeof |RES-61.7:61.7|) |T_javafe.util.NotImplementedException|) (LBLNEG |Null@61.1| (NEQ |RES-61.7:61.7| null)) (LBLPOS |trace.Throw^0,61.1| (EQ |@true| |@true|)) (EQ |ecThrow| |ecReturn|) (NOT (LBLNEG |Post:59.8@62.4| (NOT (EQ |ecThrow| |ecReturn|)))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|) (NEQ |S_61.35| null) (EQ (typeof |S_61.35|) |T_java.lang.String|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.util.Assert.<constructor>.12.20| (IMPLIES (AND (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (NOT (EQ |@true| (isAllocated objectToBeConstructed alloc))) (< alloc |after@12.20-12.20|) (NEQ |RES-12.20:12.20| null) (NOT (EQ |@true| (isAllocated |RES-12.20:12.20| alloc))) (EQ |@true| (is |RES-12.20:12.20| |T_java.lang.Object|)) (EQ |@true| (isAllocated |RES-12.20:12.20| |after@12.20-12.20|)) (EQ |EC-12.20:12.20| |ecReturn|) (EQ (select |owner:4.35.28| |RES-12.20:12.20|) null) (<: (typeof |RES-12.20:12.20|) |T_javafe.util.Assert|) (EQ objectToBeConstructed |RES-12.20:12.20|) (OR (NOT (LBLNEG |Exception@12.20| (EQ |ecReturn| |ecReturn|))) (AND (LBLNEG |Exception@12.20| (EQ |ecReturn| |ecReturn|)) (NOT (LBLNEG |OwnerNull@12.20| (EQ (select |owner:4.35.28| |RES-12.20:12.20|) null))))))))) (AND 
+(DISTINCT |ecReturn|)))
+(BG_POP)

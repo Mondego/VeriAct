@@ -1,0 +1,65 @@
+ESC/Java version VERSION
+src|test|resources|Privacy.java: Caution: Using given file as the .java file, even though it is not the java file for Privacy on the classpath
+    [TIME]
+
+Privacy ...
+  Prover started:TIME
+    [TIME]
+
+Privacy: mb() ...
+    [TIME]  passed
+
+Privacy: mbb() ...
+    [TIME]  passed
+
+Privacy: mbbb() ...
+    [TIME]  passed
+
+Privacy: pmb() ...
+    [TIME]  passed
+
+Privacy: pmbb() ...
+    [TIME]  passed
+
+Privacy: pmbbb() ...
+    [TIME]  passed
+
+Privacy: ppmb() ...
+    [TIME]  passed
+
+Privacy: ppmbb() ...
+    [TIME]  passed
+
+Privacy: m() ...
+------------------------------------------------------------------------
+src|test|resources|Privacy.java:67: Warning: Postcondition possibly not established (Post)
+        public void m() {}
+                         ^
+Associated declaration is "src|test|resources|Privacy.java", line 59, col 5:
+        //@ ensures g && pg && ppg && pppg;
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|Privacy.java", line 67, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Privacy: mm() ...
+------------------------------------------------------------------------
+src|test|resources|Privacy.java:77: Warning: Postcondition possibly not established (Post)
+        protected void mm() {}
+                             ^
+Associated declaration is "src|test|resources|Privacy.java", line 69, col 5:
+        //@ ensures g && pg && ppg && pppg;
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|Privacy.java", line 77, col 22.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Privacy: Privacy() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

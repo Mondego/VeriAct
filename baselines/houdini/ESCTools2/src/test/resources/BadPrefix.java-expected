@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|BadPrefix.java: Caution: Using given file as the .java file, even though it is not the java file for BadPrefix on the classpath
+src|test|resources|BadPrefix.java:4: Error: Could not find file referenced in refine annotation: BadPrefixx.spec
+//@ refine "BadPrefixx.spec";
+    ^
+    [TIME]
+
+BadPrefix ...
+  Prover started:TIME
+    [TIME]
+
+BadPrefix: BadPrefix() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 error

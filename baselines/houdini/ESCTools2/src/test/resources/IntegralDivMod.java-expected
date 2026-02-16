@@ -1,0 +1,24 @@
+ESC/Java version VERSION
+src|test|resources|IntegralDivMod.java: Caution: Using given file as the .java file, even though it is not the java file for IntegralDivMod on the classpath
+    [TIME]
+
+IntegralDivMod ...
+  Prover started:TIME
+    [TIME]
+
+IntegralDivMod: m(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: ma(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: mb(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: m2(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: IntegralDivMod() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

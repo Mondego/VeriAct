@@ -1,0 +1,58 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: CardRuntimeException.jml,v 1.4 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public class CardRuntimeException extends java.lang.RuntimeException {
+
+   //@ public ghost short _reason;
+
+   /*@ public normal_behavior
+        requires true;
+	ensures  true;
+	assignable \nothing;
+   @*/
+   public CardRuntimeException();
+
+   /*@ public normal_behavior
+        requires true;
+	ensures _reason == reason;
+	assignable _reason;
+   @*/
+   public CardRuntimeException(short reason);
+
+   /*@ public normal_behavior
+        requires true;
+	ensures \result == _reason;
+	assignable \nothing; 
+   @*/
+   public /*@pure@*/ short getReason();
+
+   /*@ public normal_behavior
+        requires true;
+	ensures _reason == reason ;
+	assignable _reason;
+   @*/
+   public void setReason(short reason);
+
+   /*@ public exceptional_behavior
+        requires true;
+	signals (CardRuntimeException cre) cre.getReason() == reason;
+	signals_only CardRuntimeException;
+	assignable \nothing;
+   @*/
+   public static void throwIt(short reason) throws CardRuntimeException;
+
+} 

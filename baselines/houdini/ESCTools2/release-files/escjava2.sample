@@ -1,0 +1,28 @@
+#!/bin/bash
+
+## This is a sample script file to run escjava2 in the context of the
+## Subversion directory hierarchy
+
+## You need to set the following two environment variables according
+## to your environment (see the discussion in README.first), and then
+## invoke the escj tool, passing on any command-line arguments
+
+## To save the work of guessing appropriate values for the environment 
+## variables, the user should set these:
+
+## The directory containing the release files
+## ESCTOOLS_RELEASE=/usr/local/ESCJava2
+
+## The name of a Simplify executable in $ESCTOOLS_RELEASE
+## SIMPLIFY=Simplify-1.5.4.linux
+
+########## Check if ESCTOOLS_RELEASE is defined; try to guess it if it is not
+
+if [ -z "escj" ]; then
+	echo "The escj bash script needs to be in the same directory as escjava2"
+	exit 1
+fi
+
+######## Execute
+
+./escj -specs $ESCTOOLS_RELEASE/specs $*

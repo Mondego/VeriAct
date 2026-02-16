@@ -1,0 +1,30 @@
+Caution: Unable to check method testConstructor() of type TestStringBuffer completely because too much time required
+TestStringBuffer.java:33: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestStringBuffer.java:41: Warning: Precondition possibly not established (Pre)
+    assertTrue( sb.charAt(2) == s.charAt(2));
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestStringBuffer.java:57: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestStringBuffer.java", line 44, col 11.
+    Routine call returned exceptionally in "TestStringBuffer.java", line 51, col 11.
+
+Fatal error: Unexpected exit by Simplify subprocess
+TestStringBuffer.java:80: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestStringBuffer.java:90: Warning: Precondition possibly not established (Pre)
+    assertTrue( sb.length() == 2);
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+1 caution
+5 warnings
+1 error

@@ -1,0 +1,110 @@
+## $Id$
+TestSuite.java
+## Platform dependent
+PureCheck.java
+Quant.java
+Helper.java
+InheritNull.java
+PreconditionWarnings.java
+NonNullResult.java
+InheritedSpecs.java
+StringFresh.java
+NonNullBad.java
+## Varying output
+FormalNonnullInheritance.java
+## Bug 1 now contains a path ... until we fix this so that absolute paths are fixed to
+## have a common prefix (e.g. ESCTOOLSROOT) like in jdktests, I need to exclude this test
+Bug1
+#############################################
+## Not fully implemented
+##
+# Modify everything
+ModEverything.java
+## Tests spec visibility (spec_protected, spec_public)
+Privacy.java
+## Others
+SetComprehension.java
+##
+## Problems with static initialization - interactions among classes
+StaticInit.java
+##
+##
+##
+#############################################
+## Older bugs
+##
+## A problem with Simplify with recursive specs
+MethodInSpec.java
+##
+## These do not have stable output, and are debugging output anyway
+Desugaring.java
+DesugaringA.java
+##
+##
+##
+#############################################
+## Current bugs
+##
+## Inadequate quantifier triggering - but also mismatched specs or something
+#Min.java 
+## Problems with inheriting non_null annotations
+NL.java
+## Problem with model vars with represents clauses that are not declared
+## modified, but change anyway
+Impl4.java
+## Temp problem with new specs -- needs checking of current result
+Scope.java
+## @see bug 270 - needs dynamically typed specs
+MartijnsPoint.java
+## Problems with reasoning about string freshness
+StringFresh.java
+## Problems with equivalence of different syntax for class types
+ClassEquiv.java
+## Problems with finality of reference fields
+FinalRef.java
+## Find a way to detect inconsistency
+Inconsistent.java
+## Just needs verification of the result, I think
+ManyAlsos.java
+##
+## Problems with requirements on constructors and static initialization
+THERR.java
+##
+## Exception warnings to sort out - check the actual output
+DefCon.java
+##
+## Stack overflow when an inner class extends an outer class
+StaticInnerClasses.java
+##
+## Tests non_null_by_default and nullable
+NonNullDefault.java
+InheritNullable.java
+FormalNullableInheritance.java
+##
+## Bug #55
+Zero.java
+InheritedInvariant.java
+##
+## Bug #105
+Bug105.java
+Bug105b.java
+#
+## Bug #209
+Bag.java
+##
+## Bug #187
+AClass.java
+##
+## To be assessed
+Min.java
+#
+# JDK 1.5 Assertion Failures - To be updated
+#
+Bug2.java
+ParseImports.java
+ParseImports2.java
+#
+# Java 1.5 Generics - not parsed - not supported yet
+#
+InnerClassGenerics.java
+

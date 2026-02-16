@@ -1,0 +1,64 @@
+ESC/Java version VERSION
+    [TIME]
+
+DefCon ...
+  Prover started:TIME
+    [TIME]
+
+DefCon: DefCon() ...
+    [TIME]  passed
+  [TIME total]
+
+DefCon$AE ...
+    [TIME]
+
+DefCon$AE: AE() ...
+------------------------------------------------------------------------
+DefCon.java:20: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "DefCon.java", line 17, col 12:
+        //@ signals(SE se) gg == 17;
+            ^
+Execution trace information:
+    Routine call returned exceptionally in "DefCon.java", line 18, col 30.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+DefCon$AE: AE(int) ...
+------------------------------------------------------------------------
+DefCon.java:29: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "DefCon.java", line 26, col 12:
+        //@ signals(ST se) gg == 17;
+            ^
+Execution trace information:
+    Routine call returned exceptionally in "DefCon.java", line 27, col 35.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+DefCon$E ...
+    [TIME]
+
+DefCon$E: E() ...
+    [TIME]  passed
+  [TIME total]
+
+DefCon$ST ...
+    [TIME]
+
+DefCon$ST: ST() ...
+    [TIME]  passed
+  [TIME total]
+
+DefCon$SE ...
+    [TIME]
+
+DefCon$SE: SE() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

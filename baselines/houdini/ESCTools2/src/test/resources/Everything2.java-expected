@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|Everything2.java: Caution: Using given file as the .java file, even though it is not the java file for Everything2 on the classpath
+    [TIME]
+
+Everything2 ...
+  Prover started:TIME
+    [TIME]
+
+Everything2: m() ...
+    [TIME]  passed
+
+Everything2: Everything2() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

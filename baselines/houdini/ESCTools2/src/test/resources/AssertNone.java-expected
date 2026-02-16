@@ -1,0 +1,94 @@
+ESC/Java version VERSION
+src|test|resources|AssertNone.java:8: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert true : "Hi";
+                ^
+src|test|resources|AssertNone.java:9: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert false : 0;
+                ^
+src|test|resources|AssertNone.java:16: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert true : "Hi";
+                ^
+src|test|resources|AssertNone.java:17: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert false : 0; 
+                ^
+src|test|resources|AssertNone.java:22: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert true : "Hi";
+                ^
+src|test|resources|AssertNone.java:23: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert false : 0; //@ nowarn Assert;
+                ^
+src|test|resources|AssertNone.java: Caution: Using given file as the .java file, even though it is not the java file for AssertNone on the classpath
+    [TIME]
+
+AssertNone ...
+  Prover started:TIME
+    [TIME]
+
+AssertNone: m_Exception_Assert(int) ...
+    [TIME]  passed
+
+AssertNone: mm_Exception_Assert(int) ...
+    [TIME]  passed
+
+AssertNone: mm_Nowarn_Nowarn(int) ...
+    [TIME]  passed
+
+AssertNone: nAssertWarn(int) ...
+------------------------------------------------------------------------
+src|test|resources|AssertNone.java:29: Warning: Possible assertion failure (Assert)
+                //@ assert false;
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: nNowarn(int) ...
+    [TIME]  passed
+
+AssertNone: pPostwarning() ...
+------------------------------------------------------------------------
+src|test|resources|AssertNone.java:42: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|AssertNone.java", line 39, col 5:
+        //@ exsures (java.lang.AssertionError e) false;
+            ^
+Execution trace information:
+    Executed throw in "src|test|resources|AssertNone.java", line 41, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: pExceptionwarningShouldCompilerError() ...
+------------------------------------------------------------------------
+src|test|resources|AssertNone.java:51: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "src|test|resources|AssertNone.java", line 50, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: qNoWarning(int) ...
+    [TIME]  passed
+
+AssertNone: qqExceptionWarning(int) ...
+------------------------------------------------------------------------
+src|test|resources|AssertNone.java:62: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "src|test|resources|AssertNone.java", line 61, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: rNowarning() ...
+    [TIME]  passed
+
+AssertNone: AssertNone() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+4 warnings
+6 errors

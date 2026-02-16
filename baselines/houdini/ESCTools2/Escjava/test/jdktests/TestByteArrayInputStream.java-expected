@@ -1,0 +1,19 @@
+TestByteArrayInputStream.java:29: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestByteArrayInputStream.java:52: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestByteArrayInputStream.java:77: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestByteArrayInputStream.java:96: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestByteArrayInputStream.java:108: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestByteArrayInputStream.java:123: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+6 warnings

@@ -1,0 +1,50 @@
+ESC/Java version VERSION
+Ghost.java:46: Error: Cannot have modifiers outside of the annotation on a TypeDeclElem pragma
+        //@ ghost int iii; // ERROR -- public must be in the annotatio ...
+                  ^
+Ghost.java:48: Error: Expected a declaration within the annotation following the ghost keyword
+        /*@ ghost */ int jjj; // ERROR -- decl must be in annotation w ...
+            ^
+    [TIME]
+
+Ghost ...
+Ghost.java:75: Caution: Variable a might not have been initialized
+        int a;
+            ^
+Ghost.java:79: Error: May not specify both static and instance on a declaration
+        //@ ghost instance static int interkinst2; // ERROR -- static  ...
+                  ^
+Ghost.java:29: Error: Undefined variable 'i'
+                int q = i;  // ERROR -- i is only annotation
+                        ^
+Ghost.java:37: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                //@ set ii = superinst; // ERROR - in static method
+                             ^
+Ghost.java:39: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                //@ set ii = interkinst; // ERROR - in static method
+                             ^
+Ghost.java:52: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static ghost int temp = interkinst; // ERROR -- interkinst ...
+                                    ^
+Ghost.java:53: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static ghost int temp2 = ppp; // ERROR -- ppp is instance
+                                     ^
+Ghost.java:57: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static ghost int temp4 = superinst; // ERROR -- superinst  ...
+                                     ^
+Ghost.java:58: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static ghost int temp5 = superinst2; // ERROR -- superinst ...
+                                     ^
+Ghost.java:68: Error: May not specify both static and instance on a declaration
+        //@ static ghost instance int superiii; // ERROR -- static and ...
+                         ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+GhostA ...
+  [TIME total]
+
+GhostI ...
+  [TIME total]
+2 cautions
+11 errors

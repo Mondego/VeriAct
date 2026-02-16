@@ -1,0 +1,9 @@
+#Mon Apr 07 15:39:00 IST 2008
+activeProfiles=
+eclipse.preferences.version=1
+filterResources=false
+includeModules=false
+resolveWorkspaceProjects=false
+resourceFilterGoals=process-resources resources\:testResources
+useMavenFolders=false
+version=1

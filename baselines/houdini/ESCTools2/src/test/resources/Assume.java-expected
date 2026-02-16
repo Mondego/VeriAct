@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|Assume.java: Caution: Using given file as the .java file, even though it is not the java file for Assume on the classpath
+    [TIME]
+
+Assume ...
+  Prover started:TIME
+    [TIME]
+
+Assume: m(int) ...
+    [TIME]  passed immediately
+
+Assume: mm() ...
+    [TIME]  passed
+
+Assume: Assume() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

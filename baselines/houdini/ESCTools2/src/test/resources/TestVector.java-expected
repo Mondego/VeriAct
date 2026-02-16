@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+src|test|resources|TestVector.java: Caution: Using given file as the .java file, even though it is not the java file for TestVector on the classpath
+    [TIME]
+
+TestVector ...
+src|test|resources|TestVector.java:19: Error: Cannot access this field
+        //@ assert v.elementCount == 10; // SHOULD FAIL
+                     ^
+src|test|resources|TestVector.java:27: Error: Cannot access this field
+        //@ assert v.elementCount == 1; // SHOULD PASS
+                     ^
+src|test|resources|TestVector.java:30: Error: Cannot access this field
+        //@ assert v.elementCount == 2; // SHOULD PASS
+                     ^
+src|test|resources|TestVector.java:33: Error: Cannot access this field
+        //@ assert v.elementCount == 3; // SHOULD PASS
+                     ^
+src|test|resources|TestVector.java:42: Error: No such field in type java.util.Vector
+        //@ loop_invariant v.elementType == \type(Object);
+                             ^
+src|test|resources|TestVector.java:43: Error: No such field in type java.util.Vector
+        //@ loop_invariant v.containsNull;
+                             ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+6 errors

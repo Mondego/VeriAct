@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+AssignOnConstructor ...
+  Prover started:TIME
+    [TIME]
+
+AssignOnConstructor: m() ...
+    [TIME]  passed immediately
+
+AssignOnConstructor: AssignOnConstructor() ...
+    [TIME]  passed immediately
+  [TIME total]

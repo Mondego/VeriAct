@@ -1,0 +1,17 @@
+ESC/Java version VERSION
+    [TIME]
+
+NonNullElementsErrors ...
+NonNullElementsErrors.java:8: Error: Cannot convert int to java.lang.Object[]
+        //@ ensures \nonnullelements(i);  // ERROR
+                                     ^
+NonNullElementsErrors.java:10: Error: Cannot convert int[] to java.lang.Object[]
+        //@ ensures \nonnullelements(new int[10]); // ERROR
+                                     ^
+NonNullElementsErrors.java:12: Error: Cannot convert int to java.lang.Object[]
+        //@ ensures \nonnullelements(2*i); // ERROR
+                                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+3 errors

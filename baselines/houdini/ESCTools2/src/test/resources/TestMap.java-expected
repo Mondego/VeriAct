@@ -1,0 +1,6 @@
+src|test|resources|TestMap.java: Caution: Using given file as the .java file, even though it is not the java file for TestMap on the classpath
+src|test|resources|TestMap.java:19: Fatal error: No method named assertTrue is in scope here.
+        assertTrue (map.isEmpty());
+        ^
+1 caution
+1 error

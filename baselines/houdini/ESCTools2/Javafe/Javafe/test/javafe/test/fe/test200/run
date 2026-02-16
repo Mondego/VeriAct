@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Test that we use the correct root interface [correction to Java 1.0 spec]
+
+${TOOL} RootInterface.java

@@ -1,0 +1,36 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModCond ...
+  Prover started:TIME
+    [TIME]
+
+ModCond: ModCond() ...
+    [TIME]  passed immediately
+
+ModCond: m(int) ...
+    [TIME]  passed immediately
+
+ModCond: m1(int) ...
+------------------------------------------------------------------------
+ModCond.java:20: Warning: Possible assertion failure (Assert)
+        //@ assert j == 0;  // WARNING
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModCond: m2(int) ...
+    [TIME]  passed
+
+ModCond: m3(int) ...
+    [TIME]  passed
+
+ModCond: m4(int) ...
+------------------------------------------------------------------------
+ModCond.java:41: Warning: Possible assertion failure (Assert)
+        //@ assert k == 0; // WARNING
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+2 warnings

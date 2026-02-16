@@ -1,0 +1,4 @@
+MyArray.java:8: verify: The prover cannot establish an assertion (PossiblyTooLargeIndex) in method MyArray
+			arr[i] = 0;
+
+1 error

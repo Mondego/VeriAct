@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+    [TIME]
+
+NoPublicA ...
+  Prover started:TIME
+    [TIME]
+
+NoPublicA: NoPublicA() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+NoPublicC ...
+    [TIME]
+
+NoPublicC: NoPublicC() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+NoPublicD ...
+    [TIME]
+
+NoPublicD: NoPublicD() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+NoPublicB ...
+    [TIME]
+
+NoPublicB: NoPublicB() ...
+    [TIME]  passed immediately
+  [TIME total]

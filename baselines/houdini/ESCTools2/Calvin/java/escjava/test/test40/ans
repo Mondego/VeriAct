@@ -1,0 +1,89 @@
+TypeChecking.java:3: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+    /*@non_null*/ int x;        // error: non-reference type
+                      ^
+TypeChecking.java:13: Error: non_null cannot be applied to parameters of a method override
+    void get(/*@non_null*/ Object x) {}         // error: overrides!
+                ^
+TypeChecking.java:19: Error: The non_null pragma can be applied only to variables, fields, and parameters
+    abstract /*@non_null*/ String name();       // error
+                ^
+3 errors
+Basic.java:5: Warning: Field declared non_null possibly not initialized (NonNullInit)
+    Basic() { }         // error: x not initialized to a non-null valu ...
+              ^
+Associated declaration is "Basic.java", line 3, col 7:
+    /*@non_null*/ String x;
+       ^
+Basic.java:12: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        x = null;               // error
+          ^
+Associated declaration is "Basic.java", line 3, col 7:
+    /*@non_null*/ String x;
+       ^
+Param.java:7: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        x = null;                       // error
+          ^
+Associated declaration is "Param.java", line 3, col 16:
+    void put(/*@non_null*/ String x) {
+                ^
+Param.java:11: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        put(y);                         // error
+            ^
+Associated declaration is "Param.java", line 3, col 16:
+    void put(/*@non_null*/ String x) {
+                ^
+Inherit.java:12: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        y = null;                               // error
+          ^
+Associated declaration is "Inherit.java", line 2, col 16:
+    void put(/*@non_null*/ String x) { }
+                ^
+Local.java:9: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        s = null;                       // error
+          ^
+Associated declaration is "Local.java", line 5, col 4:
+        /*@non_null*/ String s = x;
+           ^
+Static.java:9: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        s = null;                       // error
+          ^
+Associated declaration is "Static.java", line 3, col 14:
+    static /*@non_null*/ String s = "hello";
+              ^
+NonNullInit.java:13: Warning: Field declared non_null possibly not initialized (NonNullInit)
+  }  // "nn" not initialized if "if" not taken
+  ^
+Associated declaration is "NonNullInit.java", line 3, col 6:
+  /*@ non_null */ Object nn;
+      ^
+NonNullInit.java:16: Warning: Possible assignment of null to variable declared non_null (NonNull)
+    nn = x;  // this produces a NonNull error
+       ^
+Associated declaration is "NonNullInit.java", line 3, col 6:
+  /*@ non_null */ Object nn;
+      ^
+NonNullInit.java:29: Warning: Field declared non_null possibly not initialized (NonNullInit)
+  }  // fails to assign to "nn"
+  ^
+Associated declaration is "NonNullInit.java", line 3, col 6:
+  /*@ non_null */ Object nn;
+      ^
+10 warnings
+ASSERT (\lblneg NonNullInit:9.6@7.17 boolImplies(anyEQ(EC, ecReturn), refNE...
+ASSERT (\lblneg Null@32.9 refNE...
+ASSERT (\lblneg Null@45.9 refNE...
+ASSERT (\lblneg NonNull:46.8@46.28 refNE...
+ASSERT (\lblneg Null@50.9 refNE...
+ASSERT (\lblneg Null@55.9 refNE...
+ASSERT (\lblneg Null@59.9 refNE...
+ASSERT (\lblneg Null@61.9 refNE...
+ASSERT (\lblneg NonNullInit:16.6@72.2 boolImplies(anyEQ(EC, ecReturn), refNE...
+ASSERT (\lblneg NonNull:53.12@80.10 refNE...
+ASSERT (\lblneg NonNull:20.13@82.6 refNE...
+ASSERT (\lblneg NonNull:20.13@84.12 refNE...
+ASSERT (\lblneg Null@87.5 refNE...
+ASSERT (\lblneg NonNull:20.13@87.8 refNE...
+ASSERT (\lblneg Null@88.5 refNE...
+ASSERT (\lblneg NonNull:20.13@90.8 refNE...
+ASSERT (\lblneg NonNullInit:77.6@92.2 boolImplies(anyEQ(EC, ecReturn), refNE...
+ASSERT (\lblneg Null@96.9 refNE...

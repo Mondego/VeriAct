@@ -1,0 +1,36 @@
+ESC/Java version VERSION
+src|test|resources|ModifiesPure.java: Caution: Using given file as the .java file, even though it is not the java file for ModifiesPure on the classpath
+    [TIME]
+
+ModifiesPure ...
+src|test|resources|ModifiesPure.java:7: Error: A pure method may not have a modifies clause
+        //@ modifies i;                 // WARNING
+                     ^
+src|test|resources|ModifiesPure.java:2: Associated declaration: 
+//@ pure
+    ^
+src|test|resources|ModifiesPure.java:12: Error: A pure method may not have a modifies clause
+        //@     assignable i;           // WARNING
+                           ^
+src|test|resources|ModifiesPure.java:2: Associated declaration: 
+//@ pure
+    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+ModifiesPureA ...
+src|test|resources|ModifiesPure.java:24: Error: A pure method may not have a modifies clause
+        //@ modifies i;                 // WARNING
+                     ^
+src|test|resources|ModifiesPure.java:25: Associated declaration: 
+        //@ pure
+            ^
+src|test|resources|ModifiesPure.java:30: Error: A pure method may not have a modifies clause
+        //@     assignable i;           // WARNING
+                           ^
+src|test|resources|ModifiesPure.java:34: Associated declaration: 
+        public /*@ pure @*/ void n();
+                   ^
+  [TIME total] (aborted)
+2 cautions
+4 errors

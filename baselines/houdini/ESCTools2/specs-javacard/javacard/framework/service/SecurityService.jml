@@ -1,0 +1,65 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id$
+ *
+ */
+
+package javacard.framework.service;
+
+public interface SecurityService extends Service {
+
+  public static final short PRINCIPAL_APP_PROVIDER;
+  public static final short PRINCIPAL_CARD_ISSUER;
+  public static final short PRINCIPAL_CARDHOLDER;
+
+  public static final byte PROPERTY_INPUT_CONFIDENTIALITY;
+  public static final byte PROPERTY_INPUT_INTEGRITY;
+  public static final byte PROPERTY_OUTPUT_CONFIDENTIALITY;
+  public static final byte PROPERTY_OUTPUT_INTEGRITY;
+
+  //@ public static invariant PRINCIPAL_APP_PROVIDER == 3;
+  //@ public static invariant PRINCIPAL_CARD_ISSUER == 2;
+  //@ public static invariant PRINCIPAL_CARDHOLDER == 1;
+
+  //@ public static invariant PROPERTY_INPUT_CONFIDENTIALITY == 1;
+  //@ public static invariant PROPERTY_INPUT_INTEGRITY == 2;
+  //@ public static invariant PROPERTY_OUTPUT_CONFIDENTIALITY == 4;
+  //@ public static invariant PROPERTY_OUTPUT_INTEGRITY == 8;
+
+  /*@
+    public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+  @*/
+  public boolean isAuthenticated(short principal)
+    throws ServiceException;
+    
+  /*@
+    public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+  @*/
+  public boolean isChannelSecure(byte properties)
+    throws ServiceException;
+
+  /*@
+    public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+  @*/
+  public boolean isCommandSecure(byte properties)
+   throws ServiceException;
+
+} 

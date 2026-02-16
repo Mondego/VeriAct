@@ -1,0 +1,133 @@
+ESC/Java version VERSION
+    [TIME]
+
+Inherit ...
+  Prover started:TIME
+    [TIME]
+
+Inherit: m(int) ...
+    [TIME]  passed immediately
+
+Inherit: Inherit() ...
+    [TIME]  passed
+  [TIME total]
+
+InheritB ...
+    [TIME]
+
+InheritB: m(int) ...
+    [TIME]  passed immediately
+
+InheritB: InheritB() ...
+    [TIME]  passed
+  [TIME total]
+
+InheritS ...
+    [TIME]
+
+InheritS: m(int) ...
+    [TIME]  passed immediately
+
+InheritS: InheritS() ...
+    [TIME]  passed
+  [TIME total]
+
+M ...
+    [TIME]
+
+M: mm() ...
+    [TIME]  passed
+
+M: mm1() ...
+------------------------------------------------------------------------
+Inherit.java:40: Warning: Possible assertion failure (Assert)
+       //@ assert j == 1;  // OK - if we had dynamically type specs FI ...
+           ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+M: mm1a() ...
+    [TIME]  passed
+
+M: mm2() ...
+------------------------------------------------------------------------
+Inherit.java:55: Warning: Possible assertion failure (Assert)
+       //@ assert j == 2;  // OK - if we had dynamically type specs FI ...
+           ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+M: mm2a() ...
+    [TIME]  passed
+
+M: mm3() ...
+    [TIME]  passed
+
+M: mm4() ...
+    [TIME]  passed
+
+M: p(InheritS) ...
+------------------------------------------------------------------------
+Inherit.java:81: Warning: Possible assertion failure (Assert)
+       //@ assert i.m(0) == 1;  // OK - if we had dynamically typed sp ...
+           ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+M: q0(InheritS) ...
+    [TIME]  passed
+
+M: q1(InheritS) ...
+------------------------------------------------------------------------
+Inherit.java:90: Warning: Precondition possibly not established (Pre)
+       i.m(-1);  // ERROR
+          ^
+Associated declaration is "Inherit.java", line 21, col 7:
+   //@ requires k >= 0;
+       ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+M: q2(InheritS) ...
+------------------------------------------------------------------------
+Inherit.java:94: Warning: Precondition possibly not established (Pre)
+       i.m(-3);  // ERROR
+          ^
+Associated declaration is "Inherit.java", line 21, col 7:
+   //@ requires k >= 0;
+       ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+M: q3(InheritS) ...
+------------------------------------------------------------------------
+Inherit.java:98: Warning: Precondition possibly not established (Pre)
+       if (i instanceof Inherit) i.m(-1); // OK - if we had dynamicall ...
+                                    ^
+Associated declaration is "Inherit.java", line 21, col 7:
+   //@ requires k >= 0;
+       ^
+Execution trace information:
+    Executed then branch in "Inherit.java", line 98, col 33.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+M: q4(InheritS) ...
+------------------------------------------------------------------------
+Inherit.java:102: Warning: Precondition possibly not established (Pre)
+       if (i instanceof Inherit) i.m(-2); // ERROR
+                                    ^
+Associated declaration is "Inherit.java", line 21, col 7:
+   //@ requires k >= 0;
+       ^
+Execution trace information:
+    Executed then branch in "Inherit.java", line 102, col 33.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+M: M() ...
+    [TIME]  passed
+  [TIME total]
+7 warnings

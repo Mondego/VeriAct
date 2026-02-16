@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+    [TIME]
+
+ECHX ...
+  Prover started:TIME
+    [TIME]
+
+ECHX: ECHX() ...
+    [TIME]  passed
+  [TIME total]
+
+ECHD ...
+    [TIME]
+
+ECHD: ECHD() ...
+    [TIME]  passed
+  [TIME total]
+
+ECH ...
+    [TIME]
+
+ECH: ECH() ...
+    [TIME]  passed
+  [TIME total]
+
+ECHS ...
+    [TIME]
+
+ECHS: ECHS() ...
+    [TIME]  passed
+  [TIME total]

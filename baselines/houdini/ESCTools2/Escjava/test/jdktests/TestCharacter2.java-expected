@@ -1,0 +1,10 @@
+TestCharacter2.java:5: Warning: Possible assertion failure (Assert)
+        //@ assert false;  // TEST FOR CONSISTENCY - 1
+            ^
+TestCharacter2.java:11: Warning: Code marked as unreachable may possibly be reached (Reachable)
+            //@ unreachable;  // TEST FOR CONSISTENCY - 2
+                ^
+Execution trace information:
+    Executed then branch in "TestCharacter2.java", line 9, col 41.
+
+2 warnings

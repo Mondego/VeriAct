@@ -1,0 +1,38 @@
+ESC/Java version VERSION
+.|W.spec:8: Error: Model fields may not be initialized
+        //@ model int p = 0;
+                        ^
+.|W.jml:6: Error: Field is not declared in the java/class file
+        public int j = 0;
+               ^
+.|W.jml:7: Error: Field is not declared in the java/class file
+        public int k;
+               ^
+.|W.spec:6: Error: A field may be initialized only once in a refinement sequence
+        //@ ghost int i = 0;
+                        ^
+.|W.jml:4: Associated declaration: 
+        //@ ghost int i = 0;
+                        ^
+.|W.spec:10: Error: Field is not declared in the java/class file
+        public int j = 0;
+               ^
+.|W.spec:11: Error: Field is not declared in the java/class file
+        public int k = 0;
+               ^
+.|W.spec:12: Error: A java field declaration may not be initialized in a specification file
+        public int m = 0;
+                       ^
+.|W.spec:13: Error: A java field declaration may not be initialized in a specification file
+        public int n = 0;
+                       ^
+    [TIME]
+
+W ...
+  Prover started:TIME
+    [TIME]
+
+W: W() ...
+    [TIME]  passed
+  [TIME total]
+8 errors

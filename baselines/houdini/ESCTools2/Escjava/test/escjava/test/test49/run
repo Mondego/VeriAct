@@ -1,0 +1,8 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* Ghost.java
+
+# use -pjt to make sure prettyprinter handles ghost decls properly
+${ESCJ} $* -pjt -nocheck Ghost.java
+

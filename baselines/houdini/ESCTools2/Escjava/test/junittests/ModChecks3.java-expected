@@ -1,0 +1,35 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModChecks3 ...
+ModChecks3.java:5: Error: Array ranges are allowed only as specification designators
+        //@ modifies aa[*][*];   // ERROR
+                       ^
+ModChecks3.java:6: Error: Array ranges are allowed only as specification designators
+        //@ modifies aa[*][0];   // ERROR
+                       ^
+ModChecks3.java:7: Error: Array ranges are allowed only as specification designators
+        //@ modifies aa[2..4][0];   // ERROR
+                       ^
+ModChecks3.java:8: Error: Reference wild cards allowed only as specification designators
+        //@ modifies this.*.*;   // ERROR
+                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+ModChecks3A ...
+ModChecks3.java:15: Error: An instance field may not be added to a static datagroup
+        public int j; //@ in i; // ERROR
+               ^
+ModChecks3.java:14: Associated declaration: 
+        static public int i;
+                      ^
+ModChecks3.java:17: Error: An instance field may not be added to a static datagroup
+        ModChecks3A o; //@ maps o.j \into i; // ERROR
+        ^
+ModChecks3.java:14: Associated declaration: 
+        static public int i;
+                      ^
+  [TIME total] (aborted)
+1 caution
+6 errors

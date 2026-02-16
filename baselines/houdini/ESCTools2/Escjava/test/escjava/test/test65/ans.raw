@@ -1,0 +1,118 @@
+C.java:39: Warning: Precondition possibly not established (Pre)
+      case 0:  m0(); break;
+                 ^
+Associated declaration is "C.java", line 4, col 6:
+  /*@ requires x ...
+      ^
+C.java:40: Warning: Precondition possibly not established (Pre)
+      case 1:  m1(); break;
+                 ^
+Associated declaration is "C.java", line 9, col 6:
+  /*@ requires x && y;
+      ^
+C.java:41: Warning: Precondition possibly not established (Pre)
+      case 2:  m2(); break;
+                 ^
+Associated declaration is "C.java", line 14, col 6:
+  //@ requires x && y
+      ^
+C.java:42: Warning: Precondition possibly not established (Pre)
+      case 3:  m3(); break;
+                 ^
+Associated declaration is "C.java", line 18, col 6:
+  //@ requires x && y;
+      ^
+C.java:43: Warning: Precondition possibly not established (Pre)
+      case 4:  m4(); break;
+                 ^
+Associated declaration is "C.java", line 22, col 6:
+  /*@ requires x && y */
+      ^
+C.java:44: Warning: Possible assignment of null to variable declared non_null (NonNull)
+      case 5:  a = null; break;
+                 ^
+Associated declaration is "C.java", line 26, col 6:
+  /*@ non_null
+      ^
+C.java:46: Warning: Possible dynamic use before meaningful assignment of local variable (Uninit)
+                       non_null */ int[] a = null; a = a; } break;
+                                                       ^
+Associated declaration is "C.java", line 45, col 20:
+      case 6: { /*@ uninitialized
+                    ^
+C.java:47: Warning: Possible race condition (Race)
+      case 7:  b = a; break;
+                 ^
+Associated declaration is "C.java", line 30, col 8:
+      , this.a </esc> */
+        ^
+C.java:47: Warning: Possible race condition (Race)
+      case 7:  b = a; break;
+                 ^
+Associated declaration is "C.java", line 29, col 26:
+  /** "<esc> monitored_by this ...
+                          ^
+C.java:48: Warning: Possible race condition (Race)
+      case 8:  c = a; break;
+                 ^
+Associated declaration is "C.java", line 33, col 13:
+  /** "<esc> monitored
+             ^
+C.java:72: Warning: Precondition possibly not established (Pre)
+      case 0:  p0(null); break;
+                 ^
+Associated declaration is "C.java", line 52, col 3:
+/*@requires s=="h</esc>\"</esc>'</esc>\n\034"+'c'+'\''+"</esc>" ...
+   ^
+C.java:73: Warning: Precondition possibly not established (Pre)
+      case 1:  p1(); break;
+                 ^
+Associated declaration is "C.java", line 57, col 17:
+  /** //   <esc> requires b != null ...
+                 ^
+C.java:74: Warning: Precondition possibly not established (Pre)
+      case 2:  p2(); break;
+                 ^
+Associated declaration is "C.java", line 62, col 19:
+  /** "//"   <esc> requires b != null ...
+                   ^
+C.java:76: Warning: Code marked as unreachable may possibly be reached (Reachable)
+      case 9:  /** <esc>unreachable
+                        ^
+C.java:80: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "C.java", line 67, col 34:
+  //@ /* h'\\\\\ ;'' a cmnt" y */ ensures \result < -1
+                                  ^
+C.java:80: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "C.java", line 68, col 38:
+  //@ requires true|"*/\""=="</esc>"; ensures \result > -7
+                                      ^
+C.java:80: Warning: Possible violation of object invariant (Invariant)
+  }
+  ^
+Associated declaration is "C.java", line 85, col 31:
+  //@ invariant tz>=0 /* */*0; invariant tz==10||tz%3==0
+                               ^
+C.java:80: Warning: Possible violation of object invariant (Invariant)
+  }
+  ^
+Associated declaration is "C.java", line 82, col 28:
+  int tz = 20 /* *// 2; /*@ invariant ...
+                            ^
+C.java:94: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "C.java", line 87, col 11:
+  /** <esc>ensures 0 <// comment goes here ...
+           ^
+C.java:94: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "C.java", line 90, col 6:
+  /*@ ensures c // why "c" one wonders ...
+      ^
+20 warnings

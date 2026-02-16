@@ -1,0 +1,43 @@
+ESC/Java version VERSION
+src|test|resources|NewObject.java: Caution: Using given file as the .java file, even though it is not the java file for NewObject on the classpath
+    [TIME]
+
+NewObject ...
+  Prover started:TIME
+    [TIME]
+
+NewObject: NewObject() ...
+    [TIME]  passed immediately
+
+NewObject: m() ...
+    [TIME]  passed
+
+NewObject: mm() ...
+    [TIME]  passed
+
+NewObject: mmm() ...
+------------------------------------------------------------------------
+src|test|resources|NewObject.java:28: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|NewObject.java", line 20, col 5:
+        //@ ensures (new int[5]) != null;
+            ^
+Execution trace information:
+    Executed return in "src|test|resources|NewObject.java", line 27, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NewObject: m4() ...
+    [TIME]  passed
+  [TIME total]
+
+NewObjectA ...
+    [TIME]
+
+NewObjectA: NewObjectA() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+1 warning

@@ -1,0 +1,5 @@
+//@ maintaining \forall int k;  0 <= k && k < i; max >= a[k];
+//@ maintaining \exists int k;  0 <= k && k < i; max == a[k];
+//@ maintaining 0 <= i && i <= n;
+//@ decreases n - i;
+

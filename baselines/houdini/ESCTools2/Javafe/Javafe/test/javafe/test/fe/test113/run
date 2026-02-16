@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## Test anonymous array initializers                                [1.1]
+
+${TOOL} ArrayInit.java
+${TOOL} ArrayInit2.java

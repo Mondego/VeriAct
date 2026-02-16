@@ -1,0 +1,157 @@
+ESC/Java version VERSION
+  Prover started:TIME
+
+InheritNull ...
+InheritNull.java:8: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void m2(int i, /*@ non_null*/ Object o);
+                                  ^
+InheritNull.java:74: Associated declaration: 
+        /*@ pure */ public void m2(int i,  Object o);
+                                           ^
+InheritNull.java:17: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void m6(int i,  /*@ non_null */ Object o);
+                                   ^
+InheritNull.java:83: Associated declaration: 
+        /*@ pure */ public void m6(int i, Object o);
+                                          ^
+
+InheritNull: m1(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNull: m2(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNull: m3(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNull: m4(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNull: m5(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNull: m6(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNull: InheritNull() ...
+    [TIME]  passed immediately
+
+InheritNull: mm1a() ...
+------------------------------------------------------------------------
+InheritNull.java:24: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                m1(-1,oo); // FAILS
+                  ^
+Associated declaration is "InheritNull.java", line 72, col 39:
+        /*@ pure */ public void m1(int i, /*@ non_null*/ Object o);
+                                              ^
+Associated declaration is "InheritNull.java", line 5, col 27:
+        public void m1(int i, /*@ non_null*/ Object o);
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritNull: mm1b() ...
+------------------------------------------------------------------------
+InheritNull.java:27: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                m1(1,oo); // FAILS
+                  ^
+Associated declaration is "InheritNull.java", line 5, col 27:
+        public void m1(int i, /*@ non_null*/ Object o);
+                                  ^
+Associated declaration is "InheritNull.java", line 72, col 39:
+        /*@ pure */ public void m1(int i, /*@ non_null*/ Object o);
+                                              ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritNull: mm2a() ...
+    [TIME]  passed
+
+InheritNull: mm2b() ...
+    [TIME]  passed
+
+InheritNull: mm3a() ...
+    [TIME]  passed
+
+InheritNull: mm3b() ...
+------------------------------------------------------------------------
+InheritNull.java:41: Warning: Precondition possibly not established (Pre)
+                m3(1,oo); // FAILS
+                  ^
+Associated declaration is "InheritNull.java", line 10, col 5:
+        //@ requires i<0;
+            ^
+Associated declaration is "InheritNull.java", line 76, col 39:
+        /*@ pure */ public void m3(int i, /*@ non_null*/ Object o);
+                                              ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritNull: mm4a() ...
+    [TIME]  passed
+
+InheritNull: mm4b() ...
+    [TIME]  passed
+
+InheritNull: mm5a() ...
+------------------------------------------------------------------------
+InheritNull.java:51: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                m5(1,oo); // FAILS
+                  ^
+Associated declaration is "InheritNull.java", line 80, col 39:
+        /*@ pure */ public void m5(int i, /*@ non_null*/ Object o);
+                                              ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritNull: mm5b() ...
+------------------------------------------------------------------------
+InheritNull.java:55: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                (new SuperNull()).m5(1,oo); // FAILS
+                                    ^
+Associated declaration is "InheritNull.java", line 80, col 39:
+        /*@ pure */ public void m5(int i, /*@ non_null*/ Object o);
+                                              ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritNull: mm6a() ...
+------------------------------------------------------------------------
+InheritNull.java:60: Warning: Precondition possibly not established (Pre)
+                m6(-1,oo); // FAILS
+                  ^
+Associated declaration is "InheritNull.java", line 82, col 5:
+        //@ requires i>0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritNull: mm6b() ...
+    [TIME]  passed
+  [TIME total]
+
+SuperNull ...
+
+SuperNull: m1(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNull: m2(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNull: m3(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNull: m4(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNull: m5(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNull: m6(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNull: SuperNull() ...
+    [TIME]  passed immediately
+  [TIME total]
+2 cautions
+6 warnings

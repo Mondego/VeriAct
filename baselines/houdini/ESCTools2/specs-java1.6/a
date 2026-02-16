@@ -1,0 +1,91 @@
+escjava: usage: escjava options* <source files> where options include:
+  -Help, -h : Prints this usage message and terminates (combine with -v to see 
+	private switches) 
+  -Verbose, -v : verbose mode 
+  -Quiet, -q : quiet mode (no informational messages) 
+  -BootClassPath <classpath> : Directory path for specification and class files 
+	for the current JDK (default is the built-in classpath of your JDK); 
+	prepended to the current classpath. Multiple uses of -BootClassPath are 
+	ignored; only final use of -BootClassPath is recognized, as in javac. 
+  -Class <fully.specified.classname> : Check the specified class; this option 
+	can be specified multiple times 
+  -ClassPath <classpath>, -cp <classpath> : Directory path for class files 
+	(default is value of CLASSPATH). Multiple uses of -ClassPath are 
+	ignored; only final use of -ClassPath is recognized, as in javac. 
+  -DisableAssertions, -da : Ignores all Java assert statements 
+  -dir <directory> : Check all Java files in the specified directory 
+  -EnableAssertions, -ea : Processes all Java assert statements 
+  -f <file containing command-line arguments> : Path to a file containing 
+	command-line arguments that are inserted at this point in the 
+	command-line 
+  -File <filename> : Check all classes in the specified file <filename> 
+  -List <filename> : Check all classes listed in the text file <filename>; each 
+	classname in the file should be fully specified and end-of-line 
+	terminated 
+  -NoCautions : Does not print messages that are simply cautions 
+  -Package <packagename> : Loads all the files in the named package 
+  -Source <release> : Provide source compatibility with specified release 
+  -SourcePath <classpath> : Directory path for source files (default is 
+	classpath). Multiple uses of -SourcePath are ignored; only final use of 
+	-SourcePath is recognized, as in javac. 
+  -Depend : Recursively process all specification, source, and binary files on 
+	which the input files depend 
+  -CounterExample : If a warning is discovered, generate a counter-example if 
+	possible. 
+  -JavaAssertions, -eaJava : Treat Java assert statements as normal Java 
+	asserts. 
+  -JMLAssertions, -eaJML : Treat Java assert statements like JML assert 
+	statements. -eaJML and -eaJava are mutually exclusive switches. -eaJML 
+	is the default setting. 
+  -Loop <iteration_count>[.0|.5] : Consider <iteration_count> iterations of all 
+	loops (i.e., unroll all loops <iteration_count> times); if 
+	<iteration_count>.5, evaluate loop guard one extra time. The default is 
+	-Loop 1.5. 
+  -NoCheck : Do all steps, including verification condition generation, but 
+	perform no checking with the prover. 
+  -NoSemicolonWarnings : Suppress warnings about semicolons missing at the end 
+	of annotations (to support old ESC/Java). 
+  -Simplify <path_to_executable> : The path to the SIMPLIFY executable. 
+  -Specs <path_to_specs_directory_or_jarfile> : The jar file or directory path 
+	of the set of system specs to use; these are appended to the 
+	sourcepath, if specified, or else the classpath. Multiple uses of 
+	-Specs are ignored; only final use of -Specs is recognized, as in 
+	javac. The default version of specs depends on the platform 
+  -Typecheck : Perform only parsing and typechecking; no generation of 
+	verification conditions or execution of prover takes place. 
+  -LoopSafe : Use an alternate form of loop unrolling for VC generation that is 
+	more rigorous but more expensive. 
+  -NoRedundancy : Do not check specs in redundant specification (e.g., 
+	requires_redundantly, etc.). 
+  -NoTrace : Do not print the execution trace that leads to the potential error 
+	being warned about. 
+  -NoWarn <category> : Do not warn about the specified warning category. The 
+	special category 'All' can be used to ignore all warnings. The full 
+	list of warnings is found in the User's Manual. 
+  -PlainWarning : Suppress the output of the partial counterexample in the case 
+	of invariant warnings. 
+  -Prover <prover_list> : Specify which prover(s) should be used; <prover_list> 
+	is a comma-separated list of names of the provers to be enabled. Usage 
+	example : '-Prover simplify,harvey'. Simplify is the default prover if 
+	this option is not used. 
+  -Routine [<routine_identifier> | <fully_quality_routine_signature>] : Check 
+	only the specified routine in all specified classes. 
+  -RoutineIndirect <routine_file> : The file <routine_file> should contain a 
+	list of all routines that are to be checked, similar to the -list 
+	option. 
+  -Start <line_number> : Start checking the first class specified at line 
+	number <line_number>; all lines before <line_number> have warnings 
+	disabled. 
+  -Stats : Display a more detailed breakdown of some information. You can 
+	supply some keyword indicating what you want : time space complexity 
+	termComplexity variableComplexity quantifierComplexity. Usage example : 
+	-Stats time,space,variableComplexity. Default behavior is -Stats 
+	time,space. The complexity parameter displays all *Complexity flags. 
+  -Suggest : After each warning, suggest an annotation that will suppress the 
+	warning. 
+  -VCLimit <number> : Set the maximum size of the VC to <number> bytes; 
+	defaults to 500,000. 
+  -Warn <category> : Turns on all warnings of category <category> if they are 
+	currently turned off. 
+  -nonNullByDefault : Declarations of reference types are assumed to be 
+	non-null by default. 

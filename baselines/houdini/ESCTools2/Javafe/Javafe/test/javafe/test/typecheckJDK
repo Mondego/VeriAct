@@ -1,0 +1,49 @@
+#!/bin/csh -f
+
+echo "TESTING Javafe: typecheckJDK"
+
+if ( $?JDK_PRE14_SOURCES ) then
+
+foreach jdk_version ( ${JDK_PRE14_SOURCES} )
+
+    echo ===== Typechecking version ${jdk_version} =====
+
+    setenv CLASSPATH ${jdk_version}
+
+    foreach d ( `echo ${jdk_version}/*/*` )
+
+    echo ===== Typechecking $d/\*.java of ${jdk_version} =====
+    ${JAVA} -classpath ${CLASSDIRECTORY} javafe.test.Print \
+        -classpath ${CLASSPATH} \
+        -typecheck -noprint ${d}/*.java
+
+    end
+end
+
+else
+	echo Not checking PRE14 sources - no JDK_PRE14_SOURCES defined
+endif
+
+if ( $?JDK_14_SOURCES ) then 
+
+foreach jdk_version ( ${JDK_14_SOURCES} )
+
+    echo ===== Typechecking version ${jdk_version} =====
+
+    setenv CLASSPATH ${jdk_version}
+
+    ##foreach d ( ${jdk_version}/java/text )
+    foreach d ( `find ${jdk_version} -type d ` )
+
+    ( glob ${d}/*.java >& /dev/null && \
+    	( echo ===== Typechecking $d/\*.java ===== ; \
+	${JAVA} -classpath ${CLASSDIRECTORY} javafe.test.Print \
+        -classpath ${CLASSPATH} -source 1.4 \
+        -typecheck -noprint -preferBinary ${d}/*.java ) ) || true
+
+    end
+end
+
+else
+	echo Not checking java 1.4 sources - no JDK_14_SOURCES defined
+endif

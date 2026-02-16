@@ -1,0 +1,31 @@
+package escjava.vcGeneration.coq;
+
+import java.io.*;
+
+/**
+ * This class is used to generates the Coq prelude to the specified 
+ * path. The prelude is taken from the file 
+ * <code>$ESCTOOLS/docs/Escjava2-logics/coq/defs.v</code>.
+ * @author J.Charles
+ * @version 14/11/2005
+ */
+public class Prelude {
+   private File f;
+   
+   /**
+    * Creates a new instance with the specified path (the name of
+    * the file to generate).
+    * @param path where to generate the 'prelude'.
+    */
+   public Prelude(File path) {
+	   f = path;
+   }
+
+   /**
+    * Write the file to disk.
+    * @throws IOException if an I/O error occurs.
+    */
+   public void generate() throws IOException {
+	   PrintStream out = new PrintStream(new FileOutputStream(f));
+	   
+

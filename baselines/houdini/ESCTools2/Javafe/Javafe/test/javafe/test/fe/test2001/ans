@@ -1,0 +1,16 @@
+TestStaticFinalFields.java:8: Caution: Variable a1 might not have been initialized
+  int a1;  //ERROR
+      ^
+TestStaticFinalFields.java:14: Caution: Variable b1 might not have been initialized
+  int b1;  //ERROR
+      ^
+TestStaticFinalFields.java:20: Caution: Variable c1 might not have been initialized
+  public static final int c1;  //ERROR
+                          ^
+TestStaticFinalFields.java:25: Caution: Variable d1 might not have been initialized
+    public static final int d1;  //ERROR
+                            ^
+TestStaticFinalFields.java:31: Caution: Variable e1 might not have been initialized
+  public static final int e1;  //ERROR
+                          ^
+5 cautions

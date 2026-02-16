@@ -1,0 +1,9 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* Normal.java NormalError.java JavaDoc.java Nested.java
+${ESCJ} $* JavaDocCheck.java
+${ESCJ} $* JavaDocFatal0.java
+${ESCJ} $* JavaDocFatal1.java
+${ESCJ} $* JavaDocFatal2.java
+${ESCJ} $* NestedError.java

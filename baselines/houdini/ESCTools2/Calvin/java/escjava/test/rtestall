@@ -1,0 +1,8 @@
+#!/bin/sh
+# use: rtestall FLAGS
+# Copyright Hewlett-Packard, 2002
+
+for f in `grep Good alltests | awk '{print $1;}'`; do
+#echo $f
+./rtest $f $*
+done

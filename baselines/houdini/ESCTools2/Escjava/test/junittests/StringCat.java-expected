@@ -1,0 +1,19 @@
+StringCat.java:15: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "StringCat.java", line 11, col 10:
+          ensures false;
+          ^
+Execution trace information:
+    Executed return in "StringCat.java", line 14, col 4.
+
+StringCat.java:23: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "StringCat.java", line 19, col 10:
+          ensures false;
+          ^
+Execution trace information:
+    Executed return in "StringCat.java", line 22, col 4.
+
+2 warnings

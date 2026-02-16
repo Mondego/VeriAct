@@ -1,0 +1,60 @@
+ESC/Java version VERSION
+src|test|resources|ParsePure.java: Caution: Using given file as the .java file, even though it is not the java file for ParsePure on the classpath
+    [TIME]
+
+ParsePure ...
+src|test|resources|ParsePure.java:15: Error: A pure constructor may not have a modifies clause
+        //@ modifies \everything;  // ERROR
+                     ^
+src|test|resources|ParsePure.java:16: Associated declaration: 
+        //@ pure
+            ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+A ...
+src|test|resources|ParsePure.java:27: Error: A pure method may not have a modifies clause
+        //@ also modifies \everything; // ERROR
+                          ^
+src|test|resources|ParsePure.java:52: Associated declaration: 
+        //@ pure
+            ^
+src|test|resources|ParsePure.java:29: Error: A pure method may not have a modifies clause
+        //@ also modifies \everything; // ERROR
+                          ^
+src|test|resources|ParsePure.java:57: Associated declaration: 
+//@ pure
+    ^
+src|test|resources|ParsePure.java:31: Error: A pure method may not have a modifies clause
+        //@ also modifies \everything; // ERROR
+                          ^
+src|test|resources|ParsePure.java:38: Associated declaration: 
+        //@ pure
+            ^
+src|test|resources|ParsePure.java:33: Error: A pure method may not have a modifies clause
+        //@ also modifies \everything;  // ERROR
+                          ^
+src|test|resources|ParsePure.java:42: Associated declaration: 
+//@ pure
+    ^
+src|test|resources|ParsePure.java:44: Error: A pure constructor may not have a modifies clause
+        //@ modifies \everything; // ERROR
+                     ^
+src|test|resources|ParsePure.java:42: Associated declaration: 
+//@ pure
+    ^
+  [TIME total] (aborted)
+
+B ...
+  [TIME total]
+
+D ...
+  [TIME total]
+
+C ...
+  [TIME total]
+
+E ...
+  [TIME total]
+2 cautions
+6 errors

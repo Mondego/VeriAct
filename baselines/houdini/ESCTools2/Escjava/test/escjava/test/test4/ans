@@ -1,0 +1,4 @@
+C.java:24: Warning: Possible assertion failure (Assert)
+      //@ assert x instanceof Object;
+          ^
+1 warning

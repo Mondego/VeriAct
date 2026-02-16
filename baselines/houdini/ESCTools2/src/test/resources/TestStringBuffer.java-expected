@@ -1,0 +1,46 @@
+ESC/Java version VERSION
+src|test|resources|TestStringBuffer.java: Caution: Using given file as the .java file, even though it is not the java file for TestStringBuffer on the classpath
+    [TIME]
+
+TestStringBuffer ...
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/AbstractStringBuilder.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/AbstractStringBuilder.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/AbstractStringBuilder.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/StringBuffer.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+src|test|resources|TestStringBuffer.java:5: Error: No such field in type java.lang.StringBuffer
+    //@ assert sb.accumulatedString.equals("");
+                  ^
+src|test|resources|TestStringBuffer.java:6: Fatal error: No method named assertTrue is in scope here.
+    assertTrue( sb.toString().equals("") );
+    ^
+1 caution
+35 errors

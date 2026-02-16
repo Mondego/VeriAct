@@ -1,0 +1,8 @@
+#!/bin/sh
+
+## Check access control of superclass and import references   [disabled]
+
+# ${TOOL} Public.java
+# ${TOOL} Public2.java
+# ${TOOL} Public3.java
+# ${TOOL} p/C.java

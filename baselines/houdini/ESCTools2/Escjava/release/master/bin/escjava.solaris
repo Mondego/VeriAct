@@ -1,0 +1,42 @@
+#!/usr/bin/csh -f
+
+# To install ESC/Java on a new architecture, change the following
+# three lines appropriately:
+setenv ESCJAVA_ROOT /usr/local/escjava
+setenv JAVA /usr/local/jdk1.2.2/bin/java
+setenv JAVA_STDLIB /usr/local/jdk1.2.2/jre/lib/rt.jar
+
+if ($?ESCJ_SIMPLIFY) then
+else
+  setenv ESCJ_SIMPLIFY "${ESCJAVA_ROOT}/bin/Simplify"
+endif
+if ($?ESCJ_SIMPLIFY_ARGS) then
+else
+  setenv ESCJ_SIMPLIFY_ARGS "-noprune -noplunge"
+endif
+if ($?PROVER_KILL_TIME) then
+else
+  setenv PROVER_KILL_TIME 300
+endif
+if ($?PROVER_CC_LIMIT) then
+else
+  setenv PROVER_CC_LIMIT 10
+endif
+
+if ($?ESCJ_STDARGS) then
+else
+  setenv ESCJ_STDARGS "-nowarn Deadlock"
+endif
+
+if ($?CLASSPATH) then
+  setenv USERPATH ${CLASSPATH}
+else
+  setenv USERPATH "."
+endif
+
+set noglob
+${JAVA} -Dsimplify="${ESCJ_SIMPLIFY} ${ESCJ_SIMPLIFY_ARGS}" \
+  -classpath ${ESCJAVA_ROOT}/lib/escjava.zip:${JAVA_STDLIB} \
+  escjava.Main \
+  -bootclasspath ${ESCJAVA_ROOT}/lib/specs:${JAVA_STDLIB} \
+  -classpath ${USERPATH} ${ESCJ_STDARGS} $*

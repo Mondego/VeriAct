@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|HenceBy.java: Caution: Using given file as the .java file, even though it is not the java file for HenceBy on the classpath
+    [TIME]
+
+HenceBy ...
+  Prover started:TIME
+    [TIME]
+
+HenceBy: m() ...
+    [TIME]  passed
+
+HenceBy: HenceBy() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

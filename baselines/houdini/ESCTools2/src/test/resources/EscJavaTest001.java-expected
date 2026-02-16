@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|EscJavaTest001.java: Caution: Using given file as the .java file, even though it is not the java file for EscJavaTest001 on the classpath
+    [TIME]
+
+EscJavaTest001 ...
+  Prover started:TIME
+    [TIME]
+
+EscJavaTest001: m(int, int) ...
+    [TIME]  passed
+
+EscJavaTest001: EscJavaTest001() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

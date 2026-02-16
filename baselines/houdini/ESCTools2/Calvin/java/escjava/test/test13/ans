@@ -1,0 +1,16 @@
+loop.java:8: Warning: Possible assertion failure (Assert)
+    //@ assert false;
+        ^
+loop.java:20: Warning: Possible assertion failure (Assert)
+    //@ assert false;
+        ^
+loop.java:33: Warning: Possible assertion failure (Assert)
+    //@ assert false;
+        ^
+loop.java:44: Warning: Possible null dereference (Null)
+      a[i] = 0; // null dereference error
+       ^
+loop.java:66: Warning: Array index possibly too large (IndexTooBig)
+      s += a[i]; // index out-of-bounds error
+            ^
+5 warnings

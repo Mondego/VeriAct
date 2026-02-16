@@ -1,0 +1,24 @@
+ESC/Java version VERSION
+src|test|resources|Uninit.java: Caution: Using given file as the .java file, even though it is not the java file for Uninit on the classpath
+    [TIME]
+
+Uninit ...
+  Prover started:TIME
+    [TIME]
+
+Uninit: m() ...
+------------------------------------------------------------------------
+src|test|resources|Uninit.java:7: Warning: Possible dynamic use before meaningful assignment of local variable (Uninit)
+                int j = i;
+                        ^
+Associated declaration is "src|test|resources|Uninit.java", line 5, col 5:
+                //@uninitialized
+                   ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Uninit: Uninit() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

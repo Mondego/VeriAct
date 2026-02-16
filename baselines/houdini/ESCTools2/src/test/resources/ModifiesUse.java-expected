@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|ModifiesUse.java: Caution: Using given file as the .java file, even though it is not the java file for ModifiesUse on the classpath
+    [TIME]
+
+ModifiesUse ...
+src|test|resources|ModifiesUse.java:5: Fatal error: Can't find type named "JMLDataGroup"
+        //@ model public JMLDataGroup list;
+                         ^
+1 caution
+1 error

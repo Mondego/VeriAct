@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+    [TIME]
+
+Intern2 ...
+  Prover started:TIME
+    [TIME]
+
+Intern2: Intern2() ...
+    [TIME]  passed immediately
+
+Intern2: m() ...
+------------------------------------------------------------------------
+Intern2.java:11: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 warning

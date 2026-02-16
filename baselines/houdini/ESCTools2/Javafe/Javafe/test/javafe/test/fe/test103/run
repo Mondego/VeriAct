@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## This file tests the various type checks needed specifically for
+## user inserted C.this expressions.                                [1.1]
+
+${TOOL} ThisTest.java

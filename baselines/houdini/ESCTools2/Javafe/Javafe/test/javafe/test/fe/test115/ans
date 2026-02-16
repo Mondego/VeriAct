@@ -1,0 +1,10 @@
+InsideCall.java:19: Error: The instance fields of type InsideCall may not be accessed from type InsideCall$19$<anonymous>
+    InsideCall() { super(new Object() { int q = target; }); }  // erro ...
+                                                ^
+InsideCall.java:24: Error: The instance fields of type InsideCall may not be accessed from type InsideCall$Inner$24$<anonymous>
+            super(new Object() { int q = target; });    // error
+                                         ^
+InsideCall.java:32: Error: The instance fields of type InsideCall may not be accessed from type InsideCall$Middle$InnerMost$32$<anonymous>
+                super(new Object() { int q = target; });  // error
+                                             ^
+3 errors

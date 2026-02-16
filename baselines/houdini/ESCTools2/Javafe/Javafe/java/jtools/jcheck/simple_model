@@ -1,0 +1,65 @@
+     This document presents a simple model of how to do queries of the
+form "Does the reference type P.T exist?" where P is a fully-qualified
+package name and T is a simple class or interface name.  Handling inner
+reference types is more complicated and is discussed at the end of this
+document.
+
+     I propose that we use this model in ESCJava.  Javac may use a more
+complicated/different model; if so, it is proposed that jcheck enforce a
+set of rules such that for any Java environment passing jcheck, the two
+models give the same answers.
+
+
+
+Let the current Java classpath be R1:R2:...:Rn.  For simplicity,
+assume that any .jar or .zip files in the classpath have been replaced
+by the filesystem they denote.  Thus, if R2 was ~mdl/classes.zip then
+R2/A/B.java would be considered for the purposes of this discussion to
+denote the A/B.java entry in ~mdl/classes.zip.
+
+
+Algorithm for deciding if (outer) reference type T exists in package P:
+
+    (1) If we have already seen source for the class P.T, then return
+	true.
+
+	[When a source file is first read in, a note must be made of all
+	 the (outer) reference types defined in it.  This must occur
+	 *before* any package queries done on references in that source
+	 file.  Note that this requires a multi-pass approach.]
+
+    (2) If one or more of R1/P/T.class, R2/P/T.class, ..., Rn/P/T.class
+	exists, where in P, '.'s have been changed to '/'s, then return
+	true.
+
+    (3) If one or more of R1/P/T.java, R2/P/T.java, ..., Rn/P/T.java
+	exists, where in P, '.'s have been changed to '/'s, then return
+	true.
+
+    (4) return false
+
+
+Caching of this algorithm's answers is allowed, under the assumption
+that the filesystem is not changing while we are running.
+
+
+Step (1) is needed to handle the case of multiple reference types
+declared in the same source file when no binaries for them are
+available.
+
+For example, consider a case where file T.java contains the class T
+followed by the class K, and the files K.java and K.class do not exist.
+When we encounter a reference to K in the source code for T, steps
+(2)-(4) alone would say that there is no such class.
+
+Note that this trick does not work if the reference to K occurs in
+another source file.  This is why the Java spec disallows such
+references and requires K to not be declared public.
+
+
+Handling queries about inner reference types requires the ability to
+obtain the type information for a given reference type.  This is a more
+complicated operation because it may involve recursive compilation,
+checking time stamps, and the like.  Given the type information for P.T,
+it is easy to determine if P.T$A$...$Z exists.  I will discuss how to
+obtain type information in another document.

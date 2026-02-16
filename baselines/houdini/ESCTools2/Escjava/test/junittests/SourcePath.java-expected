@@ -1,0 +1,25 @@
+ESC/Java version VERSION
+    [TIME]
+
+SourcePath ...
+  Prover started:TIME
+    [TIME]
+
+SourcePath: m() ...
+------------------------------------------------------------------------
+SourcePath.java:5: Warning: Postcondition possibly not established (Post)
+        public void m() {}
+                         ^
+Associated declaration is ".|SourcePath.refines-java", line 5, col 5:
+        //@ ensures false;
+            ^
+Execution trace information:
+    Executed implicit return in "SourcePath.java", line 5, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+SourcePath: SourcePath() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

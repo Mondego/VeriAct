@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|RootInterface.java: Caution: Using given file as the .java file, even though it is not the java file for RootInterface on the classpath
+    [TIME]
+
+RootInterface ...
+src|test|resources|RootInterface.java:5: Fatal error: Can't find type named "RootInterface2"
+        RootInterface2 m();
+        ^
+1 caution
+1 error

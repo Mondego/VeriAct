@@ -1,0 +1,291 @@
+ESC/Java version VERSION
+    [TIME]
+
+Unchanged ...
+  Prover started:TIME
+    [TIME]
+
+Unchanged: m() ...
+    [TIME]  passed immediately
+
+Unchanged: mm() ...
+    [TIME]  passed
+
+Unchanged: mm1() ...
+------------------------------------------------------------------------
+Unchanged.java:27: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(this.f); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 27, col 27:
+                //@ assert \not_modified(this.f); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mm2() ...
+------------------------------------------------------------------------
+Unchanged.java:33: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(aa.f); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 33, col 27:
+                //@ assert \not_modified(aa.f); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: msup() ...
+    [TIME]  passed immediately
+
+Unchanged: mmsup() ...
+    [TIME]  passed
+
+Unchanged: mmsup1() ...
+------------------------------------------------------------------------
+Unchanged.java:48: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(super.sp); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 48, col 27:
+                //@ assert \not_modified(super.sp); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: ms() ...
+    [TIME]  passed immediately
+
+Unchanged: mms1() ...
+------------------------------------------------------------------------
+Unchanged.java:57: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(a.s); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 57, col 27:
+                //@ assert \not_modified(a.s); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mss() ...
+    [TIME]  passed immediately
+
+Unchanged: mmss1() ...
+------------------------------------------------------------------------
+Unchanged.java:66: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(a.s); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 66, col 27:
+                //@ assert \not_modified(a.s); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: ma() ...
+    [TIME]  passed immediately
+
+Unchanged: mma() ...
+    [TIME]  passed
+
+Unchanged: mma1() ...
+------------------------------------------------------------------------
+Unchanged.java:89: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(ar[1]); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 89, col 27:
+                //@ assert \not_modified(ar[1]); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mra() ...
+    [TIME]  passed immediately
+
+Unchanged: mrall() ...
+    [TIME]  passed immediately
+
+Unchanged: mmra() ...
+    [TIME]  passed
+
+Unchanged: mmra1() ...
+------------------------------------------------------------------------
+Unchanged.java:110: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(ar[1]); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 110, col 27:
+                //@ assert \not_modified(ar[1]); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mmrall1() ...
+------------------------------------------------------------------------
+Unchanged.java:116: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(ar[1]); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 116, col 27:
+                //@ assert \not_modified(ar[1]); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mmrall2() ...
+------------------------------------------------------------------------
+Unchanged.java:122: Warning: Possible assertion failure (Assert)
+                //@ assert ar[1] == ar[2]; // FAILS
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mga() ...
+    [TIME]  passed immediately
+
+Unchanged: mmga() ...
+    [TIME]  passed
+
+Unchanged: mmga1() ...
+------------------------------------------------------------------------
+Unchanged.java:142: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(ar[1]); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 142, col 27:
+                //@ assert \not_modified(ar[1]); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mw() ...
+    [TIME]  passed immediately
+
+Unchanged: mmw1() ...
+------------------------------------------------------------------------
+Unchanged.java:151: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(f); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 151, col 27:
+                //@ assert \not_modified(f); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mmw() ...
+    [TIME]  passed
+
+Unchanged: msw() ...
+    [TIME]  passed immediately
+
+Unchanged: mmsw1() ...
+------------------------------------------------------------------------
+Unchanged.java:166: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(s); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 166, col 27:
+                //@ assert \not_modified(s); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mmsw2() ...
+------------------------------------------------------------------------
+Unchanged.java:172: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(\old(a).s); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 172, col 27:
+                //@ assert \not_modified(\old(a).s); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: mmsw() ...
+    [TIME]  passed
+
+Unchanged: zp() ...
+    [TIME]  passed immediately
+
+Unchanged: zmp() ...
+    [TIME]  passed
+
+Unchanged: zmp1() ...
+------------------------------------------------------------------------
+Unchanged.java:204: Warning: Possible assertion failure (Assert)
+                //@ assert ar[1] == 1; // FAILS
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: zr() ...
+    [TIME]  passed immediately
+
+Unchanged: zrp() ...
+    [TIME]  passed
+
+Unchanged: zrp1() ...
+------------------------------------------------------------------------
+Unchanged.java:230: Warning: Possible assertion failure (Assert)
+                //@ assert ar[1] == 1; // FAILS
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: zf() ...
+    [TIME]  passed immediately
+
+Unchanged: zfp() ...
+    [TIME]  passed
+
+Unchanged: zfpp() ...
+    [TIME]  passed
+
+Unchanged: zfp1() ...
+------------------------------------------------------------------------
+Unchanged.java:254: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(\old(a).f); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 254, col 27:
+                //@ assert \not_modified(\old(a).f); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: zra() ...
+    [TIME]  passed immediately
+
+Unchanged: zrap1() ...
+------------------------------------------------------------------------
+Unchanged.java:262: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(\old(ar)[0]); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 262, col 27:
+                //@ assert \not_modified(\old(ar)[0]); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: zrap() ...
+    [TIME]  passed
+
+Unchanged: zw() ...
+    [TIME]  passed immediately
+
+Unchanged: zwp() ...
+    [TIME]  passed
+
+Unchanged: zwp1() ...
+------------------------------------------------------------------------
+Unchanged.java:286: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(\old(a).f); // FAILS
+                    ^
+Associated declaration is "Unchanged.java", line 286, col 27:
+                //@ assert \not_modified(\old(a).f); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unchanged: Unchanged() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+Sup ...
+    [TIME]
+
+Sup: Sup() ...
+    [TIME]  passed
+  [TIME total]
+18 warnings

@@ -1,0 +1,179 @@
+// $Id: ByteArrayInputStream.refines-spec 2211 2006-11-28 01:32:13Z chalin $
+
+package java.io;
+
+public class ByteArrayInputStream extends InputStream {
+
+    /*@ spec_public */ protected byte[] buf;
+    /*@ spec_public */ protected int count;  // One more than the last readable position
+    /*@ spec_public */ protected int mark; //@ in markPosition;
+    /*@ spec_public */ protected int pos;  //@ in readPosition;
+
+    // In fact any derived class can change them as it wishes.
+    // Hence all sorts of errors can occur in the various methods.
+
+    /*@ public normal_behavior
+      @   ensures \result == (
+      @              buf != null && pos >= 0 && pos <= count && 
+      @              count <= buf.length &&
+      @              mark >= 0 && mark <= count);
+      @ public pure model boolean valid();
+      @*/
+
+    // CONSTRUCTORS
+
+    /*@
+      @ public normal_behavior
+      @    requires buf != null;
+      @    ensures initialInputStream();
+      @    ensures this.buf == buf;
+      @    ensures pos == 0;
+      @    ensures count == buf.length;
+      @    ensures mark == 0;
+      @    ensures markPosition == mark && markLimit == buf.length;
+      @    ensures valid();
+      @ pure
+      @*/
+    public ByteArrayInputStream(byte[] buf);
+
+    /*@
+      @ public normal_behavior
+      @    requires buf != null;
+      @    ensures initialInputStream();
+      @    ensures this.buf == buf;
+      @    ensures pos == offset;
+      @    ensures count == Math.min(buf.length, offset + length);
+      @    ensures mark == offset;
+      @    ensures markPosition == mark && markLimit == buf.length;
+      @    ensures valid();
+      @ pure
+      @*/
+    public ByteArrayInputStream(byte[] buf, int offset, int length);
+
+    // METHODS
+
+    /*@
+      @ also public normal_behavior
+      @   ensures \result == count - pos;
+      @*/
+    public synchronized int available();
+
+  //@ also public normal_behavior
+  //@   requires pos < count;
+  //@   modifies streamState;
+  //@   ensures \result == \old(buf[pos]);
+  //   ensures pos == \old(pos+1);
+  //@   ensures \result == buf[pos];
+  //@   ensures \not_modified(isOpen,wasClosed);
+  //@   ensures valid();
+  //@ also public normal_behavior
+  //@   requires pos >= count;
+  //@   modifies \nothing;
+  //@   ensures \result == -1;
+  public synchronized int read();
+
+    /*@
+      @ 
+      @*/
+    public void close() throws IOException;
+
+    /*@
+      @ also public normal_behavior
+      @   modifies readPosition;
+      @   ensures pos == mark;
+      @   ensures pos == readPosition;
+      @*/
+    public synchronized void reset();
+
+    //@ public invariant _markSupported;
+
+    /*@
+      @*/
+    public boolean markSupported();
+
+    /*@
+      @ also public normal_behavior
+      @   modifies markPosition,markLimit;
+      @   ensures mark == pos;
+      @   ensures mark == markPosition;
+      @   ensures markLimit == buf.length;
+      @*/
+    // The argument is ignored
+    public void mark(int readAheadLimit);
+
+    /*@
+      @ also public normal_behavior
+      @   requires n <= 0;
+      @   modifies \nothing;
+      @   ensures \result == 0;
+      @ also public normal_behavior
+      @   requires n > 0;
+      @   modifies streamState;
+      @   ensures \not_modified(isOpen,wasClosed);
+      @   ensures \result == \old(Math.min(n, count-pos));
+      @   ensures pos == \old(pos) + \result;
+      @   ensures valid();
+      @*/
+    public synchronized long skip(long n);
+
+    /*@
+      @ also public behavior
+      @   requires isOpen;
+      @   requires bytes != null;
+      @   requires bytes.length == 0 && pos < count;
+      @   modifies \nothing;
+      @   ensures \result == 0;
+      @ also public behavior
+      @   requires isOpen;
+      @   requires bytes != null;
+      @   requires pos >= count; // at end of buffer
+      @   modifies \nothing;
+      @   ensures \result == -1;
+      @ also public normal_behavior
+      @   requires isOpen;
+      @   requires bytes != null;
+      @   requires bytes.length > 0;
+      @   requires pos < count;
+      @   modifies streamState, bytes[*];
+      @   ensures \not_modified(isOpen,wasClosed);
+      @   ensures \result == \old(Math.min(bytes.length, count - pos));
+      @   ensures pos == \old(pos) + \result;
+      @   ensures (\forall int i; 0 <= i && i < \result;
+                        bytes[i] == buf[\old(pos) + i]);
+      @   ensures (\forall int i; \result <= i && i < bytes.length;
+                        bytes[i] == \old(bytes[i]));
+      @   ensures valid();
+      @*/
+    public synchronized int read(byte[] bytes);
+
+    /*@ also public behavior
+      @   requires b != null;
+      @   requires isOpen;
+      @   requires len <= 0 && pos < count;
+      @   modifies \nothing;
+      @   ensures \result == 0;
+      @ also public behavior
+      @   requires isOpen;
+      @   requires pos >= count; // at end of buffer
+      @   modifies \nothing;
+      @   ensures \result == -1;
+      @ also public normal_behavior
+      @   requires isOpen;
+      @   requires b != null;
+      @   requires off >= 0 && off + len <= b.length;
+      @   requires len > 0;
+      @   requires pos < count;
+      @   modifies streamState, b[off .. off+len-1];
+      @   ensures \not_modified(isOpen,wasClosed);
+      @   ensures \result == \old(Math.min(len, count - pos));
+      @   ensures pos == \old(pos) + \result;
+                     // These quantified equalities work better if one of the
+                     // array arguments is a simple variable.
+      @   ensures (\forall int i; 0 <= off+i && i < off+\result;
+                        b[i] == buf[\old(pos) + i-off]);
+      @   ensures (\forall int i; off+\result <= i && i < off+len;
+                        b[i] == \old(b[i]));
+      @   ensures valid();
+      @*/
+    public synchronized int read(byte[] b, int off, int len);
+}

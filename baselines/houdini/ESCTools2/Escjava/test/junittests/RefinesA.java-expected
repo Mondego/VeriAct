@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+    [TIME]
+
+junittests.RefinesA ...
+  Prover started:TIME
+    [TIME]
+
+junittests.RefinesA: m(int) ...
+    [TIME]  passed
+
+junittests.RefinesA: n() ...
+------------------------------------------------------------------------
+RefinesA.java:16: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "RefinesA.java", line 13, col 5:
+        //@ ensures b;
+            ^
+Execution trace information:
+    Executed return in "RefinesA.java", line 15, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+junittests.RefinesA: RefinesA() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

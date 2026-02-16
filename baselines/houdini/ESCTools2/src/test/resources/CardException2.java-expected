@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+src|test|resources|CardException2.java: Caution: Using given file as the .java file, even though it is not the java file for CardException2 on the classpath
+    [TIME]
+
+CardException2 ...
+  Prover started:TIME
+    [TIME]
+
+CardException2: CardException2(short) ...
+    [TIME]  passed
+
+CardException2: getReason() ...
+    [TIME]  passed
+
+CardException2: setReason(short) ...
+    [TIME]  passed
+
+CardException2: throwIt(short) ...
+------------------------------------------------------------------------
+src|test|resources|CardException2.java:29: Warning: Possible null dereference (Null)
+        systemInstance.setReason(reason);
+                      ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+1 warning

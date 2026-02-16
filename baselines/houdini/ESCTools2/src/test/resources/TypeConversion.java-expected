@@ -1,0 +1,49 @@
+ESC/Java version VERSION
+src|test|resources|TypeConversion.java: Caution: Using given file as the .java file, even though it is not the java file for TypeConversion on the classpath
+    [TIME]
+
+TypeConversion ...
+  Prover started:TIME
+    [TIME]
+
+TypeConversion: m() ...
+    [TIME]  passed
+
+TypeConversion: n() ...
+    [TIME]  passed
+
+TypeConversion: p() ...
+    [TIME]  passed
+
+TypeConversion: getC() ...
+------------------------------------------------------------------------
+src|test|resources|TypeConversion.java:34: Warning: Possible violation of modifies clause (Modifies)
+        public Class getC() { return getClass(); } 
+                                             ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|TypeConversion.java", line 32, col 1:
+        //@ ensures \result == \typeof(this); ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+TypeConversion: tt(TYPE) ...
+    [TIME]  passed
+
+TypeConversion: ccc(java.lang.Class) ...
+    [TIME]  passed
+
+TypeConversion: ccc(java.lang.String) ...
+    [TIME]  passed
+
+TypeConversion: s() ...
+    [TIME]  passed
+
+TypeConversion: t() ...
+    [TIME]  passed
+
+TypeConversion: TypeConversion() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

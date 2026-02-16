@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+    [TIME]
+
+AOption2 ...
+  Prover started:TIME
+    [TIME]
+
+AOption2: m(AOption2) ...
+------------------------------------------------------------------------
+AOption2.java:8: Warning: Possible null dereference (Null)
+                o.m(this);
+                 ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AOption2: AOption2() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

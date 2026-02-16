@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+NoBody ...
+  Prover started:TIME
+    [TIME]
+
+NoBody: m() ...
+    [TIME]  passed immediately
+
+NoBody: n() ...
+------------------------------------------------------------------------
+NoBody.java:7: Warning: Possible null dereference (Null)
+            m().m();
+               ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NoBody: NoBody() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

@@ -1,0 +1,32 @@
+ESC/Java version VERSION
+DupMM.java:6: Error: Model method has more than one implementation
+        //@ model public void m() {}
+                                  ^
+.|DupMM.spec:4: Associated declaration: 
+        //@ model public void m() {}
+                                  ^
+DupMM.java:8: Error: Model constructor has more than one implementation
+        //@ model public DupMM(int i) {}
+                                      ^
+.|DupMM.spec:6: Associated declaration: 
+        //@ model public DupMM(int i) {}
+                                      ^
+    [TIME]
+
+DupMM ...
+DupMM.java:10: Error: Duplicate nested-type declaration: the type DupMM$C is already declared
+        //@ model class C {}
+                        ^
+.|DupMM.spec:8: Associated declaration: 
+        //@ model class C {}
+                        ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+DupMM$C ...
+  [TIME total]
+
+DupMM$C ...
+  [TIME total]
+1 caution
+3 errors

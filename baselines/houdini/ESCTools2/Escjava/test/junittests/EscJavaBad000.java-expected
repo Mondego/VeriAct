@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+    [TIME]
+
+EscJavaBad000 ...
+  Prover started:TIME
+    [TIME]
+
+EscJavaBad000: m(int, int) ...
+------------------------------------------------------------------------
+EscJavaBad000.java:16: Warning: Possible division by zero (ZeroDiv)
+    return x / y;  // potential division-by-zero error
+             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EscJavaBad000: EscJavaBad000() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

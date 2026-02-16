@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+src|test|resources|CardException.java: Caution: Using given file as the .java file, even though it is not the java file for CardException on the classpath
+src|test|resources|CardException.java:6: Error: Could not find file referenced in refine annotation: CardException.jml
+//@ refine "CardException.jml";
+    ^
+    [TIME]
+
+CardException ...
+  Prover started:TIME
+    [TIME]
+
+CardException: CardException(short) ...
+    [TIME]  passed
+
+CardException: getReason() ...
+    [TIME]  passed
+
+CardException: setReason(short) ...
+    [TIME]  passed
+
+CardException: throwIt(short) ...
+------------------------------------------------------------------------
+src|test|resources|CardException.java:30: Warning: Possible null dereference (Null)
+        systemInstance.setReason(reason);
+                      ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+1 warning
+1 error

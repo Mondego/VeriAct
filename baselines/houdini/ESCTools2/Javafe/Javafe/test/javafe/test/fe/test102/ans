@@ -1,0 +1,100 @@
+FinalRequirements.java:20: Error: Attempt to use a non-final variable from a different method.  From enclosing blocks, only final local variables are available.
+                class TN { int a = N; }    // error
+                                   ^
+FinalRequirements.java:23: Error: Attempt to use a non-final variable from a different method.  From enclosing blocks, only final local variables are available.
+                class Tn { int a = n; }    // error
+                                   ^
+FinalRequirements.java:26: Error: Attempt to use a non-final variable from a different method.  From enclosing blocks, only final local variables are available.
+                class Tn1 { int a = n1; }  // error
+                                    ^
+FinalRequirements.java:32: Error: Attempt to use a non-final variable from a different method.  From enclosing blocks, only final local variables are available.
+                    class TnE { Exception a = nE; }  // error
+                                              ^
+FinalRequirements.java:39: Error: Attempt to use a non-final variable from a different method.  From enclosing blocks, only final local variables are available.
+                        int b = n;          // error
+                                ^
+5 errors
+OtherModifiers.java:8: Error: Modifier 'public' not allowed on formal parameter declarations
+    void params(public int p1,              // error
+                       ^
+OtherModifiers.java:9: Error: Modifier 'private' not allowed on formal parameter declarations
+                private int p2,             // error
+                        ^
+OtherModifiers.java:10: Error: Modifier 'protected' not allowed on formal parameter declarations
+                protected int p3,           // error
+                          ^
+OtherModifiers.java:11: Error: Modifier 'static' not allowed on formal parameter declarations
+                static int s,               // error
+                       ^
+OtherModifiers.java:12: Error: Modifier 'synchronized' not allowed on formal parameter declarations
+                synchronized int sy,        // error
+                             ^
+OtherModifiers.java:13: Error: Modifier 'volatile' not allowed on formal parameter declarations
+                volatile int v,             // error
+                         ^
+OtherModifiers.java:14: Error: Modifier 'transient' not allowed on formal parameter declarations
+                transient int t,            // error
+                          ^
+OtherModifiers.java:15: Error: Modifier 'native' not allowed on formal parameter declarations
+                native int n,               // error
+                       ^
+OtherModifiers.java:16: Error: Modifier 'abstract' not allowed on formal parameter declarations
+                abstract int a) {           // error
+                         ^
+OtherModifiers.java:19: Error: Modifier 'public' not allowed on formal parameter declarations
+            catch (public Exception E) {           // error
+                          ^
+OtherModifiers.java:20: Error: Modifier 'private' not allowed on formal parameter declarations
+            } catch (private Exception E) {        // error
+                             ^
+OtherModifiers.java:21: Error: Modifier 'protected' not allowed on formal parameter declarations
+            } catch (protected Exception E) {      // error
+                               ^
+OtherModifiers.java:22: Error: Modifier 'static' not allowed on formal parameter declarations
+            } catch (static Exception E) {         // error
+                            ^
+OtherModifiers.java:23: Error: Modifier 'synchronized' not allowed on formal parameter declarations
+            } catch (synchronized Exception E) {   // error
+                                  ^
+OtherModifiers.java:24: Error: Modifier 'volatile' not allowed on formal parameter declarations
+            } catch (volatile Exception E) {       // error
+                              ^
+OtherModifiers.java:25: Error: Modifier 'transient' not allowed on formal parameter declarations
+            } catch (transient Exception E) {      // error
+                               ^
+OtherModifiers.java:26: Error: Modifier 'native' not allowed on formal parameter declarations
+            } catch (native Exception E) {         // error
+                            ^
+OtherModifiers.java:27: Error: Modifier 'abstract' not allowed on formal parameter declarations
+            } catch (abstract Exception E) {       // error
+                              ^
+OtherModifiers.java:32: Error: Modifier 'public' not allowed on local variable declarations
+        public int v1;                  // error
+                   ^
+OtherModifiers.java:33: Error: Modifier 'private' not allowed on local variable declarations
+        private int v2;                 // error
+                    ^
+OtherModifiers.java:34: Error: Modifier 'protected' not allowed on local variable declarations
+        protected int v2a;              // error
+                      ^
+OtherModifiers.java:35: Error: Modifier 'static' not allowed on local variable declarations
+        static int v3;                  // error
+                   ^
+OtherModifiers.java:39: Error: Modifier 'transient' not allowed on local variable declarations
+        transient int v6;               // error
+                      ^
+OtherModifiers.java:40: Error: Modifier 'native' not allowed on local variable declarations
+        native int v7;                  // error
+                   ^
+OtherModifiers.java:41: Error: Modifier 'abstract' not allowed on local variable declarations
+        abstract int v8;                // error
+                     ^
+25 errors
+OtherModifiers2.java:11: Fatal error: Unexpected token 'int', expected '('
+        synchronized int v4;                // parse error
+                     ^
+1 error
+OtherModifiers3.java:11: Fatal error: Unexpected token 'int', expected 'IDENT'
+        volative int v5;                // parse error
+                 ^
+1 error

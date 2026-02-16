@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|Quant.java: Caution: Using given file as the .java file, even though it is not the java file for Quant on the classpath
+    [TIME]
+
+Quant ...
+  Prover started:TIME
+    [TIME]
+
+Quant: m() ...
+    [TIME]  passed
+
+Quant: n() ...
+    [TIME]  passed
+
+Quant: Quant() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

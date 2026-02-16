@@ -1,0 +1,1666 @@
+%
+% ESC/Java2 tutorial
+% David Cok
+% $Id$
+%
+
+\documentclass[
+pdf,
+%ps,
+%a4,
+nocolorBG,
+%colorBG,
+slideColor,
+%accumulate,
+%draft,
+cok,
+%frames,
+]{prosper}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{alltt}
+\usepackage{pstricks,pst-node,pst-text,pst-3d}
+\usepackage{textcomp}
+\usepackage{verbatim}
+%\usepackage{colordvi}
+\newcommand{\Red}[1]{{\red #1}}
+\usepackage[all]{xy}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newrgbcolor{Yellowish}{0.90 0.85 0.650}
+
+%\newrgbcolor{red}{1 0 0}
+\newrgbcolor{purple}{0.4 0 0.7}
+%\newrgbcolor{lightpurple}{0.63 0.13 0.94}
+
+%\newrgbcolor{lime}{0.73 1 0}
+\newrgbcolor{fullgreen}{0 1 0} 
+\newrgbcolor{green}{0.133 0.56 0} % lichter
+%\newrgbcolor{green}{0.10 0.43 0}
+
+\newrgbcolor{knalblue}{0 0 1}
+\newrgbcolor{blue}{.2 .36 .77}
+%\newrgbcolor{darkblue}{0.28 0.24 0.55}
+
+\newrgbcolor{gray}{.5 .5 .5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\embf}[1]{\textit{\textbf{#1}}}
+\newcommand{\rmbf}[1]{\textrm{\textbf{#1}}}
+\newcommand{\ttbf}[1]{\mbox{\tt \textbf{#1}}}
+\newcommand{\code}[1]{{\rm \texttt{\textbf{\small #1}}}}
+
+
+
+\myitem{1}{\mbox{{$\bullet$}}}
+
+\newcommand{\bsl}{\char'134}
+\newcommand{\result}{\bsl result}
+\newcommand{\old}{\bsl old}
+
+
+\newcommand{\verbatimcode}[1]{
+\begin{figure*}
+\tiny
+\verbatiminput{#1}
+\end{figure*}
+}
+
+\newif\ifignore
+
+\newrgbcolor{Bluish}{0.9 0.9 1.0}
+\newcommand{\doos}[1]{\psshadowbox[fillstyle=solid,
+                        fillcolor=Bluish,
+                        framearc=0.2,
+                        framesep=2mm]
+                        {#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\embf{\blue 
+       {\huge ESC/Java2
+       \\ \medskip
+       {\Large Use and Features }}
+      }}
+\author{\embf{\Large{\red David Cok, Erik Poll, Joe Kiniry}}
+       }
+\institution{\embf{{\large Eastman Kodak Company; University of Nijmegen}\\ June 2004}}
+
+\slideCaption{{\blue Cok, Poll, Kiniry - ESC/Java2 Tutorial - June 2004}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle 
+
+\boldmath
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{ }
+
+\vspace*{0ex}
+\begin{center}{\large \red The ESC/Java2 tool}\end{center}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Structure of ESC/Java2}
+\vspace*{-6ex}
+\begin{itemize}
+\item[] ESC/Java2 consists of a 
+\begin{itemize}
+\item parsing phase (syntax checks),
+\item typechecking phase (type and usage checks),
+\item static checking phase (reasoning to find potential bugs) - runs a behind-the-scenes prover called Simplify
+\end{itemize}
+\item[] Parsing and typechecking produce {\red cautions} or {\red errors}.
+\item[] Static checking produces {\red warnings}.
+\item[] {\it The focus of ESC/Java2 is on static checking, but reports of bugs, unreported errors, confusing messages, documentation or behavior, and even just email about your application and degree of success are {\green Very Welcome}.  [and Caution: this is still an {\red alpha} release]}
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Running ESC/Java2}
+\vspace*{-6ex}
+\begin{itemize}
+\item Download the binary distribution from {\green http://www.cs.kun.nl/sos/research/escjava}
+\item Untar the distribution and follow the instructions in {\green README.release} about setting environment variables.
+\item Run the tool by doing one of the following:
+\begin{itemize}
+\item Run a script in the release: {\green escjava2} or {\green escj.bat}
+\item Run the tool directly with {\green java -cp esctools2.jar escjava.Main}, but then you need to be sure to provide values for the {\blue -simplify} and {\blue -specs}  options.
+\item Run a GUI version of the tool by double-clicking the release version of {\green esctools2.jar}
+\item Run a GUI version of the tool by executing it with {\green java -jar esctools2.jar} (in which case you can add options).
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Supported platforms}
+\vspace*{-6ex}
+ESC/Java2 is supported on
+\begin{itemize}
+\item Linux
+\item MacOSX
+\item Cygwin on Windows
+\item Windows (but there are some environment issues still to be resolved)
+\item Solaris (in principle - we are not testing there)
+\end{itemize}
+Note that the tool itself is relatively portable Java, but the underlying prover is a Modula-3 application that must be compiled and supplied for each platform.
+
+Help with platform-dependence issues is welcome.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Environment}
+\vspace*{-6ex}
+The application relies on the environment having 
+\begin{itemize}
+\item a Simplify executable (such as Simplify-1.5.4.macosx) for your platform, typically in the same directory as the application's jar file;
+\item the {\blue SIMPLIFY} environment variable set to the name of the executable for this platform;
+\item a set of specifications for Java system files - by default these are bundled into the application jar file, but they are also in {\blue jmlspecs.jar}.
+\item The scripts prefer that the variable {\blue ESCTOOLS\_RELEASE} be set to the directory containing the release.
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Command-line options}
+\vspace*{-9ex}
+The items on the command-line are either options and their arguments or input entries.
+Some commonly used options (see the documentation for more):
+\tiny
+\begin{itemize}
+\item {\knalblue -help} - prints a usage message
+\item {\knalblue -quiet} - turns off informational messages (e.g. progress messages)
+\item {\knalblue -nowarn} - turns off a warning
+\item {\knalblue -classpath} - sets the path to find referenced classes [best if it contains `.']
+\item {\knalblue -specs} - sets the path to library specification files
+\item {\knalblue -simplify} - provides the path to the simplify executable
+\item {\knalblue -f} - the argument is a file containing command-line arguments
+\item {\knalblue -nocheck} - parse and typecheck but no verification
+\item {\knalblue -routine} - restricts checking to a single routine
+\item {\knalblue -eajava}, {\knalblue -eajml} - enables checking of Java assertions
+\item {\knalblue -counterexample} - gives detailed information about a warning
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Input entries}
+\vspace*{-6ex}
+The input entries on the command-line are those classes that are actually checked.
+Many other classes may be referenced for class definitions or specifications - these are found on the classpath (or sourcepath or specspath).
+
+\begin{itemize}
+\item {\knalblue file names} - of java or specification files (relative to the current directory)
+\item {\knalblue directories} - processes all java or specification files (relative to the current directory)
+\item {\knalblue package} - (fully qualified name) - found on the classpath
+\item {\knalblue class} - (fully qualified name) - found on the classpath
+\item {\knalblue list} - (prefaced by {\green -list}) - a file containing input entries
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Specification files}
+\vspace*{-6ex}
+\begin{itemize}
+\item Specifications may be added directly to .java files
+\item Specifications may alternatively be added to specification files.
+\begin{itemize}
+\item No method bodies
+\item No field initializers
+\item Recommended suffix: {\blue .refines-java}
+\item Recommend a {\blue refines} annotation (see documentation)
+\item Must also be on the classpath
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Specification file example}
+\vspace*{-6ex}
+\tiny
+\begin{verbatim}
+package java.lang;
+import java.lang.reflect.*;
+import java.io.InputStream;
+
+public final class Class implements java.io.Serializable {
+
+    private Class();
+
+    /*@ also public normal_behavior
+      @   ensures \result != null && !\result.equals("")
+      @        && (* \result is the name of this class object *);
+      @*/
+    public /*@ pure @*/ String toString();
+
+    ....
+
+
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{}
+
+\vspace*{0ex}
+\begin{center}{\large \red ESC/Java2's static checking warnings}\end{center}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-6ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+\item[] - warnings about possible {\knalblue runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)
+\item[]
+\begin{itemize}
+\item These are the most common runtime exceptions caused by coding problems (that is, not by 
+explicitly throwing an exception)
+\item They do not include nearly all of the possible runtime exceptions
+\item Most of the others are explicitly thrown by various library methods
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Cast Warning}
+\vspace*{-9ex}
+
+The Cast warning occurs when ESC/Java2 cannot verify that a ClassCastException will not be thrown:
+\begin{figure*}
+\tiny
+\verbatiminput{examples/CastWarning.java}
+\end{figure*}
+results in
+{\tiny
+\begin{verbatim}
+------------------------------------------------------------------------
+CastWarning.java:3: Warning: Possible type cast error (Cast)
+    String s = (String)o;
+               ^
+------------------------------------------------------------------------
+\end{verbatim}
+}
+But this is OK:
+\begin{figure*}
+\tiny
+\verbatiminput{examples/CastWarningOK.java}
+\end{figure*}
+
+\end{slide}
+
+\begin{slide}{Cast Warning}
+So is this:
+\begin{figure*}
+\tiny
+\verbatiminput{examples/CastWarningOK2.java}
+\end{figure*}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Null Warning}
+\vspace*{-9ex}
+
+The Null warning occurs when ESC/Java2 cannot verify that a NullPointerException will not be thrown:
+{\tiny
+\begin{figure*}
+\verbatiminput{examples/NullWarning.java}
+\end{figure*}
+}
+results in
+{\tiny
+\begin{verbatim}
+------------------------------------------------------------------------
+NullWarning.java:3: Warning: Possible null dereference (Null)
+    int i = o.hashCode();
+             ^
+------------------------------------------------------------------------
+\end{verbatim}
+}
+
+But this is OK:
+{\tiny
+\begin{figure*}
+\verbatiminput{examples/NullWarningOK.java}
+\end{figure*}
+}
+
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ArrayStore Warning}
+\tiny
+
+\vspace*{-12ex}
+
+The ArrayStore warning occurs when ESC/Java2 cannot verify that the assignment of an object 
+to an array element will not result in an ArrayStoreException:
+\vspace*{-1ex}
+{\tiny
+\begin{figure*}
+\verbatiminput{examples/ArrayStoreWarning.java}
+\end{figure*}
+}
+\vspace*{-2ex}
+results in
+\vspace*{-1ex}
+{\tiny
+\begin{verbatim}
+------------------------------------------------------------------------
+ArrayStoreWarning.java:4: Warning: Type of right-hand side possibly not 
+a subtype of array element type (ArrayStore)
+    s[0] = o;
+         ^
+------------------------------------------------------------------------
+\end{verbatim}
+}
+\vspace*{-1ex}
+But this is OK:
+\vspace*{-1ex}
+{\tiny
+\begin{figure*}
+\verbatiminput{examples/ArrayStoreWarningOK.java}
+\end{figure*}
+}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ZeroDiv, index Warnings}
+\vspace*{-6ex}
+
+\begin{itemize}
+\item {\knalblue ZeroDiv} - issued when a denominator (integer division) may be 0
+\item {\knalblue NegSize} - issued when the array size in an array allocation expression may be negative
+\item {\knalblue IndexNegative} - issued when an array index may be negative
+\item {\knalblue IndexTooBig} - issued when an array index may be greater than or equal to the array length
+\end{itemize}
+{\tiny
+\begin{figure*}
+\verbatiminput{examples/Index.java}
+\end{figure*}
+}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-6ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+\item[] - {\gray warnings about possible { runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)}
+
+\item[] - warnings about possible method {\knalblue specification violations}:
+(Precondition, Postcondition, Modifies)
+
+\item[]
+\begin{itemize}
+\item These are all caused by violations of explicit user-written method specifications
+\end{itemize}
+
+\end{itemize}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Pre, Post warnings}
+\vspace*{-6ex}
+These warnings occur in response to user-written preconditions (requires), postconditions (ensures, signals), or assert statements.
+
+
+\begin{figure*}
+\tiny
+\verbatiminput{examples/PrePost.java}
+\end{figure*}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Frame conditions}
+
+\vspace*{-8ex}
+
+\begin{itemize}
+\item To reason (modularly) about a call of a method, one must know what that method might modify: this is specified by 
+\begin{itemize}
+\item {\knalblue assignable} clauses
+{\tiny
+
+\begin{verbatim}
+//@ assignable x, o.x, this.*, o.*, a[*], a[3], a[4..5];
+\end{verbatim}
+}
+\item {\knalblue modifies} clauses (a synonym)
+\item {\knalblue pure} modifier
+{\tiny
+
+\begin{verbatim}
+//@ pure
+public int getX() { return x; }
+\end{verbatim}
+}
+
+\end{itemize}
+\item Assignable clauses state what fields may be assigned within a method
+- this is the set of what might be modified
+\item The default assignable clause is \\ {\knalblue assignable \bsl everything;} (but it is better to be explicit because {\knalblue \bsl everything;} is not fully implemented and ESC/Java2
+can reason better with more explicit frame conditions)
+\item A {\knalblue pure} method is  {\knalblue assignable \bsl nothing;}
+\end{itemize}
+\end{slide}
+
+\begin{slide}{Frame conditions}
+
+\vspace*{-6ex}
+
+\begin{itemize}
+\item A {\knalblue Modifies} warning indicates an attempt to assign to an object field that is not in a modifies clause
+\item Note: Some violations of modifies clauses can be detected at typecheck time.
+\item Note also:  Handling of frame conditions is an active area of research.
+\end{itemize}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Modifies warnings}
+\vspace*{-9ex}
+For example, in 
+
+\begin{figure*}
+\tiny
+\verbatiminput{examples/ModifiesWarning.java}
+\end{figure*}
+we don't know if {\blue o} equals {\blue this}; since only {\blue this.i} may be assigned,
+ ESC/Java2 produces
+\tiny
+\begin{verbatim}
+------------------------------------------------------------------------
+ModifiesWarning.java:7: Warning: Possible violation of modifies clause (Modifies)
+    o.i = 2; // Modifies warning
+    ^
+Associated declaration is "ModifiesWarning.java", line 4, col 6:
+  //@ assignable i;
+      ^
+------------------------------------------------------------------------
+\end{verbatim}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-6ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+\item[] - {\gray warnings about possible { runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)}
+
+\item[] - {\gray warnings about possible { specification violations}:
+(Precondition, Postcondition, Modifies)}
+
+\item[] - {\knalblue non null} violations (NonNull, NonNullInit)
+
+\item[]
+\begin{itemize}
+\item These warnings relate to explicit {\blue non\_null} field or parameter specifications
+\end{itemize}
+
+\end{itemize}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{NonNullInit warning}
+\vspace*{-6ex}
+Class fields declared {\knalblue non\_null} must be initialized to values that are not null in each constructor, else a NonNullInit warning is produced.
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/NonNullInit.java}
+\end{figure*}
+produces
+\tiny
+
+\begin{verbatim}
+------------------------------------------------------------------------
+NonNullInit.java:4: Warning: Field declared non_null possibly 
+not initialized (NonNullInit)
+  public NonNullInit() { }
+                         ^
+Associated declaration is "NonNullInit.java", line 2, col 6:
+  /*@ non_null */ Object o;
+      ^
+------------------------------------------------------------------------
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{NonNull warning}
+\vspace*{-6ex}
+A NonNull warning is produced whenever an assignment is made to a field or variable that has been declared non\_null but ESC/Java2 cannot determine that the right-hand-side value is not null.
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/NonNull.java}
+\end{figure*}
+produces
+\tiny
+
+\begin{verbatim}
+------------------------------------------------------------------------
+NonNull.java:4: Warning: Possible assignment of null to variable 
+declared non_null (NonNull)
+  public void m(Object oo) { o = oo; } // NonNull warning
+                               ^
+Associated declaration is "NonNull.java", line 2, col 6:
+  /*@ non_null */ Object o;
+      ^
+------------------------------------------------------------------------
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{NonNull warning}
+\vspace*{-9ex}
+But this is OK
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/NonNullOK.java}
+\end{figure*}
+So is this
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/NonNullOK2.java}
+\end{figure*}
+So is this
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/NonNullOK3.java}
+\end{figure*}
+
+\begin{picture}(150,150)(-200,-220)
+\green
+\put(0,0){\shortstack[l]{
+{\knalblue non\_null} can be applied to\\
+- a field\\
+- a formal parameter\\
+- a return value\\
+- a local variable\\
+- ghost and model variables
+}}
+\end{picture}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-6ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+\item[] - {\gray warnings about possible { runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)}
+
+\item[] - {\gray warnings about possible method { specification violations}:
+(Precondition, Postcondition, Modifies)}
+
+\item[] - {\gray non null violations (NonNull, NonNullInit)}
+
+\item[] - {\knalblue loop} and {\knalblue flow} specifications (Assert, Reachable, LoopInv, DecreasesBound)
+
+\item[]
+\begin{itemize}
+\item These are caused by violations of specifications in a routine body
+\end{itemize}
+
+\end{itemize}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Body assertions}
+\scriptsize
+\vspace*{-10ex}
+
+\begin{itemize}
+\item {\knalblue Assert}: warning occurs when an {\blue assert} annotation may not be satisfied
+\item {\knalblue Reachable}: not in JML, only in ESC/Java2; occurs with the
+{\blue //@ unreachable;}
+annotation, which is equivalent to\\ {\blue //@ assert false; }
+\end{itemize}
+\tiny
+Example:
+\begin{figure*}
+\verbatiminput{examples/AssertWarning.java}
+\end{figure*}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Loop assertions}
+\scriptsize
+\vspace*{-10ex}
+
+\begin{itemize}
+\item A {\knalblue loop\_invariant} assertion just before a loop asserts a predicate that is true prior to each iteration and at the termination of the loop (or a {\knalblue LoopInv} warning is issued).
+\item A {\knalblue decreases} assertion just before a loop asserts a (int) quantity that is non-negative and decreases with each iteration (or a {\knalblue DecreasesBound} warning is issued).
+\item {\red Caution: Loops are checked by unrolling a few times}.
+
+\end{itemize}
+
+{
+\tiny
+Example:
+\begin{figure*}
+\verbatiminput{examples/LoopInvWarning.java}
+\end{figure*}
+}
+
+\vspace*{-40ex}
+\begin{picture}(100,100)(-82,75)
+\thicklines
+\red
+\put(58,42){\oval(8,8)}
+\put(152,53){\oval(8,8)}
+\put(82,5){In the scope of the loop variable}
+\put(85,15){\vector(-1,1){23}}
+\put(97,15){\vector(3,2){52}}
+\end{picture}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-6ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+\item[] - {\gray warnings about possible { runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)}
+
+
+\item[] - {\gray warnings about possible method { specification violations}:
+(Precondition, Postcondition, Modifies)}
+
+\item[] - {\gray non null violations (NonNull, NonNullInit)}
+
+\item[] - {\gray loop and flow specifications (Assert, Reachable, LoopInv, DecreasesBound)}
+
+\item[] - { warnings about possible class specification violations}:
+(Invariant, Constraint, Initially)
+
+\end{itemize}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{class invariant warnings}
+
+
+\vspace*{-6ex}
+Invariant and constraint clauses generate additional postconditions for every method.
+If they do not hold, appropriate warnings are generated:
+
+\begin{figure*}
+\tiny
+\verbatiminput{examples/Invariant.java}
+\end{figure*}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Initially warning}
+\vspace*{-6ex}
+An initially clause is a postcondition for every constructor:
+
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/Initially.java}
+\end{figure*}
+produces
+\tiny
+
+\begin{verbatim}
+------------------------------------------------------------------------
+Initially.java:5: Warning: Possible violation of initially condition 
+at constructor exit (Initially)
+  public Initially() { } // does not set i - Initially warning
+                       ^
+Associated declaration is "Initially.java", line 3, col 20:
+  public int i; //@ initially i == 1;
+                    ^
+------------------------------------------------------------------------
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-6ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+\item[] - {\gray warnings about possible { runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)}
+
+\item[] - {\gray warnings about possible method { specification violations}:
+(Precondition, Postcondition, Modifies)}
+
+\item[] - {\gray non null violations (NonNull, NonNullInit)}
+
+\item[] - {\gray loop and flow specifications (Assert, Reachable, LoopInv, DecreasesBound)}
+
+\item[] - { \gray warnings about possible class specification violations:
+(Invariant, Constraint, Initially)}
+
+
+\item[] - {exception problems (Exception)}
+\item[]
+\begin{itemize}
+\item These warnings are caused by undeclared exceptions
+\end{itemize}
+
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Exceptions - Errors}
+
+\vspace*{-6ex}
+\begin{itemize}
+\item Java {\knalblue Errors} (e.g. OutOfMemoryError) can be thrown at any time
+\begin{itemize}
+\item No declarations are needed in throws clauses
+\item No semantics are implied by JML
+\item No checking is performed by ESC/Java2
+\end{itemize}
+\end{itemize}
+
+\begin{picture}(250,120)(0,0)
+\thicklines
+\red
+\put(90,90){Throwable}
+\put(118,88){\vector(-4,-1){75}}
+\put(20,60){Error}
+\put(118,88){\vector(4,-1){75}}
+\put(180,60){Exception}
+\put(206,57){\vector(-3,-1){53}}
+\put(206,57){\vector(3,-1){53}}
+\put(100,30){\it checked exceptions}
+\put(220,30){RuntimeException}
+\put(270,28){\vector(0,-1){20}}
+\put(215,0){\it unchecked exceptions}
+\end{picture}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Checked Exceptions}
+\vspace*{-6ex}
+\begin{itemize}
+\item Java {\knalblue checked} exceptions (e.g. FileNotFoundException) are Exceptions that are not RuntimeExceptions:
+\begin{itemize}
+\item Declarations of exceptions mentioned in the body are required in throws clauses
+\item ESC/Java2 checks during typechecking that throws declarations are correct (as a Java compiler does)
+\item Typically specified in signals clauses in JML
+\item ESC/Java2 checks via reasoning that signals conditions hold
+\item Default specification is that {\it declared} exceptions may occur:  signals (Exception) true;
+\item ESC/Java2 presumes that checked exceptions not declared in a throws clause will not occur.
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Unchecked Exceptions}
+
+\vspace*{-6ex}
+\begin{itemize}
+\item Java {\knalblue unchecked} exceptions (e.g. NoSuchElementException) are RuntimeExceptions:
+\begin{itemize}
+\item Java does not require these to be declared in throws clauses
+\item ESC/Java2 is stricter than Java - it will issue an Exception warning if an unchecked exception might be {\it explicitly} thrown but is not declared in a throws declaration 
+\item Caution: currently ESC/Java2 will assume that an undeclared unchecked exception will not be thrown, even if it is specified in a signals clause - 
+\begin{itemize}
+\item[] Declare all unchecked exceptions that might be thrown! 
+\item[] (e.g. especially when there is no implementation to check).
+\end{itemize}
+\end{itemize}
+
+\end{itemize}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Exception warning}
+\vspace*{-12ex}
+So this
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/Ex.java}
+\end{figure*}
+produces
+{\tiny
+
+\begin{verbatim}
+------------------------------------------------------------------------
+Ex.java:4: Warning: Possible unexpected exception (Exception)
+  }
+  ^
+Execution trace information:
+    Executed then branch in "Ex.java", line 3, col 32.
+    Executed throw in "Ex.java", line 3, col 32.
+
+------------------------------------------------------------------------
+\end{verbatim}
+}
+Turn off this warning by
+\begin{itemize}
+\item declaring the exception in a throws clause
+\item using {\knalblue //@ nowarn Exception; } on the offending line
+\item using a {\knalblue -nowarn Exception} command-line option
+\end{itemize}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-9ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+
+\item[] - {\gray warnings about possible { runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)}
+
+\item[] - {\gray warnings about possible method { specification violations}:
+(Precondition, Postcondition, Modifies)}
+
+\item[] - {\gray non null violations (NonNull, NonNullInit)}
+
+\item[] - {\gray loop and flow specifications (Assert, Reachable, LoopInv, DecreasesBound)}
+
+\item[] - { \gray warnings about possible class specification violations:
+(Invariant, Constraint, Initially)}
+
+
+\item[] - {\gray exception problems (Exception)}
+
+\item[] - {\knalblue multithreading} (Race, RaceAllNull, Deadlock)
+\item[]
+\begin{itemize}
+\item These warnings are caused by potential problems with monitors
+\item Multithreading problems caused by the absence of any synchronization are not detected.
+\end{itemize}
+
+\end{itemize}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Race conditions}
+
+\vspace*{-6ex}
+
+\begin{itemize}
+\item Java defines monitors associated with any object and allows critical sections to be guarded by synchronization statements.
+\item ESC/Java permits fields to be declared as {\blue monitored} by one or more objects.
+\item To read a monitored field, at least one monitor must be held (or a Race warning is issued).
+\item To write a monitored field, all non-null monitors must be held (or a Race warning is issued).
+\item To write a monitored field, at least one of its monitors must be non-null (or a RaceAllNull warning is issued).
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Race warnings}
+\vspace*{-6ex}
+For example, 
+
+\begin{figure*}
+\tiny
+\verbatiminput{examples/RaceWarning.java}
+\end{figure*}
+produces
+\tiny
+\begin{verbatim}
+------------------------------------------------------------------------
+RaceWarning.java:6: Warning: Possible race condition (Race)
+    i = 0; // should have a synchronization guard
+      ^
+Associated declaration is "RaceWarning.java", line 2, col 6:
+  //@ monitored
+      ^
+------------------------------------------------------------------------
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Deadlocks}
+
+\vspace*{-6ex}
+
+\begin{itemize}
+\item Deadlocks occur when each thread of a group of threads needs monitors held by another thread in the group.
+\item One way to avoid this is to always acquire monitors in a specific order.
+\item This requires
+\begin{itemize}
+\item the user state a (partial) order for monitors (typically using an axiom)
+\item that it be clear before acquiring a monitor that the thread does not hold any `larger' monitors (typically a precondition)
+\end{itemize}
+\item Checking for Deadlock warnings is off by default but can be turned on with {\knalblue -warn Deadlock}.
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Deadlock warnings}
+\vspace*{-6ex}
+For example:
+
+\begin{figure*}
+\tiny
+\verbatiminput{examples/DeadlockWarning.java}
+\end{figure*}
+
+\begin{picture}(100,100)(0,0)
+\thicklines
+\red
+\put(120,157){\oval(200,10)}
+\end{picture}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Types of ESC/Java2 warnings}
+\vspace*{-6ex}
+
+ESC/Java2 warnings fall into various categories:
+\begin{itemize}
+
+\item[] - {\gray warnings about possible { runtime exceptions}:
+(Cast, Null, NegSize, IndexTooBig, IndexNegative, ZeroDiv, ArrayStore)}
+
+\item[] - {\gray warnings about possible method { specification violations}:
+(Precondition, Postcondition, Modifies)}
+
+\item[] - {\gray non null violations (NonNull, NonNullInit)}
+
+\item[] - {\gray loop and flow specifications (Assert, Reachable, LoopInv, DecreasesBound)}
+
+\item[] - { \gray warnings about possible class specification violations:
+(Invariant, Constraint, Initially)}
+
+
+\item[] - {\gray exception problems (Exception)}
+
+\item[] - {\gray multithreading (Race, RaceAllNull, Deadlock)}
+
+\item[] - a few others (OwnerNull, Uninit, Unreadable, Writable)
+
+\end{itemize}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Other warnings}
+
+\vspace*{-6ex}
+\begin{itemize}
+\item {\knalblue Uninit}: used with the {\blue uninitialized} annotation
+\item {\knalblue OwnerNull}: see the ESC/Java User Manual for a description
+\item {\knalblue Unreadable}: occurs with the {\blue readable\_if} annotation on shared variables.
+[ JML's change of syntax from {\blue readable\_if} to {\blue readable} is not complete in ESC/Java2.]
+\item {\knalblue Writable}: occurs with the {\blue writable\_if} annotation on shared variables.
+[ JML's change of syntax from {\blue writable\_if} to {\blue writable} is not complete in ESC/Java2.]
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{trace information}
+\vspace*{-9ex}
+For complicated bodies, the warning messages give some information about which
+if-then-else branches caused the warning:
+\begin{figure*}
+\tiny
+
+\verbatiminput{examples/Trace.java}
+\end{figure*}
+\vspace*{-2ex}
+produces
+\tiny
+
+\begin{verbatim}
+Trace.java:8: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Trace.java", line 2, col 6:
+  //@ ensures \result > 0;
+      ^
+Execution trace information:
+    Executed else branch in "Trace.java", line 4, col 4.
+    Executed then branch in "Trace.java", line 5, col 16.
+    Executed return in "Trace.java", line 5, col 16.
+\end{verbatim}
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Counterexamples}
+\vspace*{-6ex}
+\begin{itemize}
+\item Sometimes when a specification is found to be invalid, ESC/Java2 will produce a 
+{\it counterexample context}.
+\item A full context will be produced with the {\knalblue -counterexample} option
+\item These are difficult to read, but can give information about the reason for failure.
+\item They state formulae that the prover believes to be true; if there is something you think should
+not be true, that is a hint about the problem.
+\item[]
+\item Note also: Typically only one warning will be issued in a given run.
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{}
+
+\vspace*{0ex}
+\begin{center}{\large \red Specification tips and pitfalls}\end{center}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#1: Inherited specifications}
+\begin{itemize}
+\item Base class specifications apply to derived classes
+\begin{itemize}
+\item that is, ESC/Java2 enforces {\it behavioral subtyping}
+\item Specs from implemented interfaces also must hold for implementing classes
+\end{itemize}
+\item Be thoughtful about how strict the base class specs should be
+\item Guard them with {\blue \char'134 typeof(this) == \char'134 type(...) } if need be
+\item Restrictions on exceptions such as {\blue normal\_behavior} or {\blue signals (E e) false; }
+will apply to derived classes as well.
+\end{itemize}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#1: Inherited specifications}
+\vspace*{-7ex}
+For example, in the code below
+\begin{itemize}
+\item Parent.m(i) satisfies $i \geq 0 \Rightarrow \result \geq i$
+\item Child.m(i) satisfies \hspace{.5ex} $i \geq 0 \Rightarrow \result \geq i$ 
+\\{\it and} \hspace{14.5ex}  $i \leq 0 \Rightarrow \result \leq i$
+\\so Child.m(0) must be 0.
+\item[]
+\end{itemize}
+{\tiny
+\begin{verbatim}
+  class Parent {
+     //@ requires i >= 0;
+     //@ ensures  \result >= i;
+     int m(int i);
+  }
+
+  class Child extends Parent {
+     //@ also
+     //@   requires i <= 0
+     //@   ensures  \result <= i;
+     int m(int i);
+ }
+\end{verbatim}
+}
+\vspace*{-20ex}
+\begin{picture}(100,100)(0,0)
+\thicklines
+\red
+\put(51,35){\oval(25,8)}
+\put(102,-10){Indicates there are inherited specs}
+\put(100,-3){\vector(-1,1){35}}
+\end{picture}
+
+\vspace*{-20ex}
+\begin{picture}(100,100)(0,0)
+\thicklines
+\green
+\put(200,30){\shortstack[l]{
+Note: In \\
+Parent p = new Parent(); \\
+Parent pc = new Child(); \\
+Child c = new Child();\\
+p.m(i); // i must be >= 0\\
+pc.m(i); // i must be >= 0\\
+c.m(i); // i must be >= 0 or <= 0
+}}
+\end{picture}
+
+\end{slide}
+
+\begin{slide}{\#1: Inherited specifications}
+Another example: two Objects that are == are always also {\knalblue equals}.  But the converse is not
+necessarily true.  But it is true for objects whose dynamic type is Object.
+
+\vspace*{3ex}
+
+\begin{verbatim}
+public class Object {
+  //@ ensures (this == o) ==> \result;
+  /*@ ensures \typeof(this) == \type(Object) 
+              ==> (\result == (this==o));
+  */
+  public boolean equals(Object o);
+}
+\end{verbatim}
+\vspace*{-10ex}
+\begin{picture}(100,100)(0,0)
+\thicklines
+\red
+\put(0,0){True for all Objects}
+\put(58,10){\vector(1,3){32}}
+
+\put(150,10){Not necessarily true for subtypes}
+\put(200,20){\vector(-1,3){20}}
+\end{picture}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#2: Specifying exceptions}
+\vspace*{-8ex}
+\begin{itemize}
+\item A {\blue signals} clause such as \\
+{\blue signals (FileNotFoundException e) true;}\\
+states what must be true if an exception of the stated type is thrown.
+\item It does not say what other exception types may or may not be thrown.
+\item To forbid a particular exception, omit it from the Java throws clause or write \\
+{\blue signals (FileNotFoundException e) false;}\\
+\item To limit the set of allowed exceptions, use a postcondition such as 
+\begin{verbatim}
+/*@ signals (Exception e) e instanceof E1 
+                       || e instanceof E2 
+                       || ... ;
+ */
+\end{verbatim}
+\item To forbid all exceptions use a {\knalblue normal\_behavior} or 
+{\blue signals (Exception e) false;} specification - be careful not to overly restrict derived classes
+\end{itemize}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#3: Aliasing}
+\vspace*{-9ex}
+A common but non-obvious problem that causes violated invariants is aliasing.
+{\tiny
+\begin{verbatim}
+public class Alias {
+  /*@ non_null */ int[] a = new int[10];
+  boolean noneg = true;
+
+  /*@ invariant noneg ==> 
+                 (\forall int i; 0<=i && i < a.length;  a[i]>=0); */
+
+  //@ requires 0<=i && i < a.length;
+  public void insert(int i, int v) {
+    a[i] = v;
+    if (v < 0) noneg = false;
+  }
+}
+\end{verbatim}  
+}
+produces
+{\tiny
+\begin{verbatim}
+Alias.java:12: Warning: Possible violation of object invariant (Invariant)
+  }
+  ^
+Associated declaration is "Alias.java", line 5, col 6:
+  /*@ invariant (\forall int i; 0<=i && i < a.length; 
+\end{verbatim}
+}
+
+\end{slide}
+\begin{slide}{\#3: Aliasing}
+\vspace*{-6ex}
+A full counterexample context ({\blue -counterexample} option) produces, among lots of other information:
+\begin{verbatim}
+
+    brokenObj%0 != this
+    (brokenObj%0).(a@pre:2.24) == tmp0!a:10.4
+    this.(a@pre:2.24) == tmp0!a:10.4
+
+\end{verbatim}
+that is, {\blue this} and some different object ({\blue brokenObj}) share the \\ same  {\blue a} object. 
+
+
+\begin{picture}(150,150)(0,0)
+\red
+\put(38,86){\framebox(55,27){}}
+\put(113,86){\framebox(55,27){}}
+\put(40,90){\shortstack[l]{int noneg \\ int[] a}}
+\put(115,90){\shortstack[l]{int noneg \\ int[] a}}
+\put(175,60){\framebox(75,7){ }}
+\knalblue
+\put(38,118){this}
+\put(113,118){brokenObj}
+\put(175,72){{\it an} int[] {\it object}}
+\green
+\put(75,92){\vector(4,-1){100}}
+\put(150,92){\vector(1,-1){25}}
+\put(75,92){\circle*{5}}
+\put(150,92){\circle*{5}}
+\end{picture}
+\end{slide}
+\begin{slide}{\#3: Aliasing}
+\vspace*{-6ex}
+To fix this, declare that {\blue a} is owned only by its parent object:\\
+( {\blue owner} is a ghost field of java.lang.Object )
+\tiny
+\begin{verbatim}
+public class Alias {
+  /*@ non_null */ int[] a = new int[10];
+  boolean noneg = true;
+
+  /*@ invariant (\forall int i; 0<=i && i < a.length; 
+                       noneg ==> (a[i]>=0)); */
+  //@ invariant a.owner == this;
+
+  //@ requires 0<=i && i < a.length;
+  public void insert(int i, int v) {
+    a[i] = v;
+    if (v < 0) noneg = false;
+  }
+
+  public Alias() {
+    //@ set a.owner = this;
+  }
+}
+\end{verbatim}
+\vspace*{-40ex}
+\begin{picture}(100,100)(0,0)
+\thicklines
+\red
+\put(80,60){\oval(150,10)}
+\put(75,-40){\oval(110,10)}
+\end{picture}
+
+\begin{picture}(150,150)(-150,-80)
+\red
+\put(38,86){\framebox(45,25){\shortstack[l]{int noneg \\ int[] a}}}
+\put(113,86){\framebox(45,25){\shortstack[l]{int noneg \\ int[] a}}}
+\put(170,42){\framebox(45,25){\shortstack[l]{int[] ...... \\ owner}}}
+\put(100,7){\framebox(45,25){\shortstack[l]{int[] ...... \\ owner}}}
+\knalblue
+\put(38,115){this}
+\put(113,115){brokenObj}
+\put(170,70){{\it an} int[] {\it object}}
+\put(100,35){{\it an} int[] {\it object}}
+\green
+\put(70,92){\vector(1,-2){30}}
+\put(145,92){\vector(1,-1){25}}
+\put(70,92){\circle*{5}}
+\put(145,92){\circle*{5}}
+\put(208,50){\circle*{5}}
+\put(138,15){\circle*{5}}
+\put(208,50){\vector(-1,1){50}}
+\put(138,15){\vector(-2,3){55}}
+\end{picture}
+
+\end{slide}
+
+\begin{slide}{\#3: Aliasing}
+\vspace*{-9ex}
+Another example.  This one fails on the postcondition.
+\tiny
+\begin{verbatim}
+public class Alias2 {
+  /*@ non_null */ Inner n = new Inner();
+  /*@ non_null */ Inner nn = new Inner();
+  //@ invariant n.owner == this;
+  //@ invariant nn.owner == this;
+
+  //@ ensures n.i == \old(n.i + 1);
+  public void add() {
+    n.i++;
+    nn.i++;
+  }
+
+  Alias2();
+}
+
+class Inner { 
+  public int i; 
+  //@ ensures i == 0;
+  Inner();
+}
+\end{verbatim}
+\vspace*{-40ex}
+\begin{picture}(100,100)(0,0)
+\thicklines
+\red
+\put(90,82){\oval(170,10)}
+\end{picture}
+
+\end{slide}
+
+\begin{slide}{\#3: Aliasing}
+\begin{itemize}
+\item The counterexample context shows
+\begin{verbatim}
+
+    this.(nn:3.24) == tmp0!n:10.4
+    tmp2!nn:11.4 == tmp0!n:10.4
+
+\end{verbatim}
+\item These hint that {\blue n} and {\blue nn} are references to the same object.
+
+\item If we add the invariant {\blue //@ invariant n != nn; } to forbid aliasing between these two fields, then all is well.
+\end{itemize}
+\end{slide}
+
+\begin{slide}{\#3: Aliasing}
+\begin{itemize}
+
+\item Aliasing is a serious difficulty in verification
+\item Handling aliasing is an active area of research, related to handling frame conditions
+\item It is all about knowing what is modified and what is not
+\item These {\blue owner} fields or the equivalent create a form of encapsulation that can be 
+checked by ESC/Java to control what might be modified by a given operation
+\end{itemize}
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#4: Write object invariants}
+\vspace*{-6ex}
+\begin{itemize}
+\item Be sure that class invariants are about the object at hand.  
+\item Statements about all objects of
+a class may indeed be true, but they are difficult to prove, especially for automated provers.
+
+\item For example, if a predicate P is supposed to hold for objects of type T, then do {\red not} write
+\begin{verbatim}
+//@ invariant (\forall T t; P(t));
+\end{verbatim}
+
+\item Instead, write
+\begin{verbatim}
+//@ invariant P(this);
+\end{verbatim}
+
+\item The latter will make a more provable postcondition at the end of a constructor.
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#5: Inconsistent assumptions}
+\vspace*{-3ex}
+If you have inconsistent specifications you can prove anything:
+
+\verbatimcode{examples/Inconsistent.java}
+\end{slide}
+
+\begin{slide}{\#5: Inconsistent assumptions}
+\vspace*{-3ex}
+Another example:
+
+\verbatimcode{examples/Inconsistent2.java}
+
+We hope to put in checks for this someday!
+
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#6: Exposed references}
+\vspace*{-9ex}
+Problems can arise when a reference to an internal object is exported from a class:
+\begin{figure*}
+\tiny
+\verbatiminput{examples/Exposed.java}
+\end{figure*}
+\vspace*{-3ex}
+\begin{itemize}
+\item ESC/Java does not check that {\it every} allocated object still satisfies its invariants.
+\item Similar hidden problems can result if public fields are modified directly.
+\end{itemize}
+
+\begin{picture}(100,100)(0,0)
+\thicklines
+\red
+\put(165,195){\oval(270,10)}
+\end{picture}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#7: \old}
+\vspace*{-6ex}
+{\knalblue \old} is used to indicate evaluation in the pre-state in a postcondition expression.\\
+\vspace{1ex}
+Consider specifying
+{\tiny
+\begin{verbatim} 
+public static native void arraycopy(Object[] src, int srcPos,
+                                    Object[] dest, int destPos, int length);
+\end{verbatim}
+}
+Try:
+{\tiny
+\begin{verbatim} 
+ensures (\forall int i; 0<=i && i<length; dest[destPos+i] == src[srcPos+i]);
+\end{verbatim}
+}
+
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#7: \old}
+\vspace*{-6ex}
+{\knalblue \old} is used to indicate evaluation in the pre-state in a postcondition expression.\\
+\vspace{1ex}
+Consider specifying
+{\tiny
+\begin{verbatim} 
+public static native void arraycopy(Object[] src, int srcPos,
+                                    Object[] dest, int destPos, int length);
+\end{verbatim}
+}
+Try:
+{\tiny
+\begin{verbatim} 
+ensures (\forall int i; 0<=i && i<length; dest[destPos+i] == src[srcPos+i]);
+\end{verbatim}
+}
+
+{\red
+Wrong!}\\
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#7: \old}
+\vspace*{-6ex}
+{\knalblue \old} is used to indicate evaluation in the pre-state in a postcondition expression.\\
+\vspace{1ex}
+Consider specifying
+{\tiny
+\begin{verbatim} 
+public static native void arraycopy(Object[] src, int srcPos,
+                                    Object[] dest, int destPos, int length);
+\end{verbatim}
+}
+Try:
+{\tiny
+\begin{verbatim} 
+ensures (\forall int i; 0<=i && i<length; dest[destPos+i] == src[srcPos+i]);
+\end{verbatim}
+}
+
+{\red
+Wrong!}\\
+\vspace{1ex}
+Besides exceptions and invalid arguments, don't forget aliasing - {\blue dest} and {\blue src} may be the same array:
+{\tiny
+\begin{verbatim} 
+ensures (\forall int i; 0<=i && i<length; 
+                            dest[destPos+i] == \old(src[srcPos+i]);
+\end{verbatim}
+}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\#7: \old}
+\vspace*{-6ex}
+{\knalblue \old} is used to indicate evaluation in the pre-state in a postcondition expression.\\
+\vspace{1ex}
+Consider specifying
+{\tiny
+\begin{verbatim} 
+public static native void arraycopy(Object[] src, int srcPos,
+                                    Object[] dest, int destPos, int length);
+\end{verbatim}
+}
+Try:
+{\tiny
+\begin{verbatim} 
+ensures (\forall int i; 0<=i && i<length; dest[destPos+i] == src[srcPos+i]);
+\end{verbatim}
+}
+
+{\red
+Wrong!}\\
+\vspace{1ex}
+Besides exceptions and invalid arguments, don't forget aliasing - {\blue dest} and {\blue src} may be the same array:
+{\tiny
+\begin{verbatim} 
+ensures (\forall int i; 0<=i && i<length; 
+                            dest[destPos+i] == \old(src[srcPos+i]);
+\end{verbatim}
+}
+And don't forget the other elements:
+{\tiny
+\begin{verbatim} 
+ensures (\forall int i; (0<=i && i<destPos) || 
+                              (destPos+length <= i && i < destPos.length); 
+                            dest[i] == \old(dest[i]);
+\end{verbatim}
+}
+
+
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Getting started}
+\vspace*{-6ex}
+\begin{itemize}
+\item Start with foundation and library routines
+\item For each field: should it be {\knalblue non\_null}?
+\item For each reference field: should an {\knalblue owner} field be set for it?
+\item For each method: should it be {\knalblue pure}?  Should the arguments or the result be {\knalblue non\_null}?
+\item For each class: what {\knalblue invariant} expresses the self-consistency of the internal data?
+\item Add {\knalblue pre-} and {\knalblue post-conditions} to limit the inputs and outputs of each method.
+\item Add possible unchecked {\knalblue exceptions} to throws clauses.
+\item Start with simple specifications; proceed to complex ones as they have value.
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}{Getting started}
+\begin{itemize}
+\item Separate conjunctions to get information about which conjunct is violated. Use
+{\tiny \begin{verbatim}
+requires A;
+requires B;
+\end{verbatim}
+}
+not
+{\tiny \begin{verbatim}
+requires A && B;
+\end{verbatim}
+}
+
+\item Use {\knalblue assert} statements to find out what is going wrong.  Use {\knalblue assume} statements {\red \it that you KNOW are correct} to help the prover along.
+\end{itemize}
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{\it Finally}
+\begin{itemize}
+
+\item Specification is {\green tricky} - getting it right is hard, even with tools
+
+\item {\green Try it} - a substantial research gap is experience on industrial-scale sets of code
+
+\item {\green Communicate} - we are willing to offer advice
+
+\item {\green Share} your experience - tools will get better and we will all learn better techniques for 
+successful specification (use JML and ESC/Java mailing lists)
+
+
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

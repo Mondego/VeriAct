@@ -1,0 +1,14 @@
+-quiet -plainwarning -notrace -noSemicolonWarnings -nowarn Modifies
+ZEROTH
+FIRST
+SECOND
+THIRD
+Warning: Cannot parse a class file: ./A.class
+Error: No files read.
+1 warning
+1 error
+FOURTH
+Warning: Cannot parse a class file: ./A.class
+Error: No files read.
+1 warning
+1 error

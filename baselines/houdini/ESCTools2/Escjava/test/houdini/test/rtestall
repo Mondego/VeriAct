@@ -1,0 +1,8 @@
+#!/bin/sh -f
+
+# use: rtestall FLAGS
+
+for f in `grep Good alltests | awk '{print $1;}'`; do
+#echo $f
+./rtest $f $*
+done

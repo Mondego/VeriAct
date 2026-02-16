@@ -1,0 +1,60 @@
+ESC/Java version VERSION
+  Prover started:TIME
+
+Helper ...
+
+Helper: m() ...
+    [TIME]  passed immediately
+
+Helper: mm() ...
+    [TIME]  passed immediately
+
+Helper: p() ...
+------------------------------------------------------------------------
+Helper.java:25: Warning: Possible violation of object invariant (Invariant)
+        public void p() { i=10; return; }
+                                        ^
+Associated declaration is "Helper.java", line 29, col 12:
+        //@ public invariant i == 0;
+                   ^
+Possibly relevant items from the counterexample context:  
+  brokenObj == this
+(brokenObj* refers to the object for which the invariant is broken.)
+
+Execution trace information:
+    Executed return in "Helper.java", line 25, col 25.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper: n() ...
+------------------------------------------------------------------------
+Helper.java:12: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Helper.java", line 7, col 5:
+        //@ ensures i == 6;
+            ^
+Execution trace information:
+    Executed call in "Helper.java", line 32, col 2.
+    Executed implicit return in "Helper.java", line 12, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper: Helper() ...
+    [TIME]  passed immediately
+
+Helper: Helper(int) ...
+    [TIME]  passed
+  [TIME total]
+
+H2 ...
+
+H2: mmm() ...
+    [TIME]  passed immediately
+
+H2: H2() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

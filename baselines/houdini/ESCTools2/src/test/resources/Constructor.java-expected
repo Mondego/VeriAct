@@ -1,0 +1,25 @@
+ESC/Java version VERSION
+src|test|resources|Constructor.java: Caution: Using given file as the .java file, even though it is not the java file for Constructor on the classpath
+    [TIME]
+
+Constructor ...
+  Prover started:TIME
+    [TIME]
+
+Constructor: Constructor(int) ...
+------------------------------------------------------------------------
+src|test|resources|Constructor.java:15: Warning: Possible violation of modifies clause (Modifies)
+        public Constructor(int i) { k++; j=i; }
+                                  ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|Constructor.java", line 8, col 2:
+                modifies j,k,this.*;
+                ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Constructor: m() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

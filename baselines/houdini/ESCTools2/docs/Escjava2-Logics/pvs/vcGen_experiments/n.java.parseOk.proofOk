@@ -1,0 +1,192 @@
+escjava_logic : THEORY
+  BEGIN
+    IMPORTING escjava_java_semantics,
+              escjava_jml_semantics,
+              escjava_lock_semantics
+%               escjava_arrays
+
+EXPLIES( a, b : bool) : bool = a OR (NOT b) 
+
+% exceptionEqAxiom : AXIOM
+%   FORALL(a, b : S) :
+%     java_lang_Throwable__stackTrace(a,b) = getStackTrace__state(a,b) 
+ 
+
+ecReturn : S
+ecThrow : S;
+
+distinctAxiom : AXIOM
+NOT refEQ
+(ecReturn, ecThrow)
+java_lang_Throwable__stackTrace
+(a : S ,b : S)
+: S
+getStackTrace__state
+(a : S ,b : S)
+: S
+;
+
+exceptionEqAxiom : AXIOM
+  FORALL(a, b : S) :
+    java_lang_Throwable__stackTrace(a,b) = getStackTrace__state(a,b) 
+
+testTheorem : THEOREM
+FORALL
+(
+  vc_N_f_3_4 , elems_pre , alloc_pre , state_pre , state : S , x_6_28 , y_6_34 : real , Pre_0_4_8 , brokenObj , java_lang_Throwable__stackTrace , getStackTrace__state , brokenObj_1_ , ZeroDiv_8_9 : S , RES : real , trace_Return_0_8_1 , Exception_10_4 , Post_3_4_10_4 , XRES , T_java_lang_Exception : S )
+:
+
+
+(EXPLIES
+  (
+    %LBLNEGvc_N_f_3_4% 
+    (
+      (refEQ
+        (elems_pre, elems)
+        )
+      AND
+      (refEQ
+        (elems, asElems
+          (elems)
+          )
+        )
+      AND
+      (refEQ
+        (LS, asLockSet
+          (LS)
+          )
+        )
+      AND
+      (refEQ
+        (state_pre, state)
+        )
+      )
+    IMPLIES
+    (
+      (
+        (%LBLNEGPre_0_4_8% 
+          /=
+          (y_6_34, 0)
+          )
+        AND
+        (
+          (FORALL 
+            (brokenObj : S)
+            : 
+            refEQ
+            (java_lang_Throwable__stackTrace
+              (state, brokenObj)
+              , getStackTrace__state
+              (state, brokenObj)
+              )
+            )
+          )
+        AND
+        (
+          (FORALL 
+            (brokenObj_1_ : S)
+            : 
+            refEQ
+            (java_lang_Throwable__stackTrace
+              (state, brokenObj_1_)
+              , getStackTrace__state
+              (state, brokenObj_1_)
+              )
+            )
+          )
+        AND
+        (
+          (
+            (%LBLNEGZeroDiv_8_9% 
+              /=
+              (y_6_34, 0)
+              )
+            )
+          OR
+          (
+            (%LBLNEGZeroDiv_8_9% 
+              /=
+              (y_6_34, 0)
+              )
+            AND
+            (=
+              (RES, /=
+                (x_6_28, y_6_34)
+                )
+              )
+            AND
+            (%LBLPOStrace_Return_0_8_1% 
+              true )
+            AND
+            (
+              (FORALL 
+                (brokenObj : S)
+                : 
+                refEQ
+                (java_lang_Throwable__stackTrace
+                  (state, brokenObj)
+                  , getStackTrace__state
+                  (state, brokenObj)
+                  )
+                )
+              )
+            AND
+            (
+              (FORALL 
+                (brokenObj_1_ : S)
+                : 
+                refEQ
+                (java_lang_Throwable__stackTrace
+                  (state, brokenObj_1_)
+                  , getStackTrace__state
+                  (state, brokenObj_1_)
+                  )
+                )
+              )
+            AND
+            (
+              (
+                (%LBLNEGException_10_4% 
+                  refEQ
+                  (ecReturn, ecReturn)
+                  )
+                )
+              OR
+              (
+                (%LBLNEGException_10_4% 
+                  refEQ
+                  (ecReturn, ecReturn)
+                  )
+                AND
+                (
+                  (%LBLNEGPost_3_4_10_4% 
+                    (
+                      (refEQ
+                        (ecReturn, ecThrow)
+                        )
+                      AND
+                      (<=
+                        (typeof
+                          (XRES)
+                          , T_java_lang_Exception)
+                        )
+                      )
+                    IMPLIES
+                    (
+                      (/=
+                        (y_6_34, 0)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    ,true)
+  )
+
+END escjava_logic
+

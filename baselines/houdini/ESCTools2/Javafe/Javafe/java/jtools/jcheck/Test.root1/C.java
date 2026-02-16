@@ -1,0 +1,4 @@
+interface Ambiguous {};
+
+class C {};
+

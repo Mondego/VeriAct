@@ -1,0 +1,4 @@
+Neg.java:4: verify: The prover cannot establish an assertion (ArithmeticOperationRange) in method Absolute: int negation
+		return -num;
+		       ^
+1 verification failure

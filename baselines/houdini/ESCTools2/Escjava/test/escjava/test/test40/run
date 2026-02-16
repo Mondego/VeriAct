@@ -1,0 +1,11 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} -stages 1 $* TypeChecking.java
+
+${ESCJ} $* Basic.java Param.java Inherit.java Local.java Static.java NonNullInit.java Methods.java
+${ESCJ} $* -pgc Check.java | \
+  grep "ASSERT.*Null" | grep -v "OwnerNull" | \
+  sed 's/refNE.*/refNE.../' | \
+  sed 'sX/[0-9]*\([@:]\)X\1X' | \
+  sed 's/^ *ASSERT/ASSERT/'

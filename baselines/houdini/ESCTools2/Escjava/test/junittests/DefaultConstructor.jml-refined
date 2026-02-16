@@ -1,0 +1,4 @@
+public class DefaultConstructor {
+
+	public DefaultConstructor(int i);
+}

@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|EmptyEx.java: Caution: Using given file as the .java file, even though it is not the java file for EmptyEx on the classpath
+    [TIME]
+
+EmptyEx ...
+  Prover started:TIME
+    [TIME]
+
+EmptyEx: EmptyEx() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

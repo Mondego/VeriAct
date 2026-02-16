@@ -1,0 +1,67 @@
+ModChecks.java:43: Warning: Possible violation of modifies clause (Modifies)
+                this.i = 9;  // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 39, col 5:
+        //@ modifies o.i,k;
+            ^
+ModChecks.java:48: Warning: Possible violation of modifies clause (Modifies)
+                o.k = 9;     // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 46, col 5:
+        //@ modifies o.i,k;
+            ^
+ModChecks.java:83: Warning: Possible violation of modifies clause (Modifies)
+                if (i != 0) j = 1; // WARNING
+                            ^
+Associated declaration is "ModChecks.java", line 81, col 5:
+        //@ modifies k;
+            ^
+Execution trace information:
+    Executed then branch in "ModChecks.java", line 83, col 14.
+
+ModChecks.java:84: Warning: Possible violation of modifies clause (Modifies)
+                else k = 9;        // WARNING
+                     ^
+Associated declaration is "ModChecks.java", line 79, col 5:
+        //@ modifies j;
+            ^
+Execution trace information:
+    Executed else branch in "ModChecks.java", line 84, col 7.
+
+ModChecks.java:90: Warning: Possible violation of modifies clause (Modifies)
+                a[1] = 9; // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 87, col 5:
+        //@ modifies a[0];
+            ^
+ModChecks.java:95: Warning: Possible violation of modifies clause (Modifies)
+                b[0] = 0; // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 93, col 5:
+        //@ modifies a[0];
+            ^
+ModChecks.java:108: Warning: Possible violation of modifies clause (Modifies)
+                b[0] = 0; // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 104, col 5:
+        //@ modifies a[*];
+            ^
+ModChecks.java:112: Warning: Possible violation of modifies clause (Modifies)
+                a[1] = 9; // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 110, col 5:
+        //@ modifies a[2 .. 4];
+            ^
+ModChecks.java:124: Warning: Possible violation of modifies clause (Modifies)
+                a[5] = 9; // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 122, col 5:
+        //@ modifies a[2 .. 4];
+            ^
+ModChecks.java:172: Warning: Possible violation of modifies clause (Modifies)
+                o.i = 0;  // WARNING
+                ^
+Associated declaration is "ModChecks.java", line 170, col 5:
+        //@ modifies this.*;
+            ^
+10 warnings

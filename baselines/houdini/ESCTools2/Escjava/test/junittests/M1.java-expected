@@ -1,0 +1,40 @@
+ESC/Java version VERSION
+    [TIME]
+
+M1 ...
+  Prover started:TIME
+    [TIME]
+
+M1: M1() ...
+    [TIME]  passed immediately
+
+M1: P(java.lang.Object) ...
+    [TIME]  passed
+
+M1: m(java.lang.Object) ...
+------------------------------------------------------------------------
+M1.java:30: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "M1.java", line 17, col 8:
+        ensures !\result;
+        ^
+Execution trace information:
+    Executed else branch in "M1.java", line 26, col 4.
+    Executed return in "M1.java", line 29, col 4.
+
+------------------------------------------------------------------------
+M1.java:30: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "M1.java", line 22, col 8:
+        ensures \result;
+        ^
+Execution trace information:
+    Executed then branch in "M1.java", line 26, col 14.
+    Executed return in "M1.java", line 27, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+2 warnings

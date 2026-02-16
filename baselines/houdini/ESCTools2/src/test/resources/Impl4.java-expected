@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+src|test|resources|Impl4.java: Caution: Using given file as the .java file, even though it is not the java file for Impl4 on the classpath
+    [TIME]
+
+Impl4 ...
+  Prover started:TIME
+    [TIME]
+
+Impl4: unique() ...
+    [TIME]  passed
+
+Impl4: clear() ...
+    [TIME]  passed
+
+Impl4: Impl4() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution

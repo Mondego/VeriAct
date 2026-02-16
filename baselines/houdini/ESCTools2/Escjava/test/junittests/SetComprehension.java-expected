@@ -1,0 +1,14 @@
+ESC/Java version VERSION
+    [TIME]
+
+SetComprehension ...
+  Prover started:TIME
+    [TIME]
+
+SetComprehension: SetComprehension() ...
+SetComprehension.java:7: Fatal error: Set comprehension is not supported
+        //@ ghost Object o = new JMLObjectSet { Object ooo| oo.has(ooo ...
+                                                ^
+    [TIME]  error
+  [TIME total]
+1 error

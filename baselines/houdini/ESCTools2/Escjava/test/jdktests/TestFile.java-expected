@@ -1,0 +1,16 @@
+TestFile.java:39: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestFile.java", line 12, col 6.
+    Routine call returned exceptionally in "TestFile.java", line 19, col 6.
+    Routine call returned exceptionally in "TestFile.java", line 26, col 6.
+    Routine call returned exceptionally in "TestFile.java", line 34, col 6.
+
+TestFile.java:62: Warning: Possible assertion failure (Assert)
+      //@ assert false; //assertTrue (false);
+          ^
+Execution trace information:
+    Routine call returned exceptionally in "TestFile.java", line 53, col 16.
+
+2 warnings

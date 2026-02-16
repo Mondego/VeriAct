@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ "$JDK_BINARIES" ]; then
+    export JBIN="-bootclasspath ${JDK_BINARIES}"
+else
+    unset JBIN
+fi
+
+export TOOLCMD="${JAVA} -mx40m javafe.test.Print -classpath `pwd`:${CLASSPATH}: ${JBIN}"
+
+export TOOLARGS="-noprint -typecheck"
+
+export TOOL="${TOOLCMD} ${TOOLARGS} -classpath `pwd`"
+
+./run |& sed "s|`pwd`|<TEST>|g"

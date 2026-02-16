@@ -1,0 +1,66 @@
+package javacard.security;
+
+public final class KeyPair {
+
+  public static final byte ALG_DSA;
+  public static final byte ALG_EC_F2M;
+  public static final byte ALG_EC_FP;
+  public static final byte ALG_RSA;
+  public static final byte ALG_RSA_CRT;
+
+  //@ invariant ALG_DSA == 3;
+  //@ invariant ALG_EC_F2M == 4;
+  //@ invariant ALG_EC_FP == 5;
+  //@ invariant ALG_RSA == 1;
+  //@ invariant ALG_RSA_CRT == 2;
+
+  /*@ invariant _privateKey != null; @*/
+  private PrivateKey _privateKey;
+
+  /*@ invariant _publicKey != null; @*/
+  private PublicKey _publicKey;
+
+  /*@ normal_behavior 
+        requires algorithm == ALG_DSA ||
+	  algorithm == ALG_EC_F2M || algorithm == ALG_EC_FP ||
+	  algorithm == ALG_RSA || algorithm == ALG_RSA_CRT;
+	requires keyLength > 0 ;
+	ensures !_privateKey._initialized && !_publicKey._initialized;
+	assignable _privateKey, _publicKey;
+  @*/
+  public KeyPair(
+    byte algorithm, short keyLength) 
+      throws CryptoException;
+
+  /*@ normal_behavior 
+        requires privateKey != null && publicKey != null;
+	ensures _privateKey == privateKey && _publicKey == publicKey;
+	assignable _privateKey, _publicKey;
+  @*/
+  public KeyPair(
+    PublicKey publicKey, PrivateKey privateKey)
+      throws CryptoException;
+      
+  /*@ normal_behavior 
+        requires true;
+	ensures _privateKey._initialized && _publicKey._initialized;
+	assignable _privateKey._initialized, _publicKey._initialized;
+  @*/
+  public final void genKeyPair() throws CryptoException;
+  
+
+  /*@ normal_behavior 
+        requires true;
+	ensures \result == _publicKey;
+	assignable \nothing;
+  @*/
+  public PublicKey getPublic();
+
+  /*@ normal_behavior 
+        requires true;
+	ensures \result == _privateKey;
+	assignable \nothing;
+  @*/
+  public PrivateKey getPrivate();
+
+}

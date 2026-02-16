@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+    [TIME]
+
+RootInterface ...
+  Prover started:TIME
+    [TIME]
+
+RootInterface: m() ...
+    [TIME]  passed immediately
+  [TIME total]

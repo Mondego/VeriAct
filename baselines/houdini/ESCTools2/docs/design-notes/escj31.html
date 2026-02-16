@@ -1,0 +1,170 @@
+
+<html>
+<head>
+<title>ESCJ 31: Naming, revised</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<h1>ESCJ 31:  Naming, revised</h1>
+<p>By Rustan Leino and Todd Millstein, 28 Aug 1999.</p>
+<p>This note describes revisions to the naming scheme used in ESC/Java, as described 
+  in ESCJ 23b.</p>
+
+<h2>Arbitrary-value variables</h2>
+  The <i>random</i> variables (<i>arbitrary-value</i> variables) had been
+  used to represent arbitrary values 
+  of a certain variables. In particular, they were used</p>
+<ol>
+  <li value="0">as zero-equivalent value initially assigned to reference-typed 
+    or <tt>TYPE</tt>-typed instance fields inside a constructor, and</li>
+  <li>as the new, arbitrary value of a variable modified as a result of a routine 
+    call.</li>
+</ol>
+<p>Previously, the random variables had the form <tt>random</tt><i>N</i>, where 
+  <i>N</i> is a natural number (generated in sequence for subsequent random variables). 
+  Now, they have the respective forms:</p>
+<ol>
+  <li value="0"><i>f</i><tt>@zero</tt> where <i>f</i> is the name of the instance 
+    field.</li>
+  <li>If the modified variable is one of the special variables <TT>EC</TT>, <TT>RES</TT>, 
+    or <TT>XRES</TT>, then the name of the random variable is <TT>EC:</TT><i>L</i>, 
+    <TT>RES:</TT><i>L</i>, and <TT>XRES:</TT><i>L</i>, where <i>L</i> is the location 
+    of the call. If the modified variable is not one of these special variables, 
+    then the name of the random variable is <TT>after@</TT><i>L</i>, where again 
+    <i>L</i> is the location of the call.</li>
+</ol>
+<p>Note that <TT>EC</TT>, <TT>RES</TT>, and <TT>XRES</TT> may now be followed
+  by <tt>:</tt><i>L</i>, where previously (in ESCJ 23b) this was not possible.
+
+<h2>Temporary variables</h2>
+  The temporary (<tt>tmp</tt>) variables used as temporary variables for various 
+  purposes. Previously, they had the form <TT>tmp</TT><i>N</i>, where <i>N</i> 
+  is a natural number (generated in sequence for subsequent temporary variables). 
+  Now they have one of the forms <TT>tmp</TT><i>N</i><tt>:</tt><i>L</i> and <TT>tmp</TT><i>N</i><TT>!</TT><i>S</i><TT>:</TT><i>L</i>, 
+  where <i>N</i> is as before a natural number, <i>S</i> is a suffix string (described 
+  below), and <i>L </i>is a location. The suffix <i>S</i> is used to provide more 
+  information in the name of the temporary variable. In general, the location 
+  <i>L</i> used on a temporary is the <i>primary</i> location (described below) 
+  of the source expression whose value the temporary variable holds. The primary 
+  location is some location within an expression that uniquely determines the 
+  expression. The following table explains the primary locations of expressions:</p>
+<table width="94%" border="1">
+  <tr> 
+    <td width="31%"><b>Temp holds value of:</b></td>
+    <td width="20%"><b>Suffix</b></td>
+    <td width="49%"><b>Primary location</b></td>
+  </tr>
+  <tr> 
+    <td width="31%" height="20">unary operation</td>
+    <td width="20%" height="20">&nbsp;</td>
+    <td width="49%" height="20">start location of the operator</td>
+  </tr>
+  <tr> 
+    <td width="31%">~binary operation</td>
+    <td width="20%">&nbsp;</td>
+    <td width="49%">start location of the operator</td>
+  </tr>
+  <tr> 
+    <td width="31%">method invocation <i>m</i><tt>(...)</tt></td>
+    <td width="20%"><i>m</i></td>
+    <td width="49%">location of <tt>(</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%"><tt>E</tt> in <tt>switch (E) { ...</tt> <tt></tt></td>
+    <td width="20%"><tt>switch</tt></td>
+    <td width="49%">start location of <tt>E</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%"><tt>E</tt> in <tt>synchronized (E) { ...</tt> </td>
+    <td width="20%"><tt>synchronized</tt></td>
+    <td width="49%">start location of <tt>E</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">arrayinit <tt>{E0, ...</tt> <tt></tt></td>
+    <td width="20%"><tt>arrayinit</tt></td>
+    <td width="49%">location of <tt>{</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%"><tt>new </tt><i>T</i><tt>[E]</tt></td>
+    <td width="20%"><tt>new!</tt><i>T</i><tt>[]</tt></td>
+    <td width="49%">location of <tt>new</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%"><tt>new </tt><i>T</i><tt>(...)</tt></td>
+    <td width="20%"><tt>new!</tt><i>T</i></td>
+    <td width="49%">location of <tt>(</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%"><tt>G ? E0 : E1</tt></td>
+    <td width="20%"><tt>cond</tt></td>
+    <td width="49%">location of <tt>?</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%"><tt>E0 && E1</tt></td>
+    <td width="20%"><tt>cand</tt></td>
+    <td width="49%">location of <tt>&amp;&amp;</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%"><tt>E0 || E1</tt></td>
+    <td width="20%"><tt>cor</tt></td>
+    <td width="49%">location of <tt>||</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">variable access <i>x</i></td>
+    <td width="20%"><i>x</i></td>
+    <td width="49%">location of <i>x</i></td>
+  </tr>
+  <tr> 
+    <td width="31%">result of <i>x</i> <tt>assignOp E</tt> when result is the new value of <i>x</i></td>
+    <td width="20%"><i>x</i><tt>=</tt></td>
+    <td width="49%">location of <tt>assignOp</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">old value of <i>x</i> in <i>x</i> <tt>assignOp E</tt></td>
+    <td width="20%"><tt>old!</tt><i>x</i></td>
+    <td width="49%">location of <tt>assignOp</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">field access <tt>o.</tt><i>f</i></td>
+    <td width="20%"><i>f</i></td>
+    <td width="49%">location of <i>f</i></td>
+  </tr>
+  <tr> 
+    <td width="31%">result of <tt>o.</tt><i>f</i> <tt>assignOp E</tt> when result is the new value of <tt>o.</tt><i>f</i></td>
+    <td width="20%"><i>f</i><tt>=</tt></td>
+    <td width="49%">location of <tt>assignOp</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">old value of <tt>o.</tt><i>f</i> in <tt>o.</tt><i>f</i> <tt>assignOp E</tt></td>
+    <td width="20%"><tt>old!</tt><i>f</i></td>
+    <td width="49%">location of <tt>assignOp</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">array access <tt>a[i]</tt></td>
+    <td width="20%">&nbsp;</td>
+    <td width="49%">location of <tt>[</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">result of <tt>a[i] assignOp E</tt> when result is the new value of <tt>a[i] assignOp E</tt></td>
+    <td width="20%">&nbsp;</td>
+    <td width="49%">location of <tt>assignOp</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">old value of <tt>a[i] assignOp E</tt></td>
+    <td width="20%"><tt>old</tt></td>
+    <td width="49%">location of <tt>assignOp</tt></td>
+  </tr>
+  <tr> 
+    <td width="31%">value of object designator <i>o</i> in field access <i>o</i><tt>.f</tt>, when this object designator needs to be protected in the course of performing read or write check</td>
+    <td width="20%"><tt>od</tt></td>
+    <td width="49%">location associated with the corresponding read or write check</td>
+  </tr>
+</table>
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</body>
+</html>

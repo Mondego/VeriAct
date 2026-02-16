@@ -1,0 +1,4 @@
+Second.java:6: Fatal error: type Duplicated already defined at "First.java", line 6, col 0
+class Duplicated {}     // This declaration occurs twice...
+^
+1 error

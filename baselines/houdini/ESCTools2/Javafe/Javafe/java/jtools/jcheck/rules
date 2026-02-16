@@ -1,0 +1,58 @@
+Proposed rules for jcheck to check for a given package P:
+
+
+All files in P actually belong to package P:
+
+    (1) All source files (*.java) in P must be declared to be in P
+	[if P is the unnamed package, then the files must not contain a
+	 "package Q;" declaration.]	
+
+    (2) Each T$I$...$K.class file must declare (only?) the reference-type
+	P.T.I....K
+
+
+No ambiguous names (i.e., same name for both a package and a reference
+type) exist:
+
+    (3 If a file named T.java contains a declaration of a reference type
+	with simple name K, then P.T and P.K must not name packages in
+	the classpath
+
+    (4) If a T$I$..$K.class exists then P.T must not name a package in
+	the classpath 
+
+
+Files are properly named w.r.t. their contents:
+
+    (5) Any file named T.java must contain a declaration of a reference
+	type with simple name T.
+
+    [rule 2 also checks this]
+
+
+Inter-file access restrictions are obeyed properly:
+
+    (6) If a file named T.java contains a declaration of a reference type
+	with simple name K, K <> T, then K must not be declared in that
+	file as public;
+
+	moreover, K may not be referred to outside of the T.java file
+	[NOT CHECKED]
+
+
+
+
+
+    (4) If a T$I$..$K$J.class exists then a T$I$..$K.class must exist
+
+
+Shadowing checks:  ???
+
+    () ?no duplicate source files?
+
+    () ?no duplicate reference-type declarations?
+
+    () ?how handle duplicate binaries?
+
+
+What about .spec files?

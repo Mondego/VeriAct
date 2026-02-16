@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+src|test|resources|Client1.java: Caution: Using given file as the .java file, even though it is not the java file for Client1 on the classpath
+    [TIME]
+
+Client1 ...
+  Prover started:TIME
+    [TIME]
+
+Client1: unique(IntList) ...
+    [TIME]  passed
+
+Client1: clear(IntList) ...
+    [TIME]  passed
+
+Client1: Client1() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution

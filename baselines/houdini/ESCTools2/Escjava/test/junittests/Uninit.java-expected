@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+Uninit ...
+  Prover started:TIME
+    [TIME]
+
+Uninit: m() ...
+------------------------------------------------------------------------
+Uninit.java:7: Warning: Possible dynamic use before meaningful assignment of local variable (Uninit)
+                int j = i;
+                        ^
+Associated declaration is "Uninit.java", line 5, col 5:
+                //@uninitialized
+                   ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Uninit: Uninit() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

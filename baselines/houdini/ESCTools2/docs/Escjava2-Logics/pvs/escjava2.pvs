@@ -1,0 +1,483 @@
+% The ESC/Java2 sorted logic.
+%
+% This is the sorted logic used by ESC/Java2.
+%
+% $Id$
+%
+% It was written by Joe Kiniry, Cesare Tinelli, Patrice Chalin, and
+% Clement Hurlin in 2005.
+%
+% This is the canonical sorted logic which is to be translated
+% automatically into SMT-LIB by either an external script or by a new
+% extension to PVS (to be written by folks at UCD).
+
+escjava2_types : THEORY
+  BEGIN
+    S : TYPE+
+
+    % Java base types.
+    Boolean : TYPE+ FROM bool
+    % Eventually we'll refine IntegralNumber to bounded, modular ints.
+    % All of these numeric types inherit from the PVS type "number".
+    IntegralNumber : TYPE+ FROM int
+    % The same thing holds true for this bad-boy.
+    FloatingPointNumber : TYPE+ FROM real
+    BigIntNumber : TYPE+ FROM int
+    RealNumber : TYPE+ FROM real
+    % We would love to define these as supertypes of these component
+    % types but we cannot because we are relying upon PVS prelude
+    % types for their semantics.  Number is the supertype of all
+    % Java integral types and JML numeric types.
+    Number : TYPE+ = number
+    BasicValue : TYPE+ = [Boolean + Number]
+    Reference : TYPE+
+    ArrayReference : TYPE+ FROM Reference
+    JMLNumber : TYPE+ = [Number + BigIntNumber + RealNumber]
+
+    % Sorts representing the various kinds of object fields in Java.
+    Field : TYPE+
+    BooleanField, NumberField, ReferenceField : TYPE+ FROM Field
+
+    % These two PVS types represent the actual Java types.
+    JavaType : TYPE+
+    PrimitiveType, ReferenceType : TYPE+ FROM JavaType
+    ArrayType : TYPE+ FROM ReferenceType
+    JavaTypes_are_disjoint : AXIOM 
+      FORALL(p : PrimitiveType, r : ReferenceType): p /= r
+
+    Time : TYPE FROM int
+    Lock : TYPE+
+    % @review JoeK, CesareT: It is unclear if we need Object at
+    % all; reconsider later.
+    Object : TYPE+
+
+  END escjava2_types
+
+map_theory[Map : TYPE+, Index : TYPE+, Value : TYPE+] : THEORY
+  BEGIN
+
+    get : [ Map, Index -> Value ]
+    set : [ Map, Index, Value -> Map ]
+
+    get_and_set_definition : AXIOM
+      FORALL(m : Map, i : Index, v : Value ) :
+             get(set(m, i, v), i) = v
+
+    set_only_changes_one_index : AXIOM
+      FORALL(m : Map, i,j : Index, v : Value) :
+             i /= j IMPLIES get(set(m, i, v), j) = get(m, j)
+
+  END map_theory
+
+escjava2_java_typesystem : THEORY
+  BEGIN
+    IMPORTING escjava2_types,
+              orders[JavaType]
+    t, u : ReferenceType
+
+    % <: is <=
+    % < is <
+    <,<= : [ ReferenceType, ReferenceType -> bool ]
+
+    % === ESCJ 8: Section 1.1
+
+    % We will use '<=' in PVS for '<:' in the Simplify logic.  Thus,
+    % <= is reflexive, transitive, and antisymmetric.
+
+    comparison_is_a_strict_order : POSTULATE strict_order?(<)
+    % Add an axiom to relate these two orders and define subtyping (<=) as a
+    % partial order.
+    subtype_definitions: AXIOM
+      FORALL(t : ReferenceType, u : ReferenceType) : 
+             t <= u IFF t < u OR t = u
+
+    % The base type in Java (java.lang.Object).
+
+    T_java_lang_Object : ReferenceType
+
+    % Primitive types are final.
+
+    T_boolean, T_char, T_byte, T_short, T_int, T_long, T_float, T_double : PrimitiveType
+
+    % primitive? is no longer necessarily because the existence of
+    % PrimitiveType.
+
+    % extends? is Java's "extends" and "implements" (direct subtype)
+    extends? : [ ReferenceType, ReferenceType -> bool ]
+    extends_is_irreflexive : POSTULATE irreflexive?(extends?)
+
+    subtype_includes_extends : AXIOM
+      FORALL(t : ReferenceType, u : ReferenceType) :
+        extends?(t, u) IMPLIES t <= u
+
+    subtype_is_a_relation_that_contains_extends : AXIOM
+      FORALL(t : ReferenceType, u : ReferenceType) :
+        t <= u AND t /= u IMPLIES
+        EXISTS(v : ReferenceType) : extends?(t, v) AND v <= u
+
+    % Note that this is a higher-order axiom that cannot be translated
+    % to SMT-LIB.
+    subtype_is_the_smallest_relation_that_contains_extends : AXIOM
+      FORALL(r : [ ReferenceType, ReferenceType -> bool ],
+             t : ReferenceType, u : ReferenceType) : 
+        t <= u AND t /= u IMPLIES r(t, u)
+
+    primative_types_are_final : AXIOM
+      FORALL (t : JavaType, p : PrimitiveType): t <= p IMPLIES t = p
+    primative_types_have_no_proper_supertypes : AXIOM
+      FORALL (p : PrimitiveType, t : JavaType): p <= t IMPLIES p = t
+
+    java_lang_Object_is_Top : AXIOM
+      FORALL (t : ReferenceType): t <= T_java_lang_Object
+
+    % === ESCJ 8: Section 1.2
+
+    typeOf(r : Reference) : ReferenceType
+    NULL : Reference
+
+    isa?(r : Reference, t : ReferenceType) : bool =
+      ((r = NULL) OR typeOf(r) = t)
+
+    % === ESCJ 8: Section 1.3
+
+    T_java_lang_Cloneable : ReferenceType
+
+    elemtype : [ArrayType -> JavaType]
+    array_constructor : [JavaType -> ArrayType]
+
+    arrays_are_cloneable : AXIOM
+      FORALL (t : JavaType): array_constructor(t) <= T_java_lang_Cloneable
+    elemtype_definition : AXIOM
+      FORALL (t : JavaType): elemtype(array_constructor(t)) = t
+    array_subtyping : AXIOM
+      FORALL (t0 : ArrayType, t1 : JavaType): t0 <= array_constructor(t1) IFF
+                                              elemtype(t0) <= t1
+
+    % === ESCJ 8: Section 2.1
+
+    % The static type predicate.
+
+    % Again, we would prefer to wrap this up in a single is(), but
+    % because of the PVS type hierarchy (discussed above) we have to
+    % overload instead.
+    is : [ Boolean, JavaType -> bool ]
+    is : [ Number, JavaType -> bool ]
+    is : [ Reference, JavaType -> bool ]
+
+    % cast is dealt with the same way.
+    cast : [ Boolean, PrimitiveType -> Boolean ]
+    cast : [ Number, PrimitiveType -> Number ]
+    cast : [ Reference, ReferenceType -> Reference ]
+
+    redundant_cast_removal_boolean : AXIOM
+      FORALL (x : Boolean, t : JavaType): is(x, t) IMPLIES cast(x, t) = x
+    redundant_cast_removal_number : AXIOM
+      FORALL (x : Number, t : JavaType): is(x, t) IMPLIES cast(x, t) = x
+    redundant_cast_removal_reference : AXIOM
+      FORALL (x : Reference, t : JavaType): is(x, t) IMPLIES cast(x, t) = x
+
+    % === ESCJ 8: Section 2.2
+
+    % Not in ESCJ8, but should be
+
+    refEQ(x, y : Reference): bool = x = y
+
+    refNE(x, y : Reference): bool = x /= y
+
+  END escjava2_java_typesystem
+
+escjava2_java_boolean_ops : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem
+
+    % === ESCJ 8: Section 5.2
+
+    boolAnd (a, b : Boolean): bool = a AND b
+    boolEq (a, b : Boolean): bool = a IFF b
+    boolImplies (a, b : Boolean): bool = a IMPLIES b
+    boolNE (a, b : Boolean): bool = a /= b
+    boolNot (a : Boolean): bool = NOT a
+    boolOr (a, b : Boolean): bool = a OR b
+
+    % === ESCJ 8: Section 5.3
+
+    % Java's ternary 'conditional' operator (? :)
+
+    termConditional (b : Boolean, x, y : Boolean): Boolean =
+      IF b THEN x ELSE y ENDIF
+    termConditional (b : Boolean, x, y : Number): Number =
+      IF b THEN x ELSE y ENDIF
+    termConditional (b : Boolean, x, y : Reference): Reference =
+      IF b THEN x ELSE y ENDIF
+
+  END escjava2_java_boolean_ops
+
+escjava2_java_integral_types : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem
+    
+    % === ESCJ 8: Section 2.2.1
+
+    % Axioms to express the size of the basic types.
+    range_of_char : AXIOM
+      FORALL (x : Number): is(x, T_char) IFF 0 <= x AND x <= 65535
+    range_of_byte : AXIOM
+      FORALL (x : Number): is(x, T_byte) IFF -128 <= x AND x <= 127
+    range_of_short : AXIOM
+      FORALL (x : Number): is(x, T_short) IFF -32768 <= x AND x <= 32767
+    range_of_int : AXIOM
+      FORALL (x : Number): is(x, T_int) IFF -2^31 <= x AND x <= 2^31-1
+    range_of_long : AXIOM
+      FORALL (x : Number): is(x, T_long) IFF -2^63 <= x AND x <= 2^63-1
+    range_of_float : AXIOM
+      FORALL (x : Number): is(x, T_float) IFF -(2-(2^-23))*(2^127) <= x AND x <= (2-(2^-23))*(2^127)
+    range_of_double : AXIOM
+      FORALL (x : Number): is(x, T_double) IFF -(2-(2^-52))*(2^1023) <= x AND x <= (2-(2^-52))*(2^1023)
+
+  END escjava2_java_integral_types
+
+escjava2_java_integral_ops : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem
+
+    % === ESCJ 8: Section 5.1
+
+    % Define using modulo_arithmetic theory.
+    integralMod(x, y : IntegralNumber): {v: mod(y) | EXISTS (r: mod(y)): v = x * y + r}
+    integralDiv(x, y : IntegralNumber): {r: mod(y) | EXISTS (v: mod(y)): v = x * y + r}
+
+    integralMod_def : LEMMA
+      FORALL (a, b : IntegralNumber): b /= 0 IMPLIES a = (a / b) * b + (integralMod(a, b))
+
+    integralEQ(x,y : IntegralNumber) : IntegralNumber = (x = y)
+    integralGE(x,y : IntegralNumber) : IntegralNumber = (x >= y)
+    integralGT(x,y : IntegralNumber) : IntegralNumber = (x > y)
+    integralLE(x,y : IntegralNumber) : IntegralNumber = (x <= y)
+    integralLT(x,y : IntegralNumber) : IntegralNumber = (x < y)
+    integralNE(x,y : IntegralNumber) : IntegralNumber = (x /= y)
+
+    % === Axioms about properties of integral &, |, and /
+
+    integralAnd, integralOr, integralXor, intShiftL, longShiftL :
+      [ IntegralNumber, IntegralNumber -> IntegralNumber ]
+
+    integralAnd_definition1 : LEMMA
+      FORALL (x, y : IntegralNumber): (0 <= x OR 0 <= y) IMPLIES
+                         0 <= integralAnd(x, y)
+    integralAnd_definition2 : LEMMA
+      FORALL (x, y : IntegralNumber): 0 <= x IMPLIES
+                         integralAnd(x, y) <= x
+    integralAnd_definition3 : LEMMA
+      FORALL (x, y : IntegralNumber): 0 <= y IMPLIES
+                         integralAnd(x, y) <= y
+    integralOr_definition : LEMMA
+      FORALL (x, y : IntegralNumber): (0 <= x AND 0 <= y) IMPLIES
+                         x <= integralOr(x, y) AND y <= integralOr(x, y)
+    integralDiv_definition : LEMMA
+      FORALL (x, y : IntegralNumber): (0 <= x AND 0 <= y) IMPLIES
+                         0 <= integralDiv(x, y) AND integralDiv(x, y) <= x
+    integralXor_definition : LEMMA
+      FORALL (x, y : IntegralNumber): (0 <= x AND 0 <= y) IMPLIES
+                         0 <= integralXor(x, y)
+    intShiftL_definition : LEMMA
+      FORALL (n : IntegralNumber): (0 <= n AND n < 31) IMPLIES
+                      1 <= intShiftL(1, n)
+    longShiftL_definition : LEMMA
+      FORALL (n : IntegralNumber): (0 <= n AND n < 63) IMPLIES
+                      1 <= longShiftL(1, n)
+
+  END escjava2_java_integral_ops
+
+escjava2_java_floating_point : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem
+
+    % === A few floating point axioms - DRCok
+
+    floatingEQ(x, y : FloatingPointNumber) : FloatingPointNumber = (x = y)
+    floatingGE(x, y : FloatingPointNumber) : FloatingPointNumber = (x >= y)
+    floatingGT(x, y : FloatingPointNumber) : FloatingPointNumber = (x > y)
+    floatingLE(x, y : FloatingPointNumber) : FloatingPointNumber = (x <= y)
+    floatingLT(x, y : FloatingPointNumber) : FloatingPointNumber = (x < y)
+    floatingNE(x, y : FloatingPointNumber) : FloatingPointNumber = (x /= y)
+
+   floatingADD(x, y : FloatingPointNumber) : FloatingPointNumber = (x + y)
+   floatingMUL(x, y : FloatingPointNumber) : FloatingPointNumber = (x * y)
+   floatingNEQ(x : FloatingPointNumber) : FloatingPointNumber = (- x)
+   floatingMod(x, y : FloatingPointNumber): {v: mod(y) | EXISTS (r: mod(y)): v = x * y + r}
+
+  END escjava2_java_floating_point
+
+escjava2_array_store : THEORY
+  BEGIN
+
+    % Mimics the 'elems' of SRC ESC/Java.
+    ArrayStore : TYPE+
+    % This is the syntactic, fully-resolved name of the Java array
+    % being indexed.  In SRC ESC/Java, it is encoded in Translate as a
+    % standard VariableAccess.
+    ArrayName : TYPE+
+
+  END escjava2_array_store
+
+escjava2_java_field_representation : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem,
+              escjava2_jml_semantics,
+              escjava2_array_store,
+              map_theory[BooleanField, Reference, Boolean],
+              map_theory[NumberField, Reference, Number],
+              map_theory[ReferenceField, Reference, Reference],
+              map_theory[ArrayReference, IntegralNumber, Boolean],
+              map_theory[ArrayReference, IntegralNumber, Number],
+              map_theory[ArrayReference, IntegralNumber, Reference],
+              map_theory[ArrayStore, ArrayName, ArrayReference]
+
+    elems : var ArrayStore
+
+    % === ESCJ 8: Section 3.0
+
+    vAllocTime : [ Reference -> Time ]
+    isAllocated (r : Reference, t : Time): bool = vAllocTime(r) < t
+
+    % === ESCJ 8: Section 3.1
+
+    fClosedTime : [ Field -> Time ]
+    fClosedTime_definition : AXIOM
+      FORALL (r : Reference, f : Field, t : Time): 
+        (fClosedTime(f) < t AND isAllocated(r, t)) IMPLIES
+        isAllocated(get(f, r), t)
+
+    % === ESCJ 8: Section 3.2
+    eClosedTime : [ ArrayStore -> Time ]
+
+    eClosedTime_definition : AXIOM
+      FORALL (a : ArrayName, i : IntegralNumber, t : Time):
+        (eClosedTime(elems) < t AND isAllocated(get(elems, a), t)) IMPLIES
+        isAllocated(get(get(elems, a), i), t)        
+
+  END escjava2_java_field_representation
+
+escjava2_java_strings : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem,
+              escjava2_jml_semantics
+
+    T_java_lang_String : ReferenceType
+
+    stringCat (x, y : Reference) : Reference
+
+    stringCat_definition1 : AXIOM
+      FORALL (x, y : Reference): stringCat(x, y) /= NULL AND
+                         typeOf(stringCat(x, y)) <= T_java_lang_String
+
+  END escjava2_java_strings
+
+escjava2_java_semantics : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem,
+              escjava2_java_boolean_ops,
+              escjava2_java_integral_types,
+              escjava2_java_integral_ops,
+              escjava2_java_floating_point,
+              escjava2_java_field_representation,
+              escjava2_java_strings
+
+  END escjava2_java_semantics
+
+escjava2_lock_semantics : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem,
+              escjava2_jml_semantics,
+              escjava2_java_field_representation,
+              map_theory[Lock, Reference, bool]
+
+%     % === ESCJ 8: Section 4
+
+    LS : Lock
+    maxLockset : Reference
+
+    lockLE (l : Lock, x : Reference, y : Reference): bool 
+    lockLT (l : Lock, x : Reference, y : Reference): bool
+
+    max(l : Lock) : Reference =
+      maxLockset
+
+    % null is in lockset (not in ESCJ 8)
+    null_is_in_lockset : AXIOM
+      FORALL (l : Lock, r : Reference): get(l, NULL) = true
+
+    % all locks in lockset are below max(lockset) (not in ESCJ 8)
+    all_locks_in_lockset_are_below_max_lockset : AXIOM
+      FORALL (l : Lock, r : Reference): get( l, r) = true IMPLIES
+                          lockLE(l, r, max(l))
+
+    % null precedes all objects in locking order (not in ESCJ 8)
+    null_precedes_all_objects : AXIOM
+      FORALL (l : Lock, x : Reference): typeOf(x) <= T_java_lang_Object IMPLIES
+                      lockLE(l, NULL, x)
+
+  END escjava2_lock_semantics
+
+escjava2_arrays : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem,
+              escjava2_java_field_representation,
+              escjava2_java_integral_types
+
+    arrayOf( n : IntegralNumber, t : PrimitiveType) : ArrayReference
+    arrayOf( n : IntegralNumber, t : ReferenceType) : ArrayReference
+
+    arrayLength(r : ArrayReference) : IntegralNumber
+ 
+    arrayLengthDef1 : AXIOM
+      FORALL(n : IntegralNumber, t : PrimitiveType, r : ArrayReference) :
+        arrayLength(r) = n IFF r = arrayOf(n, t)
+
+    arrayLengthDef2 : AXIOM
+      FORALL(n : IntegralNumber, t : ReferenceType, r : ArrayReference) :
+        arrayLength(r) = n IFF r = arrayOf(n, t)
+
+  END escjava2_arrays
+
+escjava2_jml_semantics : THEORY
+  BEGIN
+    IMPORTING escjava2_java_typesystem
+
+    % === Define typeof for primitive types - DRCok
+    typeof : [ Boolean -> PrimitiveType ]
+    typeof : [ IntegralNumber -> PrimitiveType ]
+    typeof : [ Reference -> ReferenceType ]
+    % WRONG - not equivalent; need to review
+%     typeof_definition : AXIOM
+%       FORALL (x, y : S): primitive?(y) AND is(x, y) IFF typeof(x) = y
+
+    typeof_char : AXIOM
+      FORALL (x : IntegralNumber): is(x, T_char) IFF typeof(x) = T_char
+    typeof_byte : AXIOM
+      FORALL (x : IntegralNumber): is(x, T_byte) IFF typeof(x) = T_byte
+    typeof_short : AXIOM
+      FORALL (x : IntegralNumber): is(x, T_short) IFF typeof(x) = T_short
+    typeof_int : AXIOM
+      FORALL (x : IntegralNumber): is(x, T_int) IFF typeof(x) = T_int
+    typeof_long : AXIOM
+      FORALL (x : IntegralNumber): is(x, T_long) IFF typeof(x) = T_long
+    typeof_float : AXIOM
+      FORALL (x : IntegralNumber): is(x, T_float) IFF typeof(x) = T_float
+    typeof_double : AXIOM
+      FORALL (x : IntegralNumber): is(x, T_double) IFF typeof(x) = T_double
+
+    % === ESCJ 8: Section 2.3
+
+    typeof_reference_definition : AXIOM
+      FORALL (r : Reference, t : ReferenceType): t <= T_java_lang_Object IMPLIES
+                                                 is(r, t) IFF (r = NULL OR typeof(r) <= t)
+  END escjava2_jml_semantics
+
+escjava2_logic : THEORY
+  BEGIN
+    IMPORTING escjava2_java_semantics,
+              escjava2_jml_semantics,
+              escjava2_lock_semantics
+  END escjava2_logic
+

@@ -1,0 +1,34 @@
+#!/bin/csh -f
+
+#
+# Get current java class path or "." if none specified:
+#
+set old=.
+if ($?CLASSPATH) then
+    set old="${CLASSPATH}"
+endif
+
+#
+# The class path needed to find JWhich and its associated classes:
+#
+setenv CLASSPATH ${ESCTOOLS_ROOT}/Javafe/classfiles
+setenv CLASSSIZE 1			# of components in CLASSPATH...
+
+#
+# Determine which version of java to use:
+#
+if (! $?JAVA) then
+    setenv JAVA java
+endif
+
+#
+# Quote our arguments so empty arguments will pass through safely:
+#
+set arguments = ""
+set i=1
+while ($i <= $#argv)
+    set arguments = ($arguments \'$argv[$i]\')
+    @ i++
+end
+
+eval ${JAVA} -Djava.class.path.skip=${CLASSSIZE} jtools.jwhich.JWhich -classpath "'$old'" $arguments

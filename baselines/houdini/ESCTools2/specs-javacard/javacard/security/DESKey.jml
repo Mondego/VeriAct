@@ -1,0 +1,57 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: DESKey.jml,v 1.5 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public interface DESKey extends SecretKey {
+
+  /*@ public invariant
+    _type == KeyBuilder.TYPE_DES ||
+    _type == KeyBuilder.TYPE_DES_TRANSIENT_RESET ||
+    _type == KeyBuilder.TYPE_DES_TRANSIENT_DESELECT ;
+  @*/
+
+  /*@ public invariant
+    _size == KeyBuilder.LENGTH_DES ||
+    _size == KeyBuilder.LENGTH_DES3_2KEY ||
+    _size == KeyBuilder.LENGTH_DES3_3KEY;
+  @*/
+
+  /*@
+    public normal_behavior
+      requires keyData != null;
+      requires kOff >= 0 &&
+	       kOff <= keyData.length;
+      ensures isInitialized();
+      assignable _initialized;
+  @*/
+  public void setKey(
+    byte[] keyData, short kOff)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires keyData != null;
+      requires kOff >= 0 &&
+	       kOff <= keyData.length;
+      ensures \result > 0;
+      assignable keyData[kOff..keyData.length-1];
+  @*/
+  public byte getKey(
+    byte[] keyData, short kOff)
+      throws CryptoException;
+
+}

@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|SignalsUnchecked.java: Caution: Using given file as the .java file, even though it is not the java file for SignalsUnchecked on the classpath
+    [TIME]
+
+SignalsUnchecked ...
+  Prover started:TIME
+    [TIME]
+
+SignalsUnchecked: redundant_signals_unchecked() ...
+    [TIME]  passed
+
+SignalsUnchecked: SignalsUnchecked() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

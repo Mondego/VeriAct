@@ -1,0 +1,8 @@
+#!/bin/sh
+
+## Ensure cmd-line source files that contain no types are not
+## problematic
+
+${TOOL} Empty.java
+${TOOL} Empty2.java
+${TOOL} Empty3.java

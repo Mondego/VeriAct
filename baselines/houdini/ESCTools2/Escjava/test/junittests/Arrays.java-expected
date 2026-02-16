@@ -1,0 +1,100 @@
+Arrays.java:8: Warning: Postcondition possibly not established (Post)
+        public void m() {}
+                         ^
+Associated declaration is "Arrays.java", line 5, col 5:
+        //@ ensures (new int[5]).length == 5;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 8, col 18.
+
+Arrays.java:8: Warning: Postcondition possibly not established (Post)
+        public void m() {}
+                         ^
+Associated declaration is "Arrays.java", line 6, col 5:
+        //@ ensures (new double[6][7]).length == 7;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 8, col 18.
+
+Arrays.java:8: Warning: Postcondition possibly not established (Post)
+        public void m() {}
+                         ^
+Associated declaration is "Arrays.java", line 7, col 5:
+        //@ ensures (new double[6][7])[0].length == 6;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 8, col 18.
+
+Arrays.java:16: Warning: Postcondition possibly not established (Post)
+        public void n() {}
+                         ^
+Associated declaration is "Arrays.java", line 11, col 5:
+        //@ ensures (new Arrays[2])[0] == null;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 16, col 18.
+
+Arrays.java:16: Warning: Postcondition possibly not established (Post)
+        public void n() {}
+                         ^
+Associated declaration is "Arrays.java", line 12, col 5:
+        //@ ensures (new int[2])[0] == 0;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 16, col 18.
+
+Arrays.java:16: Warning: Postcondition possibly not established (Post)
+        public void n() {}
+                         ^
+Associated declaration is "Arrays.java", line 13, col 5:
+        //@ ensures (new double[2])[0] == 0.0;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 16, col 18.
+
+Arrays.java:16: Warning: Postcondition possibly not established (Post)
+        public void n() {}
+                         ^
+Associated declaration is "Arrays.java", line 14, col 5:
+        //@ ensures (new int[2][3])[0][0] == 0;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 16, col 18.
+
+Arrays.java:16: Warning: Postcondition possibly not established (Post)
+        public void n() {}
+                         ^
+Associated declaration is "Arrays.java", line 15, col 5:
+        //@ ensures (new int[2][3])[0] != null;
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 16, col 18.
+
+Arrays.java:21: Warning: Postcondition possibly not established (Post)
+        public void p() {}
+                         ^
+Associated declaration is "Arrays.java", line 18, col 5:
+        //@ ensures \typeof(new Arrays[2]) == \type(Arrays[]);
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 21, col 18.
+
+Arrays.java:21: Warning: Postcondition possibly not established (Post)
+        public void p() {}
+                         ^
+Associated declaration is "Arrays.java", line 19, col 5:
+        //@ ensures \typeof(new int[2]) == \type(int[]);
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 21, col 18.
+
+Arrays.java:21: Warning: Postcondition possibly not established (Post)
+        public void p() {}
+                         ^
+Associated declaration is "Arrays.java", line 20, col 5:
+        //@ ensures \typeof(new int[2][3]) == \type(int[][]);
+            ^
+Execution trace information:
+    Executed implicit return in "Arrays.java", line 21, col 18.
+
+11 warnings

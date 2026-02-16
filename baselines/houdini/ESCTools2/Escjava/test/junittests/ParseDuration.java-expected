@@ -1,0 +1,20 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParseDuration ...
+ParseDuration.java:18: Error: The function \duration takes one argument
+        //@ invariant \duration() < 10;
+                      ^
+ParseDuration.java:19: Error: The function \duration takes one argument
+        //@ invariant \duration(m,n) < 10;
+                      ^
+ParseDuration.java:20: Error: The function \working_space takes one argument
+        //@ invariant \working_space() < 10;
+                      ^
+ParseDuration.java:21: Error: The function \working_space takes one argument
+        //@ invariant \working_space(m,n) < 10;
+                      ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+4 errors

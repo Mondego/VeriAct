@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+    [TIME]
+
+Assume ...
+  Prover started:TIME
+    [TIME]
+
+Assume: m(int) ...
+    [TIME]  passed immediately
+
+Assume: mm() ...
+    [TIME]  passed
+
+Assume: Assume() ...
+    [TIME]  passed
+  [TIME total]

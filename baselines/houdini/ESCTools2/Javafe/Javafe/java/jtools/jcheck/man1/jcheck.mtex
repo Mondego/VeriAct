@@ -1,0 +1,69 @@
+\manpage{The Jcheck Command}{jcheck}{1}
+
+
+\section{NAME}
+%
+\bf{jcheck} - Checks Java environments for various errors.
+
+
+\section{SYNOPSIS}
+%
+\bf{jcheck} [\bf{-nRv}] [\bf{-classpath} \it{path}] \it{packagename}...
+
+
+\section{FLAGS}
+
+\begin{description}
+
+\item{\bf{-n}} Turn off warnings.
+
+\item{\bf{-R}} Checks all subpackages recursively.
+
+\item{\bf{-v}} Turns on verbose mode.  Each time this flag is given it
+increases the verbosity level, resulting in possibly more information.
+
+\end{description}
+
+
+\section{OPTIONS}
+
+\begin{description}
+
+\item{\bf{-classpath} \it{path}} Specifies the path \bf{jcheck} uses to
+look up classes, interfaces, and packages.  In addition to directories,
+\it{path} may contain \bf{JAR} and \bf{zip} archives.  This option
+overrides the default \bf{javac} classpath or the \bf{CLASSPATH}
+environment variable if it is set.
+
+\end{description}
+
+
+
+\section{DESCRIPTION}
+
+\it{To be written...}
+
+
+
+\section{DIAGNOSTICS}
+
+A diagnostic is given if a \it{packagename} does not name a package in the
+current Java classpath.
+
+
+\section{BUGS}
+
+The default classpath for \bf{javac} 1.0.2 is hardwired in as the
+default classpath.  If another version of \bf{javac} is in use, this
+fact may result in erroneous output if \bf{-classpath} is not used.
+
+
+\section{AUTHOR}
+
+Mark Lillibridge, Digital Equipment Corporation  (mdl@pa.dec.com)
+
+
+\section{SEE ALSO}
+
+\bf{jls}(1), \bf{javac}(1), \bf{jar}(1), \bf{zip}(1L), \bf{gzip}(1),
+\bf{CLASSPATH}

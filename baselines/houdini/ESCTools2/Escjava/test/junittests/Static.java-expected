@@ -1,0 +1,38 @@
+ESC/Java version VERSION
+    [TIME]
+
+Static ...
+Static.java:8: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static invariant i > 0; // ERROR
+                             ^
+Static.java:13: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static constraint i == \old(i); // ERROR
+                              ^
+Static.java:13: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static constraint i == \old(i); // ERROR
+                                        ^
+Static.java:19: Error: A non-static represents clause must name a non-static model field
+        //@ represents sm = i;  // ERROR
+                       ^
+Static.java:20: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static represents m = si; // ERROR
+                              ^
+Static.java:20: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static represents m = si; // ERROR
+                              ^
+Static.java:20: Error: A static represents clause must name a static model field
+        //@ static represents m = si; // ERROR
+                              ^
+Static.java:25: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        //@ static initially i == 0; // ERROR
+                             ^
+Static.java:30: Error: Unqualified this cannot be used in static contexts
+        //@ monitors_for si = this; // ERROR - NOT IN JML
+                              ^
+Static.java:31: Error: Unqualified this cannot be used in static contexts
+        //@ static monitors_for i = this;  // ERROR
+                                    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+10 errors

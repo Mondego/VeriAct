@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Check error messages for inheriting incompatible methods   [disabled]
+
+${TOOL} Incompatible.java

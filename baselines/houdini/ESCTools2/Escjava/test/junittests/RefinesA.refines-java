@@ -1,0 +1,5 @@
+package junittests;
+//@ refine "RefinesA.java";
+
+public class RefinesA {
+}

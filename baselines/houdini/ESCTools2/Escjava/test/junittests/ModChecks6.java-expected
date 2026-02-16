@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModChecks6 ...
+  Prover started:TIME
+    [TIME]
+
+ModChecks6: ModChecks6() ...
+    [TIME]  passed immediately
+
+ModChecks6: m() ...
+------------------------------------------------------------------------
+ModChecks6.java:19: Warning: Possible violation of modifies clause (Modifies)
+            o.mm();
+                ^
+Associated declaration is "ModChecks6.java", line 25, col 14:
+        //@ modifies ModChecks6.*;  // WARNING
+                     ^
+Associated declaration is "ModChecks6.java", line 12, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks6: mm() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

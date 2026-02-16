@@ -1,0 +1,12 @@
+Single.java:3: Error: No such type: p.NoSuchClass
+import p.NoSuchClass;                   // error
+       ^
+1 error
+p|Full.java:3: Error: No such type: Foo
+import Foo;             // erroneous because <unnamed>.Foo does not ex ...
+       ^
+1 error
+JavaLang.java:3: Error: No such type: Exception
+import Exception;       // erroneous because <unnamed>.Exception does  ...
+       ^
+1 error

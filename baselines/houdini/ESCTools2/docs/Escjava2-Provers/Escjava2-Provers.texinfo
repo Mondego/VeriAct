@@ -1,0 +1,378 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+
+@setfilename Escjava2-Prover.info
+@settitle The Provers of ESC/Java2 $Revision$
+@c Other commands that globally affect the document formatting: 
+@c synindex, footnotestyle
+@afourwide
+@paragraphindent 0
+@c firstparagraphindent 0
+@c %**end of header
+@c =============================================================================
+
+@c =============================================================================
+@c Definitions of new indices for this document
+
+@c =============================================================================
+@c Functions are indexed using the built-in @findex
+@c Predicates are indexed using @pindex
+@defcodeindex p
+@c Constants are indexed using @kindex
+@defcodeindex k
+
+@c Map predicates (pindex) and constants (kindex) the function index.
+
+@syncodeindex p fn
+@syncodeindex k fn
+
+@c =============================================================================
+
+@c =============================================================================
+@c %**summary and copyright
+
+Original version by Joseph Kiniry, with assistance from Cesare Tinelli
+and Silvio Ranise beginning on 21 June 2004.
+
+Current editor Joseph Kiniry.
+
+This document describes the provers used by ESC/Java2. It describes the
+expected general interface (for I/O) and functionality (mathematically,
+in terms of built-in theories, and functionally, in terms of proof
+commands) of ESC/Java2 provers, provides a ESC/Java2 Prover API in
+several forms (as a JML-annotated API, as a WDSL web service API, etc.),
+provides implementation details for distributed, current, and
+high-performance prover interfaces.
+@c add xref to other documents as appropriate
+
+This is edition $Revision$.
+
+This document is a work in progress.  Suggestions and input are always
+welcome.
+
+@copying
+``The Provers of ESC/Java2'' is licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 2.0 license.  See
+@uref{http://creativecommons.org/licenses/by-nc-sa/2.0/}
+
+Copyright @copyright{} 2004 Joseph R. Kiniry and the Radboud University
+Nijmegen.
+
+Copyright @copyright{} 2004,2005 Joseph R. Kiniry and University
+College Dublin.
+
+Copyright @copyright{} 2010 Joseph R. Kiniry and IT University of
+Copenhagen.
+
+@quotation
+You are free:
+@itemize
+@item
+to copy, distribute, display, and perform the work
+@item
+to make derivative works
+@end itemize
+
+Under the following conditions:
+@itemize
+@item
+Attribution. You must give the original author credit.
+@item
+Noncommercial. You may not use this work for commercial purposes.
+@item
+Share Alike. If you alter, transform, or build upon this work, you may
+distribute the resulting work only under a license identical to this
+one.
+@end itemize
+
+For any reuse or distribution, you must make clear to others the license
+terms of this work.
+
+Any of these conditions can be waived if you get permission from the
+author.
+
+Your fair use and other rights are in no way affected by the above.
+
+This is a human-readable summary of the Legal Code.
+
+See @uref{http://creativecommons.org/licenses/by-nc-sa/2.0/legalcode}
+@end quotation
+
+@end copying
+
+@c %**end of summary and copyright
+@c =============================================================================
+
+@c =============================================================================
+@c %**title, contents, and copyright
+
+@titlepage
+@title The Provers of ESC/Java2
+@subtitle Their Necessary Functionality, Interfaces, and Use
+@subtitle Edition $Revision$, April 2010
+@subtitle This document describes the provers of ESC/Java2 version 2.0a7.
+@author Joseph R. Kiniry <kiniry@@acm.org>
+
+@c The following two commands start the copyright page.
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+@c To be published by the KindSoftware Research Group, Software
+@c Development Group, IT University of Copenhagen as technical report
+@c See @uref{http://kindsoftware.com/}
+@end titlepage
+
+@c metadata used in HTML
+@documentdescription
+Prover, First-Order, Validity, ESC/Java, ESC/Java2, Java Modeling
+Language, JML, Extended Static Checking, Extended Static Checker, Design
+by Contract, Java, Verification, BISL, Object-oriented Logic, Behavioral
+Interface Specification Language, Kiniry
+@end documentdescription
+
+@c Output the table of contents at the beginning.
+@contents
+
+@c %**end of title, contents, and copyright
+@c =============================================================================
+
+@c =============================================================================
+@c %**top node and master menu
+
+@c We recommend including the copying permissions here as well as the
+@c segments above.
+@ifnottex
+@node Top, Introduction, (dir), (dir)
+@top The Provers of ESC/Java2
+
+@insertcopying
+@end ifnottex
+
+This document describes the provers used by ESC/Java2. It describes the
+expected general interface (for I/O) and functionality (mathematically,
+in terms of built-in theories, and functionally, in terms of proof
+commands) of ESC/Java2 provers, provides a ESC/Java2 Prover API in
+several forms (as a JML-annotated API, as a WDSL web service API, etc.),
+provides implementation details for distributed, current, and
+high-performance prover interfaces.
+
+@menu
+* Introduction::                An introduction to this document.
+* The ESC/Java2 Prover API::    
+* Prover Communication::        
+* ESC/Java2 Prover Built-in Theories::  
+* References::                  
+* Copying::                     Your rights and freedoms.
+* JML API::                     
+* Index::                       Complete index.
+
+@end menu
+
+@c %**end top node and master menu
+@c =============================================================================
+
+@c =============================================================================
+@c %**body
+
+@node Introduction, The ESC/Java2 Prover API, Top, Top
+@chapter Introduction
+
+@cindex Introduction
+
+* Discuss what this document contains.
+
+@c =============================================================================
+@node The ESC/Java2 Prover API, Prover Communication, Introduction, Top
+@chapter The ESC/Java2 Prover API
+
+@cindex The ESC/Java2 Prover API
+@cindex Prover API
+@cindex API
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@menu
+* A JML API::                   
+* A WSDL API::                  
+@end menu
+
+@node A JML API, A WSDL API, The ESC/Java2 Prover API, The ESC/Java2 Prover API
+@section A JML API
+
+@ref{JML API} includes the JML specifications of the core classes of
+this API.
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node A WSDL API,  , A JML API, The ESC/Java2 Prover API
+@section A WSDL API
+
+@c =============================================================================
+@node Prover Communication, ESC/Java2 Prover Built-in Theories, The ESC/Java2 Prover API, Top
+@chapter Prover Communication
+
+The ESC/Java2 front-end must communicate with one or more prover
+back-ends in some fashion, as it does not have a ``build-in'' prover.
+Whereas the ESC/Java2 front-end is written in Java and thus must run in
+a Java Virtual Machine process, the back-end provers can be written in
+any language.
+
+If the back-end is written in Java, then communication between the front-
+and back-ends can be directly accomplished through (perhaps remote) Java
+method invocation.  As far as we know, no first-order prover has been
+written in Java, thus this is only a theoretical option.
+
+All existing first-order provers are written in languages other than
+Java.  The languages used in modern provers include Modula-III, C, C++,
+ML, and OCaml.
+
+Communicating between a Java process and a non-Java subsystem (either a
+library, DLL, or process), is a non-trivial task.  It can be
+accomplished in any number of ways including native inter-process
+communication (IPC), XML-based remote procedure calls (XML-RPC), or
+directly function calls through a Java Native Interface (JNI).
+
+In general, one must use the JDK 1.4 ``new I/O'' (NIO) interface to
+obtain the highest-performance inter-subsystem communication.  Using
+NIO, the contents of a buffer can, potentially, reside in native memory
+outside of the ordinary garbage-collected heap.  Manipulation of these
+buffers, both from within Java and within native code, is extremely fast
+on many common VMs, operating systems, and architectures.
+
+This chapter discusses these different alternatives, comparing and
+contrasting them according to many criteria including performance,
+maintainability, flexibility, simplicity, and robustness.
+
+@c Add sections on use of callbacks and asynchronous communication.
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@menu
+* Raw IPC::                     
+* Java JMI::                    
+* XML-RPC::                     
+* Java Native Methods::         
+@end menu
+
+@node Raw IPC, Java JMI, Prover Communication, Prover Communication
+@section Using Raw Inter-Process Communication (IPC)
+
+There are several kinds of inter-process communication (IPC).  The most
+popular variants include signals, anonymous or named pipes, files and
+file locking, message queues, semaphores, shared memory, memory-mapped
+files, and sockets.  On many operating systems, IPC between local
+processes is optimized using high-throughput, low-latency mechanisms
+like shared memory.  A decent tutorial on IPC exists at
+@uref{http://www.ecst.csuchico.edu/~beej/guide/ipc/}.
+
+``Raw'' inter-process communication is the means by which SRC ESC/Java
+communicated with the Simplify theorem prover.  The standard input
+(STDIN) and standard output (STDOUT) streams were used to send bytes
+between the (Java-based) SRC ESC/Java front-end and the
+(Modula-III-based) Simplify back-end.  These streams are realized with
+anonymous pipes on most platforms.
+
+While this kind of IPC is very simple to set up and use, it is not high
+performance.  Performance is poor because every byte sent through the
+stream is typically copied several times before it is received.
+Additionally, streams must be flushed to ensure data is delivered to the
+receiver.  This is a programmatic inconvenience which contributes to
+the most frequently witnessed IPC bug---that of mis-synchronization.
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Java JMI, XML-RPC, Raw IPC, Prover Communication
+@section Using Java RMI
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node XML-RPC, Java Native Methods, Java JMI, Prover Communication
+@section Using XML-RPC
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Java Native Methods,  , XML-RPC, Prover Communication
+@section Using a Java Native Interface (JNI)
+
+The Java Native Interface is is a standard programming interface for
+writing Java native methods and embedding the Java virtual machine into
+native applications or vice-versa.  The primary goal is binary
+compatibility of native method libraries across all Java virtual machine
+implementations on a given platform.
+
+Coupling a Java-based application to a non-Java-based application or
+library using JNI provides the highest possible performance for
+inter-system communication in many circumstances.  If in a given design
+cross-subsystem calls (a) are very common (their absolute count is very
+high), or (b) must have @emph{very} low latency, or (c) must send or
+receive large amounts of non-referential data, then JNI is an
+inappropriate solution for such a design.
+
+The JNI is primarily documented in the JDK via the @cite{Java Native
+Interface Specification}.  It is also thoroughly documented in the book
+@cite{``The Java Native Interface: Programmer's Guide and
+Specification'' by Sheng Liang, Addison-Wesley, 1999}, available via
+@uref{http://www.amazon.com/exec/obidos/ASIN/0201325772/javanativeinterf,
+Amazon} and other online book retailers.  Sun also provides a tutorial,
+@cite{``Java Native Interface'', by Beth Stearns} available via
+@uref{http://java.sun.com/docs/books/tutorial/native1.1/}.
+
+For the highest-performance inter-subsystem communication using JNI, the
+JDK 1.4 ``new I/O'' (NIO) interface should be used.  This functionality,
+new to JDK 1.4, permits native code to access @code{java.nio} direct
+buffers.
+
+@c =============================================================================
+@node ESC/Java2 Prover Built-in Theories, References, Prover Communication, Top
+@chapter ESC/Java2 Prover Built-in Theories
+
+@cindex ESC/Java2 Prover Built-in Theories
+@cindex Prover Built-in Theories
+@cindex Built-in Theories
+@cindex Theories
+@cindex Theoretical Assumptions
+
+@c =============================================================================
+@node References, Copying, ESC/Java2 Prover Built-in Theories, Top
+@chapter References
+
+@cindex References
+
+@c include references to all related documents, particularly web services standards,
+@c software, JML docs, Java native method interface stuff, etc.
+
+@c =============================================================================
+@node Copying, JML API, References, Top
+@chapter Copying
+
+@cindex Copying
+
+@insertcopying
+
+@c %**end of body
+@c =============================================================================
+
+@c =============================================================================
+@c %**end of document
+
+@c =============================================================================
+@node JML API, Index, Copying, Top
+@appendix JML API
+
+The main interface of the prover is specified in the Java interface
+@code{ProverInterface}.
+
+@example
+@include ProverInterface.java.texinfo
+@end example
+
+The response codes sent by the prover to the front-end are specified
+in the Java class @code{ProverResponse}.
+
+@example
+@include ProverResponse.java.texinfo
+@end example
+
+The classes @code{Formula} and @code{Signature} are still to be defined.
+
+@node Index,  , JML API, Top
+@unnumbered Index
+
+@printindex cp
+
+@bye

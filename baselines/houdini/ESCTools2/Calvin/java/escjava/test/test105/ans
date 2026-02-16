@@ -1,0 +1,24 @@
+A.java:60: Error: Value of type int->int cannot be assigned to location of type int
+        //@ set a[2][3] = a[2]
+                        ^
+A.java:62: Error: Value of type int->int->int cannot be assigned to location of type int->boolean
+        //@ set b = a
+                  ^
+A.java:63: Error: Value of type java.lang.String->A cannot be assigned to location of type java.lang.Object->A
+        //@ set d = f
+                  ^
+A.java:65: Error: Value of type java.lang.String[]->int cannot be assigned to location of type java.lang.Object[]->int
+        //@ set g = h
+                  ^
+A.java:66: Error: Value of type java.lang.Object[]->int cannot be assigned to location of type java.lang.String[]->int
+        //@ set h = g
+                  ^
+A.java:67: Error: A map type cannot be used in this binary expression
+        //@ assert b == e
+                   ^
+A.java:67: Error: Invalid types (int->boolean and int->boolean) in equality comparison
+        //@ assert b == e
+                     ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+7 errors

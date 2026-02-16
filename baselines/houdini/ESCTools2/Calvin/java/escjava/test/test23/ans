@@ -1,0 +1,10 @@
+loop.java:8: Warning: Possible assertion failure (Assert)
+    //@ assert false;
+        ^
+loop.java:20: Warning: Possible assertion failure (Assert)
+    //@ assert false;
+        ^
+loop.java:33: Warning: Possible assertion failure (Assert)
+    //@ assert false;
+        ^
+3 warnings

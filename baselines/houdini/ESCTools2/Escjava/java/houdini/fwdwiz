@@ -1,0 +1,268 @@
+#!/bin/sh
+# ESC/Java forward annotation wizard
+# Copyright (c) 1999, Compaq Computer Corporation
+# Change history:
+#   14 Jul 1999  rustan & flanagan  Created
+#   28 Jul 1999  flanagan           Modified
+#   02 Aug 1999  burrows & flanagan Converted to sh
+#   31 Aug 1999  rustan & flanagan  Added warnings to "removed" pragmas
+#   22 Nov 1999  rustan & flanagan  Used assumers sets
+#   24 Nov 1999  rustan & flanagan  Fixed bugs
+#   10 Jan 2000  rustan & yuanyu    Fixed arguments to "sort"
+#    7 Feb 2000  rustan             Added "-annotateOnly" switch
+
+
+ulimit -s 32000
+echo "Houdini version 1.0.10, 10 January 2000"
+
+if [ "x${ESCJ}" = "x" -o "x${ESCJAVA_ROOT}" = "x" ]; then
+  echo "Error: Must first source setup in Escjava directory"
+  exit 1
+fi
+
+CL_PATH_ARG=
+if [ 2 -le  $# ]; then
+  if [ "x$1" = "x-classpath" ]; then
+    CL_PATH_ARG="-classpath $2"
+    shift
+    shift
+  fi
+fi
+
+annotateOnly="false"
+if [ 1 -le  $# ]; then
+  if [ "x$1" = "x-annotateOnly" ]; then
+	annotateOnly="true"
+	shift
+  fi
+fi
+
+continue="false"
+iter=0
+if [ 2 -le  $# ]; then
+  if [ "x$1" = "x-continue" ]; then
+    iter="$2"
+    continue="true"
+    shift
+    shift
+  fi
+fi
+   
+useAssumers="true"
+if [ 1 -le  $# ]; then
+  if [ "x$1" = "x-noAssumers" ]; then
+	useAssumers="false"
+	shift
+  fi
+fi
+
+htmlize="false"
+if [ 2 -le  $# ]; then
+  if [ "x$1" = "x-html" ]; then
+    htmlize="true"
+	outdir=$2
+	shift
+	shift
+  fi
+fi
+
+
+
+sourcefiles="$*"
+echo sourcefiles = $sourcefiles
+NOWARN_FLAGS="-nowarn Null -nowarn ZeroDiv -nowarn ArrayStore -nowarn Cast -nowarn CLeak -nowarn IndexNegative -nowarn IndexTooBig -nowarn ILeak -nowarn Deadlock -nowarn ModExt -nowarn Modifies -nowarn NegSize -nowarn Unenforcable -nowarn Exception -nowarn Writable"
+ESCJ_FLAGS="${NOWARN_FLAGS} -loopFallThru -loop 1.5 -noPeepOptGCAssertFalse -assertContinue -strongAssertPostNever"
+ESCJ_FLAGS_FINALRUN="-counterexample -loop 1.5 -nowarn Cast"
+PROVER_CC_LIMIT=1000
+    
+for f in $sourcefiles; do
+  if [ ! -e "$f" ]; then
+    echo "Cannot find file $f"
+    echo "Usage: fwdwiz [-classpath p] [-annotateOnly] [-continue iter] [-noAssumers] [-html outdir] sourcefiles..."
+    exit 1
+  fi
+done
+
+USERPATH=${CLASSPATH}:.
+CLASSPATH=${CLASSPATH}:${ESCJAVA_ROOT}/java/houdini/specs
+export CLASSPATH
+    
+ANNOTATION_VISITOR="${JAVA} houdini.Main -bootclasspath ${BOOTCLASSPATH} -classpath ${USERPATH}"
+ANNOTATION_INSERTER="${JAVA} escwizard.AnnotationInserter"
+
+
+
+# Test run the AnnotationInserter (to make sure the classpath is set up
+# correctly, before wasting CPU cycles)
+if CLASSPATH="${CLASSES}" ${ANNOTATION_INSERTER} -ping; then
+  : nothing
+else
+  echo "escwizard.AnnotationInserter not available"
+  exit 1
+fi
+
+timestamp="`date`"
+logfileprefix="houdini-`echo $timestamp | sed -e 's/[ :]/-/g'`"
+
+if [ "$continue" = "false" ]; then
+    
+   # back up source files
+    for f in $sourcefiles; do
+      cp -f "${f}" "${f}-${logfileprefix}"
+    done
+
+    echo "$timestamp, Computing initial annotations " ${1+"$@"}
+    echo ${ANNOTATION_VISITOR} ${1+"$@"} \> ${logfileprefix}.tmp 
+
+    # compute and add initial annotations
+    if CLASSPATH="${CLASSES}" ${ANNOTATION_VISITOR} ${1+"$@"} > ${logfileprefix}.tmp; then
+      : nothing
+    else
+      echo "Wizard failed to run annotation visitor (${logfileprefix}.tmp)"
+      exit 1
+    fi
+
+    #echo Annotations
+    #more ${logfileprefix}.tmp 
+
+    echo Annotating
+    if CLASSPATH="${CLASSES}" ${ANNOTATION_INSERTER} ${logfileprefix}.tmp $sourcefiles; then
+      : nothing
+    else
+      echo "Wizard failed to insert initial annotations (${logfileprefix}.tmp)"
+      exit 1
+    fi
+    for f in $sourcefiles; do
+      if [ -e "${f}.wizardUpdate.tmp" ]; then
+	mv -f "${f}.wizardUpdate.tmp" "${f}"
+      fi
+    done
+
+fi
+#  annotations computed
+if [ "$annotateOnly" = "true" ]; then
+  exit 0
+fi
+
+
+isMajorIteration="true"
+filesToCheck=$sourcefiles
+routinesFlag=
+if [ "$useAssumers" = "true" ]; then
+  printAssumersFlag="-printAssumers"
+else
+  printAssumersFlag=
+fi
+while true; do
+  timestamp="`date`"
+
+  if [ "$isMajorIteration" = "true" ]; then
+    echo "$timestamp, Major Iteration ${iter}"
+  else
+    echo "$timestamp, Iteration ${iter}"
+  fi
+  cat $sourcefiles | ${ESCJAVA_ROOT}/java/escjava/getAllPragmas.lim |
+    wc -l | xargs echo "Annotations remaining:"
+  echo $filesToCheck | sed -e 's/ /\
+/g' | wc -l | xargs echo Files to check:
+  echo $routinesFlag | sed -e 's/-routine /\
+-routine /g' | \
+    grep -e "-routine " | wc -l | xargs echo Routines to check:
+
+  # run escjava on each of filesToCheck
+  date > "${logfileprefix}-${iter}.log"
+    
+#	for f in $filesToCheck; do
+#	  date | xargs echo Checking $f
+#	  ${ESCJ} ${CL_PATH_ARG}  ${ESCJ_FLAGS} $f >> "${logfileprefix}-${iter}.log"
+#	  date >> "${logfileprefix}-${iter}.log"
+#	done
+
+  #echo ${ESCJ} ${CL_PATH_ARG}  ${ESCJ_FLAGS} $filesToCheck 
+  escjavaCommand="${ESCJ} ${CL_PATH_ARG} ${ESCJ_FLAGS} $printAssumersFlag $routinesFlag $filesToCheck"
+  echo Calling: $escjavaCommand >> "${logfileprefix}-${iter}.log"
+  echo $escjavaCommand
+  $escjavaCommand >> "${logfileprefix}-${iter}.log"
+  if [ $? != 0 ]; then
+    echo "`date`, Failed to run escjava"
+    exit 1
+  fi
+  date >> "${logfileprefix}-${iter}.log"
+
+  grep "s]  passed" "${logfileprefix}-${iter}.log" | wc -l | xargs echo Passed:
+  grep "s]  failed" "${logfileprefix}-${iter}.log" | wc -l | xargs echo Failed:
+  grep "s]  skipped" "${logfileprefix}-${iter}.log" | wc -l | xargs echo Skipped:
+  grep "s]  timed out" "${logfileprefix}-${iter}.log" | wc -l | xargs echo Timed out:
+  grep "Warning:" "${logfileprefix}-${iter}.log" | wc -l | xargs echo Warnings:
+  grep "Error:" "${logfileprefix}-${iter}.log" | wc -l | xargs echo Errors:
+  grep "Fatal error:" "${logfileprefix}-${iter}.log" | wc  -l | xargs echo Fatal errors:
+
+  if [ "x$printAssumersFlag" != "x" ]; then
+    grep ASSUMERS: "${logfileprefix}-${iter}.log" | \
+         sed -e 's/^ASSUMERS: //' > "${logfileprefix}.assumersdb"
+    printAssumersFlag=
+  fi
+
+  ${ESCJAVA_ROOT}/java/houdini/GetAssocDecls.perl \
+    < "${logfileprefix}-${iter}.log" |
+    sort -u -k 1,1 -k 2,2n -k 3,3nr > "${logfileprefix}.assocdecls"
+
+  rm -f "${logfileprefix}-${iter}.annremoved"
+  for f in $sourcefiles; do
+    ${ESCJAVA_ROOT}/java/houdini/AnnotationRemover.perl $f \
+      < "${logfileprefix}.assocdecls" >> "${logfileprefix}-${iter}.annremoved"
+    if [ $? = 2 ]; then
+      echo "`date`, Failed to run annotation remover"
+      exit 1
+    fi
+  done
+
+  cat "${logfileprefix}-${iter}.annremoved" | wc -l | \
+    xargs echo "Annotations removed:"
+
+  if [ $useAssumers = "true" ]; then
+    sed -e 's/^\([^ ]*\) \([0-9]*\) .*$/ \1:\2:/' \
+      < "${logfileprefix}-${iter}.annremoved" \
+      > "${logfileprefix}.annremovedrexp"
+    echo "This line will keep egrep from getting an empty file" \
+      >> "${logfileprefix}.annremovedrexp"
+    egrep -f "${logfileprefix}.annremovedrexp" "${logfileprefix}.assumersdb" \
+      > "${logfileprefix}-${iter}.assumers"
+    newFilesToCheck=`sed -e 's/^\(.*\)|\(.*)\).*$/\1/' "${logfileprefix}-${iter}.assumers" | sort -u`
+    routinesFlag=`sed -e 's/^\(.*\)|\(.*)\).*$/-routine \2/' "${logfileprefix}-${iter}.assumers"`
+  else
+    newFilesToCheck=`sed -e 's/^\([^ ]*\) .*$/\1/' "${logfileprefix}-${iter}.annremoved" | sort -u`
+  fi
+
+  echo New files to check: $newFilesToCheck
+
+  iter=`expr $iter + 1`
+  if [ "x$newFilesToCheck" = "x" ]; then
+    if [ "$isMajorIteration" = "true" ]; then
+      break
+    else
+      isMajorIteration="true"
+      newFilesToCheck=$sourcefiles
+      routinesFlag=
+    fi
+  else
+    isMajorIteration="false"
+  fi
+  filesToCheck=$newFilesToCheck
+done
+
+echo "`date`, Done after $iter iterations"
+
+# clean up
+#rm -f "${logfileprefix}.assumersdb"
+#rm -f "${logfileprefix}.assocdecls"
+#rm -f "${logfileprefix}.annremovedrexp"
+
+#convert to HTML, if requested
+if [ "$htmlize" = "true" ]; then
+    ${ESCJAVA_ROOT}/java/tohtml/runescj2html $outdir \
+	    $ESCJ_FLAGS_FINALRUN $sourcefiles
+fi
+
+cat $sourcefiles | ${ESCJAVA_ROOT}/java/escjava/getAllPragmas.lim |
+  	wc -l | xargs echo "Annotations remaining:"

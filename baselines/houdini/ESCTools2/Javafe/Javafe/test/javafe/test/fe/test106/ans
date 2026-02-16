@@ -1,0 +1,54 @@
+LocalRedefinition.java:37: Error: Local type definitions may not hide already existing local type definitions.
+        class T {};         // error
+              ^
+LocalRedefinition.java:49: Error: Local type definitions may not hide already existing local type definitions.
+                class S{};   // error...
+                      ^
+2 errors
+ExprScoping.java:142: Error: Duplicate field with same identifier
+    boolean f;      // error: duplicate fields
+            ^
+ExprScoping.java:141: Associated declaration: 
+    int f;
+        ^
+ExprScoping.java:146: Error: Duplicate nested-type declaration: the type DupNames2$f is already declared
+    class f{};      // error: duplicate types
+          ^
+ExprScoping.java:145: Associated declaration: 
+    class f{};
+          ^
+ExprScoping.java:151: Error: Variable 'f' is already defined here.
+        boolean f;      // error: duplicate locals
+                ^
+3 errors
+Dual.java:7: Fatal error: Reference to type member `T' of type Dual is ambiguous; it may refer to type SuperType$T or to type SuperInterface$T.
+    int j = T.i;                 // error: ambiguous
+            ^
+1 error
+Dual2.java:7: Fatal error: Reference to type member `T' of type Dual2 is ambiguous; it may refer to type SuperType$T or to type SuperInterface$T.
+    int k = Dual2.T.i;            // error: ambiguous access to T
+                  ^
+1 error
+Dual3.java:10: Fatal error: Reference to type member `T' of type Dual4 is ambiguous; it may refer to type SuperType$T or to type SuperInterface$T.
+    Object o = this.new T();   // error: ambiguous
+                        ^
+1 error
+Dual4.java:7: Fatal error: Reference to type member `T' of type Dual4 is ambiguous; it may refer to type SuperInterface1$T or to type SuperInterface2$T.
+    int j = T.i;                 // error: ambiguous
+            ^
+1 error
+Imports.java:20: Error: Cannot resolve variable access 'C.f'
+    int x = C.f;             // error: can't access C without inherita ...
+            ^
+1 error
+Prefixes.java:26: Error: No such field in type P.Q$C
+    int y = P.Q.C.g;    // error (we do not backtrack)
+                  ^
+Prefixes.java:52: Error: No such field in type P.C
+    int z = C.F.z;      // error: no such member z in C.F (of type P.C ...
+                ^
+2 errors
+MethodScoping.java:69: Error: No such method m(java.lang.String) in type Arguments$I
+            boolean x = m("hello");  // Error: wrong # of arguments
+                        ^
+1 error

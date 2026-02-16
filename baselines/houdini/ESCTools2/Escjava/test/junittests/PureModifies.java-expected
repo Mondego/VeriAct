@@ -1,0 +1,62 @@
+ESC/Java version VERSION
+    [TIME]
+
+PureModifies ...
+PureModifies.java:15: Error: A pure method may not have a modifies clause
+        //@ modifies \everything; // ERROR
+                     ^
+PureModifies.java:16: Associated declaration: 
+        //@ pure
+            ^
+PureModifies.java:34: Error: A pure method may not have a modifies clause
+        //@ modifies \everything; // ERROR
+                     ^
+PureModifies.java:35: Associated declaration: 
+        //@ pure
+            ^
+PureModifies.java:43: Error: A pure method may not have a modifies clause
+        //@     modifies \everything; // ERROR
+                         ^
+PureModifies.java:45: Associated declaration: 
+        //@ pure
+            ^
+PureModifies.java:50: Error: A pure method may not have a modifies clause
+        modifies \everything;  // ERROR
+                 ^
+PureModifies.java:51: Associated declaration: 
+        pure model void mm();
+        ^
+PureModifies.java:56: Error: A pure constructor may not have a modifies clause
+        modifies \everything;  // ERROR
+                 ^
+PureModifies.java:57: Associated declaration: 
+        pure model PureModifies(Object o);
+        ^
+PureModifies.java:64: Error: A pure constructor may not have a modifies clause
+        //@ modifies \everything; // ERROR
+                     ^
+PureModifies.java:65: Associated declaration: 
+        //@ pure
+            ^
+PureModifies.java:77: Error: A pure method may not have a modifies clause
+        //@ also modifies \everything;  // ERROR
+                          ^
+PureModifies.java:90: Associated declaration: 
+        //@ pure
+            ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+PureModifiesA ...
+PureModifies.java:84: Error: A pure constructor may not have a modifies clause
+        //@ modifies \everything;  // ERROR
+                     ^
+PureModifies.java:81: Associated declaration: 
+//@ pure
+    ^
+  [TIME total] (aborted)
+
+PureModifiesS ...
+  [TIME total]
+1 caution
+8 errors

@@ -1,0 +1,7 @@
+TestInputStream.java:38: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestInputStream.java", line 33, col 8.
+
+1 warning

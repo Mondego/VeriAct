@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+NotSpecified ...
+  Prover started:TIME
+    [TIME]
+
+NotSpecified: m() ...
+    [TIME]  passed immediately
+
+NotSpecified: NotSpecified() ...
+    [TIME]  passed
+  [TIME total]

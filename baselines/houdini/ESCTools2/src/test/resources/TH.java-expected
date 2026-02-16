@@ -1,0 +1,42 @@
+ESC/Java version VERSION
+src|test|resources|TH.java: Caution: Using given file as the .java file, even though it is not the java file for TH on the classpath
+    [TIME]
+
+TH ...
+  Prover started:TIME
+    [TIME]
+
+TH: TH() ...
+src|test|resources|TH.java:10: Error: There is no assignable clause allowing this method call
+        public TH() {}
+                    ^
+/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class: Associated declaration: 
+src|test|resources|TH.java:9: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+    [TIME]  passed
+
+TH: TH(TH) ...
+------------------------------------------------------------------------
+src|test|resources|TH.java:16: Warning: Possible violation of modifies clause (Modifies)
+        public TH(TH x) {
+                        ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|TH.java", line 14, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+TH: m() ...
+    [TIME]  passed
+
+TH: mm() ...
+    [TIME]  passed
+
+TH: TH(int) ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning
+1 error

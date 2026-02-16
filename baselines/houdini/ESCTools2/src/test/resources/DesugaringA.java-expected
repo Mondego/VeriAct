@@ -1,0 +1,58 @@
+ESC/Java version VERSION
+src|test|resources|DesugaringA.java: Caution: Using given file as the .java file, even though it is not the java file for DesugaringA on the classpath
+    [TIME]
+
+DesugaringA ...
+  Prover started:TIME
+    [TIME]
+
+DesugaringA: m() ...
+    [TIME]  passed immediately
+
+DesugaringA: mm() ...
+    [TIME]  passed immediately
+
+DesugaringA: m3() ...
+    [TIME]  passed immediately
+
+DesugaringA: m4() ...
+    [TIME]  passed immediately
+
+DesugaringA: m5() ...
+    [TIME]  passed immediately
+
+DesugaringA: m6(java.lang.Object) ...
+    [TIME]  passed immediately
+
+DesugaringA: m13() ...
+    [TIME]  passed immediately
+
+DesugaringA: ppp() ...
+    [TIME]  passed immediately
+
+DesugaringA: ppp1() ...
+    [TIME]  passed immediately
+
+DesugaringA: ppp2() ...
+    [TIME]  passed immediately
+
+DesugaringA: DesugaringA() ...
+    [TIME]  passed
+  [TIME total]
+
+JJ ...
+    [TIME]
+
+JJ: ppp() ...
+    [TIME]  passed immediately
+
+JJ: ppp1() ...
+    [TIME]  passed immediately
+
+JJ: ppp2() ...
+    [TIME]  passed immediately
+
+JJ: JJ() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

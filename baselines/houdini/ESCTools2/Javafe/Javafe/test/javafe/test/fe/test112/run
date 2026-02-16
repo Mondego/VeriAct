@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Test that we enforce static contexts correctly in 1.1
+
+${TOOL} This.java

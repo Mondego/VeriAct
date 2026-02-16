@@ -1,0 +1,34 @@
+TestBoolean.java:15: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:24: Warning: Precondition possibly not established (Pre)
+    assertTrue( !new Boolean("XXXX").booleanValue() ); // FIXME - NOT  ...
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestBoolean.java:28: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:34: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:73: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:85: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:96: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:107: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:117: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestBoolean.java:131: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+10 warnings

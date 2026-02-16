@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestClass.java: Caution: Using given file as the .java file, even though it is not the java file for TestClass on the classpath
+    [TIME]
+
+TestClass ...
+src|test|resources|TestClass.java:51: Fatal error: No method named assertTrue is in scope here.
+    assertTrue ( !o.getClass().isPrimitive() );
+    ^
+1 caution
+1 error

@@ -1,0 +1,14 @@
+ESC/Java version VERSION
+  Prover started:TIME
+
+Quant ...
+
+Quant: m() ...
+    [TIME]  passed
+
+Quant: n() ...
+    [TIME]  passed
+
+Quant: Quant() ...
+    [TIME]  passed
+  [TIME total]

@@ -1,0 +1,60 @@
+escjava_java_field_representation : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem,
+              escjava_jml_semantics
+
+    S_to_real : [ S -> real ]
+    CONVERSION+ S_to_real
+
+    % === ESCJ 8: Section 2.4
+
+    % 'as' trick in use.
+    asField : [ S, S -> S ]
+    asField_definition : AXIOM
+      FORALL (f, t, x : S): is(select(asField(f, t), x), t)
+
+    % === ESCJ 8: Section 2.5
+
+    % 'as' trick in use.
+    asElems : [ S -> S ]
+    asElems_definition : AXIOM
+      FORALL (e, a, i : S): is(select(select(asElems(e), a), i),
+                               elemtype(typeof(a)))
+
+    % === ESCJ 8: Section 3.0
+
+    vAllocTime : [ S -> S ]
+    isAllocated (x, a0 : S): bool = vAllocTime(x) < a0
+
+    % === ESCJ 8: Section 3.1
+
+    fClosedTime : [ S -> S ]
+    fClosedTime_definition : AXIOM
+      FORALL (x, f, a0 : S): 
+        (fClosedTime(f) < a0 AND isAllocated(x, a0)) IMPLIES
+        isAllocated(select(f, x), a0)
+
+    % === ESCJ 8: Section 3.2
+
+    eClosedTime : [ S -> S ]
+    eClosedTime_definition : AXIOM
+      FORALL (a, e, i, a0 : S):
+        (eClosedTime(e) < a0 AND isAllocated(a, a0)) IMPLIES
+        isAllocated(select(select(e, a), i), a0)        
+
+    % === Axioms about classLiteral; not in ESCJ 8 (yet?):
+
+    classLiteral : [ S -> S ]
+    T_java_lang_Class : S
+    % TODO: review use of alloc
+    alloc : S
+
+    classLiteral_definition1 : AXIOM
+      FORALL (t : S): classLiteral(t) /= java_null AND
+                      is(classLiteral(t), T_java_lang_Class) AND
+                      isAllocated(classLiteral(t), alloc)
+
+    classLiteral_definition2 : AXIOM
+      FORALL (t : S): classLiteral(t) = t
+
+  END escjava_java_field_representation

@@ -1,0 +1,45 @@
+ESC/Java version VERSION
+BSearch.java:44: Error: Unrecognized pragma: "tab"
+tab[i] <= tab[i+1]);
+^
+    [TIME]
+
+BSearch ...
+  Prover started:TIME
+    [TIME]
+
+BSearch: binarySearch(int[], int) ...
+------------------------------------------------------------------------
+BSearch.java:64: Warning: Loop invariant possibly does not hold (LoopInv)
+     while (result == -1 && gauche <= droite) {
+           ^
+Associated declaration is "BSearch.java", line 58, col 9:
+     //@ maintaining (\forall int i; i>=0 && i < gauche; tab[i] !=x);
+         ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "BSearch.java", line 64, col 5.
+    Executed else branch in "BSearch.java", line 68, col 16.
+    Executed else branch in "BSearch.java", line 71, col 21.
+    Reached top of loop after 1 iteration in "BSearch.java", line 64, col 5.
+
+------------------------------------------------------------------------
+BSearch.java:64: Warning: Loop invariant possibly does not hold (LoopInv)
+     while (result == -1 && gauche <= droite) {
+           ^
+Associated declaration is "BSearch.java", line 59, col 9:
+     //@ maintaining (\forall int i; i>droite && i < tab.length;tab[i] ...
+         ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "BSearch.java", line 64, col 5.
+    Executed else branch in "BSearch.java", line 68, col 16.
+    Executed then branch in "BSearch.java", line 69, col 34.
+    Reached top of loop after 1 iteration in "BSearch.java", line 64, col 5.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+BSearch: BSearch() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings
+1 error

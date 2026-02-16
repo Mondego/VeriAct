@@ -1,0 +1,8 @@
+public class MethodRefHelper {
+
+	//@ pure
+	public static boolean s();
+
+	//@ pure
+	public boolean i();
+}

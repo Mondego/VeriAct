@@ -1,0 +1,12 @@
+#!/bin/sh
+
+## Check error reporting for I/O errors when reading source files
+
+touch ErrorFile.java
+chmod a= ErrorFile.java
+
+${TOOL} NonExistantFile.java
+${TOOL} ErrorFile.java
+${TOOL} Master.java
+
+rm -f ErrorFile.java

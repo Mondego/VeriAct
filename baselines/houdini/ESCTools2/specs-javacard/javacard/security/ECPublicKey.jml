@@ -1,0 +1,67 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: ECPublicKey.jml,v 1.7 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public interface ECPublicKey extends PublicKey, ECKey {
+
+  /*@ public invariant
+    _type == KeyBuilder.TYPE_EC_F2M_PUBLIC ||
+    _type == KeyBuilder.TYPE_EC_FP_PUBLIC ;
+  @*/
+
+  /*@ public invariant
+    _size == KeyBuilder.LENGTH_EC_F2M_113 ||
+    _size == KeyBuilder.LENGTH_EC_F2M_131 ||
+    _size == KeyBuilder.LENGTH_EC_F2M_163 ||
+    _size == KeyBuilder.LENGTH_EC_F2M_193 ||
+    _size == KeyBuilder.LENGTH_EC_FP_112 ||
+    _size == KeyBuilder.LENGTH_EC_FP_128 ||
+    _size == KeyBuilder.LENGTH_EC_FP_160 ||
+    _size == KeyBuilder.LENGTH_EC_FP_192 ;
+  @*/
+
+  /*@ public ghost instance boolean _Wset; @*/
+
+  //@ public invariant _initialized == _FPset && _F2Mset && _Aset && _Bset && _Gset && _Rset && _Kset && _Wset;
+  //@ public invariant _ECinitialized == _initialized;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 && 
+	       offset + length <= buffer.length;
+      ensures _Wset;
+      assignable _Wset, _initialized, _ECinitialized;
+  @*/
+  public void setW(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getW(
+    byte[] buffer, short offset)
+      throws CryptoException;
+
+}

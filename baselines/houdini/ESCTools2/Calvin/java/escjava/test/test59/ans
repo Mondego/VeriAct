@@ -1,0 +1,52 @@
+InstInit.java:44: Warning: Possible assertion failure (Assert)
+    //@ assert x == 50;   // fails
+        ^
+InstInit.java:47: Warning: Possible assertion failure (Assert)
+    //@ assert z0 == 2;   // fails
+        ^
+T.java:18: Warning: Possible violation of object invariant (Invariant)
+    U() {}       // Error
+         ^
+Associated declaration is "T.java", line 8, col 8:
+    //@ invariant k>0
+        ^
+Typecheck.java:7: Error: non_null pragma cannot be applied to initializer block
+  //@ non_null
+      ^
+Typecheck.java:10: Error: requires pragma cannot be applied to initializer block
+  //@ requires x < y;
+      ^
+Typecheck.java:11: Error: ensures pragma cannot be applied to initializer block
+  //@ ensures x + y + z;  // this doesn't even type check, but that's  ...
+      ^
+Typecheck.java:18: Error: An instance method may be invoked only via an object and/or from a non-static context or an inner class enclosed by a type possessing that method.
+    m();  // can't do this in static initializer block
+    ^
+Typecheck.java:19: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+    y++;  // can't do this in static initializer block
+    ^
+Typecheck.java:14: Error: modifies pragma cannot be applied to initializer block
+  //@ modifies x < y;
+      ^
+Typecheck.java:15: Error: ensures pragma cannot be applied to initializer block
+  //@ ensures x + y + z;  // this doesn't even type check, but that's  ...
+      ^
+Typecheck.java:23: Error: also_ensures pragma cannot be applied to initializer block
+  //@ also_ensures true;
+      ^
+Typecheck.java:25: Error: monitored pragma cannot be applied to initializer block
+  //@ monitored
+      ^
+Typecheck.java:28: Error: readable_if pragma cannot be applied to initializer block
+  //@ readable_if false;
+      ^
+Typecheck.java:29: Error: monitored pragma cannot be applied to initializer block
+  //@ monitored
+      ^
+Typecheck.java:30: Error: monitored_by pragma cannot be applied to initializer block
+  //@ monitored_by x << true;
+      ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+3 warnings
+12 errors

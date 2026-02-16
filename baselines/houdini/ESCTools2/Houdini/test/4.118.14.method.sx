@@ -1,0 +1,6 @@
+*Method*
+LineNumberPrintWriter@4.6.6
+
+(EXPLIES 
+(LBLNEG |vc.tohtml.LineNumberPrintWriter.close.4.116.33| (EQ |@true| |@true|)) (AND 
+(DISTINCT)))

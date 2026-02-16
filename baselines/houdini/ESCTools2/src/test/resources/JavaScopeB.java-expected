@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|JavaScopeB.java: Caution: Using given file as the .java file, even though it is not the java file for JavaScopeB on the classpath
+    [TIME]
+
+JavaScopeB ...
+src|test|resources|JavaScopeB.java:4: Error: No such type: sub.JavaScopeBB
+import sub.JavaScopeBB;
+       ^
+src|test|resources|JavaScopeB.java:4: Error: No such type: sub.JavaScopeBB
+import sub.JavaScopeBB;
+       ^
+src|test|resources|JavaScopeB.java:5: Fatal error: Can't find type named "JavaScopeBB"
+public class JavaScopeB extends JavaScopeBB {
+                                ^
+1 caution
+3 errors

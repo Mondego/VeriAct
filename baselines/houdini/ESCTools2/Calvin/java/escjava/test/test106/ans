@@ -1,0 +1,102 @@
+DekkerLockStatic.java:12: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == \old(mx) ==> \old(mx) == mx */
+                    ^
+DekkerLockStatic.java:12: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == \old(mx) ==> \old(mx) == mx */
+                                 ^
+DekkerLockStatic.java:10: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 1 ==> a == \old(a) */
+                               ^
+DekkerLockStatic.java:13: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid != \old(mx) ==> \tid != mx */
+                    ^
+DekkerLockStatic.java:11: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 2 ==> b == \old(b) */
+                               ^
+5 cautions
+ProdConsMx.java:13: Warning: Global invariant possibly does not hold (GlobalInvariant)
+class ProdConsMx {
+                 ^
+Associated declaration is "ProdConsMx.java", line 26, col 8:
+    /*@ global_invariant mx == 0 || mx == 1 || mx == 2 */
+        ^
+ProdConsMx.java:13: Warning: Global invariant possibly does not hold (GlobalInvariant)
+class ProdConsMx {
+                 ^
+Associated declaration is "ProdConsMx.java", line 35, col 8:
+    /*@ global_invariant top >= 0 && top <= buf.length */
+        ^
+ProdConsMx.java:16: Warning: OTI possibly does not hold (OTI)
+        new int[BUF_SIZE];
+                ^
+Associated declaration is "ProdConsMx.java", line 34, col 8:
+    /*@ oti \old(mx) == \tid ==> \old(buf) == buf */
+        ^
+ProdConsMx.java:16: Warning: OTI possibly does not hold (OTI)
+        new int[BUF_SIZE];
+                ^
+Associated declaration is "ProdConsMx.java", line 27, col 8:
+    /*@ oti \tid == \old(mx) ==> \old(mx) == mx */
+        ^
+ProdConsMx.java:16: Warning: OTI possibly does not hold (OTI)
+        new int[BUF_SIZE];
+                ^
+Associated declaration is "ProdConsMx.java", line 33, col 8:
+    /*@ oti \old(mx) == \tid ==> \old(top) == top */
+        ^
+ProdConsMx.java:16: Warning: OTI possibly does not hold (OTI)
+        new int[BUF_SIZE];
+                ^
+Associated declaration is "ProdConsMx.java", line 28, col 8:
+    /*@ oti \tid == \old(mx) ==> \tid == mx */
+        ^
+ProdConsMx.java:13: Warning: OTI possibly does not hold (OTI)
+class ProdConsMx {
+                 ^
+Associated declaration is "ProdConsMx.java", line 34, col 8:
+    /*@ oti \old(mx) == \tid ==> \old(buf) == buf */
+        ^
+ProdConsMx.java:13: Warning: OTI possibly does not hold (OTI)
+class ProdConsMx {
+                 ^
+Associated declaration is "ProdConsMx.java", line 33, col 8:
+    /*@ oti \old(mx) == \tid ==> \old(top) == top */
+        ^
+8 warnings
+DekkerLock.java:1: Warning: Global invariant possibly does not hold (GlobalInvariant)
+class DekkerLock {
+                 ^
+Associated declaration is "DekkerLock.java", line 8, col 8:
+    /*@ global_invariant mx == 2 ==> b */    
+        ^
+DekkerLock.java:1: Warning: Global invariant possibly does not hold (GlobalInvariant)
+class DekkerLock {
+                 ^
+Associated declaration is "DekkerLock.java", line 7, col 8:
+    /*@ global_invariant mx == 1 ==> a */
+        ^
+DekkerLock.java:1: Warning: Global invariant possibly does not hold (GlobalInvariant)
+class DekkerLock {
+                 ^
+Associated declaration is "DekkerLock.java", line 6, col 8:
+    /*@ global_invariant mx == 0 || mx == 1 || mx == 2 */
+        ^
+DekkerLock.java:1: Warning: OTI possibly does not hold (OTI)
+class DekkerLock {
+                 ^
+Associated declaration is "DekkerLock.java", line 11, col 8:
+    /*@ oti \tid == 2 ==> b == \old(b) */
+        ^
+DekkerLock.java:1: Warning: OTI possibly does not hold (OTI)
+class DekkerLock {
+                 ^
+Associated declaration is "DekkerLock.java", line 12, col 8:
+    /*@ oti \tid == \old(mx) ==> \old(mx) == mx */
+        ^
+DekkerLock.java:1: Warning: OTI possibly does not hold (OTI)
+class DekkerLock {
+                 ^
+Associated declaration is "DekkerLock.java", line 10, col 8:
+    /*@ oti \tid == 1 ==> a == \old(a) */
+        ^
+6 warnings

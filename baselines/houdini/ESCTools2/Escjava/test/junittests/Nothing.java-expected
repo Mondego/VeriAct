@@ -1,0 +1,20 @@
+ESC/Java version VERSION
+Nothing.java:14: Fatal error: Unexpected token '\nothing' in Primary expression
+        //@ requires \nothing;
+                     ^
+Nothing.java:15: Fatal error: Unexpected token '\nothing' in Primary expression
+        //@ ensures \nothing;
+                    ^
+Nothing.java:16: Fatal error: Unexpected token '\nothing' in Primary expression
+        //@ diverges \nothing;
+                     ^
+Nothing.java:17: Fatal error: Unexpected token '\nothing' in Primary expression
+        //@ signals (Exception e) \nothing;
+                                  ^
+Nothing.java:18: Fatal error: Unexpected token '\nothing' in Primary expression
+        //@ when \nothing;
+                 ^
+Nothing.java:20: Fatal error: Unexpected token '\nothing' in Primary expression
+        //@     measured_by \nothing;
+                            ^
+6 errors

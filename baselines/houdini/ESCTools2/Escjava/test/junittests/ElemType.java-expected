@@ -1,0 +1,53 @@
+ESC/Java version VERSION
+    [TIME]
+
+ElemType ...
+  Prover started:TIME
+    [TIME]
+
+ElemType: m() ...
+------------------------------------------------------------------------
+ElemType.java:9: Warning: Possible assertion failure (Assert)
+                //@ assert \elemtype(\typeof(oa)) == \type(Object); // ...
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ElemType: mm() ...
+------------------------------------------------------------------------
+ElemType.java:20: Warning: Postcondition possibly not established (Post)
+        public void mm() {}
+                          ^
+Associated declaration is "ElemType.java", line 15, col 5:
+        //@ ensures \elemtype(\typeof(new int[1])) == \type(int);
+            ^
+Execution trace information:
+    Executed implicit return in "ElemType.java", line 20, col 19.
+
+------------------------------------------------------------------------
+ElemType.java:20: Warning: Postcondition possibly not established (Post)
+        public void mm() {}
+                          ^
+Associated declaration is "ElemType.java", line 16, col 5:
+        //@ ensures \elemtype(\typeof(l)) == \elemtype(\typeof(2+2));  ...
+            ^
+Execution trace information:
+    Executed implicit return in "ElemType.java", line 20, col 19.
+
+------------------------------------------------------------------------
+ElemType.java:20: Warning: Postcondition possibly not established (Post)
+        public void mm() {}
+                          ^
+Associated declaration is "ElemType.java", line 19, col 5:
+        //@ ensures \elemtype(\typeof(i)) == \elemtype(\typeof(f)); // ...
+            ^
+Execution trace information:
+    Executed implicit return in "ElemType.java", line 20, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ElemType: ElemType() ...
+    [TIME]  passed
+  [TIME total]
+4 warnings

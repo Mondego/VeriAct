@@ -1,0 +1,17 @@
+ESC/Java version VERSION
+    [TIME]
+
+EX ...
+  Prover started:TIME
+    [TIME]
+
+EX: mmm(int) ...
+EX.java:12: Caution: Not checking body of anonymous class (subclass of Object)
+                Object o = new Object() {
+                                        ^
+    [TIME]  passed
+
+EX: EX() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

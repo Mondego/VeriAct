@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+Unreachable ...
+  Prover started:TIME
+    [TIME]
+
+Unreachable: m() ...
+    [TIME]  passed
+
+Unreachable: mm() ...
+------------------------------------------------------------------------
+Unreachable.java:17: Warning: Code marked as unreachable may possibly be reached (Reachable)
+                //@ unreachable //FAILS
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unreachable: Unreachable() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

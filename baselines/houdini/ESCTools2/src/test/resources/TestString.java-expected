@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestString.java: Caution: Using given file as the .java file, even though it is not the java file for TestString on the classpath
+    [TIME]
+
+TestString ...
+src|test|resources|TestString.java:11: Fatal error: No method named assertTrue is in scope here.
+     assertTrue( (new String()).equals("") );
+     ^
+1 caution
+1 error

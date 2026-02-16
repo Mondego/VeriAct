@@ -1,0 +1,344 @@
+\documentclass[english,a4paper,10pt]{article}
+\usepackage{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{vmargin}
+\usepackage{color}
+\usepackage{verbatim}
+
+% fancy new command
+\newcommand{\superParachute}[1]{\paragraph{}\textbf{#1}}
+\newcommand{\BalleSousLeLit}[2]{
+\bigskip
+\bigskip
+\begin{Large}\textbf{\begin{LARGE}#1\end{LARGE}#2}\end{Large}
+}
+
+\title{\textbf{VC Generation Experiments for a PVS Specification of
+    the SRC ESC/Java Simplify Logic}}
+
+\author{Cl{\'{e}}ment Hurlin\\
+edited by Joe Kiniry}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty} % no page number
+
+\bigskip
+\hrule
+
+\begin{abstract}
+  \textbf{T}his paper explains what results have been obtained after
+  doing the translation of the SRC ESC/Java2 Simplify logic into PVS.
+  The Simplify-centric logic has is unsorted (i.e., it has no type, or
+  exactly one type, depending upon how you view it), so the PVS
+  translation of the logic has exactly one sort (type) too. The
+  PVS-based logic is meant to be equivalent to the Simplify-based logic.
+  The goal of this work was to (a) acquire a good knowledge of how
+  verification conditions are obtained and (b) try to prove
+  meta-theoretical properties (e.g., soundness) about the logic.\\
+
+  We describe what problems were encountered and show how this kind of
+  translation is limited if we want to do something serious, i.e.,
+  stay close to the results of Simplify and prove something different
+  from \textit{bool\_true $==$ bool\_false}.\footnote{A remark from
+    Cl{\'{e}}ment: I will not pretend that any of my comments can be
+    universally quantified since my experience with theorem proving
+    and PVS is 2 weeks old. Yet as this kind of work (translating a
+    theory to input it to another prover) isn't very common, I think
+    that what I learned might be useful to others' work.}
+\end{abstract}
+\bigskip
+\hrule
+
+\BalleSousLeLit{I}{ntroduction}
+
+\superParachute{T}he goal was to rewrite the pretty printer of
+ESC/Java2 in order to be able to input the proofs generated into
+PVS. Originally the proofs were written to be used for Simplify. In
+order to see if we can find properties about the logic, Joseph Kiniry
+decided to write a PVS logic equivalent to the logic used with
+Simplify.  Thus the process of rewriting the pretty printer wouldn't be
+difficult because the 2 logics are either as identical as possible.\\
+
+% TODO: jumping right into mentioning the many-sorted logic and
+% SMT-LIB provers; need some better lead-in here. -JRK
+
+In the first part, we describe what engineering problem the
+translation raised, keeping in mind that we will have to rewrite the
+VC generator later to use the new many-sorted logic with new provers
+like Sammy~\cite{2}.  Then we explain what results we get since we
+were able to generated proofs resulting of analysing simple programs.
+
+\BalleSousLeLit{I}{ssues about writing the translation}
+
+\superParachute{T}he syntax of Simplify provides some constructions
+that PVS does not. For example, boolean operators support more than 2
+parameters and are prefixed. Thus the Simlify's generation of
+verification conditions looks like:
+\begin{verbatim}
+      (AND 
+        (EQ |elems@pre| elems)
+        (EQ elems 
+          (asElems elems)
+          )
+        (< 
+          (eClosedTime elems)
+          alloc)
+        )
+\end{verbatim}
+Expressions like this one, that have the form:
+$\wedge(a, b, c, d, e)$ have first\footnote{As the main aim was to
+  stay close to Simplify's logic, it was the first intuitive method.}
+been translated to \textit{(boolAnd(a, b) AND boolAnd(c, d) AND e)}
+where \textit{boolAnd} is a function that reproduce $\wedge$ over type
+S\footnote{The \textit{S} type is the only type of the logic in PVS}
+and \textit{AND} is the PVS operator. 
+
+Another method was investigated, using PVS list, in this case we were
+translating $\wedge(a, b, c)$ to 
+$boolAnd(list(a, (list (b, list (c, null)))))$ 
+and \textit{boolAnd} was defined this way:
+\begin{verbatim}
+    boolAnd(args : list[S]) : RECURSIVE bool = 
+      CASES args OF
+        null : true, %consistent with definition of and
+        cons(x, y) : boolAnd(x, boolAnd(y))
+      ENDCASES
+    MEASURE length(args)
+\end{verbatim}
+Yet it appears that it dramatically slow the proof process so we stick
+to the first option.
+
+That was one the first modification done to the pretty-printer, yet it
+already raises a non-negligible problem.  A Simplify expression like:
+\begin{verbatim}
+          (NOT 
+            (EQ |@true| 
+              (isAllocated RES alloc)
+              )
+            )
+\end{verbatim}
+will be translated for PVS to:
+\begin{verbatim}
+          (boolNot
+            (
+              (isAllocated
+                (RES, alloc)
+              )
+            )
+          )  
+\end{verbatim}
+As \textit{isAllocated} has the following type in PVS: \textit{(x, a0
+  : S): bool}, it returns a PVS boolean, yet \textit{boolNot} is only
+defined over \textit{S}, so the need for a conversion function like
+this one raises:
+\begin{verbatim}
+    bool_to_S(a : bool) : S = 
+        if(a) 
+          then bool_true 
+          else bool_false
+        endif 
+\end{verbatim}
+
+Adding this function to the logic isn't harmful, yet the problem is
+that it makes the proof process slower. The main issue is that with
+huge verification conditions occasionally you will need other
+conversion functions.  but you cannot add every conversion function
+you need. For example, adding this one is impossible:
+\begin{verbatim}
+      S_to_bool(a : S) : bool = 
+        if(a = bool_true) 
+          then true 
+          else false
+        endif
+\end{verbatim} 
+because it instantly introduces non-soundness (if \textit{a} $\neq$
+\texttt{bool\_true} then you will obtain \texttt{false}, but that
+makes no sense since \textit{a} can represents a reference or
+whatever, which is $\neq$ \texttt{bool\_false}).\\
+
+Apart from that, what does it show?  It shows that the logic has to be
+designed knowing how the prover works, and how we can use the
+predefined types of the prover. In this case, the fact that there is
+already defined types in PVS, and that we sometimes rely on it,
+sometimes not, forbids us to do something clear and efficient. The
+problem is that with the current code of ESC/Java, manipulating the
+syntactic tree of the verification conditions generator is really
+annoying. The next implementation will have to be strongly typed,
+using dynamic linking of functions, genericity and inheritance
+everywhere possible.
+
+\BalleSousLeLit{R}{esults with generated proofs}
+
+\superParachute{O}nce the translation worked on a few little Java
+programs, we sent proofs to PVS, in order to see what kind of results
+the PVS prover can generate. Immediately, applying some muscleful
+compound commands like \textit{grind} was quite slow (around 15
+seconds when applying it on the empty default constructor (\textit{ie}
+without any assertions)) and raised contradictions like finding
+\textit{bool\_true = bool\_false} in the consequent formula. It means
+what? It means that there can be an incoherence in the logic or that
+the translation is wrong. As~\cite{3} explains, having too many axioms
+can introduce inconsistency.  As our logic was relying almost only on
+axioms, it's surely the reason. Moreover, reducing the proof tree by
+applying a few specific rewrite before launching a powerful command
+allowed us to avoid this kind of errors.  Yet adding axiom to an
+inconsistent theory doesn't solve the problem\dots These additional
+axioms just allowed us to 'cut' the proof tree before rewrite rules of
+other axioms introduce inconsistency. At this point nothing very
+interesting could be done because PVS is unable to handle huge proofs
+automatically, like Simplify did.\\
+
+That's why we wrote a second translation of the old unsorted logic of
+Simplify. These time, the logic was relying on PVS pre-implemented
+types like \textit{bool} and \textit{int}. So, the semantic wasn't the
+same as the previous one. Yet as we were applying it on small
+examples, that do not play with limits of \textit{integer}
+representation in memory, it sounds that it will not change the
+behaviour of our proofs. So it was written in a way that every
+comparison operator immediately returns a PVS boolean (not an untyped
+\textit{S} that will be translated using conversion
+function). Furthermore, the syntactic translation was easier since we
+were able to use PVS boolean operator like \textit{AND} or \textit{OR}
+in almost the same way as Simplify's syntax. Thus this piece of
+Simplify code:
+\begin{verbatim}
+      (AND 
+        (EQ |elems@pre| elems)
+        (EQ |alloc@pre| alloc)
+        (EQ |state@pre| state)
+        )
+\end{verbatim}
+can be translated for PVS to
+\begin{verbatim}
+      (refEQ
+        (elems_pre, elems))
+      AND
+      (refEQ
+        (alloc_pre, alloc))
+      AND
+      (refEQ
+        (state_pre, state))
+\end{verbatim} 
+We can see that it's cleaner and makes use of PVS boolean operator
+\footnote{that we know are written in an efficient way for the
+  prover}. Of course the prototype of \textit{refEQ} was changed from
+[S $\times$ S $\rightarrow$ S] to [S $\times$ S $\rightarrow$ bool]
+which makes a slight difference with the old Simplify's logic. Yet we
+think the difference is negligible on small examples.\\
+
+With this new translation of the logic, it was far easier to do
+something with PVS. First the proof generated are much more concise,
+since there is no more conversion functions all over the place, and
+the operation between \textit{boolean}, \textit{int} are now done with
+ths PVS predefined types. Thus, the proof can be done by hand. To
+simplify proofs, the succession of these commands (see the names of
+axioms to imagine what it does) was quite efficient:
+\begin{enumerate}
+\item (expand "EXPLIES")
+\item (rewrite \textcolor{green}{"asLockSet\_Axiom"})
+\item (rewrite \textcolor{green}{"asElems\_Axiom"})
+\item (rewrite \textcolor{green}{"normalAndExceptionalPathAreDifferent\_Axiom"})
+\item (expand \textcolor{green}{"refEQ"})
+\item (skolem!)
+\item (flatten)
+\item (split)
+\end{enumerate}
+Following this example, simple proof can be verified by hand,
+something that wasn't possible with the first translation of the
+logic. Notice that the first steps consist of rewriting axioms that
+have been introduced in the old Simpliy's logic only to fake
+types. These kind of things will disappear with new logics\dots Then
+some tests were run to verify if the unsorted logic for PVS was
+equivalent to the old one. The method was the following:
+\begin{enumerate}
+\item Write 2 classes slighty equivalent, except that the second one
+  fails to pass escjava2 check because of too weak pre-condition.
+\item Compare the 2 proofs generated to see how the difference is
+  translated into the proof.
+\item See what is obtained (or not) to the proof that doesn't pass
+  escjava2 check.
+\end{enumerate}
+It perhaps sound easy, but it wasn't possible to come to clear
+conclusion. First the proof generated are always, let's say \dots big
+\dots which does not make the analysis easy. Secondly the way the PVS
+prover handles proof, and the way it rewrites didn't permit us to see
+differences between wrong and correct code. In almost every case, the
+proof tree finished in a similar form for both programs. From this
+point of view, the translation was a failure, because nothing serious
+can be gathered from the proof generated. One more time, it shows that
+the logic was relying too much on Simplify to be able to get results
+with another prover.\\
+
+If we want to use multiple provers with ESC/Java2 in the near future,
+let's hope this kind of problems will be deeply reduced by the common
+SMT-LIB syntax, and that the prover will all behave in a
+not-so-different way.
+
+\newpage
+
+\BalleSousLeLit{C}{onclusion}
+
+\superParachute{T}his experience raised a few interesting
+problems. The experience acquired and the questions raised here will
+be helpful for future works. As a resume, let's list the different
+issues this work lead us to.\\
+ 
+First, you really have to design the logic with a good knowledge of
+the prover you will use. Like the authors of~\cite{1} did, if you want
+to make the proof system efficient, you have to accommodate your needs
+to it. Theorically it sounds bad, but with the actuals tools, it's
+necessary.\\
+
+Secondly, you have to define very precisely how the types of the
+program you're checking are represented by the types in the
+logic. This is particularly important when you're dealing with final
+types. For example, if you want PVS to be efficient with integers you
+have to use the predefined type \texttt{int}. Yet if the semantic of
+Java integer was the same of PVS \texttt{int}, the work would be so
+smoother\dots
+
+There's is two solution to this problem. Defining conversion function
+between the different type (like for example
+$\mathtt{JavaBool\_to\_PVSBool} : S \rightarrow \mathtt{bool}$), or using
+the predefined type of the prover. In the case of using PVS, the first
+option introduces new axioms, that can awfully slow the prover, and
+weaken the logic. The latter one causes the semantic of the logic to
+change, to differ from the one of the program analysed, yet I think
+this is the right way to proceede. If we don't want to be precise
+about possible errors related to memory representation of final types
+\footnote{Are axioms like
+  $\mathtt{range\_of\_char} : \mathtt{AXIOM} :\\
+  \forall (x : S): \mathtt{is}(x, \mathtt{T\_char}) \Leftrightarrow 0 \leq
+  x \wedge x \leq 65535$ often used?}, we can maybe use the prover
+representation of final types, without harming the number of errors
+detected. This possibility is surely described in the static
+checking's literature and should be further investigated.\\
+
+Finally, we hope that the new logic written for SMT-LIB based prover
+and his equivalent for PVS will reduce the approximation between the
+semantic of Java and the semantic of the logic. The new
+construction/writing possibility, for examples using types, will make
+the logic clearer and more concise. One possible issue is that if each
+prover works in a different way, a common logic will maybe not be
+appropriate to be efficient with each one. Let's hope we won't have to
+handle multiple logics at the same time. If this is the case, it will
+be interesting to be very flexible, for example being able to have a
+subset a logic used for a particular problem and handle the rest of
+the proof with another prover. A lot of work remains to be done \dots
+
+\begin{thebibliography}{2}
+\bibitem[1]{1} The Logics and Calculi of ESC/Java2. Original version
+  by K. Rustan, M. Leino and Jim Saxe, 1997.
+
+\bibitem[2]{2} Sammy is an SMT checker developed by Mich\ae{}l
+  DeCoser, George Hagen, Cesare Tinelli and Hantao Zhang.
+
+\bibitem[3]{3} A Tutorial Introduction to PVS, WIFT '95. Judy Crow,
+  Sam Owre, John Rushby, Natarajan Shakar, Mandayam Srivas.
+\end{thebibliography}
+
+\end{document}

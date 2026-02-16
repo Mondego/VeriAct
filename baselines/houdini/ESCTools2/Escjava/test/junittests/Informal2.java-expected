@@ -1,0 +1,11 @@
+ESC/Java version VERSION
+    [TIME]
+
+Informal2 ...
+Informal2.java:5: Error: Invalid types (int and boolean) in equality comparison
+        //@ ensures 0 == (* number *);
+                      ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+1 error

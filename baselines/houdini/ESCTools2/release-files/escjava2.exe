@@ -1,0 +1,26 @@
+#! /bin/sh
+# escjava2 -- run the ESC/Java2 checker in a cygwin environment
+
+####### You need to be sure that theses variables are set correctly for your
+####### environment:
+#######    ESCTOOLS_RELEASE - the directory containing the binary release.
+#######            For example, it should contain esctools2.jar and escj
+#######    SIMPLIFY - the name of the executable for the Simplify automatic
+#######            theorem prover.  There is a platform-dependent choice
+#######            available in the release.  For a windows machine, this 
+#######            will be something like   Simplify-1.5.4.exe  or some
+#######            subsequent version.
+
+# The directory containing the release files
+ESCTOOLS_RELEASE='/usr/local/escjava'
+
+ESC_CLASSPATH=`cygpath -aw "$ESCTOOLS_RELEASE/esctools2.jar"`
+
+# The name of a Simplify executable in $ESCTOOLS_RELEASE
+SIMPLIFY="Simplify-1.5.4.exe"
+
+export ESCTOOLS_RELEASE SIMPLIFY ESC_CLASSPATH
+
+exec "$ESCTOOLS_RELEASE/escj" "$@"
+
+

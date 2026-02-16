@@ -1,0 +1,21 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* -nocheck WontEvenParse0.java
+${ESCJ} $* -nocheck WontEvenParse1.java
+${ESCJ} $* -nocheck WontEvenParse2.java
+${ESCJ} $* -nocheck WontEvenParse3.java
+${ESCJ} $* -nocheck WontEvenParse4.java
+${ESCJ} $* -nocheck WontEvenParse5.java
+${ESCJ} $* -nocheck WontEvenParse6.java
+${ESCJ} $* -nocheck WontEvenParse7.java
+${ESCJ} $* -nocheck WontEvenParse8.java
+${ESCJ} $* -nocheck BogusInput.java
+${ESCJ} $* -nocheck BogusAssignments.java
+${ESCJ} $* -nocheck BogusLoops.java
+${ESCJ} $* -nocheck BogusFunctions.java
+${ESCJ} $* -nocheck BogusGhost.java
+${ESCJ} $* -nocheck BogusSpec.java
+${ESCJ} $* -nocheck BogusVisibility.java
+${ESCJ} $* -nocheck BogusModifiers.java
+${ESCJ} $* -nocheck BogusNowarns.java

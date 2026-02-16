@@ -1,0 +1,39 @@
+ESC/Java version VERSION
+    [TIME]
+
+Lbl ...
+  Prover started:TIME
+    [TIME]
+
+Lbl: m() ...
+------------------------------------------------------------------------
+Lbl.java:6: Warning: Postcondition possibly not established (Post)
+        void m() {}
+                  ^
+Associated declaration is "Lbl.java", line 5, col 5:
+        //@ ensures (\lblneg A false);
+            ^
+Execution trace information:
+    Executed implicit return in "Lbl.java", line 6, col 11.
+
+Counterexample labels:
+    A
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Lbl: mm() ...
+------------------------------------------------------------------------
+Lbl.java:9: Warning: Possible assertion failure (Assert)
+        //@ assert !(\lblpos B true);
+            ^
+Counterexample labels:
+    B
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Lbl: Lbl() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

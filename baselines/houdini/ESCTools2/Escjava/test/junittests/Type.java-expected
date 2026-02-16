@@ -1,0 +1,73 @@
+ESC/Java version VERSION
+    [TIME]
+
+Type ...
+  Prover started:TIME
+    [TIME]
+
+Type: Type() ...
+    [TIME]  passed immediately
+
+Type: m1() ...
+------------------------------------------------------------------------
+Type.java:16: Warning: Postcondition possibly not established (Post)
+        public void m1() {}
+                          ^
+Associated declaration is "Type.java", line 15, col 5:
+        //@ ensures \typeof(null) <: \type(Object); // FAILS
+            ^
+Execution trace information:
+    Executed implicit return in "Type.java", line 16, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Type: m2() ...
+    [TIME]  passed
+
+Type: m() ...
+    [TIME]  passed
+
+Type: m3() ...
+------------------------------------------------------------------------
+Type.java:34: Warning: Postcondition possibly not established (Post)
+        public void m3() {}
+                          ^
+Associated declaration is "Type.java", line 33, col 5:
+        //@ ensures \typeof(b) == \type(int);  // FAILS
+            ^
+Execution trace information:
+    Executed implicit return in "Type.java", line 34, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Type: m4() ...
+------------------------------------------------------------------------
+Type.java:36: Warning: Postcondition possibly not established (Post)
+        public void m4() {}
+                          ^
+Associated declaration is "Type.java", line 35, col 5:
+        //@ ensures \typeof(i) <: \type(Object); // FAILS
+            ^
+Execution trace information:
+    Executed implicit return in "Type.java", line 36, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Type: m5() ...
+------------------------------------------------------------------------
+Type.java:38: Warning: Postcondition possibly not established (Post)
+        public void m5() {}
+                          ^
+Associated declaration is "Type.java", line 37, col 5:
+        //@ ensures \typeof(i) == \typeof(null);  // FAILS
+            ^
+Execution trace information:
+    Executed implicit return in "Type.java", line 38, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+4 warnings

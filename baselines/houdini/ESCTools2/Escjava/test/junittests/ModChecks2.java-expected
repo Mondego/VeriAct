@@ -1,0 +1,67 @@
+ModChecks2.java:19: Warning: Possible violation of modifies clause (Modifies)
+                i = 0;                  // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 17, col 5:
+        //@ modifies \nothing;
+            ^
+ModChecks2.java:23: Warning: Possible violation of modifies clause (Modifies)
+                j++;                    // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 21, col 5:
+        //@ modifies \nothing;
+            ^
+ModChecks2.java:27: Warning: Possible violation of modifies clause (Modifies)
+                a[0] = 7;               // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 25, col 5:
+        //@ modifies \nothing;
+            ^
+ModChecks2.java:31: Warning: Possible violation of modifies clause (Modifies)
+                a = new int[15];        // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 29, col 5:
+        //@ modifies \nothing;
+            ^
+ModChecks2.java:35: Warning: Possible violation of modifies clause (Modifies)
+                //@ set gi = 0;         // ERROR
+                        ^
+Associated declaration is "ModChecks2.java", line 33, col 5:
+        //@ modifies \nothing;
+            ^
+ModChecks2.java:39: Warning: Possible violation of modifies clause (Modifies)
+                o.j += 3;               // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 37, col 5:
+        //@ modifies \nothing;
+            ^
+ModChecks2.java:44: Warning: Possible violation of modifies clause (Modifies)
+                i = 0; // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 42, col 12:
+        //@ modifies ModChecks2.*;
+            ^
+ModChecks2.java:50: Warning: Possible violation of modifies clause (Modifies)
+                o.j = 0; // ERROR
+                  ^
+Associated declaration is "ModChecks2.java", line 48, col 12:
+        //@ modifies this.*;
+            ^
+ModChecks2.java:55: Warning: Possible violation of modifies clause (Modifies)
+                j = 0;   // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 53, col 12:
+        //@ modifies this.*;
+            ^
+ModChecks2.java:60: Warning: Possible violation of modifies clause (Modifies)
+                i = 0; // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 58, col 12:
+        //@ modifies super.i;
+            ^
+ModChecks2.java:65: Warning: Possible violation of modifies clause (Modifies)
+                super.i = 0; // ERROR
+                ^
+Associated declaration is "ModChecks2.java", line 63, col 12:
+        //@ modifies i;
+            ^
+11 warnings

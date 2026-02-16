@@ -1,0 +1,55 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id$
+ *
+ */
+
+package javacard.framework.service;
+
+import java.rmi.Remote;
+import javacard.framework.APDU;
+
+public class RMIService extends BasicService implements RemoteService {
+
+  public static final byte DEFAULT_RMI_INVOKE_INSTRUCTION;
+
+  //@ public static invariant DEFAULT_RMI_INVOKE_INSTRUCTION == 0x38;
+  
+  //@ public ghost byte _invokeInstructionByte;
+
+  //@ public ghost Remote _remoteObject;
+  /*@ public invariant _remoteObject != null; @*/
+  
+  /*@ public normal_behavior
+       requires initialObject != null;
+       ensures _remoteObject == initialObject;
+       ensures _invokeInstructionByte == DEFAULT_RMI_INVOKE_INSTRUCTION;
+       assignable _remoteObject, _invokeInstructionByte;
+    @*/
+  public RMIService(Remote initialObject);
+
+  /*@ public normal_behavior
+       requires true;
+       ensures _invokeInstructionByte == ins;
+       assignable _invokeInstructionByte;
+    @*/
+  public void setInvokeInstructionByte(byte ins);
+  
+  /*@ also
+      public normal_behavior
+         requires apdu != null;
+	 ensures true;
+	 assignable apdu._buffer[*];
+  @*/
+  public boolean processCommand(APDU apdu);
+
+} 

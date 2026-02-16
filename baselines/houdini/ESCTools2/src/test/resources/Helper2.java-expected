@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|Helper2.java: Caution: Using given file as the .java file, even though it is not the java file for Helper2 on the classpath
+    [TIME]
+
+Helper2 ...
+src|test|resources|Helper2.java:5: Error: The helper pragma cannot be applied to method that can be overridden
+        //@ helper
+            ^
+src|test|resources|Helper2.java:8: Error: The helper pragma cannot be applied to method that can be overridden
+        //@ helper
+            ^
+src|test|resources|Helper2.java:11: Error: The helper pragma cannot be applied to method that can be overridden
+        //@ helper
+            ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+3 errors

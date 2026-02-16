@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+LoopBug ...
+  Prover started:TIME
+    [TIME]
+
+LoopBug: m() ...
+    [TIME]  passed
+
+LoopBug: LoopBug() ...
+    [TIME]  passed
+  [TIME total]

@@ -1,0 +1,25 @@
+C.java:42: Warning: Precondition possibly not established (Pre)
+    w0();  // error
+      ^
+Associated declaration is "C.java", line 35, col 6:
+  //@ requires (\forall int j; b[j] && x[j] > 0);
+      ^
+C.java:47: Warning: Precondition possibly not established (Pre)
+    w3();  // error
+      ^
+Associated declaration is "C.java", line 50, col 6:
+  //@ requires (\exists int j; b[j]; x[j] > 0);
+      ^
+2 warnings
+DoesntEvenParse0.java:3: Fatal error: Unexpected token ';', expected ')'
+  //@ invariant (\forall int j ; b[j] ; b[j] ; b[j]);
+                                             ^
+1 error
+DoesntEvenParse1.java:3: Fatal error: Unexpected token ';', expected ')'
+  //@ invariant (\forall int j ;; b[j] ; b[j]);
+                                       ^
+1 error
+DoesntEvenParse2.java:3: Fatal error: Unexpected token ')' in Primary expression
+  //@ invariant (\forall int j ; b[j] ;);
+                                       ^
+1 error

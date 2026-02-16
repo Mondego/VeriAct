@@ -1,0 +1,73 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParsePlus ...
+  Prover started:TIME
+    [TIME]
+
+ParsePlus: m() ...
+------------------------------------------------------------------------
+ParsePlus.java:5: Warning: Postcondition possibly not established (Post)
+        void m() {}
+                  ^
+Associated declaration is "ParsePlus.java", line 4, col 6:
+        //+@ ensures false;
+             ^
+Execution trace information:
+    Executed implicit return in "ParsePlus.java", line 5, col 11.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParsePlus: n() ...
+------------------------------------------------------------------------
+ParsePlus.java:10: Warning: Postcondition possibly not established (Post)
+        void n() {}
+                  ^
+Associated declaration is "ParsePlus.java", line 8, col 2:
+                ensures false;
+                ^
+Execution trace information:
+    Executed implicit return in "ParsePlus.java", line 10, col 11.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParsePlus: p() ...
+------------------------------------------------------------------------
+ParsePlus.java:16: Warning: Postcondition possibly not established (Post)
+        void p() {}
+                  ^
+Associated declaration is "ParsePlus.java", line 13, col 2:
+                ensures 4 == 2 ...
+                ^
+Execution trace information:
+    Executed implicit return in "ParsePlus.java", line 16, col 11.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParsePlus: q() ...
+    [TIME]  passed
+
+ParsePlus: r() ...
+    [TIME]  passed
+
+ParsePlus: s() ...
+------------------------------------------------------------------------
+ParsePlus.java:24: Warning: Postcondition possibly not established (Post)
+        public void s() {}
+                         ^
+Associated declaration is "ParsePlus.java", line 22, col 6:
+        /*+@ ensures ...
+             ^
+Execution trace information:
+    Executed implicit return in "ParsePlus.java", line 24, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParsePlus: ParsePlus() ...
+    [TIME]  passed
+  [TIME total]
+4 warnings

@@ -1,0 +1,269 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 12: Handling pragmas</TITLE>
+</HEAD>
+<BODY>
+
+<H1>
+ESCJ 12: Handling pragmas</H1>
+
+<H3>
+Raymie Stata</H3>
+
+<H6>
+Last modified: December 30, 1997</H6>
+
+<HR>
+
+<P>The first part of this note postulates a set of requirements for a mechanism
+for handling pragma. The requirements are rather restrictive, vastly simplifying
+the problem. The second part describes three different designs we have
+been considering and recommends one of them for further exploration.
+<H2>
+Requirements</H2>
+
+<UL>
+<LI>
+There are two kinds of pragmas. <I>Lexical pragmas</I> can appear anywhere
+in a compilation unit, for example, ESC's "no warn" pragma. They are collected
+together into a list associated with the compilation unit as a whole. This
+association is as a decoration rather than as part of the syntax.</LI>
+
+
+<P><I>Syntax pragmas</I> can appear only in certain grammatical contexts;
+they become part of the actual syntax tree. Three Java syntactic categories
+need to be expanded to allow syntax pragmas: member declarations (that
+is, class and interface members), statements, and modifiers for declarations
+of classes, members, and local variables. (When a declaration declares
+multiple entities at once, for example, "<TT>int x, y;</TT>", modifier
+pragmas may apply to all of the entities; there need not be syntax for
+separately modifying each entity in the declaration.)
+<LI>
+Pragmas always appear in Java comments. These comments must have one of
+the following forms:</LI>
+
+<MENU>
+<LI>
+<TT>/*</TT><I>tag</I> <I>white-space</I> <I>pragma-text</I> <TT>*/</TT></LI>
+
+<LI>
+<TT>//</TT><I>tag</I> <I>white-space-minus-EOL</I> <I>pragma-text</I> <I>EOL</I></LI>
+</MENU>
+The <I>tag</I> is a sequence of non-space characters meant to indicate
+the tool to be used to process the pragma. It will usually consist of a
+single punctuation character such as <TT>*</TT> or <TT>@</TT>.
+
+<P>A pragma may not be split across multiple comments. However, more than
+one pragma syntactic pragma of the same category (for example, more than
+one modifier pragma) must be allowed in a single comment.
+<LI>
+A parser built using the pragma mechanism must satisfy the <I>take out
+principle</I>: parsing a file with pragmas and then removing the pragma-related
+nodes should yield the same parse tree as would parsing the file with the
+pragma comments replaced with white space. The following example illustrates
+a potential violation of this rule:</LI>
+
+<BLOCKQUOTE>
+<PRE>...
+while (...)
+&nbsp; //@ assert ...
+&nbsp; x = x + 1;
+...</PRE>
+</BLOCKQUOTE>
+If the parser parsed the <TT>while</TT> statement such that the <TT>while</TT>
+body consisted simply of the <TT>assert</TT> statement, then the take out
+principle would be violated. Such a violation would be surprising to the
+user of a tool like ESC/Java because the program being checked would be
+different from the program that gets compiled. (In this particular case,
+one solution would be for the parser to consider the above a syntax error,
+insisting that the programmer use curly braces when the body of a <TT>while</TT>
+statement contains an <TT>assert</TT>.)</UL>
+We believe the above requirements are sufficient for the current ESC/Java
+annotation language. They also seem fine for Mr. Java Spidey and a Javadoc-like
+tool.
+
+<P>We have also identified the following "nice-to-have" feature. Modifier
+pragmas should be allowed just before the <TT>;</TT> terminating field
+and abstract method declarations; they should also be allowed just before
+the <TT>{</TT> of a method body. The idea is to put annotations for member
+declarations <I>after</I> the header of the declaration; otherwise, one
+can end up wading through many lines of modifiers before getting to see
+the name of a method (this is a problem with Javadoc, and could be for
+ESC method specs too).
+<H2>
+Possible designs</H2>
+Three approaches have been identified for the extensible parser. We describe
+them briefly below, starting with the least popular and ending with the
+most popular. The descriptions below concentrate on the handling of syntactic
+pragmas.
+<H4>
+"Shotgun approach:" Allow pragmas everywhere.</H4>
+In this approach, a pragma comment can appear anywhere in the program text.
+The parser uses decorations to associate pragmas with AST nodes according
+to a fixed set of rules. Consider, for example, the following three productions:
+<BLOCKQUOTE>
+<PRE>Expr ::= Literal
+Expr ::= Expr OP Expr
+Stmt ::= 'if' Expr Stmt 'else' Stmt ';'</PRE>
+</BLOCKQUOTE>
+The following set of rules could be used to associate pragmas with nodes.
+For a literal expression, all pragmas appearing after the token preceding
+the literal and before the literal itself are associated with the literal;
+pragmas appearing after the literal are left for the syntactic phrase that
+follows. For a binary expression, pragmas appearing before the left- and
+right subexpressions are picked up by those subexpressions; pragmas appearing
+after the first subexpression but before the <TT>OP</TT> are associated
+with the binary expression itself. For an <B>if</B> statement, pragmas
+appearing before the subexpression and substatements are associated with
+those subphrases; pragmas appearing before the <B>if</B>, the <B>else</B>,
+and the trailing <TT>;</TT> are associated with the <B>if</B> statement
+itself.
+
+<P>As these examples illustrate, it may not be too hard to define a complete
+set of rules for associating pragmas with parse-tree nodes by appling simple
+rules of thumb like "subphrases pick up the pragmas in front of them but
+leave behind pragmas after them." However, this approach seems overly general
+given the requirements listed above. Further, it would require a traversal
+of the parse tree to move syntactic pragmas from their initial positions
+as decorations to their final positions as parts of the syntax tree. As
+a result, this approach is currently out of favor.
+<H4>
+"Conventional approach:" Keep the conventional lexer/parser structure.</H4>
+In this approach, the scanner turns text introducing a syntactic pragma
+(e.g., "/**") into a "pragma token". If the parser is expecting a pragma,
+it jumps to a pragma-parsing method; if it's not expecting a pragma, it
+reports an error and initiates error recovery. There are different pragma-parsing
+methods for parsing pragmas belonging to different syntactic categories
+(e.g., one for member-declaration pragmas and another for statement pragmas).
+These pragma-parsing methods are meant to be overridden by programmers
+wanting to add pragmas to our front end.
+
+<P>So far, the behavior of the scanner and parser described above is completely
+conventional. Here is how pragma parsing differs from the convention. When
+the scanner creates the "pragma token," it includes in that token a pointer
+to a correlated input stream whose contents consist of the contents of
+the pragma comment. Inside the pragma-parsing method, this input stream
+is turned into a lexer object from which the pragma is parsed. (An alternative
+to introducing this input stream would be to have the original scanner
+continue lexing inside the pragma text. However, such a design is not very
+graceful when the lexical language inside pragmas is different from Java's
+lexical language.)
+
+<P>When it comes to integrating the results of the pragma-parsing methods
+into the parse tree, a nice mechanism already exists for doing so. It turns
+out that syntactic pragmas all appear in contexts where a sequence of them
+is always allowed (for example, a modifier pragma can be followed by another
+modifier pragmas, and a member-declaration pragma can be followed by another
+member-declaration pragma). The parser handles sequences of phrases as
+follows: as each member of the sequence is parsed, it is pushed onto a
+stack. When the sequence is over, all members of the sequence are poped
+off the stack into an array. Thus, all the pragma-parsing methods need
+to do to integrate with the tree-building mechanism of the parser is to
+push the pragmas they parse onto this stack. No change is required to the
+existing parser to have it pick up these nodes and integrate them into
+the tree (the existing parser would have to be changed to call the pragma-parsing
+methods when a pragma token is encountered).
+
+<P>Here are the detailed steps a programmer must take to add a pragma language
+to a front end under this approach:
+<OL>
+<LI>
+The programmer must implement subtypes of StatementPragma, MemberDeclPragma,
+and other such AST node types for representing the pragma language to be
+implemented.</LI>
+
+<LI>
+The programmer must implement a Parser subclass, overriding the pragma-parsing
+methods with methods that can parse the pragma language. If the lexical
+language of the pragma language differs from Java's, then the programmer
+must also implement a scanner for the language to be used by the pragma-parsing
+methods. Such a scanner may be derived from our standard Java scanner.</LI>
+
+<LI>
+When initializing our front end, the programmer must indicate the pragma
+tag. This would be done by passing a string to some initialization routine.</LI>
+
+<LI>
+When initializing our front end, the programmer must ensure that his own
+subclass of Parser is used. This would be done by passing an instance of
+the ParserFactory interface, which has a single method for returning a
+new Parser subclass. (Passing an ParserFactory here rather than a Parser
+object anticipates a multi-threaded front end. In such a front end, multiple
+threads would be created for parsing different input files. Each thread
+would do its parsing using its own instance of the Parser object. The code
+that creates these parsing threads needs to be able to create Parser objects
+to go with them, thus the ParserFactory interface.)</LI>
+
+<LI>
+When initializing our front end, some step will have to be taken to provide
+code for parsing lexical pragmas. We can assume the "rock bottom" approach
+here to differentiating syntactic from lexical pragmas. The rock bottom
+approach is to use "//" comments for lexical pragmas and "/*" comments
+for syntactic ones. However, once these two kinds of pragmas are differentiated,
+some mechanism must be there for providing code for parsing lexical pragmas.
+A likely candidate is an overridable method in the lexer.</LI>
+</OL>
+
+<H4>
+"Supertoken approach:" Do most of the pragma parsing in the lexer.</H4>
+In this approach, the scanner returns to the parser "supertokens" that
+represent fully parsed pragmas. If the parser is expecting a pragma, it
+extracts the pramga's parse tree from the supertoken and inserts it into
+the larger parse tree being built. If the parser is not expecting a pragma,
+it reports an error and initiates error recovery.
+
+<P>When the scanner is created, it is given an instance of the PragmaParser
+interface which it will use for parsing pragmas. When the scanner encounters
+a comment, it bundles the text of that comment into a correlated input
+stream and passes it to the PragmaParser instance. The lexer then calls
+a method on the PragmaParser to parse the first supertoken and returns
+the result to the parser. The next time the lexer is called, it first checks
+the PragmaParser to see if there are more supertokens; if so, the next
+one is returns, if not, the lexer continues scanning the Java text that
+follows the pragma comment.
+
+<P>The detailed steps a programmer must take to add a pragma language to
+a front end under the supertoken approach is largely the same as the steps
+under the conventional approach:
+<OL>
+<LI>
+The programmer must implement subtypes of StatementPragma, MemberDeclPragma,
+and other such AST node types for representing the pragma language to be
+implemented.</LI>
+
+<LI>
+The programmer must implement a class that implements the PragmaParser
+interface to implement pragma-parsing methods that can parse the pragma
+language. This class must handle both syntactic and lexical pragmas.</LI>
+
+<LI>
+When initializing our front end, the programmer must indicate the pragma
+tag.</LI>
+
+<LI>
+When initializing our front end, the programmer must ensure that his own
+implementation of PragmaParser is used. This would be done by passing an
+instance of the PragmaParserFactory interface.</LI>
+</OL>
+
+<H4>
+Discussion</H4>
+Either of the last two approaches seems basically fine to me -- I don't
+think we'll hurt ourselves by taking either. However, I have a slight preference
+for the supertoken approach because it seems to have a better story for
+lexical pragmas. All pragma parsing is done in one place, the PragmaParser
+instance). In the conventional approach, parsing of lexical and syntactic
+pragmas will likely be in separate places. Second, with the supertoken
+approach, it is easy to take something other than the "rock bottom" approach
+for differentiating syntactic pragmas from lexical ones.
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

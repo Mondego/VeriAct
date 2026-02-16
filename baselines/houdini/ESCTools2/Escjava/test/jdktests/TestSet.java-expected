@@ -1,0 +1,84 @@
+TestSet.java:66: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestSet.java:79: Warning: Possible assertion failure (Assert)
+        //@ assert (/forall Object o; c.contains(o); o.equals(i) ); // ...
+            ^
+TestSet.java:83: Warning: Possible assertion failure (Assert)
+        //@ assert !c.containsObject(ii);  // FIXME
+            ^
+TestSet.java:96: Warning: Possible assertion failure (Assert)
+        //@ assert c.containsObject(i);    // FIXME
+            ^
+TestSet.java:99: Warning: Precondition possibly not established (Pre)
+        assertTrue(!b);                      // FIXME
+                  ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestSet.java:100: Warning: Possible assertion failure (Assert)
+        //@ assert c.containsObject(i);     // FIXME
+            ^
+TestSet.java:101: Warning: Possible assertion failure (Assert)
+        //@ assert !c.containsObject(ii);   // FIXME
+            ^
+TestSet.java:121: Warning: Precondition possibly not established (Pre)
+        assertTrue (b);      // FIXME
+                   ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+Execution trace information:
+    Routine call returned exceptionally in "TestSet.java", line 104, col 11.
+    Routine call returned exceptionally in "TestSet.java", line 115, col 11.
+
+TestSet.java:122: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestSet.java", line 104, col 11.
+    Routine call returned exceptionally in "TestSet.java", line 115, col 11.
+
+TestSet.java:140: Warning: Precondition possibly not established (Pre)
+        assertTrue (b);      // FIXME
+                   ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+Execution trace information:
+    Routine call returned exceptionally in "TestSet.java", line 134, col 11.
+
+TestSet.java:150: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestSet.java", line 134, col 11.
+
+TestSet.java:168: Warning: Precondition possibly not established (Pre)
+        assertTrue (b);     // FIXME
+                   ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+Execution trace information:
+    Routine call returned exceptionally in "TestSet.java", line 162, col 11.
+
+TestSet.java:179: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestSet.java", line 162, col 11.
+
+TestSet.java:224: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestSet.java", line 218, col 11.
+
+TestSet.java:239: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestSet.java:270: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+16 warnings

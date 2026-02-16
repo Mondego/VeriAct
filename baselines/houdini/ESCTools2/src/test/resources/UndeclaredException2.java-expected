@@ -1,0 +1,139 @@
+ESC/Java version VERSION
+src|test|resources|UndeclaredException2.java: Caution: Using given file as the .java file, even though it is not the java file for UndeclaredException2 on the classpath
+    [TIME]
+
+UndeclaredException2 ...
+  Prover started:TIME
+    [TIME]
+
+UndeclaredException2: UndeclaredException2() ...
+    [TIME]  passed immediately
+
+UndeclaredException2: q(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:8: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: qx(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:16: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q1(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredException2: q1x(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredException2: q3(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:38: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q3x(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:45: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q4(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:57: Warning: Possible unexpected exception (Exception)
+}  // Exception WARNING with bug fixed; previously OK - we don't know  ...
+^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException2.java", line 54, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q4x(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:63: Warning: Possible unexpected exception (Exception)
+}  // WARNING - an exception might be thrown
+^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException2.java", line 62, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: rr(UndeclaredException2$NEx) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:73: Warning: Possible assertion failure (Assert)
+//@ assert false; // WARNING - but not until a bug is fixed
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException2.java", line 68, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: rrx(UndeclaredException2$Ex) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:84: Warning: Possible assertion failure (Assert)
+//@ assert false;  // WARNING
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException2.java", line 79, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredException2$NEx ...
+    [TIME]
+
+UndeclaredException2$NEx: NEx() ...
+    [TIME]  passed immediately
+
+UndeclaredException2$NEx: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:99: Warning: Possible violation of modifies clause (Modifies)
+      if (o == null) throw new NullPointerException();
+                                                   ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/NullPointerException.class":
+Associated declaration is "src|test|resources|UndeclaredException2.java", line 91, col 4:
+    //@ public normal_behavior ...
+    ^
+Execution trace information:
+    Executed then branch in "src|test|resources|UndeclaredException2.java", line 99, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredException2$Ex ...
+    [TIME]
+
+UndeclaredException2$Ex: Ex() ...
+    [TIME]  passed immediately
+
+UndeclaredException2$Ex: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException2.java:115: Warning: Possible violation of modifies clause (Modifies)
+      if (o == null) throw new NullPointerException();
+                                                   ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/NullPointerException.class":
+Associated declaration is "src|test|resources|UndeclaredException2.java", line 107, col 4:
+    //@ public normal_behavior ...
+    ^
+Execution trace information:
+    Executed then branch in "src|test|resources|UndeclaredException2.java", line 115, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+10 warnings

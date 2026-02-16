@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|ModelProgram.java: Caution: Using given file as the .java file, even though it is not the java file for ModelProgram on the classpath
+    [TIME]
+
+ModelProgram ...
+  Prover started:TIME
+    [TIME]
+
+ModelProgram: m() ...
+    [TIME]  passed
+
+ModelProgram: ModelProgram() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

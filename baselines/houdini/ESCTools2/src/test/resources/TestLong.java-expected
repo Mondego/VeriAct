@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestLong.java: Caution: Using given file as the .java file, even though it is not the java file for TestLong on the classpath
+    [TIME]
+
+TestLong ...
+src|test|resources|TestLong.java:6: Fatal error: No method named assertTrue is in scope here.
+    assertTrue( i.longValue() == 7 );
+    ^
+1 caution
+1 error

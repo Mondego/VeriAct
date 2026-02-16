@@ -1,0 +1,20 @@
+ESC/Java version VERSION
+ParseImports.java:3: Caution: An import statement in an annotation should begin with 'model import'
+//@ import java.util.Vector;
+    ^
+ParseImports.java:7: Caution: An import statement in an annotation should begin with 'model import'
+//@ import java.util.Set;
+    ^
+ParseImports.java:8: Caution: An import statement in an annotation should begin with 'model import'
+//@ import java.util.Collection;
+    ^
+    [TIME]
+
+ParseImports ...
+  Prover started:TIME
+    [TIME]
+
+ParseImports: ParseImports() ...
+    [TIME]  passed
+  [TIME total]
+3 cautions

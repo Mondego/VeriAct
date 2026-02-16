@@ -1,0 +1,4 @@
+escjava_types : THEORY
+  BEGIN
+    S : TYPE+
+  END escjava_types

@@ -1,0 +1,14 @@
+ESC/Java version VERSION
+RefineX3.java:1: Error: Expected a string literal after 'refine'
+//@ refine 2+3; // invalid expression
+           ^
+    [TIME]
+
+RefineX3 ...
+  Prover started:TIME
+    [TIME]
+
+RefineX3: RefineX3() ...
+    [TIME]  passed
+  [TIME total]
+1 error

@@ -1,0 +1,63 @@
+ESC/Java version VERSION
+src|test|resources|PureModifies.java: Caution: Using given file as the .java file, even though it is not the java file for PureModifies on the classpath
+    [TIME]
+
+PureModifies ...
+src|test|resources|PureModifies.java:15: Error: A pure method may not have a modifies clause
+        //@ modifies \everything; // ERROR
+                     ^
+src|test|resources|PureModifies.java:16: Associated declaration: 
+        //@ pure
+            ^
+src|test|resources|PureModifies.java:34: Error: A pure method may not have a modifies clause
+        //@ modifies \everything; // ERROR
+                     ^
+src|test|resources|PureModifies.java:35: Associated declaration: 
+        //@ pure
+            ^
+src|test|resources|PureModifies.java:43: Error: A pure method may not have a modifies clause
+        //@     modifies \everything; // ERROR
+                         ^
+src|test|resources|PureModifies.java:45: Associated declaration: 
+        //@ pure
+            ^
+src|test|resources|PureModifies.java:50: Error: A pure method may not have a modifies clause
+        modifies \everything;  // ERROR
+                 ^
+src|test|resources|PureModifies.java:51: Associated declaration: 
+        pure model void mm();
+        ^
+src|test|resources|PureModifies.java:56: Error: A pure constructor may not have a modifies clause
+        modifies \everything;  // ERROR
+                 ^
+src|test|resources|PureModifies.java:57: Associated declaration: 
+        pure model PureModifies(Object o);
+        ^
+src|test|resources|PureModifies.java:64: Error: A pure constructor may not have a modifies clause
+        //@ modifies \everything; // ERROR
+                     ^
+src|test|resources|PureModifies.java:65: Associated declaration: 
+        //@ pure
+            ^
+src|test|resources|PureModifies.java:77: Error: A pure method may not have a modifies clause
+        //@ also modifies \everything;  // ERROR
+                          ^
+src|test|resources|PureModifies.java:90: Associated declaration: 
+        //@ pure
+            ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+PureModifiesA ...
+src|test|resources|PureModifies.java:84: Error: A pure constructor may not have a modifies clause
+        //@ modifies \everything;  // ERROR
+                     ^
+src|test|resources|PureModifies.java:81: Associated declaration: 
+//@ pure
+    ^
+  [TIME total] (aborted)
+
+PureModifiesS ...
+  [TIME total]
+2 cautions
+8 errors

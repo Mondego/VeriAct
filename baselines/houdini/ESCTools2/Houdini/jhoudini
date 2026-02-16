@@ -1,0 +1,616 @@
+#!/bin/sh -f
+
+# Copyright 2000, 2001, Compaq Computer Corporation
+
+# Copyright (c) 1999-2001, Compaq Computer Corporation
+# Change history:
+#   Summer 2000  Michael Levin      Created from houdini script
+#   13 Dec 2000  Rustan Leino       Print error messages also to logfile
+#   13 Dec 2000  Rustan Leino       Made some changes to classpath behavior
+#   19 Feb 2001  Rustan and Steve   Made some more changes to classpath behavior
+#   26 Feb 2001  Rustan             More classpath and runesc fiddling
+#   28 Feb 2001  Rustan             Stop if coordinator fails
+#    1 Mar 2001  Rustan             New stop if coordinator fails
+#    8 Mar 2001  Rustan and Steve   Use new tool2html instead of old escj2html
+#   12 Mar 2001  Rustan and Steve   Use CopyLoaded
+#   14 Mar 2001  Rustan             Cleaned up environment variables, here and in setup files
+
+VERSION="Houdini version 3, April 2001"
+echo ${VERSION}
+
+if [ -z $ESCTOOLS_ROOT ]; then
+    if [ -e "$0" ]; then
+        #ESCTOOLS_ROOT=`dirname "$0"`/..
+        ESCTOOLS_ROOT=`pwd`/..
+        echo "Warning: Guessing ESCTOOLS_ROOT = $ESCTOOLS_ROOT"
+    fi
+    if [ -z "$ESCTOOLS_ROOT" ]; then
+        echo "Error: ESCTOOLS_ROOT is not set and guessing was unsuccessful."
+        exit 2
+    fi
+fi
+
+HOUDINI_ROOT=${ESCTOOLS_ROOT}/Houdini
+ESCJAVA_ROOT=${ESCTOOLS_ROOT}/Escjava
+# 'export' needed for tool2html
+export JAVAFE_ROOT=${ESCTOOLS_ROOT}/Javafe
+UTILS_ROOT=${ESCTOOLS_ROOT}/Utils
+
+CLASSPATH=${CLASSPATH}:${HOUDINI_ROOT}/classfiles:${ESCJAVA_ROOT}/classfiles:${JAVAFE_ROOT}/classfiles:${UTILS_ROOT}:.
+HOUDINI_CLASSPATH=${CLASSPATH}
+ESC_CLASSPATH=${CLASSPATH}
+
+JDKSPEC_ROOT=${HOUDINI_ROOT}/../specs-java1.6
+
+ESCJ=${ESCJAVA_ROOT}/escj
+
+COMMANDLINE="$*"
+
+### ---------- Parse command line
+
+USAGE_MSG="Usage: jhoudini [-bootclasspath p] [-classpath p] \
+  [-annotateOnly] [-restart] \
+  [-progGuesser guesser] [-libGuesser guesser] \
+  -outdir outdir \
+  [-hosts hostfile] \
+  [-f programIndirectionFile] files..."
+
+#if [ "x$ESCJ" = "x" ]; then
+#    echo "houdini: Error: setup must be sourced first"
+#    exit 2
+#fi
+
+ANNOTATE_ONLY="false"
+RESTART="false"
+PROG_GUESSER="Standard"
+LIB_GUESSER="Library"
+OUTDIR=""
+GIVEN_SOURCE_FILES=""
+GIVEN_SOURCE_INDIRECTION_FILES=""
+HOST_FILE_DEFAULT="${HOUDINI_ROOT}/defaulthosts"
+HOST_FILE=""
+NETSCAPE="false"
+
+while [ 0 -lt $# ]; do
+
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-hosts" ]; then
+      HOST_FILE="$2"
+      shift
+      shift
+      continue
+    fi
+  fi
+
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-bootclasspath" ]; then
+      BOOTCLASSPATH="$2"
+      shift
+      shift
+      continue
+    fi
+  fi
+
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-classpath" ]; then
+      CLASSPATH="$2"
+      shift
+      shift
+      continue
+    fi
+  fi
+
+  if [ 1 -le $# ]; then
+    if [ "x$1" = "x-annotateOnly" ]; then
+      ANNOTATE_ONLY="true"
+      shift
+      continue
+    fi
+  fi
+
+  if [ 1 -le $# ]; then
+    if [ "x$1" = "x-netscape" ]; then
+      NETSCAPE="true"
+      shift
+      continue
+    fi
+  fi
+
+  if [ 1 -le $# ]; then
+    if [ "x$1" = "x-restart" ]; then
+      RESTART="true"
+      shift
+      continue
+    fi
+  fi
+
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-progGuesser" ]; then
+      PROG_GUESSER="$2"
+      shift
+      shift
+      continue
+    fi
+  fi
+   
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-libGuesser" ]; then
+      LIB_GUESSER="$2"
+      shift
+      shift
+      continue
+    fi
+  fi
+   
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-outdir" ]; then
+      OUTDIR="$2"
+      shift
+      shift
+      continue
+    fi
+  fi
+
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-settings" ]; then
+      HOUDINI_SETTINGS="$2"
+      shift
+      shift
+      continue
+    fi
+  fi
+
+  if [ 2 -le $# ]; then
+    if [ "x$1" = "x-f" ]; then
+      GIVEN_SOURCE_INDIRECTION_FILES="${GIVEN_SOURCE_INDIRECTION_FILES} $2"
+      shift
+      shift
+      continue
+    fi
+  fi
+
+  GIVEN_SOURCE_FILES="${GIVEN_SOURCE_FILES} $1"
+  shift
+done
+
+if [ "x${BOOTCLASSPATH}" = "x" ]; then
+  BCL_PATH_ARG=
+else
+  BCL_PATH_ARG="-bootclasspath ${BOOTCLASSPATH}"
+fi
+
+# Prepend . to classpath, so that the copied (and annotated) libraries will be
+# picked up appropriately.
+if [ "x${CLASSPATH}" = "x" ]; then
+  CL_PATH_ARG="-classpath ."
+  CL_PATH_ARG_NO_DOT=""
+else
+  CL_PATH_ARG="-classpath .:${CLASSPATH}"
+  CL_PATH_ARG_NO_DOT="-classpath ${CLASSPATH}"
+fi
+PATH_ARG="${BCL_PATH_ARG} ${CL_PATH_ARG}"
+PATH_ARG_NO_DOT="${BCL_PATH_ARG} ${CL_PATH_ARG_NO_DOT}"
+
+if [ "x${GIVEN_SOURCE_FILES}${GIVEN_SOURCE_INDIRECTION_FILES}" = "x" ]; then
+  if [ "${RESTART}" = "false" ]; then
+    echo houdini: Error: no source files given
+    echo ${USAGE_MSG}
+    exit 2
+  fi
+fi
+
+for f in ${GIVEN_SOURCE_FILES}; do
+  if [ ! -e "${f}" ]; then
+    echo "houdini: Error: source file ${f} does not exist" |
+      tee -a ${LOGFILE}
+    exit 2
+  fi
+done
+for f in ${GIVEN_SOURCE_INDIRECTION_FILES}; do
+  if [ ! -e "${f}" ]; then
+    echo "houdini: Error: indirection file ${f} does not exist" |
+      tee -a ${LOGFILE}
+    exit 2
+  fi
+done
+
+if [ "x${OUTDIR}" = "x" ]; then
+  echo houdini: Error: no -outdir specified
+  echo ${USAGE_MSG}
+  exit 2
+fi
+
+### ---------- Create output directories
+
+if [ "${RESTART}" = "false" ]; then
+  if [ -e "${OUTDIR}" ]; then
+    echo "houdini: Error: outdir ${OUTDIR} already exists"
+    exit 2
+  fi
+  mkdir ${OUTDIR}
+  mkdir ${OUTDIR}/src-original
+  mkdir ${OUTDIR}/src-annotated
+  mkdir ${OUTDIR}/html
+  mkdir ${OUTDIR}/log
+  mkdir ${OUTDIR}/gvc
+fi
+
+# copy over host file to outdir so we can find it on a restart
+if [ "${RESTART}" = "false" ]; then
+    if [ "x${HOST_FILE}" = "x" ]; then
+      echo "`date`: Using default hosts file" | tee -a ${LOGFILE}
+      HOST_FILE=${HOST_FILE_DEFAULT}
+    fi
+else  
+    if [ "x${HOST_FILE}" = "x" ]; then
+      echo "`date`: Using old hosts file" | tee -a ${LOGFILE}
+      HOST_FILE=${OUTDIR}/log/hosts
+    fi
+fi
+
+if [ ! -e "${HOST_FILE}" ]; then
+    echo "houdini: Error: host file ${HOST_FILE} does not exist" |
+        tee -a ${LOGFILE}
+      exit 2
+fi
+
+if [ ! "x${HOST_FILE}" = "x${OUTDIR}/log/hosts" ]; then 
+    cp ${HOST_FILE} ${OUTDIR}/log/hosts
+fi
+
+### ---------- Absolutify OUTDIR and define vars dependent on it
+
+OUTDIR=$PWD/$OUTDIR
+LOGDIR="${OUTDIR}/log"
+export LOGDIR
+LOGFILE="${LOGDIR}/houdini.log"
+STATSFILE="${LOGDIR}/stats.html"
+GVCDIR="${OUTDIR}/gvc"
+export GVCDIR
+HOST_FILE="${OUTDIR}/log/hosts"
+
+SPECIFIED_SOURCE_FILES="${LOGDIR}/progIndirectFiles-given"
+PROG_INDIRECT_FILE="${LOGDIR}/progIndirectFiles"
+LIB_INDIRECT_FILE="${LOGDIR}/libIndirectFiles"
+
+
+### ---------- Configuration
+
+ulimit -s 32000
+
+NOWARN_FLAGS="\
+	-nowarn Null -nowarn ZeroDiv -nowarn ArrayStore \
+	-nowarn Cast -nowarn CLeak -nowarn IndexNegative -nowarn IndexTooBig \
+	-nowarn ILeak -nowarn Deadlock -nowarn ModExt -nowarn Modifies \
+	-nowarn NegSize -nowarn Unenforcable -nowarn Exception -nowarn Writable"
+
+#ESCJ_FLAGS_BOTH="\
+#	-inlineFromConstructors \
+#	-verboseTrace \
+#	-vclimit 2000000 \
+#	-excuseNullInitializers"
+
+# Disallow constructor inlining for now to do with VisualThreads code
+ESCJ_FLAGS_BOTH="\
+	-verboseTrace \
+	-vclimit 2000000 \
+	-excuseNullInitializers"
+
+ESCJ_FLAGS="\
+	${NOWARN_FLAGS} ${ESCJ_FLAGS_BOTH} \
+	-noPeepOptGCAssertFalse \
+	-loopFallThru -assertContinue -strongAssertPostNever \
+	-guardedVC ${GVCDIR}"
+
+ESCJ_FLAGS_FINALRUN="\
+	${ESCJ_FLAGS_BOTH} -suggest"
+
+# the following variables are exported for the benefit of the Coordinator
+#OLD_HOUDINI_ROOT="${ESCJAVA_ROOT}/scheme/houdini"
+#HOUDINI_ROOT="${ESCJAVA_ROOT}/../Houdini"
+export HOUDINI_ROOT
+
+# various programs
+# (need to export JAVA for tool2html)
+export JAVA=java
+COPY_LOADED="${JAVA} -classpath ${CLASSPATH} houdini.CopyLoaded" 
+ANNOTATION_VISITOR="${JAVA} -classpath ${CLASSPATH} houdini.Main -noCautions"
+ANNOTATION_INSERTER="${JAVA} -classpath ${CLASSPATH} houdini.AnnotationInserter"
+ANNOTATION_REMOVER="${HOUDINI_ROOT}/AnnotationRemover.perl"
+HGUARD_EXTRACTOR="${HOUDINI_ROOT}/HGuards.perl"
+JAVA2HTML="${JAVAFE_ROOT}/java/tohtml/tool2html"
+GEN_ESC_SCRIPT="${JAVA}  -classpath ${HOUDINI_CLASSPATH} houdini.FinalESCRun"
+
+SMPLFY=${ESCJAVA_ROOT}/release/master/bin/Simplify-1.5.4.linux
+HOST=localhost
+HCLIENT="${JAVA} -Xmx1000000000 -Dsimplify=${SMPLFY} -classpath ${HOUDINI_CLASSPATH} houdini.HoudiniClient -port 9999 -host ${HOST} -vcdir ${GVCDIR} -ubp ${ESCJAVA_ROOT}/java/escjava/backpred/UnivBackPred.ax -logToFile"
+
+HSERVER="${JAVA} -Xmx1000000000 -Dsimplify=${SMPLFY}/simplify -classpath ${HOUDINI_CLASSPATH} houdini.HoudiniServer -port 9999 -vcdir ${GVCDIR} -logToFile"
+
+HSERVER_RESTART="srcjava -Dsimplify=${ESCJAVA_ROOT}/simplify -classpath ${HOUDINI_CLASSPATH} houdini.HoudiniServer -port 9999 -vcdir ${GVCDIR} -restart -logToFile"
+
+SIMPLIFY_ENV='set PROVER_CC_LIMIT=30000; set PROVER_KILL_TIME=300; set ESCJ_SIMPLIFY_ARGS="-noprune -noplunge -labelsonly"; set JAVAVERSION=fast1.2.2;'
+
+### ---------- Start work
+
+echo "##########################################################" >> ${LOGFILE}
+echo "${VERSION}" >> ${LOGFILE}
+echo "<PRE>${VERSION}" >> ${STATSFILE}
+echo "`date`: Start" | tee -a ${LOGFILE} | tee -a ${STATSFILE}
+echo "Command-line arguments: ${COMMANDLINE}" >> ${LOGFILE}
+echo "The machine is: `hostname`" >> ${LOGFILE}
+printenv | grep -E "ESCJ|PROVER_|CLASSPATH|HOUDINI|JAVA|SIMPLIFY" | \
+  xargs echo Environment variables: >> ${LOGFILE}
+
+if [ "${RESTART}" = "false" ]; then
+
+  for f in ${GIVEN_SOURCE_FILES}; do
+    echo ${f} >> ${SPECIFIED_SOURCE_FILES}
+  done
+  for f in ${GIVEN_SOURCE_INDIRECTION_FILES}; do
+    cat ${f} >> ${SPECIFIED_SOURCE_FILES}
+  done
+fi
+
+if [ "${RESTART}" = "false" ]; then
+  ### ---------- Copy files
+
+  echo "`date`: Copying files..." | tee -a ${LOGFILE}
+  echo "${COPY_LOADED} ${PATH_ARG_NO_DOT} -specs ${JDKSPEC_ROOT} -outdir ${OUTDIR}/src-original \
+      -outProgIndirect ${PROG_INDIRECT_FILE} -outLibIndirect ${LIB_INDIRECT_FILE} \
+      -f ${SPECIFIED_SOURCE_FILES}" 
+  ${COPY_LOADED} ${PATH_ARG_NO_DOT} -specs ${JDKSPEC_ROOT} -outdir ${OUTDIR}/src-original \
+      -outProgIndirect ${PROG_INDIRECT_FILE} -outLibIndirect ${LIB_INDIRECT_FILE} \
+      -f ${SPECIFIED_SOURCE_FILES} >> ${LOGFILE} 2>&1
+  #${COPY_LOADED} ${PATH_ARG_NO_DOT} -specs ${HOUDINI_ROOT}/../specs -outdir ${OUTDIR}/src-original \
+  #    -outProgIndirect ${PROG_INDIRECT_FILE} -outLibIndirect ${LIB_INDIRECT_FILE} \
+  #    -f ${SPECIFIED_SOURCE_FILES} >> ${LOGFILE} 2>&1
+  if [ "$?" != 0 ]; then
+    echo "`date`: Failed to run CopyLoaded" | tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  ### ---------- Compute and insert annotations
+
+  #cd ${OUTDIR}/src-original/java/lang/
+  #mkdir reflect
+  #mkdir annotation
+  #cat ${JDKSPEC_ROOT}/java/lang/reflect/AnnotatedElement.java > ${OUTDIR}/src-original/java/lang/reflect/AnnotatedElement.java
+  #cat ${JDKSPEC_ROOT}/java/lang/reflect/AnnotatedElement.java > ${OUTDIR}/src-original/java/lang/reflect/AnnotatedElement.spec
+  #cat ${JDKSPEC_ROOT}/java/lang/annotation/Annotation.java > ${OUTDIR}/src-original/java/lang/annotation/Annotation.java
+  #cat ${JDKSPEC_ROOT}/java/lang/annotation/Annotation.java > ${OUTDIR}/src-original/java/lang/annotation/Annotation.spec
+  cd ${OUTDIR}/src-original/
+  cat ${JDKSPEC_ROOT}/java/io/Serializable.refines-spec > ${OUTDIR}/src-original/java/io/Serializable.spec
+  cat ${JDKSPEC_ROOT}/java/lang/reflect/GenericDeclaration.spec > ${OUTDIR}/src-original/java/lang/reflect/GenericDeclaration.spec
+  cat ${JDKSPEC_ROOT}/java/lang/reflect/Type.spec > ${OUTDIR}/src-original/java/lang/reflect/Type.spec
+  cat ${JDKSPEC_ROOT}/java/lang/Cloneable.refines-spec > ${OUTDIR}/src-original/java/lang/Cloneable.spec
+  cat ${JDKSPEC_ROOT}/java/lang/CloneNotSupportedException.refines-spec > ${OUTDIR}/src-original/java/lang/CloneNotSupportedException.spec
+  cat ${JDKSPEC_ROOT}/java/lang/InterruptedException.refines-spec > ${OUTDIR}/src-original/java/lang/InterruptedException.spec
+
+  echo "`date`: Create candidate annotation set..." | tee -a ${LOGFILE}
+  echo "${ANNOTATION_VISITOR} ${PATH_ARG} -guesser ${PROG_GUESSER} -q \
+       -f ${PROG_INDIRECT_FILE} > ${LOGDIR}/annotations.instr"
+  if ${ANNOTATION_VISITOR} ${PATH_ARG} -guesser ${PROG_GUESSER} -q \
+       -f ${PROG_INDIRECT_FILE} > ${LOGDIR}/annotations.instr; then
+    : nothing
+  else
+    echo "Failed to run program visitor for (${LOGDIR}/annotations.instr)" |
+      tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  if ${ANNOTATION_VISITOR} ${PATH_ARG} -ignoreBodies -guesser ${LIB_GUESSER} -q \
+       -f ${LIB_INDIRECT_FILE} >> ${LOGDIR}/annotations.instr; then
+    : nothing
+  else
+    echo "Failed to run library visitor for (${LOGDIR}/annotations.instr)" |
+      tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  echo "${ANNOTATION_INSERTER} ${LOGDIR}/annotations.instr \
+       -f ${PROG_INDIRECT_FILE} -f ${LIB_INDIRECT_FILE}"
+  if ${ANNOTATION_INSERTER} ${LOGDIR}/annotations.instr \
+       -f ${PROG_INDIRECT_FILE} -f ${LIB_INDIRECT_FILE} >> ${LOGFILE}; then
+    : nothing
+  else
+    echo "Failed to insert initial annotations (${LOGDIR}/annotations.instr)" |
+      tee -a ${LOGFILE}
+    exit 1
+  fi
+
+  # duplicate the src-original directory hierarchy into src-annotated
+  for f in `find . -type d`; do
+    mkdir -p ../src-annotated/${f}
+  done
+
+  for f in `cat ${PROG_INDIRECT_FILE} ${LIB_INDIRECT_FILE}`; do
+    if [ -e "${f}.wizardUpdate.tmp" ]; then
+      mv "${f}.wizardUpdate.tmp" "../src-annotated/${f}"
+    else
+      cp "${f}" "../src-annotated/${f}"
+    fi
+  done
+
+  cd ..
+
+  if [ "${ANNOTATE_ONLY}" = "true" ]; then
+    echo "`date`: Done" | tee -a ${LOGFILE}
+    exit 0
+  fi
+
+  ### ---------- compute VCs
+
+  cd src-annotated
+
+  ESCOUT=${LOGDIR}/escjava.vc.out
+  echo "`date`: Running Escjava to generate VCs" | tee -a ${LOGFILE}
+  escjavaCommand="${ESCJ} ${PATH_ARG} ${ESCJ_FLAGS} \
+    -f ${PROG_INDIRECT_FILE}"
+  echo Calling: ${escjavaCommand} | tee -a ${ESCOUT} >> ${LOGFILE}
+  ${escjavaCommand} >> ${ESCOUT} 2>&1
+
+  if [ $? != 0 ]; then
+    echo "`date`: Failed to run escjava: $?" | tee -a ${LOGFILE}
+    exit 1
+  fi
+
+
+  ### ---------- compute a list of houdini annotations/guards
+
+  EXTRACTOROUT=${LOGDIR}/extractor.out
+  # The following three filenames are hardcoded in the coordinator
+  FILE_NUMBERS=${GVCDIR}/files.txt
+  GUARDS=${GVCDIR}/guards.txt
+  HGUARDS=${GVCDIR}/hguards.txt
+
+  echo "`date`: Extracting Houdini Annotations" | tee -a ${LOGFILE}
+  echo "Full extractor output is piped to: ${EXTRACTOROUT}" >> ${LOGFILE}
+
+  for f in `cat ${PROG_INDIRECT_FILE} ${LIB_INDIRECT_FILE}`; do
+    echo "`date`: Extracting Houdini Annotations for `grep "${f}" ${FILE_NUMBERS}`" \
+      >> ${EXTRACTOROUT}
+    if [ "x`grep "${f}" ${FILE_NUMBERS}`" != "x" ]; then
+        ${HGUARD_EXTRACTOR} `grep "${f}" ${FILE_NUMBERS}` < ${GUARDS} \
+        >> ${HGUARDS}
+        if [ $? != 0 ]; then
+          echo "`date`: Failed to run HGuard extractor" | tee -a ${LOGFILE}
+          exit 1
+        fi
+    fi
+  done
+
+  cd ..
+
+else
+  echo "`date`: Skipping Setup" | tee -a ${LOGFILE}
+  cd ${OUTDIR}
+fi
+
+### ---------- run HoudiniServer/Client to reach a fixed point
+
+
+  COORDINATOROUT=${GVCDIR}/coordinator.out
+  CLIENTLOG=${LOGDIR}/client.log
+  SERVERLOG=${LOGDIR}/server.log 
+  echo "`date`: Starting Clients" | tee -a ${LOGFILE}
+
+  for f in `cat ${HOST_FILE}`; do
+    # echo "`date`: Starting HoudiniClient on ${f}" | tee -a ${LOGFILE}
+    echo "`date`: Starting HoudiniClient" | tee -a ${LOGFILE}
+    echo Calling: ${HCLIENT} >> ${LOGFILE}
+    #(rsh -n ${f} ${SIMPLIFY_ENV}'; '${HCLIENT} >> ${CLIENTLOG} 2>&1 
+    (${SIMPLIFY_ENV}; 
+     ${HCLIENT} >> ${CLIENTLOG} 2>&1 
+    if [ $? != 0 ]; then
+      #echo "`date`: Failed to run client on ${f}.  Could it be your .rhosts?" | tee -a ${LOGFILE}
+      echo "`date`: Failed to run client" | tee -a ${LOGFILE}
+      exit 1
+    fi)&
+  done
+
+  echo "`date`: Starting HoudiniServer" | tee -a ${LOGFILE}
+
+  if [ "${NETSCAPE}" = "true" ]; then
+      (netscape ${GVCDIR}/reports.html) &
+  fi
+
+
+  if [ "${RESTART}" = "false" ]; then
+    echo Calling: ${HSERVER} | >> ${LOGFILE}
+    ${HSERVER} > ${SERVERLOG}
+    if [ $? != 0 ]; then
+      echo "`date`: Failed to run houdini server" | tee -a ${LOGFILE}
+      exit 1
+    fi
+  else
+    echo Calling: ${HSERVER_RESTART} >> ${LOGFILE}
+    ${HSERVER_RESTART} >  ${SERVERLOG}
+    if [ $? != 0 ]; then
+      echo "`date`: Failed to restart houdini server" | tee -a ${LOGFILE}
+      exit 1
+    fi 
+  fi
+
+### ---------- remove refuted annotations
+
+if [ "${RESTART}" = "false" ]; then
+  rm -f ${LOGDIR}/DONE_WITH_REMOVER
+fi
+
+if [ ! -e ${LOGDIR}/DONE_WITH_REMOVER ]; then
+
+  cd src-annotated
+
+  DECLS=${LOGDIR}/assocdecls.txt
+  ANNOTATION_REMOVER_OUT=${LOGDIR}/remover.out
+  echo "`date`: Removing refuted annotations" | tee -a ${LOGFILE}
+  echo "Full remover output is piped to: ${ANNOTATION_REMOVER_OUT}" >> ${LOGFILE}
+
+  cat ${COORDINATOROUT} > ${DECLS}
+  for f in `cat ${PROG_INDIRECT_FILE} ${LIB_INDIRECT_FILE}`; do
+    perl ${ANNOTATION_REMOVER} ${f} < ${DECLS} >> ${ANNOTATION_REMOVER_OUT}
+    if [ $? = 2 ]; then
+      echo "`date`: Failed to run annotation remover" | tee -a ${LOGFILE}
+      exit 1
+    fi
+  done
+  echo "DONE WITH REMOVE" > ${LOGDIR}/DONE_WITH_REMOVER
+else
+  echo "`date`: Skipping Remover" | tee -a ${LOGFILE}
+  cd src-annotated
+fi
+
+
+### ---------- generate final set of warnings
+
+echo "`date`: Final escjava run" | tee -a ${LOGFILE}
+
+# Concatenate the output from the different processors into one file
+ESCOUT=${LOGDIR}/escjava.final.out
+
+# hackish for now - we don't have rsh
+# escjavaCommand="(rsh -n %1 '(cd ${ESCJAVA_ROOT}; source setup; cd ${OUTDIR}/src-annotated; ${ESCJ} ${PATH_ARG} ${ESCJ_FLAGS_FINALRUN} %2) >& ${ESCOUT}.%3 ')&"
+escjavaCommand="(echo \"not rshing to %1.\" | cd ${OUTDIR}/src-annotated; ${ESCJ} ${PATH_ARG} ${ESCJ_FLAGS_FINALRUN} %2 >> ${ESCOUT}.%3)&"
+
+echo Calling: ${GEN_ESC_SCRIPT} -hosts ${HOST_FILE} -files ${PROG_INDIRECT_FILE} -command "${escjavaCommand}" \
+    | tee -a ${ESCOUT} >> ${LOGFILE}
+
+${GEN_ESC_SCRIPT} -hosts ${HOST_FILE} -files ${PROG_INDIRECT_FILE} -command "${escjavaCommand}" >> ${LOGFILE}
+
+if [ $? != 0 ]; then
+  echo "`date`: Failed to run ${GEN_ESC_SCRIPT}" | tee -a ${LOGFILE}
+  exit 1
+fi
+
+echo "wait" >> esc.final.script
+
+echo Calling: esc.final.script | tee -a ${ESCOUT} >> ${LOGFILE}
+sh esc.final.script >> ${ESCOUT} 2>&1
+
+if [ $? != 0 ]; then
+  echo "`date`: Failed to run esc.final.script" | tee -a ${LOGFILE}
+  exit 1
+fi
+
+echo "`date`: Generating ${ESCOUT}" | tee -a ${LOGFILE}
+echo "" > ${ESCOUT}
+find ${LOGDIR} -name "escjava.final.out.*" | xargs cat >> ${ESCOUT}
+
+### ---------- htmlize
+
+echo "`date`: Creating HTML output" | tee -a ${LOGFILE} | tee -a ${STATSFILE}
+echo "</PRE>" >> ${STATSFILE}
+cp ${STATSFILE} ../html
+
+# java2html reads PATH_ARG from the environment
+echo Calling: TOOL_CLASSPATH="${ESC_CLASSPATH}" PATH_ARG="${PATH_ARG}" ${JAVA2HTML} ${ESCOUT} . ../html '@' ${PROG_INDIRECT_FILE} >> ${LOGFILE}
+TOOL_CLASSPATH="${ESC_CLASSPATH}" PATH_ARG="${PATH_ARG}" \
+    ${JAVA2HTML} ${ESCOUT} . ../html '@' ${PROG_INDIRECT_FILE} >> ${LOGFILE} 2>&1
+
+cd ..
+
+
+### ---------- finish
+
+echo "`date`: Done" | tee -a ${LOGFILE}

@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|ExceptionChild.java: Caution: Using given file as the .java file, even though it is not the java file for ExceptionChild on the classpath
+    [TIME]
+
+ExceptionChild ...
+  Prover started:TIME
+    [TIME]
+
+ExceptionChild: ExceptionChild() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

@@ -1,0 +1,38 @@
+ESC/Java version VERSION
+    [TIME]
+
+Client8 ...
+  Prover started:TIME
+    [TIME]
+
+Client8: unique(IntList) ...
+    [TIME]  passed
+
+Client8: clear(IntList) ...
+------------------------------------------------------------------------
+Client8.java:15: Warning: Possible violation of modifies clause (Modifies)
+                list.clear();  // ERROR
+                          ^
+Associated declaration is "Client8.java", line 30, col 21:
+        //@ modifies length,isEmpty;
+                            ^
+Associated declaration is "Client8.java", line 11, col 5:
+        //@ modifies list.length; // MISSING list.isEmpty;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Client8: Client8() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

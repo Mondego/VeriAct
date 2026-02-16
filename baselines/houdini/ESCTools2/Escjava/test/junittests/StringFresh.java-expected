@@ -1,0 +1,136 @@
+ESC/Java version VERSION
+    [TIME]
+
+StringFresh ...
+  Prover started:TIME
+    [TIME]
+
+StringFresh: StringFresh() ...
+    [TIME]  passed immediately
+
+StringFresh: mp(java.lang.String, java.lang.String) ...
+    [TIME]  passed
+
+StringFresh: m(java.lang.String, java.lang.String) ...
+    [TIME]  passed
+
+StringFresh: mm(java.lang.String) ...
+------------------------------------------------------------------------
+StringFresh.java:28: Warning: Possible violation of modifies clause (Modifies)
+        st.hashCode();  // FAILS
+                   ^
+Associated declaration is "c:\cygwin\ESC\ESCTools\jmlspecs.jar:java/lang/Object.jml", line 72, col 23:
+      @     assignable objectState; // for subclasses with benevolent  ...
+                       ^
+Associated declaration is "StringFresh.java", line 26, col 0:
+//@ pure ...
+^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+StringFresh: meq() ...
+    [TIME]  passed
+
+StringFresh: mconstr() ...
+------------------------------------------------------------------------
+StringFresh.java:48: Warning: Possible violation of object invariant (Invariant)
+}
+^
+Associated declaration is "c:\cygwin\ESC\ESCTools\jmlspecs.jar:java/lang/String.jml", line 41, col 15:
+    //@ public invariant stringSeq != null;
+               ^
+Possibly relevant items from the counterexample context:  
+  (brokenObj<4> < longFirst)
+  (vAllocTime(brokenObj<4>) < alloc<1>)
+  typeof(brokenObj<4>) == T_java.lang.String
+  typeof(brokenObj<4>) <: T_java.lang.String
+  java.lang.String#stringSeq(state:47.4 brokenObj<4>) == null
+  isAllocated(brokenObj<4> alloc<1>)
+  !typeof(brokenObj<4>) <: T_byte
+  !typeof(brokenObj<4>) <: T_real
+  !typeof(brokenObj<4>) <: T_char
+  !typeof(brokenObj<4>) <: T_bigint
+  !typeof(brokenObj<4>) <: T_boolean
+  !typeof(brokenObj<4>) <: T_int
+  !typeof(brokenObj<4>) <: T_double
+  !typeof(brokenObj<4>) <: T_short
+  !typeof(brokenObj<4>) <: T_float
+  brokenObj<4> != null
+(brokenObj* refers to the object for which the invariant is broken.)
+
+Execution trace information:
+    Executed implicit return in "StringFresh.java", line 48, col 0.
+
+------------------------------------------------------------------------
+StringFresh.java:48: Warning: Possible violation of object invariant (Invariant)
+}
+^
+Associated declaration is "c:\cygwin\ESC\ESCTools\jmlspecs.jar:java/lang/String.jml", line 42, col 15:
+    /*@ public invariant ...
+               ^
+Possibly relevant items from the counterexample context:  
+  (org.jmlspecs.models.JMLCollection.size.86.26(state java.lang.String#stringSeq(state:47.4 brokenObj<5>)) <= longLast)
+  (org.jmlspecs.models.JMLCollection.size.86.26(state:47.4 java.lang.String#stringSeq(state:47.4 brokenObj<5>)) <= longLast)
+  (org.jmlspecs.models.JMLValueSequence.int_size.609.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>)) <= intLast)
+  (brokenObj<5> < longFirst)
+  (i:708.43.25 < org.jmlspecs.models.JMLCollection.size.86.26(state java.lang.String#stringSeq(state:47.4 brokenObj<5>)))
+  (i:708.43.25 < org.jmlspecs.models.JMLCollection.size.86.26(state:47.4 java.lang.String#stringSeq(state:47.4 brokenObj<5>)))
+  (i:708.43.25 < org.jmlspecs.models.JMLValueSequence.int_size.609.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>)))
+  (vAllocTime(brokenObj<5>) < alloc<1>)
+  (org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25) < longFirst)
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_org.jmlspecs.models.JMLType
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_org.jmlspecs.models.JMLType
+  typeof(org.jmlspecs.models.JMLCollection.size.86.26(state:47.4 java.lang.String#stringSeq(state:47.4 brokenObj<5>))) <: T_bigint
+  typeof(brokenObj<5>) <: T_java.lang.String
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: java.lang.String#stringSeq(state:47.4 brokenObj<5>).(elementType:731.44.30)
+  typeof(org.jmlspecs.models.JMLValueSequence.int_size.609.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>))) <: T_int
+  org.jmlspecs.models.JMLValueSequence.int_length.630.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>)) == org.jmlspecs.models.JMLValueSequence.int_size.609.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>))
+  typeof(org.jmlspecs.models.JMLCollection.size.86.26(state java.lang.String#stringSeq(state:47.4 brokenObj<5>))) <: T_bigint
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_java.io.Serializable
+  typeof(brokenObj<5>) == T_java.lang.String
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_java.lang.Cloneable
+  isAllocated(brokenObj<5> alloc<1>)
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_java.lang.Object
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_float
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_byte
+  !typeof(brokenObj<5>) <: T_bigint
+  !typeof(brokenObj<5>) <: T_boolean
+  !typeof(brokenObj<5>) <: T_int
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_bigint
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_float
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_double
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_boolean
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_char
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_byte
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_short
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_int
+  typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) != T_real
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_real
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_char
+  !typeof(brokenObj<5>) <: T_double
+  !typeof(brokenObj<5>) <: T_short
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_bigint
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_boolean
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_org.jmlspecs.models.JMLChar
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_int
+  !typeof(brokenObj<5>) <: T_float
+  org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25) != null
+  !typeof(brokenObj<5>) <: T_byte
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_double
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_org.jmlspecs.models.JMLChar
+  !typeof(org.jmlspecs.models.JMLValueSequence.itemAt.500.4(java.lang.String#stringSeq(state:47.4 brokenObj<5>) i:708.43.25)) <: T_short
+  !typeof(brokenObj<5>) <: T_real
+  !typeof(brokenObj<5>) <: T_char
+  brokenObj<5> != null
+(brokenObj* refers to the object for which the invariant is broken.)
+
+Execution trace information:
+    Executed implicit return in "StringFresh.java", line 48, col 0.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+StringFresh: mlit() ...
+    [TIME]  passed
+  [TIME total]
+3 warnings

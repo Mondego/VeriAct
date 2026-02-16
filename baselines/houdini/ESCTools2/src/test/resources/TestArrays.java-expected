@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestArrays.java: Caution: Using given file as the .java file, even though it is not the java file for TestArrays on the classpath
+    [TIME]
+
+TestArrays ...
+src|test|resources|TestArrays.java:12: Fatal error: No method named assertTrue is in scope here.
+    assertTrue( k == 4);
+    ^
+1 caution
+1 error

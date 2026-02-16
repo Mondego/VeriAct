@@ -1,0 +1,4 @@
+Sub.java:5: verify: The prover cannot establish an assertion (ArithmeticOperationRange) in method Sub: underflow in int difference
+		return x - y;
+		         ^
+1 verification failure

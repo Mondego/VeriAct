@@ -1,0 +1,191 @@
+ESC/Java version VERSION
+  Prover started:TIME
+
+PureCheck ...
+PureCheck.java:3: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ invariant m() + n() == 0;
+                            ^
+PureCheck.java:4: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ constraint n() == \old(n());
+                       ^
+PureCheck.java:4: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ constraint n() == \old(n());
+                                   ^
+PureCheck.java:5: Error: Method nn is used in an annotation but is not pure (PureCheck.java:25)
+        //@ axiom PureCheck.m() + PureCheck.nn() == 0;
+                                            ^
+PureCheck.java:7: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ public represents modeli <- m() + n();
+                                              ^
+PureCheck.java:8: Error: Method nn is used in an annotation but is not pure (PureCheck.java:25)
+        //@ public depends modeli <- oo[m()],oo[nn()];
+                                                ^
+PureCheck.java:9: Error: Constructor is used in an annotation but is not pure (PureCheck.java:16)
+        //@ invariant (new PureCheck()).k() + (new PureCheck(1)).k() > ...
+                       ^
+PureCheck.java:13: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ public ghost int jj = m() + n();
+                                        ^
+PureCheck.java:16: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ ensures m() + mp() + n() + k() > 0;
+                                 ^
+PureCheck.java:31: Error: Method nn is used in an annotation but is not pure (PureCheck.java:25)
+        //@ modifies j if m()+nn() == 0;
+                              ^
+PureCheck.java:32: Error: Method nn is used in an annotation but is not pure (PureCheck.java:25)
+        //@ modifies oo[m()+nn()];
+                            ^
+PureCheck.java:33: Error: Method length is used in an annotation but is not pure (/home/cok/apps/java-1.4.1_02/j2sdk1.4.1_02/jre/lib/rt.jar:java/lang/String.class)
+        //@ requires mm().length() + nn() > 0;
+                          ^
+PureCheck.java:33: Error: Method nn is used in an annotation but is not pure (PureCheck.java:25)
+        //@ requires mm().length() + nn() > 0;
+                                     ^
+PureCheck.java:34: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ requires m() + mp() + n() + k() > 0;
+                                  ^
+PureCheck.java:35: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ when m() + n() > 0;
+                       ^
+PureCheck.java:36: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ signals (Exception e) m() + n() > 0;
+                                        ^
+PureCheck.java:37: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ duration m() + n();
+                           ^
+PureCheck.java:38: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ working_space m() + n();
+                                ^
+PureCheck.java:39: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ measured_by m() + n();
+                              ^
+PureCheck.java:40: Error: Method n is used in an annotation but is not pure (PureCheck.java:46)
+        //@ diverges m() + n() > 0;
+                           ^
+PureCheck.java:58: Error: Method p is used in an annotation but is not pure (PureCheck.java:31)
+        //@ ensures kk(p());
+                       ^
+
+PureCheck: PureCheck() ...
+------------------------------------------------------------------------
+PureCheck.java:17: Warning: Postcondition possibly not established (Post)
+        public PureCheck() {}
+                            ^
+Associated declaration is "PureCheck.java", line 16, col 5:
+        //@ ensures m() + mp() + n() + k() > 0;
+            ^
+Execution trace information:
+    Executed implicit return in "PureCheck.java", line 17, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PureCheck: k() ...
+    [TIME]  passed
+
+PureCheck: m() ...
+    [TIME]  passed immediately
+
+PureCheck: mp() ...
+    [TIME]  passed immediately
+
+PureCheck: nn() ...
+    [TIME]  passed immediately
+
+PureCheck: mm() ...
+    [TIME]  passed immediately
+
+PureCheck: mmm() ...
+    [TIME]  passed immediately
+
+PureCheck: p() ...
+    [TIME]  passed immediately
+
+PureCheck: n() ...
+    [TIME]  passed immediately
+
+PureCheck: q() ...
+    [TIME]  passed immediately
+
+PureCheck: qq() ...
+    [TIME]  passed immediately
+
+PureCheck: ss() ...
+    [TIME]  passed immediately
+
+PureCheck: PureCheck(int) ...
+------------------------------------------------------------------------
+PureCheck.java:59: Warning: Postcondition possibly not established (Post)
+        public /*@ pure */ PureCheck(int i) {}
+                                             ^
+Associated declaration is "PureCheck.java", line 58, col 5:
+        //@ ensures kk(p());
+            ^
+Execution trace information:
+    Executed implicit return in "PureCheck.java", line 59, col 38.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PureCheck: kk(int) ...
+    [TIME]  passed
+
+PureCheck: am() ...
+    [TIME]  passed immediately
+
+PureCheck: aq() ...
+    [TIME]  passed immediately
+
+PureCheck: an() ...
+    [TIME]  passed immediately
+
+PureCheck: ap() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+A ...
+
+A: am() ...
+    [TIME]  passed immediately
+
+A: aq() ...
+    [TIME]  passed immediately
+
+A: bp() ...
+    [TIME]  passed immediately
+
+A: bq() ...
+    [TIME]  passed immediately
+
+A: br() ...
+    [TIME]  passed immediately
+
+A: bs() ...
+    [TIME]  passed
+
+A: A() ...
+    [TIME]  passed
+  [TIME total]
+
+B ...
+
+B: an() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+C ...
+
+C: ap() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+D ...
+
+D: aq() ...
+    [TIME]  passed immediately
+
+D: D() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings
+21 errors

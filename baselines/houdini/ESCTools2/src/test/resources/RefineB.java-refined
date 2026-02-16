@@ -1,0 +1,9 @@
+public class RefineB {
+
+	//@ ghost boolean b = true;
+
+	//@ requires i == 0;
+	//@ ensures \result == 0;
+	public int m(int i);
+
+}

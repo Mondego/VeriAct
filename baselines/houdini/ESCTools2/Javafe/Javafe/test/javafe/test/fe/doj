@@ -1,0 +1,15 @@
+#!/bin/bash
+
+rm -rf ../_tmp_classes
+mkdir ../_tmp_classes
+
+export CLASSPATH=`pwd`
+
+export TOOLCMD="${OLD_JAVAC} -d `pwd`/../_tmp_classes"
+unset TOOLARGS
+
+export TOOL="${TOOLCMD} ${TOOLARGS}"
+
+./run |& sed "s|`pwd`|<TEST>|g"
+
+rm -rf ../_tmp_classes

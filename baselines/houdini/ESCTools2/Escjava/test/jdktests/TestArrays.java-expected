@@ -1,0 +1,50 @@
+TestArrays.java:45: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "TestArrays.java", line 39, col 22.
+
+TestArrays.java:51: Warning: Possible assertion failure (Assert)
+    //@ assert a[3] <= a[7];
+        ^
+TestArrays.java:52: Warning: Possible assertion failure (Assert)
+    //@ assert a[6] < a[5]; // ERROR
+        ^
+TestArrays.java:62: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "TestArrays.java", line 58, col 13.
+
+TestArrays.java:88: Warning: Possible assertion failure (Assert)
+    //@ assert Arrays.equals(a,d); // ERROR - FIXME
+        ^
+TestArrays.java:142: Warning: Possible assertion failure (Assert)
+    //@ assert Arrays.contains(a,0); // FIXME
+        ^
+TestArrays.java:143: Warning: Possible assertion failure (Assert)
+    //@ assert Arrays.contains(a,1);
+        ^
+TestArrays.java:156: Warning: Possible assertion failure (Assert)
+    //@ assert Arrays.contains(a,o); // FIXME
+        ^
+TestArrays.java:174: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "TestArrays.java", line 169, col 13.
+
+TestArrays.java:202: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "TestArrays.java", line 190, col 13.
+    Routine call returned exceptionally in "TestArrays.java", line 197, col 13.
+
+TestArrays.java:225: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "TestArrays.java", line 220, col 20.
+
+11 warnings

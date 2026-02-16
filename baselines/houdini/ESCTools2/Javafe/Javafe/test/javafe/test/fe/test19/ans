@@ -1,0 +1,12 @@
+FromFinal.java:5: Error: Can't subclass final classes: class foo.bar.B
+class A extends B {}            // error
+                ^
+1 error
+FromInterface.java:5: Error: Can't subclass interfaces: interface foo.bar.B
+class A extends B {}            // error
+                ^
+1 error
+ImplementsClass.java:8: Error: Interfaces may not extend classes: class foo.bar.B
+interface A extends Neutral1, B, Neutral2 {}            // error
+                              ^
+1 error

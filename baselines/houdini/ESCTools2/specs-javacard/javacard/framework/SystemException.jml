@@ -1,0 +1,42 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: SystemException.jml,v 1.4 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public class SystemException extends CardRuntimeException { 
+
+   public static final short ILLEGAL_VALUE;
+   public static final short NO_TRANSIENT_SPACE;
+   public static final short ILLEGAL_TRANSIENT;
+   public static final short ILLEGAL_AID;
+   public static final short NO_RESOURCE;
+   public static final short ILLEGAL_USE;
+
+   //@ public static invariant ILLEGAL_VALUE == 1;
+   //@ public static invariant NO_TRANSIENT_SPACE == 2;
+   //@ public static invariant ILLEGAL_TRANSIENT == 3;
+   //@ public static invariant ILLEGAL_AID == 4;
+   //@ public static invariant NO_RESOURCE == 5;
+   //@ public static invariant ILLEGAL_USE == 6;
+
+   /*@ public exceptional_behavior
+        requires true;
+	signals (SystemException se) se.getReason() == reason ;
+	signals_only SystemException;
+	assignable \nothing ;
+   @*/
+  public static void throwIt(short reason) throws SystemException;
+
+}

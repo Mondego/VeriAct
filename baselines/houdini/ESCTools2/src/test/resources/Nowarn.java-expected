@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|Nowarn.java: Caution: Using given file as the .java file, even though it is not the java file for Nowarn on the classpath
+    [TIME]
+
+Nowarn ...
+  Prover started:TIME
+    [TIME]
+
+Nowarn: m() ...
+    [TIME]  passed
+
+Nowarn: Nowarn() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

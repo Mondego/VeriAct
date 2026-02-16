@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|Intern2.java: Caution: Using given file as the .java file, even though it is not the java file for Intern2 on the classpath
+    [TIME]
+
+Intern2 ...
+src|test|resources|Intern2.java:8: Error: No such method equals(java.lang.String, java.lang.String) in type java.lang.String
+  //@ assert String.equals(s,s4);
+                    ^
+src|test|resources|Intern2.java:10: Error: No such method equals(java.lang.String, java.lang.String) in type java.lang.String
+  //@ assert String.equals(s,s5); // SHOULD BE OK
+                    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+2 errors

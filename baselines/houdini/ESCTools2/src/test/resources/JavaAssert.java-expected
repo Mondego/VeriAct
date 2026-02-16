@@ -1,0 +1,137 @@
+ESC/Java version VERSION
+src|test|resources|JavaAssert.java:35: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert false;
+        ^
+src|test|resources|JavaAssert.java:41: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert true == false;
+        ^
+src|test|resources|JavaAssert.java:47: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert p >= 0;
+        ^
+src|test|resources|JavaAssert.java:53: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert p >= -1;
+        ^
+src|test|resources|JavaAssert.java:60: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert p >= 1;
+        ^
+src|test|resources|JavaAssert.java:67: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert p + q == 10;
+        ^
+src|test|resources|JavaAssert.java:75: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert p + q == 11;
+        ^
+src|test|resources|JavaAssert.java:84: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert p + q >= 0;
+        ^
+src|test|resources|JavaAssert.java:95: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+        assert p + q >= 0;
+        ^
+src|test|resources|JavaAssert.java: Caution: Using given file as the .java file, even though it is not the java file for JavaAssert on the classpath
+    [TIME]
+
+JavaAssert ...
+  Prover started:TIME
+    [TIME]
+
+JavaAssert: nothing() ...
+    [TIME]  passed
+
+JavaAssert: trivial() ...
+------------------------------------------------------------------------
+src|test|resources|JavaAssert.java:36: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "src|test|resources|JavaAssert.java", line 32, col 8:
+    //@ ensures false;
+        ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|JavaAssert.java", line 36, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: constant_boolean_expression() ...
+------------------------------------------------------------------------
+src|test|resources|JavaAssert.java:42: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "src|test|resources|JavaAssert.java", line 39, col 8:
+    //@ ensures false;
+        ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|JavaAssert.java", line 42, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: assert_matches_precondition(int) ...
+    [TIME]  passed
+
+JavaAssert: assert_weaker_than_precondition(int) ...
+    [TIME]  passed
+
+JavaAssert: assert_stronger_than_precondition(int) ...
+------------------------------------------------------------------------
+src|test|resources|JavaAssert.java:61: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "src|test|resources|JavaAssert.java", line 58, col 8:
+    //@ ensures false;
+        ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|JavaAssert.java", line 61, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: constant_arithmetic(int, int) ...
+    [TIME]  passed
+
+JavaAssert: constant_arithmetic_dual(int, int) ...
+------------------------------------------------------------------------
+src|test|resources|JavaAssert.java:76: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "src|test|resources|JavaAssert.java", line 73, col 8:
+    //@ ensures false;
+        ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|JavaAssert.java", line 76, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: non_trivial_arithmetic(int, int) ...
+------------------------------------------------------------------------
+src|test|resources|JavaAssert.java:86: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "src|test|resources|JavaAssert.java", line 82, col 8:
+    //@ ensures 0 <= \result && \result <= 1000*1000;
+        ^
+Execution trace information:
+    Executed return in "src|test|resources|JavaAssert.java", line 85, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: non_trivial_arithmetic_overflow(int, int) ...
+------------------------------------------------------------------------
+src|test|resources|JavaAssert.java:97: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "src|test|resources|JavaAssert.java", line 93, col 8:
+    //@ ensures false;
+        ^
+Execution trace information:
+    Executed return in "src|test|resources|JavaAssert.java", line 96, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: JavaAssert() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+6 warnings
+9 errors

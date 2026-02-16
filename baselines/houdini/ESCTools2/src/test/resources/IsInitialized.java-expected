@@ -1,0 +1,34 @@
+ESC/Java version VERSION
+src|test|resources|IsInitialized.java: Caution: Using given file as the .java file, even though it is not the java file for IsInitialized on the classpath
+    [TIME]
+
+IsInitialized ...
+  Prover started:TIME
+    [TIME]
+
+IsInitialized: m() ...
+------------------------------------------------------------------------
+src|test|resources|IsInitialized.java:9: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|IsInitialized.java", line 5, col 5:
+        //@ ensures \is_initialized(java.util.Vector);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|IsInitialized.java", line 9, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+IsInitialized: IsInitialized() ...
+    [TIME]  passed
+  [TIME total]
+
+IsInitializedA ...
+    [TIME]
+
+IsInitializedA: IsInitializedA() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

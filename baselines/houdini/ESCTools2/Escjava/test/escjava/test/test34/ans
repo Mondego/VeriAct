@@ -1,0 +1,1185 @@
+WontEvenParse2.java:3: Error: Cannot convert java.lang.Object to boolean
+    //@ assert new Object();
+               ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+1 error
+WontEvenParse3.java:3: Error: Cannot convert int[] to boolean
+    //@ assert new int[10];
+               ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+1 error
+WontEvenParse5.java:3: Error: No such method \nonnullelements(java.lang.Object[]) in type WontEvenParse5
+    //@ assert WontEvenParse5.\nonnullelements(a);
+                              ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+1 error
+WontEvenParse6.java:4: Fatal error: Statement pragmas are not legal in this context.
+    //@ assert x == x;
+    ^
+1 error
+WontEvenParse7.java:3: Fatal error: Can't find type named "m"
+    //@ assert \type(WontEvenParse7[]) <: \type(m);
+                                                ^
+1 error
+WontEvenParse8.java:2: Fatal error: Unexpected token '[', expected ')'
+  //@ exsures (Throwable a[]) true;
+                          ^
+1 error
+BogusInput.java:11: Error: Unqualified this cannot be used in static contexts
+  //@ axiom this != null
+            ^
+BogusInput.java:16: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ axiom x == 5
+            ^
+BogusInput.java:18: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ readable_if x < 10
+                  ^
+BogusInput.java:19: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ writable_if x < 10
+                  ^
+BogusInput.java:23: Error: Keyword \lockset is not allowed in this context
+  //@ axiom \lockset == \lockset
+            ^
+BogusInput.java:23: Error: Keyword \lockset is not allowed in this context
+  //@ axiom \lockset == \lockset
+                        ^
+BogusInput.java:24: Error: Keyword \lockset is not allowed in this context
+  //@ invariant \lockset == \lockset
+                ^
+BogusInput.java:24: Error: Keyword \lockset is not allowed in this context
+  //@ invariant \lockset == \lockset
+                            ^
+BogusInput.java:25: Error: Keyword \lockset is not allowed in this context
+  //@ axiom \max(\lockset) == null;
+                 ^
+BogusInput.java:26: Error: Keyword \lockset is not allowed in this context
+  //@ invariant \max(\lockset) == null
+                     ^
+BogusInput.java:28: Error: Keyword \result is not allowed in this context
+  //@ axiom \result == \result;
+            ^
+BogusInput.java:28: Error: Keyword \result is not allowed in this context
+  //@ axiom \result == \result;
+                       ^
+BogusInput.java:29: Error: Keyword \result is not allowed in this context
+  //@ invariant \result == \result
+                ^
+BogusInput.java:29: Error: Keyword \result is not allowed in this context
+  //@ invariant \result == \result
+                           ^
+BogusInput.java:31: Error: The function \old cannot be used in this context
+  //@ axiom \old(x) == x && (\forall BogusInput t; t.x == t.x);
+            ^
+BogusInput.java:31: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ axiom \old(x) == x && (\forall BogusInput t; t.x == t.x);
+                       ^
+BogusInput.java:31: Error: Invalid types (void and int) in equality comparison
+  //@ axiom \old(x) == x && (\forall BogusInput t; t.x == t.x);
+                    ^
+BogusInput.java:32: Error: The function \old cannot be used in this context
+  //@ invariant \old(x) == x && (\forall BogusInput t; t.x == t.x);
+                ^
+BogusInput.java:32: Error: Invalid types (void and int) in equality comparison
+  //@ invariant \old(x) == x && (\forall BogusInput t; t.x == t.x);
+                        ^
+BogusInput.java:34: Error: Keyword \result is not allowed in this context
+  //@ requires \result == \result
+               ^
+BogusInput.java:34: Error: Keyword \result is not allowed in this context
+  //@ requires \result == \result
+                          ^
+BogusInput.java:35: Error: Keyword \result is not allowed in this context
+  //@ modifies a[ (\result == \result ? 0 : 1 )]
+                   ^
+BogusInput.java:35: Error: Keyword \result is not allowed in this context
+  //@ modifies a[ (\result == \result ? 0 : 1 )]
+                              ^
+BogusInput.java:36: Error: Invalid types (void and void) in equality comparison
+  //@ ensures \result == \result
+                      ^
+BogusInput.java:40: Error: Keyword \result is not allowed in this context
+  //@ requires \result == 0
+               ^
+BogusInput.java:41: Error: Keyword \result is not allowed in this context
+  //@ modifies a[\result]
+                 ^
+BogusInput.java:46: Error: requires annotations can occur only on method and constructor declarations
+  //@ requires \result == 0
+      ^
+BogusInput.java:47: Error: A modifies annotation can occur only on method and constructor declarations
+  //@ modifies a[\result]
+      ^
+BogusInput.java:48: Error: ensures annotations can occur only on initializer, method and constructor declarations
+  //@ ensures \result == 0
+      ^
+BogusInput.java:49: Error: A modifies annotation can occur only on method and constructor declarations
+  //@ also modifies a[\result]
+           ^
+BogusInput.java:50: Error: ensures annotations can occur only on initializer, method and constructor declarations
+  //@ also ensures \result == 0;
+           ^
+BogusInput.java:53: Error: The uninitialized annotation can occur only on local variable declarations
+  /*@ uninitialized */ int uninitA;
+                           ^
+BogusInput.java:54: Error: The uninitialized annotation can occur only on local variable declarations
+  /*@ uninitialized */ int uninitB = 5;
+                           ^
+BogusInput.java:55: Error: The uninitialized annotation can occur only on local variable declarations
+  /*@ uninitialized */ static int uninitC;
+                                  ^
+BogusInput.java:56: Error: The uninitialized annotation can occur only on local variable declarations
+  /*@ uninitialized */ static int uninitD = 5;
+                                  ^
+BogusInput.java:57: Error: The uninitialized annotation can occur only on local variable declarations
+  /*@ uninitialized */ int uninitE, uninitF;
+                           ^
+BogusInput.java:57: Error: The uninitialized annotation can occur only on local variable declarations
+  /*@ uninitialized */ int uninitE, uninitF;
+                                    ^
+BogusInput.java:58: Error: The uninitialized annotation can occur only on local variable declarations
+  /*@ uninitialized */ int uninitM() { return 0; }
+      ^
+BogusInput.java:58: Error: Unknown kind of pragma for a routine declaration: uninitialized
+  /*@ uninitialized */ int uninitM() { return 0; }
+      ^
+BogusInput.java:59: Error: The uninitialized annotation can occur only on local variable declarations
+  void uninit(/*@ uninitialized */ int p) {
+                                       ^
+BogusInput.java:60: Error: The uninitialized annotation can occur only on local variable declarations that have an initializer
+    /*@ uninitialized */ int a;
+                             ^
+BogusInput.java:62: Error: The uninitialized annotation can occur only on local variable declarations that have an initializer
+    /*@ uninitialized */ int c = 0, d;
+                                    ^
+BogusInput.java:67: Error: The uninitialized annotation can occur only on local variable declarations that have an initializer
+    /*@ uninitialized */ Object w, z = null;
+                                ^
+BogusInput.java:68: Error: The uninitialized annotation can occur only on local variable declarations that have an initializer
+    /*@ uninitialized */ Object v;
+                                ^
+BogusInput.java:71: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+  /*@ non_null */ int nn0;
+                      ^
+BogusInput.java:72: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+  int nn1 /*@ non_null */;
+      ^
+BogusInput.java:77: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+  /*@ non_null */ int nn7[], nn8;
+                             ^
+BogusInput.java:78: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+  /*@ non_null */ static int nn9;
+                             ^
+BogusInput.java:85: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+  void nonNull(/*@ non_null */ int p, int q, /*@ non_null */ Object r) ...
+                                   ^
+BogusInput.java:86: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+    /*@ non_null */ int a;
+                        ^
+BogusInput.java:101: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  /*@ readable_if defif0 == defif3; */ static int defif3;
+                  ^
+BogusInput.java:103: Error: The readable_if annotation can occur only on field declarations and local variable declarations
+  /*@ readable_if true; */ int definedifM() { return 0; }
+      ^
+BogusInput.java:103: Error: Unknown kind of pragma for a routine declaration: readable_if
+  /*@ readable_if true; */ int definedifM() { return 0; }
+      ^
+BogusInput.java:104: Error: The readable_if annotation can occur only on field declarations and local variable declarations
+  void definedIf0(/*@ readable_if true; */ int x) {
+                      ^
+BogusInput.java:107: Error: Undefined variable 'c'
+    /*@ readable_if 0 <= c; */ int c;
+                         ^
+BogusInput.java:112: Error: Unqualified this cannot be used in static contexts
+    /*@ readable_if this == null || defif0 == defif2; */ int e;
+                    ^
+BogusInput.java:112: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+    /*@ readable_if this == null || defif0 == defif2; */ int e;
+                                    ^
+BogusInput.java:117: Error: Undefined variable 'a'
+    /*@ readable_if a; */ boolean a;  // this is not fine
+                    ^
+BogusInput.java:119: Error: Undefined variable 'c'
+    /*@ readable_if c; */ boolean b, c, d;  // this is not fine, for a ...
+                    ^
+BogusInput.java:123: Error: Undefined variable 'undeclaredVariable'
+  /*@ monitored_by mus[0], this, undeclaredVariable, this.mus[1]; moni ...
+                                 ^
+BogusInput.java:123: Error: Cannot convert int to java.lang.Object
+ ... ariable, this.mus[1]; monitored_by mb0 */ int mb0;
+                                        ^
+BogusInput.java:124: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  /*@ monitored_by mus, this, this.mus */ static int mb1;
+                   ^
+BogusInput.java:124: Error: Unqualified this cannot be used in static contexts
+  /*@ monitored_by mus, this, this.mus */ static int mb1;
+                        ^
+BogusInput.java:124: Error: Unqualified this cannot be used in static contexts
+  /*@ monitored_by mus, this, this.mus */ static int mb1;
+                              ^
+BogusInput.java:125: Error: The monitored_by annotation can occur only on field declarations
+  /*@ monitored_by mus */ void monitoredBy0(/*@ monitored_by this */ i ...
+                                                ^
+BogusInput.java:125: Error: The monitored_by annotation can occur only on field declarations
+  /*@ monitored_by mus */ void monitoredBy0(/*@ monitored_by this */ i ...
+      ^
+BogusInput.java:126: Error: The monitored_by annotation can occur only on field declarations
+    /*@ monitored_by this */ int x;
+        ^
+BogusInput.java:125: Error: monitored_by is obsolete and only applies to fields
+  /*@ monitored_by mus */ void monitoredBy0(/*@ monitored_by this */ i ...
+      ^
+BogusInput.java:128: Error: The monitored_by annotation can occur only on field declarations
+  /*@ monitored_by mb1 */ static void monitoredBy1(/*@ monitored_by mb ...
+                                                       ^
+BogusInput.java:128: Error: The monitored_by annotation can occur only on field declarations
+  /*@ monitored_by mb1 */ static void monitoredBy1(/*@ monitored_by mb ...
+      ^
+BogusInput.java:129: Error: The monitored_by annotation can occur only on field declarations
+    /*@ monitored_by mb1 */ int x;
+        ^
+BogusInput.java:130: Error: The monitored_by annotation can occur only on field declarations
+    /*@ monitored_by this */ int y;
+        ^
+BogusInput.java:128: Error: monitored_by is obsolete and only applies to fields
+  /*@ monitored_by mb1 */ static void monitoredBy1(/*@ monitored_by mb ...
+      ^
+BogusInput.java:136: Error: The monitored annotation can occur only on field declarations
+  /*@ monitored */ void monitored0(/*@ monitored */ int p) {
+                                                        ^
+BogusInput.java:136: Error: The monitored annotation can occur only on field declarations
+  /*@ monitored */ void monitored0(/*@ monitored */ int p) {
+      ^
+BogusInput.java:137: Error: The monitored annotation can occur only on field declarations
+    /*@ monitored */ int x;
+                         ^
+BogusInput.java:139: Error: The monitored annotation can occur only on field declarations
+  /*@ monitored */ static void monitored1(/*@ monitored */ int p) {
+                                                               ^
+BogusInput.java:139: Error: The monitored annotation can occur only on field declarations
+  /*@ monitored */ static void monitored1(/*@ monitored */ int p) {
+      ^
+BogusInput.java:140: Error: The monitored annotation can occur only on field declarations
+    /*@ monitored */ int x;
+                         ^
+BogusInput.java:144: Error: Unqualified this cannot be used in static contexts
+    this.pp();  // "this" is not allowed in this context
+    ^
+BogusInput.java:148: Error: Array ranges are allowed only as specification designators
+  //@ requires mus[*] == null;
+                  ^
+BogusInput.java:150: Error: Array ranges are allowed only as specification designators
+  //@ modifies iarr[iarr[*]];
+                        ^
+BogusInput.java:151: Error: Array ranges are allowed only as specification designators
+  //@ ensures mus[*] == null;
+                 ^
+BogusInput.java:156: Error: Undefined variable 'blah'
+  //@ axiom new Object(blah);
+                       ^
+BogusInput.java:156: Error: No such constructor in type java.lang.Object
+  //@ axiom new Object(blah);
+            ^
+BogusInput.java:156: Error: Cannot convert java.lang.Object to boolean
+  //@ axiom new Object(blah);
+            ^
+BogusInput.java:157: Error: Cannot convert int[] to boolean
+  //@ axiom new int[5];
+            ^
+BogusInput.java:158: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx = 0) == 0;
+                ^
+BogusInput.java:159: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx *= 0) == 0;
+                ^
+BogusInput.java:160: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx /= 0) == 0;
+                ^
+BogusInput.java:161: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx %= 0) == 0;
+                ^
+BogusInput.java:162: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx += 0) == 0;
+                ^
+BogusInput.java:163: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx -= 0) == 0;
+                ^
+BogusInput.java:164: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx <<= 0) == 0;
+                ^
+BogusInput.java:165: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx >>= 0) == 0;
+                ^
+BogusInput.java:166: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx >>>= 0) == 0;
+                ^
+BogusInput.java:167: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx &= 0) == 0;
+                ^
+BogusInput.java:168: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx |= 0) == 0;
+                ^
+BogusInput.java:169: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx ^= 0) == 0;
+                ^
+BogusInput.java:170: Error: assignments cannot be used in specification expressions
+  //@ axiom (++xx) == 0;
+             ^
+BogusInput.java:171: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx++) == 0;
+               ^
+BogusInput.java:172: Error: assignments cannot be used in specification expressions
+  //@ axiom (--xx) == 0;
+             ^
+BogusInput.java:173: Error: assignments cannot be used in specification expressions
+  //@ axiom (xx--) == 0;
+               ^
+BogusInput.java:183: Error: Quantified expressions are not allowed in this context
+    /*@ assert (boolean)(\forall int i; i < i+1); */
+                        ^
+BogusInput.java:184: Error: Quantified expressions are not allowed in this context
+    /*@ assert (boolean)(\exists int i; i*i < 0); */
+                        ^
+BogusInput.java:185: Error: Labeled predicates are not allowed in this context
+    /*@ assert (boolean)(\lblneg Hello 1 < 2); */
+                        ^
+BogusInput.java:186: Error: Labeled predicates are not allowed in this context
+    /*@ assert (boolean)(\lblpos Hello 1 < 2); */
+                        ^
+BogusInput.java:189: Error: Quantified expressions are not allowed in this context
+    /*@ assert (\forall int i; i < i+1) ? (\forall int i; i < i+1) : ( ...
+               ^
+BogusInput.java:189: Error: Quantified expressions are not allowed in this context
+    /*@ assert (\forall int i; i < i+1) ? (\forall int i; i < i+1) : ( ...
+                                          ^
+BogusInput.java:189: Error: Quantified expressions are not allowed in this context
+ ...  i+1) ? (\forall int i; i < i+1) : (\forall int i; i < i+1); */
+                                        ^
+BogusInput.java:190: Error: Quantified expressions are not allowed in this context
+    /*@ assert (\exists int i; i*i < 0) ? (\exists int i; i*i < 0) : ( ...
+               ^
+BogusInput.java:190: Error: Quantified expressions are not allowed in this context
+    /*@ assert (\exists int i; i*i < 0) ? (\exists int i; i*i < 0) : ( ...
+                                          ^
+BogusInput.java:190: Error: Quantified expressions are not allowed in this context
+ ...  < 0) ? (\exists int i; i*i < 0) : (\exists int i; i*i < 0); */
+                                        ^
+BogusInput.java:191: Error: Labeled predicates are not allowed in this context
+    /*@ assert (\lblneg Hello 1 < 2) ? (\lblneg Hello 1 < 2) : (\lblne ...
+               ^
+BogusInput.java:191: Error: Labeled predicates are not allowed in this context
+    /*@ assert (\lblneg Hello 1 < 2) ? (\lblneg Hello 1 < 2) : (\lblne ...
+                                       ^
+BogusInput.java:191: Error: Labeled predicates are not allowed in this context
+    /*@ assert (\lblneg Hello 1 < 2) ? (\lblneg Hello 1 < 2) : (\lblne ...
+                                                               ^
+BogusInput.java:192: Error: Labeled predicates are not allowed in this context
+    /*@ assert (\lblpos Hello 1 < 2) ? (\lblpos Hello 1 < 2) : (\lblpo ...
+               ^
+BogusInput.java:192: Error: Labeled predicates are not allowed in this context
+    /*@ assert (\lblpos Hello 1 < 2) ? (\lblpos Hello 1 < 2) : (\lblpo ...
+                                       ^
+BogusInput.java:192: Error: Labeled predicates are not allowed in this context
+    /*@ assert (\lblpos Hello 1 < 2) ? (\lblpos Hello 1 < 2) : (\lblpo ...
+                                                               ^
+BogusInput.java:4: Error: The uninitialized annotation can occur only on local variable declarations
+/*@ uninitialized */
+    ^
+BogusInput.java:5: Error: The non_null pragma can be applied only to variables, fields, parameters, and methods
+/*@ non_null */
+    ^
+BogusInput.java:6: Error: The readable_if annotation can occur only on field declarations and local variable declarations
+/*@ readable_if x == 5 */
+    ^
+BogusInput.java:6: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+/*@ readable_if x == 5 */
+                ^
+BogusInput.java:7: Error: The writable_if annotation can occur only on field declarations and local variable declarations
+/*@ writable_if x == 5 */
+    ^
+BogusInput.java:7: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+/*@ writable_if x == 5 */
+                ^
+BogusInput.java:8: Error: The monitored_by annotation can occur only on field declarations
+/*@ monitored_by null, true */
+    ^
+BogusInput.java:8: Error: The monitored_by annotation can occur only on field declarations
+/*@ monitored_by null, true */
+    ^
+BogusInput.java:9: Error: The monitored annotation can occur only on field declarations
+/*@ monitored */
+    ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+128 errors
+BogusAssignments.java:4: Caution: May not assign to a final field
+    x = 3;  // this is a "final" field, but we don't currently disallo ...
+    ^
+BogusAssignments.java:2: Associated declaration: 
+  final int x = 5;
+        ^
+BogusAssignments.java:9: Error: Invalid designator
+    a.length = 3;
+      ^
+BogusAssignments.java:9: Error: May not assign to array's length field
+    a.length = 3;
+    ^
+BogusAssignments.java:12: Error: Invalid designator
+  //@ modifies a.length;
+                 ^
+BogusAssignments.java:13: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies x;
+               ^
+Caution: Turning off extended static checking due to type error(s)
+3 cautions
+3 errors
+BogusLoops.java:13: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a != null
+          ^
+BogusLoops.java:14: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant \old(x) <= x;
+          ^
+BogusLoops.java:17: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a[0] == 0;
+          ^
+BogusLoops.java:27: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a != null;
+          ^
+BogusLoops.java:28: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant \old(x) <= x;
+          ^
+BogusLoops.java:31: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a[0] == 1;
+          ^
+BogusLoops.java:41: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a != null;
+          ^
+BogusLoops.java:42: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant \old(x) <= x;
+          ^
+BogusLoops.java:45: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a[0] == 2;
+          ^
+BogusLoops.java:61: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+          //@ loop_invariant a[0] == 4;
+              ^
+BogusLoops.java:72: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a[0] == 6;
+          ^
+BogusLoops.java:77: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      MyLabel: { //@ loop_invariant a[0] == 7;
+                     ^
+BogusLoops.java:79: Error: 'loop_invariant' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ loop_invariant a[0] == 8;
+          ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+13 errors
+BogusFunctions.java:16: Error: Value of type TYPE cannot be assigned to location of type int
+    /*@ set ii = \type(Cloneable); */  // illegal
+               ^
+BogusFunctions.java:17: Error: Invalid types (boolean and int) in equality comparison
+    /*@ assert (\type(Object) <: \typeof(this)) == 12; */ // illegal
+                                                ^
+BogusFunctions.java:18: Error: Cannot convert TYPE to boolean
+    /*@ assert \type(java.lang.Object[]); */  // illegal
+               ^
+BogusFunctions.java:19: Error: Cannot convert TYPE to boolean
+    /*@ assert \elemtype(\type(java.lang.Object[])); */  // illegal
+               ^
+BogusFunctions.java:20: Error: The argument must have TYPE type
+    /*@ assert \elemtype(5 < 5) == \elemtype((\TYPE)this); */  // ille ...
+                         ^
+BogusFunctions.java:20: Error: Bad cast from BogusFunctions to TYPE
+    /*@ assert \elemtype(5 < 5) == \elemtype((\TYPE)this); */  // ille ...
+                                             ^
+BogusFunctions.java:33: Error: Cannot convert int[] to java.lang.Object[]
+    /*@ assert \nonnullelements(b); */  // illegal
+                                ^
+BogusFunctions.java:34: Error: Cannot convert int to java.lang.Object[]
+    /*@ assert \nonnullelements(12); */  // illegal
+                                ^
+BogusFunctions.java:35: Error: Cannot convert boolean to java.lang.Object[]
+    /*@ assert \nonnullelements(12 < 13); */  // illegal
+                                ^
+BogusFunctions.java:36: Error: Invalid types (boolean and int) in equality comparison
+    /*@ assert \nonnullelements(a) == 12; */  // illegal
+                                   ^
+BogusFunctions.java:37: Error: Cannot convert TYPE[] to java.lang.Object[]
+    //@ assert \nonnullelements(mENNghost1);
+                                ^
+BogusFunctions.java:42: Error: Cannot convert TYPE to java.lang.Object
+  /*@ ensures \fresh(tt); */  // illegal
+                     ^
+BogusFunctions.java:43: Error: Cannot convert int to java.lang.Object
+  /*@ ensures \fresh(ii); */  // illegal
+                     ^
+BogusFunctions.java:44: Error: The function fresh must have at least one argument
+  /*@ ensures \fresh(); */  // illegal
+              ^
+BogusFunctions.java:52: Error: Quantified expressions are not allowed in this context
+ ... ctions bf; bf.aa != null) ==> \old((\forall BogusFunctions bf; bf ...
+                                        ^
+BogusFunctions.java:53: Error: Invalid types (int and TYPE) in equality comparison
+  /*@ ensures \old(ii) == \old(tt); */  // illegal
+                       ^
+BogusFunctions.java:54: Error: The function \old takes one argument
+  /*@ ensures \old() == \old(ii, ii); */  // illegal
+              ^
+BogusFunctions.java:54: Error: The function \old takes one argument
+  /*@ ensures \old() == \old(ii, ii); */  // illegal
+                        ^
+BogusFunctions.java:54: Error: Invalid types (void and void) in equality comparison
+  /*@ ensures \old() == \old(ii, ii); */  // illegal
+                     ^
+BogusFunctions.java:67: Error: Cannot convert java.lang.Object to a numeric type 
+    /*@ assume (\max(\lockset) < 4) == (3 < \max(\lockset)); */  // il ...
+                ^
+BogusFunctions.java:67: Error: Cannot convert java.lang.Object to a numeric type 
+    /*@ assume (\max(\lockset) < 4) == (3 < \max(\lockset)); */  // il ...
+                                            ^
+BogusFunctions.java:68: Error: The function \max takes one argument
+    /*@ assume \max() == \max(this); */  // illegal
+               ^
+BogusFunctions.java:68: Error: Cannot convert BogusFunctions to LOCKSET
+    /*@ assume \max() == \max(this); */  // illegal
+                              ^
+BogusFunctions.java:69: Error: Cannot convert java.lang.Object to a numeric type 
+    /*@ assume \max(\lockset) > \max(\lockset); */  // illegal
+               ^
+BogusFunctions.java:69: Error: Cannot convert java.lang.Object to a numeric type 
+    /*@ assume \max(\lockset) > \max(\lockset); */  // illegal
+                                ^
+BogusFunctions.java:70: Error: Cannot convert java.lang.Object to a numeric type 
+    /*@ assume \max(\lockset) >= \max(\lockset); */  // illegal
+               ^
+BogusFunctions.java:70: Error: Cannot convert java.lang.Object to a numeric type 
+    /*@ assume \max(\lockset) >= \max(\lockset); */  // illegal
+                                 ^
+BogusFunctions.java:71: Error: Can only index \lockset with a reference type
+    /*@ assume \lockset[12]; */  // illegal
+                       ^
+BogusFunctions.java:72: Error: Array index is not an integer
+    /*@ assume a[this] == 12; */  // illegal
+                ^
+BogusFunctions.java:73: Error: Invalid types (boolean and int) in equality comparison
+    /*@ assume \lockset[this] == 12; */  // illegal
+                              ^
+BogusFunctions.java:74: Error: The function \max takes one argument
+    /*@ assume \max(12, 13) == 13; */  // illegal
+               ^
+BogusFunctions.java:74: Error: Invalid types (java.lang.Object and int) in equality comparison
+    /*@ assume \max(12, 13) == 13; */  // illegal
+                            ^
+BogusFunctions.java:75: Error: Invalid types (boolean and int) in equality comparison
+    /*@ assume (\max(\lockset) < \max(\lockset)) == 3; */  // illegal
+                                                 ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+33 errors
+BogusGhost.java:14: Error: Another field named 'l' already exists in this type
+  //@ ghost public int l;
+                       ^
+BogusGhost.java:15: Associated declaration: 
+  //@ ghost static public int l;
+                              ^
+BogusGhost.java:15: Error: Another field named 'l' already exists in this type
+  //@ ghost static public int l;
+                              ^
+BogusGhost.java:14: Associated declaration: 
+  //@ ghost public int l;
+                       ^
+BogusGhost.java:17: Error: Another field named 'm' already exists in this type
+  //@ ghost public int m;
+                       ^
+BogusGhost.java:16: Associated declaration: 
+  int m;
+      ^
+BogusGhost.java:19: Error: Another field named 'n' already exists in this type
+  //@ ghost public static int n;
+                              ^
+BogusGhost.java:18: Associated declaration: 
+  int n;
+      ^
+BogusGhost.java:21: Error: Another field named 'o' already exists in this type
+  //@ ghost public int o;
+                       ^
+BogusGhost.java:20: Associated declaration: 
+  static int o;
+             ^
+BogusGhost.java:23: Error: Another field named 'p' already exists in this type
+  //@ ghost public static int p;
+                              ^
+BogusGhost.java:22: Associated declaration: 
+  static int p;
+             ^
+Caution: Turning off extended static checking due to type error(s)
+BogusGhost.java:81: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+    /*@ set y = 0; */   // not legal
+            ^
+BogusGhost.java:98: Error: May use set only with assignment targets that are declared ghost
+    /*@ set z = 5; */            // not legal
+        ^
+BogusGhost.java:94: Associated declaration: 
+  int z;
+  ^
+BogusGhost.java:105: Error: Quantified expressions are not allowed in this context
+    /*@ set bo = (\forall int i; i < i+1); */
+                 ^
+BogusGhost.java:106: Error: Quantified expressions are not allowed in this context
+    /*@ set bo = (\exists int i; i*i < 0); */
+                 ^
+BogusGhost.java:107: Error: Labeled predicates are not allowed in this context
+    /*@ set bo = (\lblneg Hello 1 < 2); */
+                 ^
+BogusGhost.java:108: Error: Labeled predicates are not allowed in this context
+    /*@ set bo = (\lblpos Hello 1 < 2); */
+                 ^
+1 caution
+12 errors
+BogusSpec.java:26: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_modifies x, x
+      ^
+BogusSpec.java:28: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures x == null;
+      ^
+BogusSpec.java:89: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (Throwable t) t == null
+      ^
+BogusSpec.java:125: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (Throwable tt) true
+      ^
+BogusSpec.java:142: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_modifies x, x
+      ^
+BogusSpec.java:144: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures x == null;
+      ^
+BogusSpec.java:155: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_modifies \lockset
+      ^
+BogusSpec.java:156: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures \lockset == \lockset;
+      ^
+BogusSpec.java:157: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures \lockset;
+      ^
+BogusSpec.java:167: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (SomeException se) se != null;
+      ^
+BogusSpec.java:168: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (Throwable t) t == 5;
+      ^
+BogusSpec.java:169: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (SomeSubException sse) false;
+      ^
+BogusSpec.java:170: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (SomeOtherException soe) soe != null;
+      ^
+BogusSpec.java:171: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (NullPointerException npe) true;
+      ^
+BogusSpec.java:172: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (\TYPE tt) tt == \type(SomeException);
+      ^
+BogusSpec.java:173: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_exsures (AnotherException ae) ae == null;
+      ^
+BogusSpec.java:222: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_modifies this.xx;
+      ^
+BogusSpec.java:223: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_modifies x, y, b;
+      ^
+BogusSpec.java:224: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_modifies bb;
+      ^
+BogusSpec.java:2: Error: Cannot convert void to a numeric type 
+  //@ ensures \result < 6;
+              ^
+BogusSpec.java:3: Error: Invalid types (void and void) in equality comparison
+  //@ ensures \result == \result;
+                      ^
+BogusSpec.java:4: Error: Invalid types (void and void) in equality comparison
+  //@ ensures \result != \result;
+                      ^
+BogusSpec.java:5: Error: Cannot convert void to a numeric type 
+  //@ ensures \result <= \result;
+              ^
+BogusSpec.java:5: Error: Cannot convert void to a numeric type 
+  //@ ensures \result <= \result;
+                         ^
+BogusSpec.java:11: Error: Not a specification designator expression
+  //@ modifies this != null;
+               ^
+BogusSpec.java:12: Error: Not a specification designator expression
+  //@ modifies this.x, x
+                       ^
+BogusSpec.java:18: Error: Keyword \result is not allowed in this context
+  //@ requires \result;
+               ^
+BogusSpec.java:19: Error: Keyword \result is not allowed in this context
+  //@ modifies \result
+               ^
+BogusSpec.java:32: Error: Not a specification designator expression
+  //@ modifies a
+               ^
+BogusSpec.java:34: Error: Not a specification designator expression
+  //@ modifies a[*], a, a[p]
+                     ^
+BogusSpec.java:39: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ requires x != null;
+               ^
+BogusSpec.java:40: Error: Unqualified this cannot be used in static contexts
+  //@ requires this != null;
+               ^
+BogusSpec.java:41: Error: Keyword \result is not allowed in this context
+  //@ modifies \result.x;
+               ^
+BogusSpec.java:42: Error: Keyword \result is not allowed in this context
+  //@ modifies \result, x;
+               ^
+BogusSpec.java:42: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ modifies \result, x;
+                        ^
+BogusSpec.java:49: Error: Cannot convert LOCKSET to boolean
+  //@ requires \lockset;
+               ^
+BogusSpec.java:50: Error: Not a specification designator expression
+  //@ modifies \lockset
+               ^
+BogusSpec.java:52: Error: Cannot convert LOCKSET to boolean
+  //@ ensures \lockset;
+              ^
+BogusSpec.java:56: Error: The function \old cannot be used in this context
+  //@ requires \old(x) == x;
+               ^
+BogusSpec.java:56: Error: Invalid types (void and java.lang.Object) in equality comparison
+  //@ requires \old(x) == x;
+                       ^
+BogusSpec.java:57: Error: The function \old cannot be used in this context
+  //@ requires \old(\old(x)) == x;
+               ^
+BogusSpec.java:57: Error: Invalid types (void and java.lang.Object) in equality comparison
+  //@ requires \old(\old(x)) == x;
+                             ^
+BogusSpec.java:59: Error: The function \old cannot be used in this context
+  //@ modifies \old(this).x;
+               ^
+BogusSpec.java:59: Error: No such field in type void
+  //@ modifies \old(this).x;
+                          ^
+BogusSpec.java:62: Error: Nested applications of \old not allowed
+  //@ ensures \old(x==x && \old(this)==this);
+                           ^
+BogusSpec.java:62: Error: Invalid types (void and BogusSpec) in equality comparison
+  //@ ensures \old(x==x && \old(this)==this);
+                                     ^
+BogusSpec.java:66: Error: The function \fresh cannot be used in this context
+  //@ requires \fresh(x);
+               ^
+BogusSpec.java:70: Error: The function \fresh cannot be used inside a \old expression
+  //@ ensures \old(\fresh(x));
+                   ^
+BogusSpec.java:76: Error: Keyword \result is not allowed in this context
+  //@ requires \result != null;
+               ^
+BogusSpec.java:77: Error: Invalid types (void and null) in equality comparison
+  //@ ensures \result != null;
+                      ^
+BogusSpec.java:79: Error: Keyword \result is not allowed in this context
+  //@ modifies \result.x
+               ^
+BogusSpec.java:85: Error: Keyword \result is not allowed in this context
+  //@ exsures (Throwable t) \result == null
+                            ^
+BogusSpec.java:87: Error: Keyword \result is not allowed in this context
+  //@ exsures (SomeException se) se == \result
+                                       ^
+BogusSpec.java:88: Error: Invalid types (SomeException and BogusSpec) in equality comparison
+  //@ exsures (SomeException se) se == x && se == this;
+                                               ^
+BogusSpec.java:90: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ exsures (Object o) true; exsures (int t) false;
+               ^
+BogusSpec.java:90: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ exsures (Object o) true; exsures (int t) false;
+                                        ^
+BogusSpec.java:95: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ exsures (int) true;
+               ^
+BogusSpec.java:96: Error: Variable 'j' is already defined here.
+  //@ exsures (Throwable j) true;
+                         ^
+BogusSpec.java:98: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ exsures (\TYPE tt) tt == \type(SomeException);
+               ^
+BogusSpec.java:99: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ exsures (int[] a) a == a;
+               ^
+BogusSpec.java:100: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ exsures (Cloneable c) true;
+               ^
+BogusSpec.java:95: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ exsures (int) true;
+               ^
+BogusSpec.java:101: Associated declaration: 
+  Object m9(int j) throws Throwable {
+                   ^
+BogusSpec.java:98: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ exsures (\TYPE tt) tt == \type(SomeException);
+               ^
+BogusSpec.java:101: Associated declaration: 
+  Object m9(int j) throws Throwable {
+                   ^
+BogusSpec.java:99: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ exsures (int[] a) a == a;
+               ^
+BogusSpec.java:101: Associated declaration: 
+  Object m9(int j) throws Throwable {
+                   ^
+BogusSpec.java:106: Error: Invalid types (java.lang.Throwable and int) in equality comparison
+  //@ exsures (Throwable t) t == 5;
+                              ^
+BogusSpec.java:110: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ exsures (ArrayStoreException ase) ase == ase;
+               ^
+BogusSpec.java:111: Associated declaration: 
+  void m10() throws SomeException, NullPointerException, AnotherExcept ...
+             ^
+BogusSpec.java:113: Error: Keyword \result is not allowed in this context
+  //@ exsures (SomeException se) \result == 2;
+                                 ^
+BogusSpec.java:114: Error: Unqualified this cannot be used in static contexts
+  //@ exsures (SomeException se) this != x;
+                                 ^
+BogusSpec.java:114: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ exsures (SomeException se) this != x;
+                                         ^
+BogusSpec.java:121: Error: Keyword \result is not allowed in this context
+  //@ exsures (SomeException se) se == \result && se == this && se ==  ...
+                                       ^
+BogusSpec.java:121: Error: Invalid types (SomeException and BogusSpec) in equality comparison
+  //@ exsures (SomeException se) se == \result && se == this && se ==  ...
+                                                     ^
+BogusSpec.java:122: Error: Undefined variable 'se'
+  //@ exsures (Throwable tt) tt == se;
+                                   ^
+BogusSpec.java:130: Error: Keyword \result is not allowed in this context
+  //@ exsures (SomeException se) se == \result && se == this && se ==  ...
+                                       ^
+BogusSpec.java:130: Error: Invalid types (SomeException and BogusSpec) in equality comparison
+  //@ exsures (SomeException se) se == \result && se == this && se ==  ...
+                                                     ^
+BogusSpec.java:131: Error: Undefined variable 'se'
+  //@ exsures (Throwable tt) tt == se;
+                                   ^
+Caution: Turning off extended static checking due to type error(s)
+BogusSpec.java:146: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+  void m3() {
+       ^
+BogusSpec.java:30: Associated declaration: 
+  void m3() {
+  ^
+BogusSpec.java:155: Error: Not a specification designator expression
+  //@ also_modifies \lockset
+                    ^
+BogusSpec.java:157: Error: Cannot convert LOCKSET to boolean
+  //@ also_ensures \lockset;
+                   ^
+BogusSpec.java:158: Error: Not a specification designator expression
+  //@ also modifies \lockset; ensures \lockset == \lockset; ensures \l ...
+                    ^
+BogusSpec.java:158: Error: Cannot convert LOCKSET to boolean
+ ... ures \lockset == \lockset; ensures \lockset;
+                                        ^
+BogusSpec.java:159: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+  void m6() {
+       ^
+BogusSpec.java:53: Associated declaration: 
+  void m6() {
+  ^
+BogusSpec.java:162: Error: Not a specification designator expression
+  //@ also modifies \lockset; ensures \lockset == \lockset; ensures \l ...
+                    ^
+BogusSpec.java:162: Error: Cannot convert LOCKSET to boolean
+ ... ures \lockset == \lockset; ensures \lockset;
+                                        ^
+BogusSpec.java:162: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also modifies \lockset; ensures \lockset == \lockset; ensures \l ...
+      ^
+BogusSpec.java:168: Error: Invalid types (java.lang.Throwable and int) in equality comparison
+  //@ also_exsures (Throwable t) t == 5;
+                                   ^
+BogusSpec.java:172: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ also_exsures (\TYPE tt) tt == \type(SomeException);
+                    ^
+BogusSpec.java:174: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+  void m10() throws SomeSubException, AnotherException {
+       ^
+BogusSpec.java:111: Associated declaration: 
+  void m10() throws SomeException, NullPointerException, AnotherExcept ...
+  ^
+BogusSpec.java:171: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ also_exsures (NullPointerException npe) true;
+                    ^
+BogusSpec.java:174: Associated declaration: 
+  void m10() throws SomeSubException, AnotherException {
+             ^
+BogusSpec.java:172: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ also_exsures (\TYPE tt) tt == \type(SomeException);
+                    ^
+BogusSpec.java:174: Associated declaration: 
+  void m10() throws SomeSubException, AnotherException {
+             ^
+BogusSpec.java:179: Error: Invalid types (java.lang.Throwable and int) in equality comparison
+  //@ exsures (Throwable t) t == 5;
+                              ^
+BogusSpec.java:183: Error: The type of the exsures argument must be a subtype of java.lang.Throwable
+  //@ exsures (\TYPE tt) tt == \type(SomeException);
+               ^
+BogusSpec.java:177: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also 
+      ^
+BogusSpec.java:182: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ exsures (NullPointerException npe) true;
+               ^
+BogusSpec.java:185: Associated declaration: 
+  void m10also() throws SomeSubException, AnotherException {
+                 ^
+BogusSpec.java:183: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+  //@ exsures (\TYPE tt) tt == \type(SomeException);
+               ^
+BogusSpec.java:185: Associated declaration: 
+  void m10also() throws SomeSubException, AnotherException {
+                 ^
+BogusSpec.java:139: Error: No such constructor BogusSpec() in type BogusSpec
+class BogusSpecSub extends BogusSpec {
+                                     ^
+BogusSpec.java:207: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies x, this.x, this.b, FClass.b;
+               ^
+BogusSpec.java:207: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies x, this.x, this.b, FClass.b;
+                       ^
+BogusSpec.java:207: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies x, this.x, this.b, FClass.b;
+                               ^
+BogusSpec.java:207: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies x, this.x, this.b, FClass.b;
+                                         ^
+BogusSpec.java:208: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies b, y;
+               ^
+BogusSpec.java:209: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies a, a.length, a[4], a[*]
+               ^
+BogusSpec.java:209: Error: Invalid designator
+  //@ modifies a, a.length, a[4], a[*]
+                    ^
+BogusSpec.java:213: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies b, f.x;
+               ^
+BogusSpec.java:213: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies b, f.x;
+                    ^
+BogusSpec.java:222: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ also_modifies this.xx;
+                         ^
+BogusSpec.java:223: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ also_modifies x, y, b;
+                    ^
+BogusSpec.java:223: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ also_modifies x, y, b;
+                          ^
+BogusSpec.java:224: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ also_modifies bb;
+                    ^
+BogusSpec.java:225: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+  void m() {
+       ^
+BogusSpec.java:210: Associated declaration: 
+  void m() {
+  ^
+BogusSpec.java:228: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ also modifies this.xx;
+                         ^
+BogusSpec.java:229: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies x, y, b;
+               ^
+BogusSpec.java:229: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies x, y, b;
+                     ^
+BogusSpec.java:230: Caution: a final field is not allowed as the designator in a modifies clause
+  //@ modifies bb;
+               ^
+BogusSpec.java:228: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also modifies this.xx;
+      ^
+24 cautions
+91 errors
+BogusVisibility.java:150: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:151: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub4 == spub1 && spub2 == spub3;
+      ^
+BogusVisibility.java:152: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub0 == spub4;
+      ^
+BogusVisibility.java:160: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:161: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub4 == spub1 && spub2 == spub3;
+      ^
+BogusVisibility.java:168: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:169: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub4 == spub1 && spub2 == spub3;
+      ^
+BogusVisibility.java:176: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:177: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub4 == spub1 && spub2 == spub3;
+      ^
+BogusVisibility.java:184: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:185: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub4 == spub1 && spub2 == spub3;
+      ^
+BogusVisibility.java:192: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures privSubSt == packSt && protSt == publSt;
+      ^
+BogusVisibility.java:193: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub4St == spub1St && spub2St == spub3St;
+      ^
+BogusVisibility.java:200: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures privSubSt == packSt && protSt == publSt;
+      ^
+BogusVisibility.java:201: Error: Original ESC/Java keywords beginning with also_ are obsolete; they have been replaced with the corresponding JML keywords and the use of 'also' - note that the semantics has also changed.
+  //@ also_ensures spub4St == spub1St && spub2St == spub3St;
+      ^
+BogusVisibility.java:108: Error: Undefined variable 'reqProtSelf'
+  //@ requires reqProtSelf;
+               ^
+Caution: Turning off extended static checking due to type error(s)
+BogusVisibility.java:155: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:162: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+  void ens1() {}
+       ^
+BogusVisibility.java:119: Associated declaration: 
+  void ens1() {}
+  ^
+BogusVisibility.java:164: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:170: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+  protected void ens2() {}
+                 ^
+BogusVisibility.java:123: Associated declaration: 
+  protected void ens2() {}
+            ^
+BogusVisibility.java:172: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:178: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+  public void ens3() {}
+              ^
+BogusVisibility.java:127: Associated declaration: 
+  public void ens3() {}
+         ^
+BogusVisibility.java:180: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:188: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also ensures privSub == pack && prot == publ;
+      ^
+BogusVisibility.java:196: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also ensures privSubSt == packSt && protSt == publSt;
+      ^
+BogusVisibility.java:204: Caution: No initial also expected since there are no overridden or refined methods
+  //@ also ensures privSubSt == packSt && protSt == publSt;
+      ^
+BogusVisibility.java:212: Error: Cannot access this field
+        int y = x.spub0;    // Error: spec_public only applies to anno ...
+                  ^
+11 cautions
+17 errors
+BogusModifiers.java:23: Error: Modifier 'native' not allowed on field declarations
+  abstract native int xx = 0;
+                      ^
+BogusModifiers.java:23: Error: Modifier 'abstract' not allowed on field declarations
+  abstract native int xx = 0;
+                      ^
+BogusModifiers.java:26: Error: Modifier 'public' not allowed on local variable declarations
+    public int x0 = 0;
+               ^
+BogusModifiers.java:27: Error: Modifier 'private' not allowed on local variable declarations
+    private int x1 = 0;
+                ^
+BogusModifiers.java:28: Error: Modifier 'protected' not allowed on local variable declarations
+    protected int x2 = 0;
+                  ^
+BogusModifiers.java:29: Error: Modifier 'static' not allowed on local variable declarations
+    static int x3 = 0;
+               ^
+BogusModifiers.java:35: Error: Modifier 'volatile' not allowed on local variable declarations
+    volatile int x6 = 0;
+                 ^
+BogusModifiers.java:36: Error: Modifier 'transient' not allowed on local variable declarations
+    transient int x7 = 0;
+                  ^
+BogusModifiers.java:37: Error: Modifier 'native' not allowed on local variable declarations
+    native int x8 = 0;
+               ^
+BogusModifiers.java:38: Error: Modifier 'abstract' not allowed on local variable declarations
+    abstract int x9 = 0;
+                 ^
+BogusModifiers.java:43: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+    /*@ non_null */ int x1 = 0;
+                        ^
+BogusModifiers.java:44: Error: requires annotations can occur only on method and constructor declarations
+    /*@ requires true; */ int x2 = 0;
+        ^
+BogusModifiers.java:45: Error: A modifies annotation can occur only on method and constructor declarations
+    /*@ modifies x0 */ int x3 = 0;
+        ^
+BogusModifiers.java:46: Error: ensures annotations can occur only on initializer, method and constructor declarations
+    /*@ ensures true; */ int x4 = 0;
+        ^
+BogusModifiers.java:47: Error: exsures annotations can occur only on method and constructor declarations
+    /*@ exsures (Throwable t) true; */ int x5 = 0;
+        ^
+BogusModifiers.java:48: Error: exsures annotations can occur only on method and constructor declarations
+    int x6 = 0 /*@ exsures (Throwable t) true */;
+                   ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+16 errors
+BogusNowarns.java:2: Error: 'Bogus' is not a legal warning category
+  //@ nowarn Null, Bogus, Exception
+      ^
+BogusNowarns.java:3: Error: 'Bogus' is not a legal warning category
+  //@ nowarn Bogus;
+      ^
+BogusNowarns.java:4: Error: 'Bogus' is not a legal warning category
+  //@ nowarn Bogus, Bogus, Bogus
+      ^
+BogusNowarns.java:4: Error: 'Bogus' is not a legal warning category
+  //@ nowarn Bogus, Bogus, Bogus
+      ^
+BogusNowarns.java:4: Error: 'Bogus' is not a legal warning category
+  //@ nowarn Bogus, Bogus, Bogus
+      ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+5 errors

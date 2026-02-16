@@ -1,0 +1,15 @@
+src|test|resources|TestSystem1.java: Caution: Using given file as the .java file, even though it is not the java file for TestSystem1 on the classpath
+src|test|resources|TestSystem1.java:18: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+        System.out.println("EXCEPTION " + e);
+                                        ^
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/io/PrintStream.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/io/PrintStream.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/io/PrintStream.class: Error: Different or incompatible return types on overridden(hidden) and overriding(hiding) methods
+src|test|resources|TestSystem1.java:18: Error: No method println(error) matching given argument types
+        System.out.println("EXCEPTION " + e);
+                   ^
+src|test|resources|TestSystem1.java:10: Fatal error: No method named assertTrue is in scope here.
+        assertTrue( in_orig != null);
+        ^
+1 caution
+6 errors

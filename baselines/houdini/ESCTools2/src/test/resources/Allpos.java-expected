@@ -1,0 +1,24 @@
+ESC/Java version VERSION
+src|test|resources|Allpos.java: Caution: Using given file as the .java file, even though it is not the java file for Allpos on the classpath
+    [TIME]
+
+Allpos ...
+  Prover started:TIME
+    [TIME]
+
+Allpos: Allpos() ...
+    [TIME]  passed immediately
+
+Allpos: allpos(int[], int) ...
+    [TIME]  passed immediately
+
+Allpos: diff(int[], int) ...
+    [TIME]  passed immediately
+
+Allpos: allposLoop(int[]) ...
+    [TIME]  passed
+
+Allpos: allposLoop2(int[]) ...
+    [TIME]  passed
+  [TIME total]
+1 caution

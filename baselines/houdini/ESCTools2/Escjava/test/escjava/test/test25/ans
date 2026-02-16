@@ -1,0 +1,61 @@
+MethodCall.java:48: Warning: Precondition possibly not established (Pre)
+        MCS.lessx(1);                   // error!
+                 ^
+Associated declaration is "MethodCall.java", line 9, col 8:
+    //@ requires arg<x;
+        ^
+MethodSpec.java:21: Warning: Postcondition possibly not established (Post)
+    int foo(int arg) { return arg; }
+                                   ^
+Associated declaration is "MethodSpec.java", line 20, col 13:
+    //@ also ensures \result<=0;
+             ^
+MiscFields.java:29: Warning: Possible violation of object invariant (Invariant)
+    MiscFieldsUser2() {}                // error
+                       ^
+Associated declaration is "MiscFields.java", line 25, col 8:
+    //@ invariant x==0;
+        ^
+MiscFields.java:51: Warning: Read of variable when its value may be meaningless (Unreadable)
+        System.out.println(x);                          // error!
+                           ^
+Associated declaration is "MiscFields.java", line 48, col 8:
+    /*@ readable_if MiscFields.y==0; */    int x;
+        ^
+OtherClass.java:21: Warning: Possible violation of object invariant (Invariant)
+    }                           // error!
+    ^
+Associated declaration is "OtherClass.java", line 3, col 8:
+    //@ invariant x==0;
+        ^
+OtherClass.java:29: Warning: Possible violation of object invariant (Invariant)
+    }                           // error!
+    ^
+Associated declaration is "OtherClass.java", line 3, col 8:
+    //@ invariant x==0;
+        ^
+OtherClass.java:34: Warning: Possible violation of object invariant (Invariant)
+    }                           // error!
+    ^
+Associated declaration is "OtherClass.java", line 6, col 8:
+    //@ invariant y==0;
+        ^
+SameClass.java:11: Warning: Possible violation of object invariant (Invariant)
+    SameClass() { }     // error!
+                  ^
+Associated declaration is "SameClass.java", line 3, col 8:
+    //@ invariant x!=0;
+        ^
+SameClass.java:16: Warning: Possible violation of object invariant (Invariant)
+    }                   // error!
+    ^
+Associated declaration is "SameClass.java", line 3, col 8:
+    //@ invariant x!=0;
+        ^
+SuperClass.java:22: Warning: Possible violation of object invariant (Invariant)
+    }                   // error!
+    ^
+Associated declaration is "SuperClass.java", line 3, col 8:
+    //@ invariant x!=0;
+        ^
+10 warnings

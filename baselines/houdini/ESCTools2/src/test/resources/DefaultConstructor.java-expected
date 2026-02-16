@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|DefaultConstructor.java: Caution: Using given file as the .java file, even though it is not the java file for DefaultConstructor on the classpath
+src|test|resources|DefaultConstructor.java:3: Error: Could not find file referenced in refine annotation: DefaultConstructor.jml
+//@ refine "DefaultConstructor.jml";
+    ^
+    [TIME]
+
+DefaultConstructor ...
+  Prover started:TIME
+    [TIME]
+
+DefaultConstructor: DefaultConstructor(int) ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 error

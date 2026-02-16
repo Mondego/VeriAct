@@ -1,0 +1,25 @@
+#!/bin/bash
+
+## This script presumes it is operating from a release.
+## It checks and sets various environment variables and then invokes the
+## escj script to run the escjava2 tool.
+
+## To save the work of guessing appropriate values for the environment 
+## variables, the user should set these:
+
+## The directory containing the release files
+## ESCTOOLS_RELEASE=/usr/local/ESCJava2
+
+## The name of a Simplify executable in $ESCTOOLS_RELEASE
+## SIMPLIFY=Simplify-1.5.4.linux
+
+##########  
+
+if [ -z "escj" ]; then
+	echo "The escj bash script needs to be in the same directory as escjava2"
+	exit 1
+fi
+
+######## Execute
+
+./escj -specs ${ESCTOOLS_RELEASE}/specs $*

@@ -1,0 +1,81 @@
+ESC/Java version VERSION
+    [TIME]
+
+Embedded ...
+  Prover started:TIME
+    [TIME]
+
+Embedded: m() ...
+------------------------------------------------------------------------
+Embedded.java:11: Warning: Postcondition possibly not established (Post)
+        public void m() {}
+                         ^
+Associated declaration is "Embedded.java", line 8, col 2:
+                ensures false;
+                ^
+Execution trace information:
+    Executed implicit return in "Embedded.java", line 11, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Embedded: n() ...
+------------------------------------------------------------------------
+Embedded.java:18: Warning: Postcondition possibly not established (Post)
+        public void n() {}
+                         ^
+Associated declaration is "Embedded.java", line 15, col 2:
+                ensures false;
+                ^
+Execution trace information:
+    Executed implicit return in "Embedded.java", line 18, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Embedded: q() ...
+------------------------------------------------------------------------
+Embedded.java:25: Warning: Postcondition possibly not established (Post)
+        public void q() {}
+                         ^
+Associated declaration is "Embedded.java", line 22, col 2:
+                ensures false;
+                ^
+Execution trace information:
+    Executed implicit return in "Embedded.java", line 25, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Embedded: p() ...
+------------------------------------------------------------------------
+Embedded.java:32: Warning: Postcondition possibly not established (Post)
+        public void p() {}
+                         ^
+Associated declaration is "Embedded.java", line 29, col 2:
+                ensures false;
+                ^
+Execution trace information:
+    Executed implicit return in "Embedded.java", line 32, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Embedded: mm() ...
+------------------------------------------------------------------------
+Embedded.java:48: Warning: Postcondition possibly not established (Post)
+        public void mm() {}
+                          ^
+Associated declaration is "Embedded.java", line 45, col 2:
+                ensures false;
+                ^
+Execution trace information:
+    Executed implicit return in "Embedded.java", line 48, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Embedded: Embedded() ...
+    [TIME]  passed
+  [TIME total]
+5 warnings

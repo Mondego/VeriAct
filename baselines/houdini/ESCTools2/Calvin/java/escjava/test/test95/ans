@@ -1,0 +1,9 @@
+Specials.java:11: Error: Can use set only on ghost fields
+        //@ set a.length = 0
+                  ^
+Specials.java:12: Error: Can use set only on ghost fields
+        //@ set b.length = 0
+                  ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+2 errors

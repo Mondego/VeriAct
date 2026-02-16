@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## Test that we make sure that a type cannot have the same simple   [1.1]
+## name as an enclosing type
+
+${TOOL} Dup.java

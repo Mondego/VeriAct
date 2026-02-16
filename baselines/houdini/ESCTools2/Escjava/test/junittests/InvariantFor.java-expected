@@ -1,0 +1,32 @@
+ESC/Java version VERSION
+    [TIME]
+
+InvariantFor ...
+  Prover started:TIME
+    [TIME]
+
+InvariantFor: m() ...
+------------------------------------------------------------------------
+InvariantFor.java:9: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "InvariantFor.java", line 6, col 5:
+        //@ ensures \invariant_for(a);
+            ^
+Execution trace information:
+    Executed implicit return in "InvariantFor.java", line 9, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InvariantFor: InvariantFor() ...
+    [TIME]  passed
+  [TIME total]
+
+InvariantForA ...
+    [TIME]
+
+InvariantForA: InvariantForA() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

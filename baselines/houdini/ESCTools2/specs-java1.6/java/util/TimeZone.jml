@@ -1,0 +1,87 @@
+package java.util;
+
+import java.io.Serializable;
+import java.lang.ref.SoftReference;
+import java.security.AccessController;
+import java.text.DateFormatSymbols;
+import java.util.concurrent.ConcurrentHashMap;
+import sun.security.action.GetPropertyAction;
+import sun.util.calendar.ZoneInfo;
+import sun.util.calendar.ZoneInfoFile;
+
+public abstract class TimeZone implements Serializable, Cloneable {
+    public /*@ pure @*/ TimeZone();
+    public static final int SHORT;
+    public static final int LONG;
+    //@ public ghost static final int ONE_MINUTE = 60 * 1000;
+    //@ public ghost static final int ONE_HOUR = 60 * ONE_MINUTE;
+    //@ public ghost static final int ONE_DAY = 24 * ONE_HOUR;
+    //@ public ghost static Hashtable cachedLocaleData = new Hashtable(3);
+    static final long serialVersionUID;
+    
+    public abstract int getOffset(int era, int year, int month, int day, int dayOfWeek, int milliseconds);
+    
+    public int getOffset(long date);
+    
+    int getOffsets(long date, int[] offsets);
+    
+    public abstract void setRawOffset(int offsetMillis);
+    
+    public abstract int getRawOffset();
+    
+    public /*@ pure @*/ String getID();
+    
+    public void setID(String ID);
+    
+    public final String getDisplayName();
+    
+    public final String getDisplayName(Locale locale);
+    
+    public final String getDisplayName(boolean daylight, int style);
+    
+    public String getDisplayName(boolean daylight, int style, Locale locale);
+    
+    private static final String[] getDisplayNames(String id, Locale locale);
+    
+    private static final String[] retrieveDisplayNames(String id, Locale locale);
+    
+    public int getDSTSavings();
+    
+    public /*@ pure @*/ abstract boolean useDaylightTime();
+    
+    public abstract boolean inDaylightTime(Date date);
+    
+    public /*@ pure @*/ static synchronized TimeZone getTimeZone(String ID);
+    
+    private static TimeZone getTimeZone(String ID, boolean fallback) ;
+    
+    public static synchronized String[] getAvailableIDs(int rawOffset);
+    
+    public static synchronized String[] getAvailableIDs();
+    
+    private static native String getSystemTimeZoneID(String javaHome, String country);
+    
+    private static native String getSystemGMTOffsetID();
+    
+    public static /*@ pure @*/ TimeZone getDefault();
+    
+    static TimeZone getDefaultRef();
+    
+    private static synchronized TimeZone setDefaultZone();
+    
+    private static boolean hasPermission();
+    
+    public static void setDefault(TimeZone zone);
+    
+    public boolean hasSameRules(TimeZone other);
+    
+    public /*@ non_null @*/ Object clone();
+    static final TimeZone NO_TIMEZONE;
+    //@ private ghost  String ID;
+    //@ public ghost static TimeZone defaultTimeZone;
+    //@ private ghost static final InheritableThreadLocal defaultZoneTL = new InheritableThreadLocal();
+    static final String GMT_ID;
+    //@ private ghost static final int GMT_ID_LENGTH = 3;
+    
+    private static final TimeZone parseCustomTimeZone(String id);
+}

@@ -1,0 +1,172 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: RSAPrivateCrtKey.jml,v 1.7 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public interface RSAPrivateCrtKey extends PrivateKey {
+
+  /*@ public invariant
+    _type == KeyBuilder.TYPE_RSA_CRT_PRIVATE;
+  @*/
+
+  /*@ public invariant
+    _size == KeyBuilder.LENGTH_RSA_512 ||
+    _size == KeyBuilder.LENGTH_RSA_736 ||
+    _size == KeyBuilder.LENGTH_RSA_768 ||
+    _size == KeyBuilder.LENGTH_RSA_896 ||
+    _size == KeyBuilder.LENGTH_RSA_1024 ||
+    _size == KeyBuilder.LENGTH_RSA_1280 ||
+    _size == KeyBuilder.LENGTH_RSA_1536 ||
+    _size == KeyBuilder.LENGTH_RSA_1984 ||
+    _size == KeyBuilder.LENGTH_RSA_2048 ;
+  @*/
+
+  /*@ public ghost instance boolean _Pset; @*/
+
+  /*@ public ghost instance boolean _Qset; @*/
+
+  /*@ public ghost instance boolean _DPset; @*/
+
+  /*@ public ghost instance boolean _DQset; @*/
+
+  //@ public invariant _initialized == _Pset && _Qset && _DPset && _DQset;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Pset;
+      assignable _Pset, _initialized;
+  @*/
+  public void setP(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Qset;
+      assignable _Qset, _initialized;
+  @*/
+  public void setQ(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _DPset;
+      assignable _DPset, _initialized;
+  @*/
+  public void setDP1(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _DQset;
+      assignable _DQset, _initialized;
+  @*/
+  public void setDQ1(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Pset;
+      ensures _Qset;
+      assignable _Pset, _Qset, _initialized;
+  @*/
+  public void setPQ(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getP(byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getQ(byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getDP1(byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getDQ1(byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getPQ(byte[] buffer, short offset)
+      throws CryptoException;
+
+}

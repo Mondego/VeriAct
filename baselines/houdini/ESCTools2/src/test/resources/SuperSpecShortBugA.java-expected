@@ -1,0 +1,35 @@
+ESC/Java version VERSION
+src|test|resources|SuperSpecShortBugA.java: Caution: Using given file as the .java file, even though it is not the java file for SuperSpecShortBugA on the classpath
+    [TIME]
+
+SuperSpecShortBugA ...
+  Prover started:TIME
+    [TIME]
+
+SuperSpecShortBugA: m(P) ...
+    [TIME]  passed
+
+SuperSpecShortBugA: SuperSpecShortBugA() ...
+    [TIME]  passed
+  [TIME total]
+
+CSuperSpecShortBug ...
+    [TIME]
+
+CSuperSpecShortBug: m(P) ...
+    [TIME]  passed
+
+CSuperSpecShortBug: CSuperSpecShortBug() ...
+    [TIME]  passed
+  [TIME total]
+
+P ...
+    [TIME]
+
+P: mmm() ...
+    [TIME]  passed
+
+P: P() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

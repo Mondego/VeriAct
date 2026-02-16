@@ -1,0 +1,14 @@
+ESC/Java version VERSION
+    [TIME]
+
+After ...
+After.java:19: Error: Method m may not be used in an annotation since it is not pure
+                    ensures purem() && m();
+                                       ^
+After.java:5: Associated declaration: 
+        native public boolean m()
+        ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+1 error

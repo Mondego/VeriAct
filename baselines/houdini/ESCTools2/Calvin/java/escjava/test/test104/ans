@@ -1,0 +1,363 @@
+A.java:10: Warning: OTI possibly does not hold (OTI)
+    int Add() {
+              ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:10: Warning: OTI possibly does not hold (OTI)
+    int Add() {
+              ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:12: Warning: OTI possibly does not hold (OTI)
+        z = x + y;
+            ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:12: Warning: OTI possibly does not hold (OTI)
+        z = x + y;
+            ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:12: Warning: OTI possibly does not hold (OTI)
+        z = x + y;
+                ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:12: Warning: OTI possibly does not hold (OTI)
+        z = x + y;
+                ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:14: Warning: OTI possibly does not hold (OTI)
+    }
+    ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:14: Warning: OTI possibly does not hold (OTI)
+    }
+    ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:16: Warning: OTI possibly does not hold (OTI)
+    int IncX() {
+               ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:16: Warning: OTI possibly does not hold (OTI)
+    int IncX() {
+               ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:17: Warning: OTI possibly does not hold (OTI)
+        x++;
+        ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:17: Warning: OTI possibly does not hold (OTI)
+        x++;
+        ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:17: Warning: OTI possibly does not hold (OTI)
+        x++;
+         ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:17: Warning: OTI possibly does not hold (OTI)
+        x++;
+         ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:17: Warning: Global invariant possibly does not hold (GlobalInvariant)
+        x++;
+         ^
+Associated declaration is "A.java", line 4, col 8:
+    /*@ global_invariant x < y */
+        ^
+A.java:18: Warning: OTI possibly does not hold (OTI)
+        return x;
+               ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:18: Warning: OTI possibly does not hold (OTI)
+        return x;
+               ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:19: Warning: OTI possibly does not hold (OTI)
+    }
+    ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+Caution: Not checking method IncX() of type B completely because warning limit (PROVER_CC_LIMIT) reached
+A.java:21: Warning: OTI possibly does not hold (OTI)
+    int IncX1() {
+                ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:21: Warning: OTI possibly does not hold (OTI)
+    int IncX1() {
+                ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:24: Warning: OTI possibly does not hold (OTI)
+        a[0] = x;
+               ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:24: Warning: OTI possibly does not hold (OTI)
+        a[0] = x;
+               ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:24: Warning: OTI possibly does not hold (OTI)
+        a[0] = x;
+             ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:24: Warning: OTI possibly does not hold (OTI)
+        a[0] = x;
+             ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:26: Warning: OTI possibly does not hold (OTI)
+        a[0]++;
+            ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:26: Warning: OTI possibly does not hold (OTI)
+        a[0]++;
+            ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:28: Warning: OTI possibly does not hold (OTI)
+        return a[0];
+                ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:28: Warning: OTI possibly does not hold (OTI)
+        return a[0];
+                ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+Caution: Not checking method IncX1() of type B completely because warning limit (PROVER_CC_LIMIT) reached
+A.java:31: Warning: OTI possibly does not hold (OTI)
+    int Foo1(int i) {
+                    ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:31: Warning: OTI possibly does not hold (OTI)
+    int Foo1(int i) {
+                    ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:32: Warning: OTI possibly does not hold (OTI)
+        x = i;
+          ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:32: Warning: OTI possibly does not hold (OTI)
+        x = i;
+          ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:32: Warning: Global invariant possibly does not hold (GlobalInvariant)
+        x = i;
+          ^
+Associated declaration is "A.java", line 4, col 8:
+    /*@ global_invariant x < y */
+        ^
+A.java:33: Warning: OTI possibly does not hold (OTI)
+    }
+    ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:33: Warning: OTI possibly does not hold (OTI)
+    }
+    ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:35: Warning: OTI possibly does not hold (OTI)
+    int Foo2() {
+               ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:35: Warning: OTI possibly does not hold (OTI)
+    int Foo2() {
+               ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:37: Warning: OTI possibly does not hold (OTI)
+        y = 0;
+          ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:37: Warning: OTI possibly does not hold (OTI)
+        y = 0;
+          ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:37: Warning: Global invariant possibly does not hold (GlobalInvariant)
+        y = 0;
+          ^
+Associated declaration is "A.java", line 4, col 8:
+    /*@ global_invariant x < y */
+        ^
+A.java:38: Warning: OTI possibly does not hold (OTI)
+        a[y] = x;
+          ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:38: Warning: OTI possibly does not hold (OTI)
+        a[y] = x;
+          ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:38: Warning: OTI possibly does not hold (OTI)
+        a[y] = x;
+               ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:38: Warning: OTI possibly does not hold (OTI)
+        a[y] = x;
+               ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:38: Warning: Possible negative array index (IndexNegative)
+        a[y] = x;
+         ^
+Caution: Not checking method Foo2() of type B completely because warning limit (PROVER_CC_LIMIT) reached
+A.java:41: Warning: OTI possibly does not hold (OTI)
+    int Foo3() {
+               ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:41: Warning: OTI possibly does not hold (OTI)
+    int Foo3() {
+               ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:43: Warning: OTI possibly does not hold (OTI)
+        x = a[0];
+             ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:43: Warning: OTI possibly does not hold (OTI)
+        x = a[0];
+             ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:43: Warning: OTI possibly does not hold (OTI)
+        x = a[0];
+          ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:43: Warning: OTI possibly does not hold (OTI)
+        x = a[0];
+          ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:43: Warning: Global invariant possibly does not hold (GlobalInvariant)
+        x = a[0];
+          ^
+Associated declaration is "A.java", line 4, col 8:
+    /*@ global_invariant x < y */
+        ^
+A.java:44: Warning: OTI possibly does not hold (OTI)
+    }
+    ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:44: Warning: OTI possibly does not hold (OTI)
+    }
+    ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:1: Warning: OTI possibly does not hold (OTI)
+class B {
+        ^
+Associated declaration is "A.java", line 5, col 8:
+    /*@ oti y < \old(x) */
+        ^
+A.java:1: Warning: OTI possibly does not hold (OTI)
+class B {
+        ^
+Associated declaration is "A.java", line 7, col 8:
+    /*@ oti y < \tid */
+        ^
+A.java:1: Warning: Global invariant possibly does not hold (GlobalInvariant)
+class B {
+        ^
+Associated declaration is "A.java", line 4, col 8:
+    /*@ global_invariant x < y */
+        ^
+3 cautions
+57 warnings
+Dekker.java:13: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 1 ==> gc1 == \old(gc1) */
+                                 ^
+Dekker.java:10: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 2 ==> b == \old(b) */
+                               ^
+Dekker.java:14: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 2 ==> gc2 == \old(gc2) */
+                                 ^
+Dekker.java:11: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 1 ==> critical1 == \old(critical1) */
+                                       ^
+Dekker.java:12: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 2 ==> critical2 == \old(critical2) */
+                                       ^
+Dekker.java:9: Caution: Variables in \old not mentioned in modifies pragma.
+    /*@ oti \tid == 1 ==> a == \old(a) */
+                               ^
+6 cautions

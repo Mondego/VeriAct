@@ -1,0 +1,45 @@
+(* This program prints the DEFPRED's of its input. *)
+(* Caveat:  There is no special handling for characters, in particular
+   semi-colons, inside vertical-bar brackets. *)
+
+PROC Main() IS
+  DO
+    Rd("("); ReadBlanks(); Rd("DEFPRED"); Wr("(DEFPRED"); CopyBlank();
+    CopyUntilCloseParen(); Wr('\n')
+  | ReadChar()
+  OD
+END;
+
+PROC ReadBlanks() IS
+  DO Rd('\s') | Rd('\n') | ReadComment() OD
+END;
+
+PROC ReadChar() IS
+  ReadComment() | EVAL Rd()
+END;
+
+PROC CopyChar() IS
+  ReadComment(); Wr('\n') | Wr(Rd())
+END;
+
+PROC CopyBlank() IS
+  ReadComment(); Wr('\n') | At('\s'); Wr(Rd()) | At('\n'); Wr(Rd())
+END;
+
+PROC ReadComment() IS
+  Rd(';'); ReadUntilEoln()
+END;
+
+PROC ReadUntilEoln() IS
+  TIL Eof()
+  |   Rd('\n')
+  DO  EVAL Rd()
+  END
+END;
+
+PROC CopyUntilCloseParen() IS
+  TIL Rd(')'); Wr(')')
+  DO  Rd('('); Wr('('); CopyUntilCloseParen()
+  |   CopyChar()
+  END
+END;

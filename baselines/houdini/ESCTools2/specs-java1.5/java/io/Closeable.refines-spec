@@ -1,0 +1,9 @@
+package java.io;
+
+public interface Closeable {
+
+  //@ public model instance JMLDataGroup closeableDataGroup; //
+   //@ assignable closeableDataGroup;
+   public void close() throws IOException;
+}
+   

@@ -1,0 +1,394 @@
+
+axiom : TYPE = BOOLEAN ;
+
+Time : TYPE = REAL ;
+%
+% Translation note:
+% Time is a synonym of REAL and not INT just for efficiency.
+% All we need really is a totally ordered type.
+
+JavaValue : TYPE;
+
+% converts a (symbolic) Java value into a CVC INT
+to_INT : JavaValue -> INT;
+%
+% Translation note:
+% each time that the AST contains a variable x of an integral type
+% (byte, short, int, ...) in an arithmetic expression, the
+% corresponding CVC term should contain to_INT(x)
+
+% converts a (symbolic) Java value into a CVC REAL
+to_REAL : JavaValue -> REAL;
+%
+% Translation note:
+% each time that the AST contains a variable x of a float type
+% (float, double) in an arithmetic expression, the
+% corresponding CVC term should contain to_REAL(x)
+
+% converts a (symbolic) Java value into a CVC INT
+to_bool : JavaValue -> INT;
+%
+% Translation note:
+% each time that the AST contains a boolean variable x
+% in a Boolean expression, the corresponding CVC term should
+% contain to_bool(x)
+% (to_bool returns an INT because booleans here are translated
+%  to INT values)
+
+
+
+% note: the reason to use a CVC recursive datatype to model
+% Java types is that we automatically get that all type names
+% are distinct and we can construct the array types in a
+% natural way.
+% for this model it is required that each class and interface 
+% in the original Java code be given a unique integer identifies
+% (so that, if class or interface A has identifier n, the type A
+% can be modeled as by the value class(n)).
+
+DATATYPE
+  JavaType = javaBool
+           | javaChar
+           | javaByte 
+           | javaShort 
+           | javaInt 
+           | javaLong
+           | javaFloat 
+           | javaDouble 
+           | javaClass(class_id : INT) 
+           | javaArray(elem_type : JavaType)
+END; 
+%
+% Translation note:
+% The constructor JavaChar corresponds to Simplify's constant
+% `char' (Similarly for the other nullary constructors.)
+% The constructor `javaArray' corresponds to the function symbol
+% `array' in Simplify. 
+% The destructor `elem_type' corresponds to the function symbol
+% `elemType' in Simplify. 
+% The constructor 'javaClass' is used for both classes and interfaces.
+
+
+
+% some predefined class types
+Object : JavaType = javaClass(0);
+Clonable : JavaType = javaClass(-1);
+Instantiable : JavaType = javaClass(-2);
+% ...
+
+% returns the static type of a value
+s_type : JavaValue -> JavaType ;
+%
+% Translation note: 
+% for each variable x in the AST of static type t, we should add
+% the CVC assertion: s_type(x) = t
+
+% returns the dynamic type of a value
+d_type : JavaValue -> JavaType ;
+%
+% Translation note: 
+% Corresponds to Simplify's `typeof'
+
+% predicate specifying which elements of JavaType are reference types
+% (similarly for the others below)
+%
+is_ReferenceType : JavaType -> BOOLEAN = 
+                   LAMBDA (t:JavaType):
+                     is_javaClass(t) OR
+                     is_javaArray(t) ;
+
+is_PrimitiveType : JavaType -> BOOLEAN = 
+                   LAMBDA (t:JavaType):
+                     NOT is_ReferenceType(t) ;
+                     
+is_NumericType : JavaType -> BOOLEAN = 
+                   LAMBDA (t:JavaType):
+                     is_javaChar(t) OR
+                     is_javaByte(t) OR
+                     is_javaShort(t) OR
+                     is_javaInt(t) OR 
+                     is_javaLong(t) OR
+                     is_javaFloat(t) OR 
+                     is_javaDouble(t) ;
+                     
+                     
+ObjectType : TYPE = SUBTYPE(is_javaClass) ;
+
+ArrayType : TYPE = SUBTYPE(is_javaArray) ;
+
+ReferenceType : TYPE = SUBTYPE(is_ReferenceType) ;
+
+PrimitiveType : TYPE = SUBTYPE(is_PrimitiveType) ;                
+
+NumericType : TYPE = SUBTYPE(is_NumericType) ;
+
+
+ReferenceValue : TYPE = SUBTYPE(LAMBDA (x:JavaValue) :
+                   is_ReferenceType(s_type(x))
+                 ) ;
+
+% supposed to be true iff a reference variable x is set to null
+is_null : ReferenceValue -> BOOLEAN ;
+%
+% Translation note:
+% We cannot write the AST expression `x == null' as the CVC equation
+% `x = null' because we cannot declare a constant null that has
+% every possible reference type (which is is case in Java).
+% Instead, we translate it as is_null(x).
+
+ArrayValue : TYPE = SUBTYPE(LAMBDA (x:JavaValue) :
+                   is_javaArray(s_type(x))
+             );
+             
+PrimitiveValue : TYPE = SUBTYPE(LAMBDA (x:JavaValue) :
+                 is_PrimitiveType(s_type(x))
+                 );
+                 
+IntegerValue : TYPE = SUBTYPE(LAMBDA (x:JavaValue) :
+                 is_javaInt(s_type(x))
+                 );
+                 
+NumericValue : TYPE = SUBTYPE(LAMBDA (x:JavaValue) :
+                 is_NumericType(s_type(x))
+                 );
+                 
+
+% the Java subtype relation (<:) is modeled by
+% the relation is_subtype axiomatized below
+is_subtype: (JavaType, JavaType) -> BOOLEAN ;
+
+% Axioms for is_subtype
+
+% reflexivity
+is_subtype_Reflexivity_axiom: axiom =  
+FORALL (t:JavaType): is_subtype(t,t);
+
+% transitivity
+is_subtype_Transitivity_axiom: axiom =  
+FORALL (t1,t2,t3:JavaType): 
+  is_subtype(t1,t2) AND is_subtype(t2,t3) => is_subtype(t1,t3) ;
+
+% antisymmetry
+is_subtype_Antisymmetry_axiom: axiom =  
+FORALL (t1,t2:JavaType): 
+  is_subtype(t1,t2) AND is_subtype(t2,t1) => t1 = t2 ;
+
+% all reference types are objects
+is_subtype_Object_axiom: axiom =  
+FORALL (t:ReferenceType): 
+  is_subtype(t,Object) ;
+
+% primitive types are final
+is_subtype_Primitive_1_axiom: axiom =  
+FORALL (pt:PrimitiveType, t:JavaType): 
+  is_subtype(t,pt) => t = pt ;
+
+% primitive types have no supertypes
+is_subtype_Primitive_2_axiom: axiom =  
+FORALL (pt:PrimitiveType, t:JavaType): 
+  is_subtype(pt,t) => t = pt ;
+
+% every array type is a clonable type
+is_subtype_Clonable_axiom: axiom =  
+FORALL (t:JavaType): 
+  is_subtype(javaArray(t),Clonable) ;
+
+% <: is monotonic wrt arrays
+is_subtype_Arrays_1_axiom: axiom =  
+FORALL (t1:JavaType, t2:JavaType):
+  is_subtype(t1,t2) => is_subtype(javaArray(t1),javaArray(t2)) ;  
+
+% arrays only have arrays as subtypes
+is_subtype_Arrays_2_axiom: axiom =  
+FORALL (t1:JavaType, t2:JavaType):
+  is_subtype(t1,javaArray(t2)) => is_javaArray(t1) AND 
+                                  is_subtype(elem_type(t1), t2);
+
+% the dynamic type of a value is always a subtype of its static type
+is_subtype_Dynamic_axiom: axiom =  
+FORALL (x:JavaValue):
+  is_subtype(d_type(x),s_type(x)) ;
+  
+
+% models the dynamic types of a value
+is : (JavaValue, JavaType) -> BOOLEAN ;
+%
+% Translation note:
+% Corresponds to Simplify's `is'
+
+% Axioms
+
+is_Reference_axiom: axiom = 
+FORALL (x:ReferenceValue, t:JavaType): 
+  is(x,t) <=> is_null(x) OR is_subtype(d_type(x),t) ;
+  
+is_Primitive_axiom: axiom = 
+FORALL (x:PrimitiveValue, t:JavaType): 
+  d_type(x) = t => is(x,t) ;
+
+is_Char_axiom: axiom =  
+FORALL (x:JavaValue) : 
+  is(x,javaChar) <=> (0 <= to_INT(x) AND to_INT(x) <= 65535) ;
+
+is_Byte_axiom: axiom =  
+FORALL (x:JavaValue) : 
+  is(x,javaByte) <=> (-128 <= to_INT(x) AND to_INT(x) <= 127) ;
+
+is_Short_axiom: axiom =  
+FORALL (x:JavaValue) : 
+  is(x,javaShort) <=> (0 <= to_INT(x) AND to_INT(x) <= 65535) ;
+
+intFirst : INT % = actually value for smallest Java int
+;
+intLast : INT % = actula value for largest Java int
+;
+
+is_Int_axiom: axiom =  
+FORALL (x:JavaValue) : 
+  is(x,javaShort) <=> (intFirst <= to_INT(x) AND to_INT(x) <= intLast) ;
+
+longFirst : INT % = actually value for smallest Java long
+;
+longLast : INT % = actula value for largest Java long
+;
+
+is_Long_axiom: axiom =  
+FORALL (x:JavaValue) : 
+  is(x,javaShort) <=> (longFirst <= to_INT(x) AND to_INT(x) <= longLast) ;
+
+
+% cast function
+cast : (JavaValue, JavaType) -> JavaValue ;
+
+% Axioms
+cast_1_axiom: axiom =  
+FORALL (x:JavaValue, t:JavaType) : d_type(cast(x,t)) = t ;
+is_cast_axiom: axiom =  
+FORALL (x:JavaValue, t:JavaType) : is(x,t) => cast(x,t) = x;
+%
+% Translation note:
+% Corresponds to Simplify's `cast'
+
+
+% instantiable predicate
+instantiable : ObjectType -> BOOLEAN ;
+%
+% Translation note:
+% Corresponds to Simplify's `instantiable'
+
+% Field Type
+
+Field : TYPE = ARRAY ReferenceValue OF JavaValue ;
+% 
+% Translation note:
+% Each field in the AST should be translated as a constant of
+% type 'Field'
+
+
+return_type : Field -> JavaType;
+
+% Axioms
+is_asField_axiom: axiom =  
+FORALL (f:Field, x:JavaValue) : 
+  is(f[x],return_type(f)) ;
+%
+% Translation note:
+% Corresponds to Simplify's `asField'.
+
+% elems takes a Java array a and an integer i and returns
+% the Java value a[i] 
+ElemsT : TYPE = ARRAY ArrayValue OF ARRAY INT OF JavaValue ;
+elems : ElemsT ;
+%
+% Translation note:
+% Corresponds to Simplify's `elems'
+
+
+% Axioms
+is_elems_axiom: axiom =  
+FORALL (e: ElemsT, a:ArrayValue, i:INT) :
+  is(e[a][i], elem_type(d_type(a))) ;
+
+
+% Allocation [to be completed]
+
+v_alloc_time : ReferenceValue -> Time ;
+
+is_allocated : (ReferenceValue, Time) -> BOOLEAN =
+                 LAMBDA (x:ReferenceValue, t:Time) :
+                   v_alloc_time(x) < t ;
+  
+
+
+
+% Array properties
+
+array_length: ArrayValue -> IntegerValue ;
+
+% Axioms
+array_length_axiom: axiom =  
+FORALL (a:ArrayValue): 
+  0 <= to_INT(array_length(a)) ;
+ 
+is_array_length_axiom: axiom =  
+FORALL (a:ArrayValue): 
+  is(array_length(a),javaInt) ;
+%
+% Translation note:
+% Corresponds to Simplify's `arrayLength'
+
+DATATYPE
+  ArrayShape = shapeOne(sizeOne: INT)
+             | shapeMore(sizeMore: INT, shape: ArrayShape)
+END ;
+
+array_parent : ArrayValue -> ArrayValue ;
+array_position : ArrayValue -> JavaValue ;
+array_fresh : (ArrayValue, Time, Time, ElemsT, ArrayShape, JavaType, JavaValue) -> BOOLEAN;
+
+
+%% A simple way (a la C) to implement the Java Booleans in CVC:
+%% - the Java constant true and false are translated as bool_true
+%%   and bool_false below;
+%% - the Java Boolean operators are translated as the integer
+%%   functions below;
+%% - a constant x of type JavaValue is first converted into an
+%%   INT with the function to_INT (replacing it with to_INT(x))
+%% - a Java Boolean term s is converted into a predicate
+%%   by rewriting it a (s /= bool_false)
+
+bool_true : INT = 1;
+
+bool_false : INT = 0;
+
+bool_not : INT -> INT = LAMBDA(x:INT):
+                         IF x = 0 THEN 1 ELSE 0 ENDIF;
+
+% bool_and(x,y) returns 0 if x or y is 0, and a non-0 value otherwise
+bool_and : (INT,INT) -> INT = LAMBDA(x:INT,y:INT):
+                                IF x = 0 THEN 0 ELSE y ENDIF;
+
+% bool_or(x,y) returns 0 if x and y are both 0, and a non-0 value otherwise
+bool_or : (INT,INT) -> INT = LAMBDA(x:INT,y:INT):
+                               IF x = 0 THEN y ELSE x ENDIF;
+
+% bool_or(x,y) returns 1 if x and y are both 0 or both non-0, 
+% and 0 otherwise
+bool_eq : (INT,INT) -> INT = LAMBDA(x:INT,y:INT):
+                               IF x = 0 THEN bool_not(y)
+                               ELSE y 
+                               ENDIF ;
+
+Path : TYPE;
+S : TYPE;
+LockSet: TYPE;
+e_closed_time : ElemsT -> Time;
+f_closed_time : Field -> Time;
+is_new_array : ArrayValue -> BOOLEAN;
+alloc:Time;
+alloc_:Time;
+LS:LockSet;
+Exception: JavaType = javaClass(-3);
+
+% needed: unset
+% check: shapeOne, shapeMany (types or functions?) 

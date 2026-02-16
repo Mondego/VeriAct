@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+    [TIME]
+
+UnchangedPrecondition ...
+  Prover started:TIME
+    [TIME]
+
+UnchangedPrecondition: m() ...
+    [TIME]  passed immediately
+
+UnchangedPrecondition: mm() ...
+    [TIME]  passed
+
+UnchangedPrecondition: mm1() ...
+------------------------------------------------------------------------
+UnchangedPrecondition.java:22: Warning: Possible assertion failure (Assert)
+        //@ assert \not_modified(i); // FAILS
+            ^
+Associated declaration is "UnchangedPrecondition.java", line 22, col 26:
+        //@ assert \not_modified(i); // FAILS
+                                 ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UnchangedPrecondition: mma() ...
+    [TIME]  passed
+
+UnchangedPrecondition: UnchangedPrecondition() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

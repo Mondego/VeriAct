@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+    [TIME]
+
+ExceptionChild ...
+  Prover started:TIME
+    [TIME]
+
+ExceptionChild: ExceptionChild() ...
+    [TIME]  passed
+  [TIME total]

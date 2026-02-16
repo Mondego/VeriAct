@@ -1,0 +1,1135 @@
+<html>
+
+<head>
+<title>A Specification of Java's Type System</title>
+</head>
+
+<body>
+
+<h1>A Specification of Java's Type System</h1>
+
+<p> This document was derived partly by cut-and-paste from the first
+edition of "<a
+href="http://java.sun.com/docs/books/jls/index.html">The Java Language
+Specification</a>", henceforth called JLS1. The document provides a
+somewhat more concise and accessible description of Java's type system
+that that provided in JLS1. It is organized along the lines of the
+LALR(1) grammar described in chapter 19 of that specification. Each
+production rule in the grammar is annotated with additional typing
+conditions.  Each production rule also has the implicit condition that
+the left-hand-side of the rule is ok (ie passes the type system) only
+if each of the non-temrinals on the right-hand-side are also ok.
+
+<h2>
+1. Productions from &sect;2.3: The Syntactic Grammar</h2>
+
+<ul>
+<pre><i>Goal:
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>CompilationUnit</i></pre>
+</ul>
+
+<h2>
+2. Productions from &sect;7: Packages</h2>
+
+<ul><i>CompilationUnit:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PackageDeclaration<sub>opt</sub></i><tt>
+</tt><i>ImportDeclaration*</i><tt> </tt><i>TypeDeclaration*</i>
+
+<p>If two single-type-import declarations in the same compilation unit
+attempt to import types with the same simple name, then a compile-time
+error occurs, unless the two types are the same type, in which case the
+duplicate declaration is ignored.
+<br>If another type with the same name is otherwise declared in the current
+compilation unit except by a type-import-on-demand declaration (&sect;7.5.2),
+then a compile-time error occurs.
+
+<p>A compile-time error occurs if the Identifier naming a class or interface
+appears as the name of any other class type or interface type declared
+in the same package (&sect;7.6).
+
+<p>A compile-time error occurs if the Identifier naming a class or interface
+is also declared as a type by a single-type-import declaration (&sect;7.5.1)
+in the compilation unit (&sect;7.3) containing the class declaration.
+
+<p><i>PackageDeclaration:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>package </tt><i>Name</i><tt>
+;</tt>
+
+<p>Name is a fully-qualified name
+<br>No type declaration and subpackage of the same name.
+
+<p><i>ImportDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>SingleTypeImportDeclaration</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>TypeImportOnDemandDeclaration</i>
+
+<p><i>SingleTypeImportDeclaration:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; import </tt><i>Name</i><tt>
+;</tt>
+
+<p>Name must be a fully qualified name of a class or interface type that
+is in an accessible package and declared public.
+
+<p><i>TypeImportOnDemandDeclaration:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>import </tt><i>Name</i><tt>
+. * ;</tt>
+
+<p>Name must be a name of an accessible package.
+
+<p>Two or more type-import-on-demand declarations in the same compilation
+unit may name the same package; the effect is as if there were exactly
+one such declaration. It is not a compile-time error to name the current
+package or java.lang in a type-import-on-demand declaration, even though
+they are already imported; the duplicate type-import-on-demand declaration
+is ignored.
+
+<p><i>TypeDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ClassDeclaration</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>InterfaceDeclaration</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>;</tt></ul>
+
+<h2>
+3. Productions from &sect;8: Classes</h2>
+
+<h3>
+3.1 Productions from &sect;8.1: Class Declaration</h3>
+
+<ul><i>ClassDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Modifiers<sub>opt</sub></i><tt>
+class </tt><i>Identifier</i><tt> </tt><i>Super<sub>opt</sub></i><tt> </tt><i>Interfaces<sub>opt</sub></i><tt>
+</tt><i>ClassBody</i>
+
+<p>Modifiers must be one of: <tt>public abstract final</tt>
+
+<p>If a class that is not abstract cannot contain abstract methods. A class
+has abstract methods if any of the following is true:
+<ul>
+<li>
+It explicitly contains a declaration of an abstract method (&sect;8.4.3).</li>
+
+<li>
+It inherits an abstract method from its direct superclass (&sect;8.1.3).</li>
+
+<li>
+A direct superinterface (&sect;8.1.4) of the class declares or inherits
+a method (which is therefore necessarily abstract) and the class neither
+declares nor inherits a method that implements it.</li>
+</ul>
+It is a compile-time error to declare an abstract class type such that
+it is not possible to create a subclass that implements all of its abstract
+methods. This situation can occur if
+<ul>
+<li>
+the class would have as members two abstract methods that have the same
+method signature (&sect;8.4.2) but different return types.</li>
+
+<li>
+a class is declared both final and abstract, because the implementation
+of such a class could never be completed (&sect;8.1.2.1).</li>
+</ul>
+<i>Super:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>extends </tt><i>ClassType</i>
+
+<p>ClassType must be an accessible, non-final class type.
+<br>Cycles in the subclass relation are not allowed.
+
+<p><i>Interfaces:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>implements </tt><i>InterfaceType*</i>
+
+<p>Each InterfaceType must name an accessible (&sect;6.6) interface type.
+<br>A compile-time error occurs if the same interface is mentioned two
+or more times in a single implements clause.
+
+<p><i>ClassBody:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>{ </tt><i>ClassBodyDeclaration*</i><tt>
+}</tt>
+
+<p><i>ClassBodyDeclaration:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClassMemberDeclaration</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; StaticInitializer</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ConstructorDeclaration</i>
+
+<p><i>ClassMemberDeclaration:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FieldDeclaration</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>MethodDeclaration</i></ul>
+
+<h3>
+3.2 Productions from &sect;8.3: Field Declarations</h3>
+
+<ul>
+<pre><i>FieldDeclaration:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Modifier*</i><tt> </tt><i>Type</i><tt> </tt><i>VariableDeclarator*</i><tt> ;</tt></pre>
+No duplicate field declarations.
+
+<p>Modifiers can only be: <tt>public protected private final static transient
+volatile.</tt>
+<br>final fields must include an initializer.
+<br>final fields cannot be assigned.
+<br>final fields cannot be volatile.
+
+<p><i>VariableDeclarator:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>VariableDeclaratorId</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>VariableDeclaratorId</i><tt>
+= </tt><i>VariableInitializer</i>
+
+<p><i>VariableDeclaratorId:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Identifier</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>VariableDeclaratorId</i><tt>
+[ ]</tt>
+
+<p><i>VariableInitializer:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Expression</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ArrayInitializer</i>
+
+<p>It is a compile-time error if the evaluation of a variable initializer
+for a field of a class (or interface) can complete abruptly with a checked
+exception (&sect;11.2).
+
+<p>The initializer of a class variable occurs in a static context.
+
+<p>A compile-time error occurs if an initialization expression for a class
+variable contains a use by a simple name of that class variable or of another
+class variable whose declaration occurs to its right (that is, textually
+later) in the same class.
+
+<p>A compile-time error occurs if an initialization expression for an instance
+variable contains a use by a simple name of that instance variable or of
+another instance variable whose declaration occurs to its right (that is,
+textually later) in the same class.</ul>
+
+<h3>
+3.3 Productions from &sect;8.4: Method Declarations</h3>
+
+<ul><i>MethodDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>MethodHeader</i><tt>
+</tt><i>MethodBody</i>
+
+<p>It is a compile-time error for the body of a class to have as members
+two methods with the same signature (&sect;8.4.2) (name, number of parameters,
+and types of any parameters).
+
+<p>A method that is declared static is called a class method.
+<br>A method that is not declared static is called an instance method.</ul>
+
+<h4>
+3.3.1 Method Headers</h4>
+
+<ul><i>MethodHeader:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Modifiers<sub>opt</sub></i><tt>
+</tt><i>Type</i><tt> </tt><i>MethodDeclarator</i><tt> </tt><i>Throws<sub>opt</sub></i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Modifiers<sub>opt</sub></i><tt>
+void </tt><i>MethodDeclarator</i><tt> </tt><i>Throws<sub>opt</sub></i>
+
+<p>Modifiers can only be:&nbsp; public protected private abstract static
+final synchronized native
+<br>A compile-time error occurs if a method declaration that contains the
+keyword abstract also contains any one of the keywords private, static,
+final, native, or synchronized.
+
+<p>A private method and all methods declared in a final class (&sect;8.1.2.2)
+are implicitly final, because it is impossible to override them.
+<br>It is a compile-time error to attempt to override or hide a final method.
+
+<p>A compile-time error occurs if an instance method overrides a static
+method.
+<br>A compile-time error occurs if a static method hides an instance method.
+
+<p>If a method declaration overrides or hides the declaration of another
+method, then a compile-time error occurs if they have different return
+types or if one has a return type and the other is void. Moreover, a method
+declaration must not have a throws clause that conflicts (&sect;8.4.4)
+with that of any method that it overrides or hides; otherwise, a compile-time
+error occurs.
+
+<p>The access modifier (&sect;6.6) of an overriding or hiding method must
+provide at least as much access as the overridden or hidden method. In
+more detail:
+<ul>
+<li>
+If the overridden or hidden method is public, then the overriding or hiding
+method must be public; otherwise, a compile-time error occurs.</li>
+
+<li>
+If the overridden or hidden method is protected, then the overriding or
+hiding method must be protected or public; otherwise, a compile-time error
+occurs.</li>
+
+<li>
+If the overridden or hidden method has default (package) access, then the
+overriding or hiding method must not be private; otherwise, a compile-time
+error occurs.</li>
+</ul>
+It is possible for a class to inherit more than one method with the same
+signature (&sect;8.4.6.4). Such a situation does not in itself cause a
+compile-time error. There are then two possible cases:
+<ul>
+<li>
+If one of the inherited methods is not abstract, then there are two subcases:</li>
+
+<ul>
+<li>
+If the method that is not abstract is static, a compile-time error occurs.</li>
+
+<li>
+Otherwise, the method that is not abstract is considered to override, and
+therefore to implement, all the other methods on behalf of the class that
+inherits it. The usual checks regarding overriding for return types and
+throws clause apply.</li>
+</ul>
+
+<li>
+If none of the inherited methods is not abstract, then the class is necessarily
+an abstract class and is considered to inherit all the abstract methods.
+A compile-time error occurs if, for any two such inherited methods, either
+they have different return types or one has a return type and the other
+is void. (The throws clauses do not cause errors in this case.)</li>
+</ul>
+<i>MethodDeclarator:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Identifier</i><tt> (
+</tt><i>FormalParameterList<sub>opt</sub></i><tt> )</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>MethodDeclarator</i><tt>
+[ ]</tt>
+
+<p>Latter production is obsolescent
+
+<p><i>FormalParameterList:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+FormalParameter+</i>
+
+<p>If two formal parameters are declared to have the same name (that is,
+their declarations mention the same Identifier), then a compile-time error
+occurs.
+
+<p><i>FormalParameter:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Type</i><tt> </tt><i>VariableDeclaratorId</i>
+
+<p><i>Throws:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; throws </tt><i>ClassType*</i>
+
+<p>For each checked exception that can result from execution of the body
+of a method or constructor, a compile-time error occurs unless that exception
+type or a superclass of that exception type is mentioned in a throws clause
+in the declaration of the method or constructor.</ul>
+
+<h4>
+3.3.2 Method Bodies</h4>
+
+<ul><i>MethodBody:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Block</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>;</tt>
+
+<p>The body of a class method occurs in a static context.
+<br>The body of a method must be a semicolon if and only if the method
+is either abstract (&sect;8.4.3.1) or native (&sect;8.4.3.4).
+
+<p>If a method is declared void, then its body must not contain any return
+statement (&sect;14.15) that has an Expression.
+<br>If a method is declared to have a return type, then every return statement
+(&sect;14.15) in its body must have an Expression. A compile-time error
+occurs if the body of the method can complete normally (&sect;14.1).</ul>
+
+<h3>
+3.4 Productions from &sect;8.5: Static Initializers</h3>
+
+<ul>
+<pre><i>StaticInitializer:
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>static </tt><i>Block</i></pre>
+It is a compile-time error for a static initializer to be able to complete
+abruptly (&sect;14.1, &sect;15.5) with a checked exception (&sect;11.2).
+
+<p>The static initializers and class variable initializers may not refer
+to class variables declared in the class whose declarations appear textually
+after the use, even though these class variables are in scope.
+
+<p>If a return statement (&sect;14.15) appears anywhere within a static
+initializer, then a compile-time error occurs.
+
+<p>The static initializer occurs in a static context.</ul>
+
+<h3>
+3.5 Productions from &sect;8.6: Constructor Declarations</h3>
+
+<ul><i>ConstructorDeclaration:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Modifiers<sub>opt</sub></i><tt>
+</tt><i>ConstructorDeclarator</i><tt> </tt><i>Throws</i><sub>opt</sub><tt>
+</tt><i>ConstructorBody</i>
+
+<p>Modifiers can only be: public protected private
+
+<p><i>ConstructorDeclarator:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt><i>SimpleName</i><tt>
+( </tt><i>FormalParameterList<sub>opt</sub></i><tt> )</tt>
+
+<p>The SimpleName in the ConstructorDeclarator must be the simple name
+of the class that contains the constructor declaration; otherwise a compile-time
+error occurs.
+
+<p><i>ConstructorBody:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>{ </tt><i>ExplicitConstructorInvocation<sub>opt</sub></i><tt>
+</tt><i>BlockStatements<sub>opt</sub></i><tt> }</tt>
+
+<p>It is a compile-time error for a constructor to directly or indirectly
+invoke itself through a series of one or more explicit constructor invocations
+involving this.
+
+<p><i>ExplicitConstructorInvocation:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>this ( </tt><i>ArgumentList<sub>opt</sub></i><tt>
+) ;</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>super ( </tt><i>ArgumentList<sub>opt</sub></i><tt>
+) ;</tt>
+
+<p>The argument list occurs in a static context.
+<br>If no explicit constructor invocation occurs, then the compiler inserts&nbsp;
+"<tt>super.();</tt>"
+<br>If no constructor declarations appear in a class, then the compiler
+provides an empty constructor that takes no arguments and whose body is
+"<tt>super.();</tt>"
+<br>&nbsp;</ul>
+
+<h2>
+4. Productions from &sect;9: Interfaces</h2>
+
+<h3>
+4.1 Productions from &sect;9.1: Interface Declarations</h3>
+
+<ul><i>InterfaceDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Modifiers<sub>opt</sub></i><tt>
+interface </tt><i>Identifier</i><tt> </tt><i>ExtendsInterfaces<sub>opt</sub></i><tt>
+</tt><i>InterfaceBody</i>
+
+<p>Modifiers can only be: public abstract.
+
+<p><i>ExtendsInterfaces:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>extends </tt><i>InterfaceType*</i>
+<br>&nbsp;
+<br>Each InterfaceType must name an accessible interface type.
+<br>A compile-time error occurs if there is a circularity such that an
+interface directly or indirectly extends itself.
+
+<p><i>InterfaceBody</i>:
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </tt><i>InterfaceMemberDeclaration*</i><tt>
+}</tt>
+
+<p><i>InterfaceMemberDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ConstantDeclaration</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>AbstractMethodDeclaration</i>
+
+<p><i>ConstantDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>FieldDeclaration</i>
+
+<p>Modifiers can only be: <tt>public static final</tt>
+<br>Java Spec is wrong here - forgot trailing semicolon, and says only
+one VariableDeclarator.
+
+<p>Every field in the body of an interface must have an initialization
+expression, which need not be a constant expression. This initialization
+expression occurs in a static context, and cannot&nbsp; contain a reference
+by simple name to the same field or to another field whose declaration
+occurs textually later in the same interface.
+
+<p><i>AbstractMethodDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>MethodHeader</i> ;
+
+<p>Modifiers can only be: <tt>public abstract</tt>
+
+<p>If a method declaration in an interface overrides the declaration of
+a method in another interface, a compile-time error occurs if the methods
+have different return types or if one has a return type and the other is
+void. Moreover, a method declaration must not have a throws clause that
+conflicts (&sect;8.4.4) with that of any method that it overrides; otherwise,
+a compile-time error occurs.
+
+<p>It is possible for an interface to inherit more than one method with
+the same signature (&sect;8.4.2). Such a situation does not in itself cause
+a compile-time error. The interface is considered to inherit all the methods.
+However, a compile-time error occurs if, for any two such inherited methods,
+either they have different return types or one has a return type and the
+other is void. (The throws clauses do not cause errors in this case.) [Compare
+to 8.4.6.4]</ul>
+
+<h2>
+5. Productions from &sect;10: Arrays</h2>
+
+<ul>
+<pre><i>ArrayInitializer:
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>{ </tt><i>VariableInitializer*</i><tt> ,</tt><i><sub>opt</sub></i><tt> }</tt></pre>
+Each expression must be assignment-compatible (&sect;5.2) with the array's
+component type.</ul>
+
+<h2>
+6. Productions Used Only in the LALR(1) Grammar</h2>
+
+<ul>
+<pre><i>Modifiers:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Modifier
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Modifiers</i><tt> </tt><i>Modifier
+
+Modifier: one of
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>public protected private static
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; abstract final native synchronized transient volatile</tt></pre>
+</ul>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No duplicate Modifiers allowed.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; At most one of the access
+modifiers (<tt>public, protected, private</tt>) allowed.
+<h2>
+7. Productions from &sect;14: Blocks and Statements</h2>
+
+<ul><i>Block:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>{ </tt><i>BlockStatement*</i><tt>
+}</tt>
+
+<p><i>BlockStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>LocalVariableDeclarationStatement</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Statement</i>
+
+<p><i>LocalVariableDeclarationStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>LocalVariableDeclaration</i><tt>
+;</tt>
+
+<p><i>LocalVariableDeclaration:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Type</i><tt> </tt><i>VariableDeclarator+</i>
+
+<p>If a declaration of an identifier as a local variable appears within
+the scope of a parameter or local variable of the same name, a compile-time
+error occurs.
+
+<p>If a declarator does not have an initialization expression, then a Java
+compiler must prove, using exactly the algorithm given in &sect;16, that
+every reference to the variable is necessarily preceded by execution of
+an assignment to the variable. If this is not the case, then a compile-time
+error occurs.
+
+<p><i>Statement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i> Block</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>;</tt>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>do </tt><i>Statement</i><tt>
+while ( </tt><i>Expression</i><tt> ) ;</tt>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>if ( </tt><i>Expression</i><tt>
+) </tt><i>Statement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>if ( </tt><i>Expression</i><tt>
+) </tt><i>Statement</i><tt> else </tt><i>Statement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>while ( </tt><i>Expression</i><tt>
+) </tt><i>Statement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>break </tt><i>Identifier<sub>opt</sub></i><tt>
+;</tt>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>continue </tt><i>Identifier<sub>opt</sub></i><tt>
+;</tt>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ExpressionStatement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SwitchStatement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ReturnStatement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SynchronizedStatement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ThrowStatement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TryStatement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LabeledStatement</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ForStatement</i>
+<br>&nbsp;
+<br>The Expression in a if, while or do statement must have type boolean.
+<br>If no switch, while, do, or for statement encloses an unlabeled break
+or continue statement, a compile-time error occurs.
+<br>If no appropriately labeled statement encloses a labeled break or continue
+statement, a compile-time error occurs.
+
+<p><i>LabeledStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Identifier</i><tt> :
+</tt><i>Statement</i>
+
+<p>A statement labeled by an identifier must not appear anywhere within
+another statement labeled by the same identifier.
+
+<p><i>ExpressionStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>StatementExpression</i><tt>
+;</tt></ul>
+
+<ul><i>SwitchStatement:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; switch ( </tt><i>Expression</i><tt>
+) </tt><i>SwitchBlock</i>
+
+<p>The type of the Expression must be char, byte, short, or int.
+<pre><i>SwitchBlock:
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>{ </tt><i>SwitchBlockStatementGroup*</i><tt> </tt><i>SwitchLabel*</i><tt> }
+
+</tt><i>SwitchBlockStatementGroup:
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>SwitchLabel+</i><tt> </tt><i>BlockStatements
+
+SwitchLabel:
+</i><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; case </tt><i>ConstantExpression</i><tt> :
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; default :</tt></pre>
+<i>SwitchBlock</i> must start with a <i>SwitchLabel</i>.
+
+<p>Every case constant expression associated with a switch statement must
+be assignable (&sect;5.2) to the type of the switch Expression. No two
+of the case constant expressions associated with a switch statement may
+have the same value. At most one default label may be associated with the
+same switch statement.</ul>
+
+<ul><i>ForStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>for ( </tt><i>ForInit<sub>opt</sub></i><tt>
+; </tt><i>Expression<sub>opt</sub></i><tt> ; </tt><i>ForUpdate<sub>opt</sub></i><tt>
+)</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<i>Statement</i>
+
+<p><i>ForInit:</i>
+<br><tt>&nbsp;&nbsp;&nbsp; </tt><i>StatementExpression+</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>LocalVariableDeclaration</i>
+
+<p><i>ForUpdate:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>StatementExpression+</i>
+
+<p>The Expression must have type boolean.
+
+<p><i>ReturnStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>return </tt><i>Expression<sub>opt</sub></i><tt>
+;</tt>
+
+<p>-- The following may be redundant -- A return statement with no Expression
+must be contained in the body of a method that is declared, using the keyword
+void, not to return any value (&sect;8.4), or in the body of a constructor
+(&sect;8.6). A compile-time error occurs if a return statement appears
+within a static initializer (&sect;8.5). A return statement with an Expression
+must be contained in a method declaration that is declared to return a
+value (&sect;8.4). The Expression must denote a variable or value of some
+type T that is assignable (&sect;5.2) to the declared result type of the
+method.
+
+<p><i>ThrowStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>throw </tt><i>Expression</i><tt>
+;</tt>
+<br>&nbsp;
+<br>The Expression in a throw statement must denote a variable or value
+of a reference type which is assignable (&sect;5.2) to the type Throwable.
+Moreover, at least one of the following three conditions must be true:
+<ul>
+<li>
+The exception is not a checked exception (&sect;11.2)-specifically, one
+of the following situations is true:</li>
+
+<ul>
+<li>
+The type of the Expression is the class RuntimeException or a subclass
+of RuntimeException.</li>
+
+<li>
+The type of the Expression is the class Error or a subclass of&nbsp; Error.</li>
+</ul>
+
+<li>
+The throw statement is contained in the try block of a try statement&nbsp;
+(&sect;14.18) and the type of the Expression is assignable (&sect;5.2)
+to the type of&nbsp; the parameter of at least one catch clause of the
+try statement.</li>
+
+<li>
+The throw statement is contained in a method or constructor declaration&nbsp;
+and the type of the Expression is assignable (&sect;5.2) to at least one
+type&nbsp; listed in the throws clause (&sect;8.4.4, &sect;8.6.4) of the
+declaration.</li>
+</ul>
+<i>SynchronizedStatement:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>synchronized ( </tt><i>Expression</i><tt>
+) </tt><i>Block</i>
+<br>&nbsp;
+<br>The type of Expression must be a reference type.
+
+<p><i>TryStatement:</i>
+<br><tt>&nbsp;&nbsp;&nbsp; try </tt><i>Block</i><tt> </tt><i>CatchClause+</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>try </tt><i>Block</i><tt>
+</tt><i>CatchClause*</i><tt> </tt><i>Finally</i>
+
+<p><i>CatchClause:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>catch ( </tt><i>FormalParameter</i><tt>
+) </tt><i>Block</i>
+<br>&nbsp;
+<br>The declared type of the exception parameter must be the class Throwable
+or a subclass of Throwable. An exception parameter must not have the same
+name as a local variable or parameter in whose scope it is declared.
+
+<p><i>Finally:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; finally </tt><i>Block</i>
+
+<p>It is a compile-time error if a statement cannot be executed because
+it is unreachable. Every Java compiler must carry out the conservative
+flow analysis specified here to make sure all statements are reachable.&nbsp;
+See section 14.19</ul>
+
+<h2>
+8. Productions from &sect;15: Expressions</h2>
+
+<ul>Our grammar differs from JLS since we are only concerned with AST's
+here. In particular, because
+<br>&nbsp;
+<ul>Primary -> ( Expression ) ->* ( Primary )
+<br>&nbsp;</ul>
+and we don't care about parentheses in the AST, we merge most syntactic
+expression catagories into the single catagory Expression.
+
+<p><i>Expression:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Expression ? Expression
+: Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression || Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression &amp;&amp;
+Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression | Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression ^ Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression &amp; Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression == Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression != Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression &lt; Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression > Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression &lt;= Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression >= Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression instanceof
+ReferenceType</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression &lt;&lt; Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression >> Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression &lt;&lt;&lt;
+Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression + Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression - Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression * Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression / Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression % Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; + Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~ Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ! Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; StatementExpression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ArrayCreationExpression</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Literal</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>FieldAccess</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ArrayAccess</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Assignment</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CastExpression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Name</i>
+
+<p>The argument to the unary + or - or ~ operator must be a primitive numeric
+type; the result is a value of the unary promoted type of the argument.
+
+<p>The argument to the unary ! operator must be boolean, the result is
+a boolean value.
+
+<p>The binary operators *, /, %, - are binary numeric operators. The arguments
+to binary numeric operators must be numeric.Binary numeric promotion is
+performed on the operands (&sect;5.6.2), and the type of the expression
+is the promoted type of its operands.
+
+<p>If the type of either operand of a binary + operator is String, then
+the operation is string concatenation, the other argument is converted
+to type String (if necessary), and the result is type String. If neither
+operand of a binary + operator is String, then + is treated as a binary
+numeric operator (described above).
+
+<p>The arguments to the binary operators >>, &lt;&lt;, >>> must be primitive
+integral types, the result type is the unary promoted type of the left
+operand.
+
+<p>The arguments to the a numerical comparison operators (&lt;,&lt;=,>,&lt;=)
+must be primitive numeric types; the result is always boolean.
+
+<p>The type of a Expression operand of the <tt>instanceof</tt> operator
+must be a reference type or the null type. The ReferenceType mentioned
+after the instanceof operator must denote a reference type. If a cast of
+the RelationalExpression to the ReferenceType would be rejected as a compile-time
+error, then the instanceof relational expression likewise produces a compile-time
+error.
+
+<p>The equality operators == and != may be used to compare two operands
+of numeric type, or two operands of type boolean, or two operands that
+are each of either reference type or the null type. The type of an equality
+expression is always boolean. A compile-time error occurs if it is impossible
+to convert the type of either operand to the type of the other by a casting
+conversion (&sect;5.4).
+
+<p>When both operands of an operator &amp;, ^, or | are of primitive integral
+type, binary numeric promotion is first performed on the operands (&sect;5.6.2).
+The type of the bitwise operator expression is the promoted type of the
+operands. When both operands of a &amp;, ^, or | operator are of type boolean,
+then the type of the bitwise operator expression is boolean. All other
+cases result in a compile-time error.
+
+<p>The arguments to &amp;&amp; and || must be boolean, the result is also
+boolean.
+
+<p>The keyword this may be used only in a static context (the body of an
+instance method or constructor, or in the initializer of an instance variable
+of a class). The type of this is the class C within which the keyword this
+occurs.</ul>
+
+<h3>
+8.1 Sub-Catagories of Expressions</h3>
+
+<ul><i>StatementExpression:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Assignment</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>++ Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -- Expression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression ++</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expression --</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MethodInvocation</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClassInstanceCreationExpression</i>
+
+<p>The argument to a prefix or postfix increment or decrement operation
+must be a numeric variable, the result is a value of the same type.
+
+<p><i>ClassInstanceCreationExpression:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>new </tt><i>ClassType</i><tt>
+( Expression* )</tt>
+<br>&nbsp;
+<br>ClassType must name a class that is not abstract. This class type is
+the type of the creation expression.
+<br>As in method invocations, a compile-time method matching error results
+if there is no most-specific, accessible, applicable constructor.
+
+<p><i>ArrayCreationExpression:</i>
+<br><i><sub>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </sub></i><tt>new
+</tt><i>PrimitiveType</i><tt> </tt><i>DimExpr+</i><tt> </tt><i>Dims<sub>opt</sub></i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>new </tt><i>ClassOrInterfaceType</i><tt>
+</tt><i>DimExpr+</i><tt> </tt><i>Dims<sub>opt</sub></i>
+
+<p><i>DimExpr:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>[ </tt><i>Expression</i><tt>
+]</tt>
+
+<p><i>Dims:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>[ ]</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Dims</i><tt> [ ]</tt>
+<br>&nbsp;
+<br>The type of the creation expression is an array type that can denoted
+by a copy of the creation expression from which the new keyword and every&nbsp;
+has been deleted.
+
+<p>The type of each dimension expression <i>Expression</i> must be an integral
+type.
+
+<p><i>FieldAccess:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Primary</i><tt> . </tt><i>Identifier</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>super . </tt><i>Identifier</i>
+
+<p>The type of the Primary must be a reference type T, which should contain
+a single accessible member field named Identifier, and the type of the
+field access expression is a variable of the declared type of of that field.
+It is a compile-time error to reference instance fields in a static context.
+
+<p>The special form using the keyword super is valid only in a non-static
+context (an instance method or constructor, or in the initializer of an
+instance variable of a class), and is equivalent to "<tt>((C) this).Identifier</tt>",
+where C denotes the direct superclass of the current class.
+
+<p><i><tt>MethodInvocation:</tt></i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Name</i> ( Expression+
+)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Primary</i> . <i>Identifier</i>
+( Expression+ )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; super . <i>Identifier</i>
+( Expression+ )</tt>
+<br>&nbsp;
+<br>Validity of a MethodInvocation is mostly done by name resolution algorithm.
+
+<p>If the method invocation has, before the left parenthesis, a MethodName
+of the form Identifier, and the method invocation appears in a static context,
+then the compile-time declaration of the method must be static.
+
+<p>If the method invocation has, before the left parenthesis, a MethodName
+of the form TypeName . Identifier, then the compile-time declaration should
+be static.
+
+<p>If the compile-time declaration for the method invocation is void, then
+the method invocation must be a top-level expression, that is, the Expression
+in&nbsp; an expression statement (&sect;14.7) or in the ForInit or ForUpdate
+part of a for statement (&sect;14.12).
+
+<p>If the compile-time declaration for the method invocation is not void,
+then the tye of the method invocation expression is the result type specified
+in the compile-time declaration.
+
+<p><i>ArrayAccess:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Name</i><tt> [ </tt><i>Expression</i><tt>
+]</tt>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>PrimaryNoNewArray</i><tt>
+[ </tt><i>Expression</i><tt> ]</tt>
+
+<p>The type of the array reference expression must be an array type T[],&nbsp;
+and the type of the array access expression is T.
+<br>The index expression undergoes unary numeric promotion (&sect;5.6.1);
+the promoted type must be int.
+
+<p><i>PostfixExpression:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Primary</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Name</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PostIncrementExpression</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PostDecrementExpression</i>
+
+<p><i>CastExpression:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( <i>PrimitiveType</i> <i>Dims<sub>opt</sub></i>
+) <i>UnaryExpression</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( <i>Expression</i> ) <i>UnaryExpressionNotPlusMinus</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i>( <i>Name</i> <i>Dims</i>
+) <i>UnaryExpressionNotPlusMinus</i>
+
+<p>The type of a cast expression is the type whose name appears within
+the parentheses. (The parentheses and the type they contain are sometimes
+called the cast operator.) The result of a cast expression is not a variable,
+but a value.
+
+<p>Not all casts are permitted by the Java language. Some casts result
+in an error at compile time. For example, a primitive value may not be
+cast to a reference type.
+
+<p><i>ConditionalExpression:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ConditionalOrExpression</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ConditionalOrExpression</i><tt>
+? </tt>Expression<tt> : </tt><i>ConditionalExpression</i>
+
+<p>The first expression must be of type boolean.
+
+<p>The type of a conditional expression is determined as follows:
+<ul>
+<li>
+If the second and third operands have the same type (which may be the null
+type), then that is the type of the conditional expression.</li>
+
+<li>
+Otherwise, if the second and third operands have numeric type, then there
+are several cases:</li>
+
+<ul>
+<li>
+If one of the operands is of type byte and the other is of type short,
+then the type of the conditional expression is short.</li>
+
+<li>
+If one of the operands is of type T where T is byte, short, or char, and
+the other operand is a constant expression of type int whose value is representable
+in type T, then the type of the conditional expression is T.</li>
+
+<li>
+Otherwise, binary numeric promotion (&sect;5.6.2) is applied to the operand
+types, and the type of the conditional expression is the promoted type
+of the second and third operands.</li>
+</ul>
+
+<li>
+If one of the second and third operands is of the null type and the type
+of the other is a reference type, then the type of the conditional expression
+is that reference type.</li>
+
+<li>
+If the second and third operands are of different reference types, then
+it must be possible to convert one of the types to the other type (call
+this latter type T) by assignment conversion (&sect;5.2); the type of the
+conditional expression is T. It is a compile-time error if neither type
+is assignment compatible with the other type.</li>
+</ul>
+<i>Assignment:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>LeftHandSide</i><tt>
+</tt><i>AssignmentOperator</i><tt> </tt><i>AssignmentExpression</i>
+
+<p>The result of the first operand of an assignment operator must be a
+variable.
+<br>The type of the assignment expression is the type of the variable.
+<br>A variable that is declared final cannot be assigned to
+
+<p>For =, a compile-time error occurs if the type of the right-hand operand
+cannot be converted to the type of the variable by assignment conversion
+(&sect;5.2).
+
+<p>A compound assignment expression of the form E1 op= E2 is equivalent
+to E1 = (T)((E1) op (E2)), where T is the type of E1, except that E1 is
+evaluated only once.
+
+<p><i>LeftHandSide:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Name</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>FieldAccess</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ArrayAccess</i>
+
+<p><i>AssignmentOperator:</i> <i>one</i> <i>of</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>= *= /= %= += -= &lt;&lt;=
+>>= >>>= &amp;= ^= |=</tt>
+
+<p><i>ConstantExpression:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Expression</i>
+
+<p>A compile-time constant expression is an expression denoting a value
+of primitive type or a String that is composed using only the following:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Literals of primitive type and literals of
+type String
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Casts to primitive types and casts to type
+String
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The unary operators +, -, ~, and ! (but not
+++ or --)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The multiplicative operators *, /, and %
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The additive operators + and -
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The shift operators &lt;&lt;, >>, and >>>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The relational operators &lt;, &lt;=, >, and
+>= (but not instanceof)
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The equality operators == and !=
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The bitwise and logical operators &amp;, ^,
+and |
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The conditional-and operator &amp;&amp; and
+the conditional-or operator ||
+<br>&nbsp;&nbsp;&nbsp;&nbsp; The ternary conditional operator ? :
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Simple names that refer to final variables
+whose initializers are constant expressions
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Qualified names of the form TypeName .
+<br>&nbsp;&nbsp;&nbsp;&nbsp; Identifier that refer to final variables whose
+initializers are constant expressions</ul>
+
+<h3>
+8.2 Conversions and Promotions</h3>
+
+<h4>
+8.2.1 Unary Numeric Promotion</h4>
+
+<ul>The unary promoted type of byte, short or char is int; unary promotion
+is the identity on any other numeric type.</ul>
+
+<h4>
+8.2.2 Binary Numeric Promotion</h4>
+
+<ul>When an operator applies binary numeric promotion to a pair of operands,
+each of which must denote a value of a numeric type, the following rules
+apply, in order, using widening conversion (&sect;5.1.2) to convert operands
+as necessary:
+<ul>
+<li>
+If either operand is of type double, the other is converted to double.</li>
+
+<li>
+Otherwise, if either operand is of type float, the other is converted to
+float.</li>
+
+<li>
+Otherwise, if either operand is of type long, the other is converted to
+long.</li>
+
+<br>Otherwise, both operands are converted to type int.</ul>
+</ul>
+
+<h4>
+8.2.3 String Conversion</h4>
+
+<ul>A value x of primitive type T is first converted to a reference value
+as if by giving it as an argument to an appropriate class instance
+<br>creation expression:
+<ul>
+<li>
+If T is boolean, then use new Boolean(x) (&sect;20.4).</li>
+
+<li>
+If T is char, then use new Character(x) (&sect;20.5).</li>
+
+<li>
+If T is byte, short, or int, then use new Integer(x) (&sect;20.7).</li>
+
+<li>
+If T is long, then use new Long(x) (&sect;20.8).</li>
+
+<li>
+If T is float, then use new Float(x) (&sect;20.9).</li>
+
+<li>
+If T is double, then use new Double(x) (&sect;20.10).</li>
+</ul>
+Now only reference values need to be considered. If the reference is null,
+it is converted to the string "null" (four ASCII characters n,u, l, l).
+Otherwise, the conversion is performed as if by an invocation of the toString
+method of the referenced object with no
+<br>arguments; but if the result of invoking the toString method is null,
+then the string "null" is used instead. The toString method
+<br>(&sect;20.1.2) is defined by the primordial class Object (&sect;20.1);
+many classes override it, notably Boolean, Character, Integer, Long,
+<br>Float, Double, and String.</ul>
+
+<h2>
+9. Productions from &sect;4: Types, Values, and Variables</h2>
+
+<ul><i>Type:</i>
+<br><tt>&nbsp;&nbsp;&nbsp; </tt><i>PrimitiveType</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ReferenceType</i>
+
+<p><i>PrimitiveType:</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NumericType</i>
+<br><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><tt>boolean</tt>
+
+<p><i>NumericType:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>IntegralType</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>FloatingPointType</i>
+
+<p><i>IntegralType:</i> <i>one</i> <i>of</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>byte short int long
+char</tt>
+
+<p><i>FloatingPointType:</i> <i>one</i> <i>of</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; float double</tt>
+
+<p><i>ReferenceType:</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ClassOrInterfaceType</i>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>ArrayType</i>
+
+<p><i>ClassOrInterfaceType</i>:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>Name</i>
+
+<p>The name must resolve to a class or interface type
+
+<p><i>ClassType:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt><i>ClassOrInterfaceType</i>
+
+<p>The name must resolve to a class type
+
+<p><i>InterfaceType:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt><i>ClassOrInterfaceType</i>
+
+<p>The name must resolve to a interface type
+
+<p><i>ArrayType:</i>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt><i>PrimitiveType</i><tt>
+[ ]</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt><i>Name</i><tt>
+[ ]</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </tt><i>ArrayType</i><tt>
+[ ]</tt>
+
+<p>Name must be a type name.</ul>
+
+<h2>
+10. Productions from &sect;6: Names</h2>
+
+<ul>
+<pre><i>Name:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SimpleName
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; QualifiedName
+
+SimpleName:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Identifier
+
+QualifiedName:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Name</i><tt> . </tt><i>Identifier</i></pre>
+Not certain about compile-time errors for this section.</ul>
+
+<h2>
+11. Productions from &sect;3: Lexical Structure</h2>
+
+<ul>
+<pre><i>Literal:
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>IntegerLiteral
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>FloatingPointLiteral
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>BooleanLiteral
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>CharacterLiteral
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>StringLiteral
+</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>NullLiteral</i></pre>
+Ints, longs, and doubles should not be too big.
+<br>floats should not be too small.
+
+<p>The type of an integer literal that ends with L or l is long; the type
+of any other integer literal is int.
+<br>The type of a floating-point literal that ends with F or f is float;
+the type of any other floating-point literal is double.
+<br>The type of a boolean literal is boolean.
+<br>The type of a character literal is char.
+<br>The type of a string literal is String.
+<br>The type of the null literal null is the null type.</ul>
+
+<hr>
+<br>&nbsp;
+</body>
+</html>

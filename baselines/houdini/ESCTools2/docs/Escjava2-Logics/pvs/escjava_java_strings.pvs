@@ -1,0 +1,13 @@
+escjava_java_strings : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem,
+              escjava_jml_semantics
+
+    T_java_lang_String : S
+    stringCat (x, y : S): S
+
+    stringCat_definition1 : AXIOM
+      FORALL (x, y : S): stringCat(x, y) /= java_null AND
+                         typeof(stringCat(x, y)) <= T_java_lang_String
+
+  END escjava_java_strings

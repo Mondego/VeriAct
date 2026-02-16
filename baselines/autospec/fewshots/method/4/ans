@@ -1,0 +1,4 @@
+//@ requires n > 0 && n == a.length;
+//@ ensures (\forall int k;  0 <= k && k < n; \result >= a[k]);
+//@ ensures (\exists int k;  0 <= k && k < n; \result == a[k]);
+

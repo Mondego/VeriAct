@@ -1,0 +1,750 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModChecksMethod ...
+  Prover started:TIME
+    [TIME]
+
+ModChecksMethod: mnothing() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:20: Warning: Possible violation of modifies clause (Modifies)
+            pe(); // WARNING
+              ^
+Associated declaration is "ModChecksMethod.java", line 245, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 18, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mnothingA() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:24: Warning: Possible violation of modifies clause (Modifies)
+            pi(); // WARNING
+              ^
+Associated declaration is "ModChecksMethod.java", line 242, col 14:
+        //@ modifies i;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 22, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mnothingB() ...
+    [TIME]  passed
+
+ModChecksMethod: mnothingC() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:32: Warning: Possible violation of modifies clause (Modifies)
+            paelem(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 257, col 14:
+        //@ modifies a[2];
+                     ^
+Associated declaration is "ModChecksMethod.java", line 30, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mnothingD() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:36: Warning: Possible violation of modifies clause (Modifies)
+            pastar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 254, col 15:
+        //@ modifies a[*];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 34, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mnothingE() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:40: Warning: Possible violation of modifies clause (Modifies)
+            parange(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 260, col 15:
+        //@ modifies a[2..5];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 38, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mnothingF() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:44: Warning: Possible violation of modifies clause (Modifies)
+            ptstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 272, col 14:
+        //@ modifies this.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 42, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mnothingG() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:48: Warning: Possible violation of modifies clause (Modifies)
+            pTstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 278, col 14:
+        //@ modifies ModChecksMethod.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 46, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mnothingH() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:52: Warning: Possible violation of modifies clause (Modifies)
+            pATstar(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 275, col 14:
+        //@ modifies ModChecksMethodA.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 50, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: meverything() ...
+    [TIME]  passed
+
+ModChecksMethod: mi() ...
+    [TIME]  passed
+
+ModChecksMethod: mi1() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:76: Warning: Possible violation of modifies clause (Modifies)
+            o.pi(); // WARNING
+                ^
+Associated declaration is "ModChecksMethod.java", line 242, col 14:
+        //@ modifies i;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 74, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi2() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:80: Warning: Possible violation of modifies clause (Modifies)
+            pe(); // WARNING
+              ^
+Associated declaration is "ModChecksMethod.java", line 245, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 78, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi3() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:84: Warning: Possible violation of modifies clause (Modifies)
+            o.pe(); // WARNING
+                ^
+Associated declaration is "ModChecksMethod.java", line 245, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 82, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi3A() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:88: Warning: Possible violation of modifies clause (Modifies)
+            paelem(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 257, col 14:
+        //@ modifies a[2];
+                     ^
+Associated declaration is "ModChecksMethod.java", line 86, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi3B() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:92: Warning: Possible violation of modifies clause (Modifies)
+            pastar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 254, col 15:
+        //@ modifies a[*];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 90, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi3C() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:96: Warning: Possible violation of modifies clause (Modifies)
+            parange(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 260, col 15:
+        //@ modifies a[2..5];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 94, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi3D() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:100: Warning: Possible violation of modifies clause (Modifies)
+            ptstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 272, col 14:
+        //@ modifies this.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 98, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi3E() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:104: Warning: Possible violation of modifies clause (Modifies)
+            pTstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 278, col 14:
+        //@ modifies ModChecksMethod.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 102, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mi3F() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:108: Warning: Possible violation of modifies clause (Modifies)
+            pATstar(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 275, col 14:
+        //@ modifies ModChecksMethodA.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 106, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mii() ...
+    [TIME]  passed
+
+ModChecksMethod: mtstar() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:120: Warning: Possible violation of modifies clause (Modifies)
+            o.ptstar(); // WARNING
+                    ^
+Associated declaration is "ModChecksMethod.java", line 272, col 14:
+        //@ modifies this.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 117, col 5:
+        //@ modifies this.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mtstarA() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:124: Warning: Possible violation of modifies clause (Modifies)
+            pTstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 278, col 14:
+        //@ modifies ModChecksMethod.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 122, col 5:
+        //@ modifies this.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mtstarB() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:128: Warning: Possible violation of modifies clause (Modifies)
+            o.pTstar(); // WARNING
+                    ^
+Associated declaration is "ModChecksMethod.java", line 278, col 14:
+        //@ modifies ModChecksMethod.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 126, col 5:
+        //@ modifies this.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mtstarC() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:132: Warning: Possible violation of modifies clause (Modifies)
+            pATstar(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 275, col 14:
+        //@ modifies ModChecksMethodA.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 130, col 5:
+        //@ modifies this.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mTstar() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:137: Warning: Possible violation of modifies clause (Modifies)
+            ptstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 272, col 14:
+        //@ modifies this.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 135, col 5:
+        //@ modifies ModChecksMethod.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mTstarA() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:142: Warning: Possible violation of modifies clause (Modifies)
+            o.ptstar(); // WARNING
+                    ^
+Associated declaration is "ModChecksMethod.java", line 272, col 14:
+        //@ modifies this.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 140, col 5:
+        //@ modifies ModChecksMethod.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mTstarB() ...
+    [TIME]  passed
+
+ModChecksMethod: mTstarC() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:153: Warning: Possible violation of modifies clause (Modifies)
+            pATstar(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 275, col 14:
+        //@ modifies ModChecksMethodA.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 151, col 5:
+        //@ modifies ModChecksMethod.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mATstar() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:158: Warning: Possible violation of modifies clause (Modifies)
+            ptstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 272, col 14:
+        //@ modifies this.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 156, col 5:
+        //@ modifies ModChecksMethodA.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mATstarA() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:163: Warning: Possible violation of modifies clause (Modifies)
+            o.ptstar(); // WARNING
+                    ^
+Associated declaration is "ModChecksMethod.java", line 272, col 14:
+        //@ modifies this.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 161, col 5:
+        //@ modifies ModChecksMethodA.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mATstarB() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:168: Warning: Possible violation of modifies clause (Modifies)
+            pTstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 278, col 14:
+        //@ modifies ModChecksMethod.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 166, col 5:
+        //@ modifies ModChecksMethodA.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mATstarC() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:173: Warning: Possible violation of modifies clause (Modifies)
+            o.pTstar(); // WARNING
+                    ^
+Associated declaration is "ModChecksMethod.java", line 278, col 14:
+        //@ modifies ModChecksMethod.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 171, col 5:
+        //@ modifies ModChecksMethodA.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mATstarD() ...
+    [TIME]  passed
+
+ModChecksMethod: mastar() ...
+    [TIME]  passed
+
+ModChecksMethod: mastarA() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:190: Warning: Possible violation of modifies clause (Modifies)
+            pbstar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 263, col 15:
+        //@ modifies b[*];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 188, col 5:
+        //@ modifies a[*];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mastarC() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:194: Warning: Possible violation of modifies clause (Modifies)
+            pbrange(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 269, col 15:
+        //@ modifies b[2..5];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 192, col 5:
+        //@ modifies a[*];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mastarB() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:198: Warning: Possible violation of modifies clause (Modifies)
+            pbelem(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 266, col 14:
+        //@ modifies b[2];
+                     ^
+Associated declaration is "ModChecksMethod.java", line 196, col 5:
+        //@ modifies a[*];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marange() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:203: Warning: Possible violation of modifies clause (Modifies)
+            pastar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 254, col 15:
+        //@ modifies a[*];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 201, col 5:
+        //@ modifies a[3..5];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marangeZ() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:208: Warning: Possible violation of modifies clause (Modifies)
+            paelem(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 257, col 14:
+        //@ modifies a[2];
+                     ^
+Associated declaration is "ModChecksMethod.java", line 206, col 5:
+        //@ modifies a[3..5];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marangeA() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:213: Warning: Possible violation of modifies clause (Modifies)
+            parange(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 260, col 15:
+        //@ modifies a[2..5];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 211, col 5:
+        //@ modifies a[3..5];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marange1() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:218: Warning: Possible violation of modifies clause (Modifies)
+            pastar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 254, col 15:
+        //@ modifies a[*];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 216, col 5:
+        //@ modifies a[2..4];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marange1A() ...
+    [TIME]  passed
+
+ModChecksMethod: marange1B() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:228: Warning: Possible violation of modifies clause (Modifies)
+            parange(); // WARNING
+                   ^
+Associated declaration is "ModChecksMethod.java", line 260, col 15:
+        //@ modifies a[2..5];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 226, col 5:
+        //@ modifies a[2..4];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marange2() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:233: Warning: Possible violation of modifies clause (Modifies)
+            pastar(); // WARNING
+                  ^
+Associated declaration is "ModChecksMethod.java", line 254, col 15:
+        //@ modifies a[*];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 231, col 5:
+        //@ modifies a[1..6];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marange2A() ...
+    [TIME]  passed
+
+ModChecksMethod: pi() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pe() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pn() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: psi() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pastar() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: paelem() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: parange() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pbstar() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pbelem() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pbrange() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: ptstar() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pATstar() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pTstar() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: ModChecksMethod() ...
+ModChecksMethod.java:284: Error: There is no assignable clause allowing this method call
+            this(0); // WARNING
+                ^
+ModChecksMethod.java:297: Associated declaration: 
+        //@ modifies \everything;
+                     ^
+ModChecksMethod.java:282: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+    [TIME]  passed
+
+ModChecksMethod: mcnothing() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:289: Warning: Possible violation of modifies clause (Modifies)
+            new ModChecksMethod(0); // WARNING 
+                               ^
+Associated declaration is "ModChecksMethod.java", line 297, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 287, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: mcnothingA() ...
+    [TIME]  passed
+
+ModChecksMethod: ModChecksMethod(int) ...
+    [TIME]  passed immediately
+
+ModChecksMethod: ModChecksMethod(double) ...
+    [TIME]  passed immediately
+
+ModChecksMethod: marangeB() ...
+    [TIME]  passed
+
+ModChecksMethod: parangeB() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: marangeC() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:314: Warning: Possible violation of modifies clause (Modifies)
+            parangeC(); // OK - needs FIXME
+                    ^
+Associated declaration is "ModChecksMethod.java", line 331, col 15:
+        //@ modifies a[*];
+                      ^
+Associated declaration is "ModChecksMethod.java", line 312, col 5:
+        //@ modifies a[0..10];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: marangeCC() ...
+    [TIME]  passed
+
+ModChecksMethod: marangeCCC() ...
+    [TIME]  passed
+
+ModChecksMethod: parangeC() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: mstatic() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:336: Warning: Possible violation of modifies clause (Modifies)
+                new ModChecksMethod(null); // WARNING
+                                   ^
+Associated declaration is "ModChecksMethod.java", line 339, col 29:
+        //@ modifies ModChecksMethod.si;
+                                    ^
+Associated declaration is "ModChecksMethod.java", line 334, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMethod: ModChecksMethod(java.lang.Object) ...
+    [TIME]  passed immediately
+
+ModChecksMethod: ModChecksMethod(java.lang.Object, int) ...
+    [TIME]  passed
+
+ModChecksMethod: ModChecksMethod(java.lang.Object, double) ...
+ModChecksMethod.java:350: Error: There is no assignable clause allowing this method call
+                super(0); // WARNING
+                     ^
+ModChecksMethod.java:399: Associated declaration: 
+        //@ modifies zi;
+                     ^
+ModChecksMethod.java:348: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+    [TIME]  passed
+
+ModChecksMethod: ModChecksMethod(java.lang.Object, double, int) ...
+    [TIME]  passed
+
+ModChecksMethod: ModChecksMethod(java.lang.Object, java.lang.Object) ...
+ModChecksMethod.java:360: Error: There is no assignable clause allowing this method call
+                super(0.0); // WARNING
+                     ^
+ModChecksMethod.java:402: Associated declaration: 
+        //@ modifies szi;
+                     ^
+ModChecksMethod.java:358: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+    [TIME]  passed
+
+ModChecksMethod: ModChecksMethod(java.lang.Object, java.lang.Object, int) ...
+    [TIME]  passed
+
+ModChecksMethod: pstaticA() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: pstaticB() ...
+    [TIME]  passed immediately
+
+ModChecksMethod: mstaticA() ...
+    [TIME]  passed
+
+ModChecksMethod: mstaticB() ...
+------------------------------------------------------------------------
+ModChecksMethod.java:381: Warning: Possible violation of modifies clause (Modifies)
+                pstaticB();  // WARNING
+                        ^
+Associated declaration is "ModChecksMethod.java", line 371, col 14:
+        //@ modifies ModChecksMethod.*;
+                     ^
+Associated declaration is "ModChecksMethod.java", line 379, col 5:
+        //@ modifies ModChecksMethodZ.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+ModChecksMethodA ...
+    [TIME]
+
+ModChecksMethodA: ModChecksMethodA() ...
+    [TIME]  passed
+  [TIME total]
+
+ModChecksMethodZ ...
+    [TIME]
+
+ModChecksMethodZ: ModChecksMethodZ() ...
+    [TIME]  passed immediately
+
+ModChecksMethodZ: ModChecksMethodZ(int) ...
+    [TIME]  passed immediately
+
+ModChecksMethodZ: ModChecksMethodZ(double) ...
+    [TIME]  passed immediately
+  [TIME total]
+41 warnings
+3 errors

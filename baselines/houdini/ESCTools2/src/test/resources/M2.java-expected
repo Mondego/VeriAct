@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|M2.java: Caution: Using given file as the .java file, even though it is not the java file for M2 on the classpath
+    [TIME]
+
+M2 ...
+src|test|resources|M2.java:20: Error: No such field in type SS
+        modifies o.owner;
+                   ^
+src|test|resources|M2.java:28: Error: No such field in type SS
+        //@ set o.owner = this;
+                  ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+SS ...
+  [TIME total]
+2 cautions
+2 errors

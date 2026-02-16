@@ -1,0 +1,8 @@
+ESC/Java version VERSION
+    [TIME]
+
+CausedAnErrorOnce01 ...
+CausedAnErrorOnce01.java:6: Fatal error: Can't find type named "fieldref"
+  public static int m1(fieldref o) {
+                       ^
+1 error

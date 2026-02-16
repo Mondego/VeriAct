@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## Test for loop in typechecker when an inner class is a static class
+## and the parent class is not.
+
+${TOOL} InnerClassTest.java

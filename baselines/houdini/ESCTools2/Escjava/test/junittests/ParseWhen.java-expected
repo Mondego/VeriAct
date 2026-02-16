@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParseWhen ...
+  Prover started:TIME
+    [TIME]
+
+ParseWhen: m() ...
+    [TIME]  passed immediately
+
+ParseWhen: n() ...
+    [TIME]  passed immediately
+
+ParseWhen: ParseWhen() ...
+    [TIME]  passed
+  [TIME total]

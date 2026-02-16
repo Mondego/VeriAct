@@ -1,0 +1,48 @@
+ESC/Java version VERSION
+src|test|resources|ModelConstructors.java:6: Error: The type name in a constructor must be a simple name that matches the name of the enclosing type
+        //@ model constructor sub.badname(float i) {  } // ERROR
+                              ^
+src|test|resources|ModelConstructors.java: Caution: Using given file as the .java file, even though it is not the java file for ModelConstructors on the classpath
+src|test|resources|ModelConstructors.java:5: Error: A constructor-like declaration has an id which is not the same as the id of the enclosing type: badname vs. ModelConstructors
+        //@ model constructor badname(int i) {  } // ERROR
+                              ^
+src|test|resources|ModelConstructors.java:3: Associated declaration: 
+public class ModelConstructors {
+             ^
+    [TIME]
+
+ModelConstructors ...
+src|test|resources|ModelConstructors.java:12: Error: Undefined variable 'ooo'
+                ooo == null; // ERROR
+                ^
+src|test|resources|ModelConstructors.java:34: Error: Undefined variable 'ooo'
+                ooo == null; // ERROR
+                ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+ModelConstructorZ ...
+src|test|resources|ModelConstructors.java:43: Error: No such constructor in type ModelConstructors
+                oo = new ModelConstructors(0,0,0); // ERROR - no such  ...
+                     ^
+  [TIME total] (aborted)
+
+ModelConstructorA ...
+src|test|resources|ModelConstructors.java:51: Error: Undefined variable 'o'
+        public ModelConstructorA() { o = null; } // ERROR
+                                     ^
+src|test|resources|ModelConstructors.java:53: Error: Undefined variable 'o'
+        public void m() { o = null; } // ERROR
+                          ^
+  [TIME total] (aborted)
+
+ModelConstructorB ...
+src|test|resources|ModelConstructors.java:61: Error: Duplicate declaration of constructor with same signature
+        //@ model public ModelConstructorB(int i) {}  // ERROR
+                         ^
+src|test|resources|ModelConstructors.java:59: Associated declaration: 
+        public ModelConstructorB(int i) {}
+        ^
+  [TIME total] (aborted)
+2 cautions
+8 errors

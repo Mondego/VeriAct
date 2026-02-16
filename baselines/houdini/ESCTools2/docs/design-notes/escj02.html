@@ -1,0 +1,345 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 2: Improving the safety of Java</TITLE>
+<LINK REV="made" HREF="mailto:raymie@larch.lcs.mit.edu">
+</HEAD>
+<BODY>
+
+<H1>
+ESCJ 2: Improving the safety of Java</H1>
+<B>Raymie Stata</B>
+
+<P><B>December 2, 1995</B>
+
+<P>A central goal in the design of the Java programming language is <I>robustness</I>:
+``early checking for possible problems, later dynamic (run-time) checking,
+and eliminating situations that are error prone'' (<A HREF="#Java95">[Java95]</A>).
+This paper suggests five changes to Java aimed at improving its robustness.
+Most of these changes are backward compatible with the existing Java specification.
+
+<P>Many of the above changes involve moving run-time checks to compile-time.
+While run-time checks detect errors in a particular execution of a program,
+compile-time checks detect errors in all executions of a program, increasing
+confidence in the correctness of the program. Also, compile-time checking
+eliminates run-time overhead incurred by run-time checks. The third change
+introduces a run-time check were no check is currently done. The first
+change moves a compile-time check to run-time. In this case, the compile-time
+check is too restrictive, forcing programmers into an unsafe work-around
+that eliminates all checking. In this case, a run-time check improves robustness
+of Java programs.
+
+<P>Table of contents:
+<OL>
+<LI>
+<A HREF="#initialization">Move local-variable initialization checking to
+run-time</A></LI>
+
+<LI>
+<A HREF="#maybe">Add <TT>Maybe</TT> types for compile-time <TT>null</TT>
+checking</A></LI>
+
+<LI>
+<A HREF="#arithmetic">Add arithmetic exceptions</A></LI>
+
+<LI>
+<A HREF="#parameters">Add parametric polymorphism</A></LI>
+
+<LI>
+<A HREF="#subtyping">Eliminate the array subtyping rule</A></LI>
+</OL>
+
+<H1>
+<A NAME="initialization"></A>1. Move initialization checking to run-time</H1>
+Java has a compile-time check to ensure that local variables are initialized
+before use (this section pertains only to local variables, not to static
+or instance variables). Although compile-time checks are generally preferable
+to run-time checks, we recommend moving this particular check to run-time.
+The compile-time check is too strict, forcing programmers into an unsafe
+work around. Moving this check to run-time eliminates the need for this
+work around, improving the reliability of Java programs. Moving this check
+to run-time is backward compatible with the current Java spec, and the
+performance penalty is small because the check can be optimized away in
+most cases.
+
+<P>In general, it is impossible to determine statically if a variable is
+initialized. Thus, Java's check is defined using a conservative, all-paths
+test: a use of a variable is illegal if the variable is not initialized
+on all paths leading up to the use. This test is too strict; it rules out
+code programmers need to write. For example, consider the following:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp; void foo(String args[]) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int j;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (..some predicate..) j = 0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ...more conditional code that might or might
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //&nbsp;&nbsp;&nbsp; not set j...
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int i;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (..true only if j has been set by previous stmts..)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i = j; // Java complains about this because it
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //&nbsp;&nbsp; doesn't think j is initialized
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else i = 10;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ...
+&nbsp;&nbsp;&nbsp;&nbsp; }</PRE>
+This method is illegal in Java because <TT>j</TT> is not initialized on
+all paths leading to the point at which <TT>j</TT> is used. However, conditional
+initialization as in the above example is inevitable. Java's strict check
+forces programmers to work around Java's strict checking by initializing
+variables like <TT>j</TT> with dummy values. An example of such a work
+around can be found in the <TT>MethodExpression</TT> class of the Java
+compiler:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp; public long checkValue(Environment env, Context ctx, long vset) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClassDeclaration c = null; // This is a dummy initialization
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...34-lines of complicated, nested-if statements in which
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c is initialized...
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...15 more lines...
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; clazz = c.getClassDefinition(env); // Assumes c not null!!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+&nbsp;&nbsp;&nbsp;&nbsp; }</PRE>
+The use of <TT>c</TT> near the end of the method body assumes that it is
+initialized by the nested <TT>if</TT> statements. However, the nested <TT>if</TT>
+statements are sufficiently complicated that it is not trivial to determine
+if they in fact initialize <TT>c</TT>. And even when such code is correct,
+it is fragile: a maintenance programmer making a change to the <TT>if</TT>
+statements can easily create a situation in which <TT>c</TT> is not initialized.
+
+<P>The dummy-value work around is particularly dangerous when variables
+like <TT>j</TT> or <TT>c</TT> are stored into data structures. If the conditional
+initialization code is buggy, the dummy value might be stored into the
+data structure, corrupting the structure's integrity. Finding such bugs
+is time consuming because the corruption often does not manifest itself
+until program execution has continued a long distance past the buggy code.
+
+<P>A compile-time error is appropriate if a variable is not initialized
+on any path before it is used. However, only a warning is appropriate if
+a variable is not initialized on all paths. A compile-time error in the
+all-paths case forces programmers into the dummy-value work around, which
+has the effect of removing all checking for uninitialized variables just
+when it is needed most: when complicated conditionals are involved. Instead
+of issuing an error, the compiler should generate code to check at run
+time for uses of variables that are not initialized on all paths.
+<H1>
+<A NAME="maybe"></A>2. Add Maybe types</H1>
+In Java, the <TT>null</TT> reference can be used anywhere an object is
+expected. This requires run-time checks to ensure that <TT>null</TT> is
+not dereferenced. We recommend a change to the type-system in which programmers
+explicitly indicate when <TT>null</TT> is allowed. This change moves most
+<TT>null</TT> checks from run-time to compile-time, improving both performance
+and reliability. This change also makes programs easier to understand.
+This change can be made in an backward compatible manner.
+
+<P>In CLU-derived languages such as Argus (<A HREF="#Liskov88">[Liskov88]</A>)
+and Theta (<A HREF="#Liskov95">[Liskov95]</A>), programmers must indicate
+explicitly when <TT>null</TT> can be assigned to a variable or stored into
+a data structure. This is done by introducing the type <TT>Maybe[T]</TT>.
+The <TT>null</TT> reference can be assigned to <TT>Maybe[T]</TT>, but not
+to <TT>T</TT>. Uses of <TT>Maybe[T]</TT> require run-time checks for <TT>null</TT>,
+but uses of <TT>T</TT> do not. Experience in CLU-derived languages indicates
+that <TT>T</TT> is used most of the time, improving performance and increasing
+reliability. Research work on moving <TT>null</TT> checking in C and Modula-3
+to compile-time support the CLU experience (<A HREF="#Evans96">[Evans96]</A><A HREF="#Detlefs96">[Detlefs96]</A>).
+
+<P>In addition to removing run-time checks, <TT>Maybe</TT> types make programs
+easier to understand. In the Java implementation, the method <TT>inline</TT>
+of the class <TT>ArrayExpression</TT> returns an <TT>Expression</TT>:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp; Expression inline(...) { ... }</PRE>
+Can this method return <TT>null</TT>? The name of the method suggests no:
+when an expression is inlined, one might not expect to get <TT>null</TT>
+back. But a closer inspection of the code indicates that it can in fact
+return <TT>null</TT>. If Java had <TT>Maybe</TT> types, questions such
+as this could be answered by simply looking at signatures rather than by
+looking at code.
+
+<P>We recommend the type expression <TT>T ?x</TT> for <TT>Maybe</TT> types
+in Java. This syntax fits Java's C genealogy: the type qualifier <TT>?</TT>
+would be a type-constructor like <TT>*</TT> is in C. Under this proposal,
+<TT>null</TT> could be assigned to <TT>T ?</TT>, but not to <TT>T</TT>.
+If backward compatibility is desired, the syntax <TT>T !x</TT> could be
+used to indicate that <TT>null</TT> can not be assigned, and the meaning
+of <TT>T x</TT> could remain as-is (<I>i.e.</I>, <TT>null</TT> <I>can</I>
+be assigned). The <TT>T ?</TT> syntax has the advantage of using the simpler
+syntax for the common case and also of having the safer default. It is
+not backward compatible, but a mechanical translator could translate old
+programs.
+<H1>
+<A NAME="arithmetic"></A>3. Add arithmetic exceptions</H1>
+The current Java specification has wrap-around semantics for integer-arithmetic
+overflows. For example, adding one to the maximum-sized integer results
+in the minimum-sized integer. We recommend adding a run-time check for
+overflows and other arithmetic exceptions, {\eg}, adding one to the maximum-sized
+integer should raise an exception. This change will catch hard-to-find
+errors in programs. Although this change is not backward compatible, the
+incompatibility should not affect most programs.
+
+<P>Most Java programs will not rely on Java's wrap-around semantics. Instead,
+programs will assume that overflow does not occur. This is dangerous. If
+buggy code causes an overflow, the error will not be detected; instead,
+corrupt data will be passed further and further away from the source of
+the error. As mentioned earlier, this kind of error is hard to debug.
+
+<P>The argument against arithmetic exceptions is that they impose a performance
+penalty. However, on modern architectures with support for overflow detection,
+it is not clear that this penalty is significant. Further, the reliability/performance
+trade-off is a trade-off that should be decided by the end-user, not the
+language. If the user of a Java applet wants to run fast-and-lose, she
+can turn off overflow checking (and other run-time checking such as array-bounds
+checking). A more cautious user might decide to take the penalty and run
+more safely.
+
+<P>Adding arithmetic exceptions to Java is not backward compatible. However,
+we feel most programs just assume overflows do not occur and do not rely
+on wrap-around semantics. This means the change will not be burdensome
+on the installed base of programs.
+<H1>
+<A NAME="parameters"></A>4. Add parameterized types</H1>
+Currently, Java has no facility for defining parameterized types. We recommend
+adding such a facility. Such a facility will promote a more careful typing
+of programs by programmers, eliminating many run-time type checks and allowing
+more errors to be caught at compile-time.
+
+<P><TT>Hashtable</TT>, Java's hashtable class, illustrates the benefits
+of parameterized types. <TT>Hashtable</TT> maps keys to values. In <TT>Hashtable</TT>,
+both keys and values have type <TT>Object</TT>, which effectively means
+they are untyped, which in turn means that dynamic type-checks are needed.
+For example, in the <TT>Identifier</TT> class of the Java compiler, a <TT>Hashtable</TT>
+is used to map <TT>Strings</TT> to <TT>Identifiers</TT>. Because <TT>Hashtable</TT>
+is untyped, the code for <TT>lookup</TT> must downcast elements of this
+table to <TT>Identifiers</TT>:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp; public static synchronized Identifier lookup(String s) \{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Identifier id = (Identifier)hash.get(s); // Note downcast
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+&nbsp;&nbsp;&nbsp;&nbsp; }</PRE>
+With downcasts of this sort require run-time checks, which imply both the
+possibility of an exception being raised and run-time overhead.
+
+<P>When using <TT>Hashtable</TT>s, the types of both the keys and the values
+are usually known at compile-time. Parameterized types would allow programmers
+to express this information so it can be checked at compile-time. This
+would eliminate the need for downcasts and the associated run-time checks.
+This analysis applies to <TT>Vector</TT> and <TT>Enumeration</TT>, two
+other commonly-used Java classes that require extensive run-time type checking.
+For example, the <TT>Enumeration</TT> class is used over fifty times in
+the Java source code, almost all of which involve a run-time type check
+that could easily be moved to compile-time.
+
+<P>It is beyond the scope of this document to propose a Java extension
+for parameterized types. <A HREF="#Day95">[Day95]</A> contains a valuable
+discussion about the design of parameterization mechanisms and should be
+consulted. It is available via <A HREF="ftp://ftp.pmg.lcs.mit.edu/pub/thor/where-clauses.ps.gz">ftp
+</A>.
+<H1>
+<A NAME="subtyping"></A>5. Eliminate array subtyping</H1>
+Java has a special subtyping rule for array types. If type <TT>A</TT> is
+a supertype of <TT>B</TT>, then <TT>A[]</TT> is a supertype of <TT>B[]</TT>.
+This rule requires a run-time type check every time an element is stored
+into an array. We propose eliminating this rule, replacing it instead with
+new parameterized types that eliminate the run-time checks. While this
+change is not backward compatible, it makes Java both faster and more robust.
+
+<P>Java's array subtyping rule is unsound due to the the infamous ``contravariant''
+rule for subtyping (<A HREF="#Cardelli88">[Cardelli88]</A>). Thus, run-time
+checking is required. To see where, consider the following example:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; class A { A(){}; };
+
+&nbsp;&nbsp;&nbsp;&nbsp; class B extends A {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B() {};
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public static void main(String args[]) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; B[] x = new B[1];
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A[] y = x;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y[0] = new A(); // bug!!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp;&nbsp; };</PRE>
+On the line marked ``<TT>bug</TT>,'' an instance of <TT>A</TT> is stored
+into an array of <TT>B</TT>. This is an error because <TT>A</TT> is not
+a subtype of <TT>B</TT>. The Alpha-3 Java implementation raises a run-time
+exception on this program:
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp; java.lang.IncompatibleTypeException
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at B.main(Test.java:9)</PRE>
+In general, when storing an element into an array, a run-time check is
+needed to ensure that a supertype object isn't being stored into a subtype
+array. (The Java spec says nothing about this problem in its discussion
+of arrays or of <TT>IncompatibleTypeException</TT>.)
+
+<P>The subtype rule for arrays-and its associated run-time check-can be
+eliminated if parameterized types were available. With parameterized types,
+programmers can type programs more carefully, allowing the compiler to
+check for errors. For example, we can add a parameterized <TT>Sequence</TT>
+type. A <TT>Sequence</TT> of <TT>B</TT> is a read-only supertype of <TT>B[]</TT>,
+<I>i.e.</I>, elements can be read from a <TT>Sequence</TT> but not write
+into them. A <TT>Sequence</TT> of <TT>B</TT> can safely be passed where
+a <TT>Sequence</TT> of <TT>A</TT> is expected, taking care of many of the
+places in which the original array subtype rule would be used. Although
+eliminating the array subtype rule would not be backward compatible, we
+feel the resulting improvement in robustness and performance justify the
+change.
+<H1>
+References</H1>
+
+<DL COMPACT>
+<DT>
+<A NAME="Cardelli88"></A><B>Cardelli88</B></DT>
+
+<DD>
+&nbsp;L. Cardelli. A semantics of multiple inheritance. <I>Inf. and Computation</I>,
+<B>76</B>(1/2):138-64. Academic Press, Feb./Mar. 1988.</DD>
+
+<DT>
+<A NAME="Day95"></A><B>Day95</B></DT>
+
+<DD>
+&nbsp;M. Day, R. Gruber, B. Liskov, and A. Myers. Subtypes vs. where clauses:
+constraining parametric polymorphism. <I>OOPSLA '95 Conf. Proceedings</I>
+(Austin, TX). Published as <I>ACM SIGPLAN Notices</I>, <B>30</B>(10):156-68.
+ACM, Oct. 1995. <A HREF="ftp://ftp.pmg.lcs.mit.edu/pub/thor/where-clauses.ps.gz">ftp://ftp.pmg.lcs.mit.edu/pub/thor/where-clauses.ps.gz</A>.</DD>
+
+<DT>
+<A NAME="Detlefs96"></A><B>Detlefs96</B></DT>
+
+<DD>
+&nbsp;D. L. Detlefs. An overview of the extended static checking system.
+ACM, Jan. 1996. <I>To appear.</I></DD>
+
+<DT>
+<A NAME="Evans96"></A><B>Evans96</B></DT>
+
+<DD>
+&nbsp;D. Evans. Static detection of dynamic memory errors. <I>Submitted
+for publication.</I></DD>
+
+<DT>
+<A NAME="Java95"></A><B>Java95</B></DT>
+
+<DD>
+&nbsp;Sun Microsystems. The Java language: a white paper. Sun Microsystems,
+Inc., 1995. <A HREF="http://java.sun.com/1.0alpha3/doc/overview/java/">http://java.sun.com/1.0alpha3/doc/overview/java/</A>.</DD>
+
+<DT>
+<A NAME="Liskov88"></A><B>Liskov88</B></DT>
+
+<DD>
+&nbsp;B. Liskov. Distributed programming in Argus. <I>Communications of
+the ACM</I>, <B>31</B>(3):300-12. ACM, Mar. 1988.</DD>
+
+<DT>
+<A NAME="Liskov95"></A><B>Liskov95</B></DT>
+
+<DD>
+&nbsp;B. Liskov, D. Curtis, M. Day, S. Ghemawat, R. Gruber, P. Johnson,
+and A. Myers. Theta reference manual. MIT LCS, PMG memo 88, Feb. 1995.
+<A HREF="http://www.pmg.lcs.mit.edu/Theta.html">http://www.pmg.lcs.mit.edu/Theta.html</A>.</DD>
+</DL>
+
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

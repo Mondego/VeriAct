@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModelModifies ...
+  Prover started:TIME
+    [TIME]
+
+ModelModifies: m() ...
+    [TIME]  passed
+
+ModelModifies: mm() ...
+    [TIME]  passed
+
+ModelModifies: p(int) ...
+    [TIME]  passed
+
+ModelModifies: mmm() ...
+    [TIME]  passed
+
+ModelModifies: ModelModifies() ...
+    [TIME]  passed
+  [TIME total]

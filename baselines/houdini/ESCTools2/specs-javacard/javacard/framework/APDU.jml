@@ -1,0 +1,268 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: APDU.jml,v 1.8 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public final class APDU { 
+
+        /*@ public invariant _Lc >= 0 && _Lc < 256 ; @*/
+   	//@ public ghost short _Lc;
+
+        /*@ public invariant _Lr >= 0 && _Lr <= 256 ; @*/
+   	//@ public ghost short _Lr;
+
+        /*@ public invariant _Le >= 0 && _Le <= 256 ; @*/
+   	//@ public ghost short _Le;
+
+        /*@ public invariant BUFFER_LENGTH >= 37 ; @*/
+        //@ public ghost static short BUFFER_LENGTH;
+
+        //@ public ghost byte[] _buffer;
+        /*@ public invariant _buffer != null; @*/
+        /*@ public invariant _buffer.length == BUFFER_LENGTH; @*/
+        /*@ public invariant _buffer.owner == this; @*/
+	/*@ public constraint _buffer == \old(_buffer); @*/
+
+        /*@ public invariant (_apduState >= STATE_INITIAL &&
+	               _apduState <= STATE_FULL_OUTGOING)
+	              || _apduState == STATE_ERROR_NO_T0_GETRESPONSE
+	              || _apduState == STATE_ERROR_T1_IFD_ABORT
+	              || _apduState == STATE_ERROR_IO
+	              || _apduState == STATE_ERROR_NO_T0_REISSUE ;
+	@*/
+
+        //@ public ghost byte _apduState;
+
+        /*@ public invariant _apduState == STATE_INITIAL ==>
+	     _Lc == (short)(_buffer[ISO7816.OFFSET_LC] & 0xff); @*/
+
+        //@ axiom (\forall byte b; 0 <= (short)(b  & 0xff));
+        //@ axiom (\forall byte b; (short)(b  & 0xff) < 256);
+        //@ axiom (\forall byte b; (short)(b & 0xff) == 0 ==> b == 0);
+        //@ axiom (\forall byte b;  b == (byte)(b & 0xff));
+        //@ axiom (\forall short s; 0 <= s && s < 256 ==> s == ((byte)s & 0xff));
+        //@ axiom (byte)256 == 0;
+	        
+	public static final byte PROTOCOL_MEDIA_CONTACTLESS_TYPE_A;
+	public static final byte PROTOCOL_MEDIA_CONTACTLESS_TYPE_B;
+	public static final byte PROTOCOL_MEDIA_DEFAULT;
+	public static final byte PROTOCOL_MEDIA_MASK;
+	public static final byte PROTOCOL_MEDIA_USB;
+	public static final byte PROTOCOL_T0;
+	public static final byte PROTOCOL_T1;
+	public static final byte PROTOCOL_TYPE_MASK;
+	public static final byte STATE_ERROR_NO_T0_GETRESPONSE;
+	public static final byte STATE_ERROR_T1_IFD_ABORT;
+	public static final byte STATE_ERROR_IO;
+	public static final byte STATE_ERROR_NO_T0_REISSUE;
+
+	public static final byte STATE_INITIAL;
+	public static final byte STATE_PARTIAL_INCOMING;
+	public static final byte STATE_FULL_INCOMING;
+	public static final byte STATE_OUTGOING;
+	public static final byte STATE_OUTGOING_LENGTH_KNOWN;
+	public static final byte STATE_PARTIAL_OUTGOING;
+	public static final byte STATE_FULL_OUTGOING;
+
+	//@ public static invariant PROTOCOL_MEDIA_CONTACTLESS_TYPE_A == 0xff;
+	//@ public static invariant PROTOCOL_MEDIA_CONTACTLESS_TYPE_B == 0xef;
+	//@ public static invariant PROTOCOL_MEDIA_DEFAULT == 0;
+	//@ public static invariant PROTOCOL_MEDIA_MASK == 0x8f;
+	//@ public static invariant PROTOCOL_MEDIA_USB == 0xdf;
+	//@ public static invariant PROTOCOL_T0 == 0;
+	//@ public static invariant PROTOCOL_T1 == 1;
+	//@ public static invariant PROTOCOL_TYPE_MASK == 0x0f;
+	//@ public static invariant STATE_ERROR_NO_T0_GETRESPONSE == 0x80;
+	//@ public static invariant STATE_ERROR_T1_IFD_ABORT == 0x81;
+	//@ public static invariant STATE_ERROR_IO == 0x82;
+	//@ public static invariant STATE_ERROR_NO_T0_REISSUE == 0x83;
+
+	//@ public static invariant STATE_INITIAL == 0;
+	//@ public static invariant STATE_PARTIAL_INCOMING == 1;
+	//@ public static invariant STATE_FULL_INCOMING == 2;
+	//@ public static invariant STATE_OUTGOING == 3;
+	//@ public static invariant STATE_OUTGOING_LENGTH_KNOWN == 4;
+	//@ public static invariant STATE_PARTIAL_OUTGOING == 5;
+	//@ public static invariant STATE_FULL_OUTGOING == 6;
+
+
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures \result == _buffer;
+	   assignable \nothing;
+      @*/
+    public /*@pure@*/ byte[] getBuffer();
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures getProtocol() == PROTOCOL_T0 ==> \result == 1 ;
+	   ensures getProtocol() == PROTOCOL_T1 ==>
+	     (\result > 0 && \result <= BUFFER_LENGTH) ;
+	   assignable \nothing;
+      @*/
+    public static /*@pure@*/ short getInBlockSize();
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures getProtocol() == PROTOCOL_T0 ==> \result == 258 ;
+	   ensures getProtocol() == PROTOCOL_T1 ==>
+	     (\result > 0 && \result <= BUFFER_LENGTH) ;
+	   assignable \nothing;
+      @*/
+    public static /*@pure@*/ short getOutBlockSize();
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures \result == PROTOCOL_T0 || \result == PROTOCOL_T1;
+	   assignable \nothing;
+      @*/
+    public static /*@pure@*/ byte getProtocol();
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures getProtocol() == PROTOCOL_T0 ==> \result == 0;
+	   assignable \nothing;
+      @*/
+    public /*@pure@*/ byte getNAD();
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures \result == _apduState;
+	   assignable \nothing;
+      @*/
+    public /*@pure@*/ byte getCurrentState();
+
+    /*@  public normal_behavior
+           requires _apduState < STATE_OUTGOING;
+	   ensures getProtocol() == PROTOCOL_T0 ==> \result == 256;
+	   ensures getProtocol() == PROTOCOL_T1 ==> \result == _Le;
+	   ensures _apduState == STATE_OUTGOING;
+	   assignable _apduState;
+      @*/
+    public short setOutgoing() throws APDUException;
+
+    /*@  public normal_behavior
+           requires _apduState < STATE_OUTGOING;
+	   ensures getProtocol() == PROTOCOL_T0 ==> \result == 256;
+	   ensures getProtocol() == PROTOCOL_T1 ==> \result == _Le;
+	   ensures _apduState == STATE_OUTGOING;
+	   assignable _apduState;
+      @*/
+    public short setOutgoingNoChaining() throws APDUException;
+
+    /*@  public normal_behavior
+           requires len >= 0 && len <= 256 && _apduState == STATE_OUTGOING;
+	   ensures _Lr == len;
+           ensures _apduState == STATE_OUTGOING_LENGTH_KNOWN;
+	   assignable _apduState, _Lr;
+      @*/
+    public void setOutgoingLength(short len) throws APDUException;
+
+    /*@  public normal_behavior
+           requires _apduState == STATE_INITIAL;
+	   ensures \old(_Lc) <= BUFFER_LENGTH - ISO7816.OFFSET_LC - 1
+	             ==> (\result == \old(_Lc) &&
+		   _apduState == STATE_FULL_INCOMING);
+           ensures \old(_Lc) > BUFFER_LENGTH - ISO7816.OFFSET_LC - 1
+	             ==> (\result ==  BUFFER_LENGTH - ISO7816.OFFSET_LC - 1 &&
+		   _apduState == STATE_PARTIAL_INCOMING);
+	   ensures (* _buffer[ISO7816.OFFSET_CDATA..ISO7816.OFFSET_CDATA+\result-1] received *);
+	   assignable _apduState, _Lc;
+      @*/
+    public short setIncomingAndReceive() throws APDUException;
+
+    /*@  public normal_behavior
+           requires _apduState == STATE_PARTIAL_INCOMING || _apduState == STATE_FULL_INCOMING &&
+	     bOff >= 0 && bOff <= _buffer.length;
+	   ensures (\old(_apduState) == STATE_FULL_INCOMING ==>
+ 	            \result == 0);
+	   ensures  \old(_apduState) == STATE_PARTIAL_INCOMING ==>
+                     (\old(_Lc) <= BUFFER_LENGTH - bOff
+	               ==> (\result == \old(_Lc) &&
+   		             _apduState == STATE_FULL_INCOMING));
+	   ensures \old(_apduState) == STATE_PARTIAL_INCOMING ==>
+		     (\old(_Lc) > BUFFER_LENGTH - bOff
+	             ==> (\result ==  BUFFER_LENGTH - bOff &&
+		            (_Lc > 0 ==> _apduState == STATE_PARTIAL_INCOMING) &&
+		            (_Lc == 0 ==> _apduState == STATE_FULL_INCOMING)
+		         ));
+	   ensures (* _buffer[bOff..bOff+\result-1] received *);
+	   assignable _apduState, _Lc;
+      @*/
+    public short receiveBytes(short bOff) throws APDUException;
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures \result != null;
+	   assignable \nothing;
+      @*/
+    public static /*@pure@*/ APDU getCurrentAPDU() throws SecurityException;
+	
+    /*@  public normal_behavior
+           requires true;
+	   ensures \result == getCurrentAPDU().getBuffer();
+	   assignable \nothing;
+      @*/
+    public static /*@ pure @*/ byte[] getCurrentAPDUBuffer() throws SecurityException;
+
+    /*@  public normal_behavior
+           requires true;
+	   ensures \result >= 0 && \result <= 3;
+	   assignable \nothing;
+      @*/
+    public static /*@pure@*/ byte getCLAChannel();
+	
+    /*@  public normal_behavior
+           requires true;
+	   ensures true;
+	   assignable \nothing;
+      @*/
+    public static void waitExtension();
+
+    /*@  public normal_behavior
+           requires _apduState >= STATE_OUTGOING_LENGTH_KNOWN && 
+	     _apduState < STATE_FULL_OUTGOING;
+	   requires bOff >= 0 && len >= 0 && len <= 256 &&
+	      bOff + len <= _buffer.length;
+	   ensures _apduState == STATE_FULL_OUTGOING;
+	   ensures (* _buffer[bOff..bOff+len-1] sent out *);
+	   assignable _apduState;
+      @*/
+    public void sendBytes(short bOff, short len) throws APDUException;
+
+    /*@  public normal_behavior
+           requires _apduState < STATE_OUTGOING;
+	   requires bOff >= 0 && len >= 0 && len <= 256 && bOff + len <= _buffer.length;
+	   ensures _apduState == STATE_FULL_OUTGOING;
+	   ensures _Lr == len;
+	   ensures (* _buffer[bOff..bOff+len-1] sent out *);
+	   assignable _apduState, _Lr;
+      @*/
+    public void setOutgoingAndSend(short bOff, short len)
+	throws APDUException;
+
+    /*@ public normal_behavior
+           requires _apduState >= STATE_OUTGOING_LENGTH_KNOWN &&
+   	     _apduState < STATE_FULL_OUTGOING;
+	   requires  outData != null && bOff >= 0 && len >= 0 && len <= 256 && bOff + len <= outData.length;
+	   ensures _apduState == STATE_FULL_OUTGOING;
+	   ensures (* outData[bOff..bOff+len-1] sent out *);
+	   assignable _apduState;
+      @*/
+    public void sendBytesLong(byte[] outData, short bOff, short len)
+      throws APDUException, SecurityException;
+
+}

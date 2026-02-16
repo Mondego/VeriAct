@@ -1,0 +1,50 @@
+ESC/Java version VERSION
+src|test|resources|UnchangedInner.java: Caution: Using given file as the .java file, even though it is not the java file for UnchangedInner on the classpath
+    [TIME]
+
+UnchangedInner ...
+  Prover started:TIME
+    [TIME]
+
+UnchangedInner: test() ...
+------------------------------------------------------------------------
+src|test|resources|UnchangedInner.java:28: Warning: Possible assertion failure (Assert)
+        //@ assert x>0 ;        // error
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UnchangedInner: test2() ...
+------------------------------------------------------------------------
+src|test|resources|UnchangedInner.java:34: Warning: Possible assertion failure (Assert)
+        //@ assert x>0 ;        // error
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UnchangedInner: UnchangedInner() ...
+    [TIME]  passed
+  [TIME total]
+
+UnchangedInner$Inner ...
+    [TIME]
+
+UnchangedInner$Inner: Inner() ...
+    [TIME]  passed
+
+UnchangedInner$Inner: Inner(int) ...
+src|test|resources|UnchangedInner.java:16: Error: There is no assignable clause allowing this method call
+        Inner(int y) {}
+                     ^
+/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class: Associated declaration: 
+src|test|resources|UnchangedInner.java:15: Associated declaration: 
+        //@ modifies x;
+            ^
+    [TIME]  passed
+
+UnchangedInner$Inner: modify() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings
+1 error

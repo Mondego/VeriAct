@@ -1,0 +1,30 @@
+ESC/Java version VERSION
+src|test|resources|ModChecksArgs.java: Caution: Using given file as the .java file, even though it is not the java file for ModChecksArgs on the classpath
+    [TIME]
+
+ModChecksArgs ...
+  Prover started:TIME
+    [TIME]
+
+ModChecksArgs: ModChecksArgs() ...
+    [TIME]  passed immediately
+
+ModChecksArgs: m() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecksArgs.java:13: Warning: Possible violation of modifies clause (Modifies)
+            ma(1,a);
+              ^
+Associated declaration is "src|test|resources|ModChecksArgs.java", line 18, col 14:
+        //@ modifies aa[i];
+                     ^
+Associated declaration is "src|test|resources|ModChecksArgs.java", line 10, col 5:
+        //@ modifies a[0];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksArgs: ma(int, int[]) ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+1 warning

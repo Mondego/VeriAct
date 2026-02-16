@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|FreshErrors.java: Caution: Using given file as the .java file, even though it is not the java file for FreshErrors on the classpath
+    [TIME]
+
+FreshErrors ...
+src|test|resources|FreshErrors.java:7: Error: The function \fresh cannot be used in this context
+        //@ requires \fresh(o);
+                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+1 error

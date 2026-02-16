@@ -1,0 +1,10 @@
+package junittests;
+public class RefinesA {
+
+	//@ ghost public boolean b = true;
+
+	//@ requires i == 0;
+	//@ ensures \result == 0;
+	public int m(int i);
+
+}

@@ -1,0 +1,131 @@
+; === Define typeof for primitive types - DRCok
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   (IFF (is x |T_int|) (EQ (typeof x) |T_int|))))
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   ;(PATS (is x |T_short|))
+	   (IFF (is x |T_short|) (EQ (typeof x) |T_short|))))
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   ;(PATS (is x |T_long|))
+	   (IFF (is x |T_long|) (EQ (typeof x) |T_long|))))
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   ;(PATS (is x |T_byte|))
+	   (IFF (is x |T_byte|) (EQ (typeof x) |T_byte|))))
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   ;(PATS (is x |T_char|))
+	   (IFF (is x |T_char|) (EQ (typeof x) |T_char|))))
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   ;(PATS (is x |T_boolean|))
+	   (IFF (is x |T_boolean|) (EQ (typeof x) |T_boolean|))))
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   ;(PATS (is x |T_double|))
+	   (IFF (is x |T_double|) (EQ (typeof x) |T_double|))))
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (typeof x))
+	   ;(PATS (is x |T_float|))
+	   (IFF (is x |T_float|) (EQ (typeof x) |T_float|))))
+
+(BG_PUSH
+  (FORALL (a0 b0 e s T v)
+    (PATS (arrayMake a0 b0 s T v))
+    (arrayFresh
+	(arrayMake a0 b0 s T v)
+	a0 b0 elems s T v)))
+
+(BG_PUSH
+  (FORALL (a0 b0 a1 b1 s1 s2 T1 T2 v)
+    (PATS (MPAT (arrayMake a0 b0 s1 T1 v) (arrayMake a1 b1 s2 T2 v)))
+    (IMPLIES
+	(EQ (arrayMake a0 b0 s1 T1 v) (arrayMake a1 b1 s2 T2 v))
+	(AND (EQ b0 b1) (EQ T1 T2) (EQ s1 s2)))))
+
+(BG_PUSH 
+ (FORALL (i)
+	 (PATS (integralMod 0 i))
+	 (IMPLIES (NOT (EQ i 0))
+		  (EQ (integralMod 0 i) 0))))
+
+(BG_PUSH
+ (FORALL (t)
+	 (PATS (classLiteral t))
+	 (EQ (classLiteral t) t)))
+
+; === A few floating point axioms - DRCok
+;; FIXME - floatingLT etc are predicates here, but are functions in 
+;; ESC/java - is that a problem?
+
+;; Order axioms
+(BG_PUSH
+ (FORALL (d dd)
+  (AND
+     (OR
+	(EQ |@true| (floatingLT d dd))
+	(EQ |@true| (floatingEQ d dd))
+	(EQ |@true| (floatingGT d dd)))
+     (IFF (EQ |@true| (floatingLE d dd)) 
+        (OR (EQ |@true| (floatingEQ d dd)) (EQ |@true| (floatingLT d dd))))
+     (IFF (EQ |@true| (floatingGE d dd)) 
+        (OR (EQ |@true| (floatingEQ d dd)) (EQ |@true| (floatingGT d dd))))
+     (IFF (EQ |@true| (floatingLT d dd)) (EQ |@true| (floatingGT dd d)))
+     (IFF (EQ |@true| (floatingLE d dd)) (EQ |@true| (floatingGE dd d)))
+     (NOT (IFF (EQ |@true| (floatingLT d dd)) (EQ |@true| (floatingGE d dd))))
+     (NOT (IFF (EQ |@true| (floatingGT d dd)) (EQ |@true| (floatingLE d dd)))))))
+
+
+;; floatingNE
+(BG_PUSH (FORALL (d dd) (IFF (EQ |@true| (floatingEQ d dd)) 
+                             (NOT (EQ |@true| (floatingNE d dd))))))
+
+;; floatADD
+(BG_PUSH (FORALL (d dd)
+  (IMPLIES (EQ |@true| (floatingGT d (floatingNEG dd))) 
+           (EQ |@true| (floatingGT (floatingADD d dd) |F_0.0|)))))
+
+;; floatMUL (currently unused)
+;;(BG_PUSH (FORALL (d dd) (AND
+  ;;(IFF (OR (floatingEQ d |F_0.0|) (floatingEQ dd |F_0.0|)) 
+  ;;     (floatingEQ (floatingMUL d dd) |F_0.0|))
+  ;;(IMPLIES (AND (floatingGT d |F_0.0|) (floatingGT dd |F_0.0|)) 
+  ;;         (floatingGT (floatingMUL d dd) |F_0.0|))
+  ;;(IMPLIES (AND (floatingLT d |F_0.0|) (floatingLT dd |F_0.0|)) 
+  ;;         (floatingGT (floatingMUL d dd) |F_0.0|))
+  ;;(IMPLIES (AND (floatingLT d |F_0.0|) (floatingGT dd |F_0.0|)) 
+  ;;         (floatingLT (floatingMUL d dd) |F_0.0|))
+  ;;(IMPLIES (AND (floatingGT d |F_0.0|) (floatingLT dd |F_0.0|)) 
+  ;;         (floatingLT (floatingMUL d dd) |F_0.0|)))))
+
+;; floatingMOD
+(BG_PUSH
+ (FORALL (d dd)
+  (IMPLIES (EQ |@true| (floatingNE dd |F_0.0|)) (AND
+    (IMPLIES (EQ |@true| (floatingGE d |F_0.0|)) 
+             (EQ |@true| (floatingGE (floatingMOD d dd) |F_0.0|)))
+    (IMPLIES (EQ |@true| (floatingLE d |F_0.0|)) 
+             (EQ |@true| (floatingLE (floatingMOD d dd) |F_0.0|)))))))
+
+(BG_PUSH (FORALL (d dd) 
+    (IMPLIES (EQ |@true| (floatingGT dd |F_0.0|)) (AND
+        (EQ |@true| (floatingGT (floatingMOD d dd) (floatingNEG dd))) 
+        (EQ |@true| (floatingLT (floatingMOD d dd) dd))))))
+
+(BG_PUSH (FORALL (d dd) 
+    (IMPLIES (EQ |@true| (floatingLT dd |F_0.0|)) 
+             (EQ |@true| (floatingLT (floatingMOD d dd) (floatingNEG dd))))))
+
+(BG_PUSH (FORALL (d dd) 
+    (IMPLIES (EQ |@true| (floatingLT dd |F_0.0|)) 
+             (EQ |@true| (floatingGT (floatingMOD d dd) dd)))))

@@ -1,0 +1,23 @@
+/**
+ ** Test escjava's reasoning about member inner classes, part V
+ **/
+
+
+/*
+ * Test that invariants work properly:
+ */
+class Outer {
+    int x;
+
+    class Inner {
+	//@ invariant Outer.this.x>0
+
+	Inner() { x = 3; }
+
+	Inner(char y) { }    // failure to establish invariant
+
+	void m() {
+	    //@ assert x>0
+	}
+    }
+}

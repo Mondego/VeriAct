@@ -1,0 +1,1205 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Author" CONTENT="Rustan Leino">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.03 [en] (Win95; I) [Netscape]">
+   <TITLE>ESC/Java Annotation Reference Manual</TITLE>
+</HEAD>
+<BODY>
+
+<H1>
+ESCJ 17a:&nbsp; ESC/Java Annotation Reference Manual</H1>
+DIGITAL Confidential.&nbsp; By Rustan and Jim, 5 February 1998.&nbsp; Supersedes
+ESCJ 7.&nbsp; Revised on 22 May 1998 (ESCJ 17)&nbsp; and on 21 Dec 1998
+(ESCJ 17a).
+
+<P>To do:
+<UL>
+<LI>
+write a introduction (big picture overview of the system)</LI>
+
+<LI>
+semantics of all checks</LI>
+
+<LI>
+In <I>Java-to-Guarded Command translation</I> document:&nbsp; which line
+number is associated with a check (to determine whether or check is suppressed
+by a nowarn)</LI>
+
+<LI>
+command line switches</LI>
+
+<LI>
+function <I>DTTFSA</I> (nee <I>WIZARD</I>, see src.sparta post)</LI>
+
+<LI>
+Explain what [<I>JLS</I>, 19.4] means, and use it throughout.</LI>
+
+<LI>
+In <I>Logic</I> document, change <I>elemType</I> to <I>elemtype</I>.</LI>
+
+<LI>
+Clarify treatment of exceptions vs. runtime errors.</LI>
+
+<LI>
+Define "current method" and "current class".</LI>
+
+<LI>
+Clean up "method (or constructor)" language.</LI>
+
+<LI>
+Add section describing sources of unsoundness and incompleteness.</LI>
+
+<LI>
+Shorten check names, and make sure they match our implementation.</LI>
+
+<LI>
+Add Raymie's suggestion for an additional syntactic form of quantifers,
+useful when specifying properties of arrays (which is when we expect quantifiers
+to be used anyway).</LI>
+</UL>
+
+<H2>
+0&nbsp; Checks</H2>
+ESC/Java can produce the following error messages:
+<UL>
+<LI>
+Uncaught exceptions.&nbsp; ESC/Java includes checks to detect the possibility
+of the following Java exceptions being raised and not caught:</LI>
+
+<UL>
+<LI>
+<TT>NullPointerException</TT> -- an attempt to access a field or call a
+method of <TT>null</TT> or to access an array element of <TT>null</TT>.</LI>
+
+<LI>
+<TT>IndexOutOfBoundsException</TT> -- an attempt to access an array outside
+its bounds.</LI>
+
+<LI>
+<TT>ClassCastException</TT> -- an attempt to narrow the type of an object
+to something it is not.</LI>
+
+<LI>
+<TT>ArrayStoreException</TT> -- an attempt to store an object into an array
+whose dynamic element type is not a supertype of the object's type.</LI>
+
+<LI>
+<TT>ArithmeticException</TT> -- an attempt to divide by the integer 0.</LI>
+
+<LI>
+<TT>NegativeArraySizeException</TT> -- an attempt to create an array of
+negative length.</LI>
+</UL>
+If ESC/Java produces one of the error messages above, it doesn't necessarily
+mean that the indicated uncaught exception will occur in any execution
+of the code being checked; it merely means that ESC/Java is unable to prove
+that the exception will never occur, given the annotations that the user
+has supplied.
+<LI>
+ESC/Java violations.&nbsp; ESC/Java allows a user to supply annotations
+that record design decisions.&nbsp; It includes checks to detect the following
+possible violations of these design decisions:</LI>
+
+<UL>
+<LI>
+<TT>AssertViolation</TT> -- An <TT>assert</TT> statement might not hold.</LI>
+
+<LI>
+<TT>PreconditionViolation</TT> -- A precondition of a method call might
+not hold.</LI>
+
+<LI>
+<TT>PostconditionViolation</TT> -- The current method might not establish
+its postcondition.</LI>
+
+<LI>
+<TT>ModifiesViolation</TT> -- The current method might modify a variable
+not mentioned in its <TT>modifies</TT> clause.</LI>
+
+<LI>
+<TT>ObjectInvariantViolation</TT> -- The current method might fail to preserve
+or establish a declared object invariant.</LI>
+
+<LI>
+<TT>InitialLoopInvariantViolation</TT> -- A declared loop invariant might
+not hold on entry to a loop.</LI>
+
+<LI>
+<TT>IterativeLoopInvariantViolation</TT> -- A loop invariant might not
+be preserved by the body of a loop.</LI>
+
+<LI>
+<TT>SharingViolation</TT> -- A shared variable might be accessed while
+the locks declared to protect it are not held.</LI>
+
+<LI>
+<TT>LockingOrderViolation</TT> -- A lock might be acquired out of the declared
+lock ordering.</LI>
+
+<LI>
+<TT>InitializationViolation</TT> -- A local variable might be read before
+being given a meaningful value.</LI>
+
+<LI>
+<TT>DefinednessViolation</TT> -- A variable might be read while the condition
+declaring when it is meaningful does not hold.</LI>
+
+<LI>
+<TT>CodeReachabilityViolation</TT> -- A piece of code declared as unreachable
+might be reached.</LI>
+</UL>
+We will define these violations more precisely when we describe the annotations
+below.
+<BR>Again, if ESC/Java produces one of the error messages above, it doesn't
+necessarily indicate the presence of an error; it merely means that ESC/Java
+is unable to prove that the error will never occur, given the annotations
+that the user has supplied.
+<LI>
+ESC/Java warnings.&nbsp; ESC/Java produces warnings in some situations
+when either Java code or annotations use variables in ways that might be
+regarded as poor programming style and that may diminish the checker's
+effectiveness in detecting errors.&nbsp; These warnings are:</LI>
+
+<UL>
+<LI>
+<TT>ConstructorLeakWarning</TT> -- A constructor contains a statement that
+uses <TT>this</TT> as if it were completely constructed before it is.</LI>
+
+<LI>
+<TT>InitializerLeakWarning</TT> -- An initializer expression uses <TT>this</TT>
+as if it were completely constructed before it is.</LI>
+
+<LI>
+<TT>WriteableDeferredWarning</TT> -- A variable declared as <TT>writeable_deferred</TT>
+is used as an assignment target.</LI>
+
+<LI>
+<TT>UnenforcableObjectInvariantWarning</TT> -- An object invariant mentions
+a variable that is writeable outside the current scope.</LI>
+
+<LI>
+<TT>ModifiesExtensionWarning</TT> -- An <TT>also_modifies</TT> clause lists
+a field of <TT>this</TT> that neither is declared by the current class
+nor is a <TT>writeable_deferred</TT> field of the direct superclass.</LI>
+
+<LI>
+<TT>IgnoringUninitializedPragmaWarning</TT> -- A local variable without
+an initializing expression is declared with the <TT>uninitialized</TT>
+pragma, which will be ignored.</LI>
+</UL>
+ESC/Java produces these warnings based on a purely syntactic inspection
+of the program, to be described below.&nbsp; No theorem proving is involved.</UL>
+Given an annotated Java program, ESC/Java first parses and type checks
+the program.&nbsp; It then produces any warnings for the methods to be
+checked.&nbsp; Finally, ESC/Java attempts to prove the absence of uncaught
+exceptions and of ESC/Java violations in the methods to be checked.&nbsp;
+Once ESC/Java has reported an uncaught exception or an ESC/Java violation
+for a given method, it will stop searching for further errors in that method
+and will instead go on to the next method.
+<H2>
+1&nbsp; Specification expressions, predicates, and designators</H2>
+The ESC/Java annotations may contain <I>specification expressions</I>,
+<I>predicates</I>, and <I>specification designators</I>.&nbsp; To a first
+approximation, a specification expression is similar to a Java expression,
+and a specification designator is similar to a Java <I>LeftHandSide</I>
+[<I>JLS</I>, 19.12].&nbsp; A <I>predicate</I> is a specification expression
+of type <TT>boolean</TT>.&nbsp; While we have attempted to avoid gratuitous
+differences between these specification constructs and the corresponding
+Java constructs, some differences, for example allowing quantifiers and
+forbidding side effects, are inevitable.
+
+<P>This section describes the syntax and type checking rules for specification
+expressions and specification designators.&nbsp; It also describes some
+additional syntactic restrictions that go beyond type checking.
+<H3>
+1.0&nbsp; Specification expressions</H3>
+
+<H4>
+1.0.0&nbsp; Syntax of specification expressions</H4>
+The grammar for specification expressions allows a superset of Java expressions:
+<UL><I>SpecExpr</I> ::=
+<BR>&nbsp;&nbsp; <I>ExtendedExpr</I>
+<BR>|&nbsp; <I>SpecExpr</I> <TT>==></TT> <I>SpecExpr</I>
+<BR>|&nbsp; <I>SpecExpr</I> <TT>&lt;:</TT> <I>SpecExpr</I>
+<BR>|&nbsp; <TT>type</TT> <TT>(</TT> <I>Type</I> <TT>)</TT>
+<BR>|&nbsp; <TT>classlock</TT> <TT>(</TT> <I>Type</I> <TT>)</TT>
+<BR>|&nbsp; <TT>( forall</TT> <I>BoundVariableDeclarationStatement</I>+&nbsp;
+<I>SpecExpr</I> <TT>)</TT>
+<BR>|&nbsp; <TT>( exists</TT> <I>BoundVariableDeclarationStatement</I>+&nbsp;
+<I>SpecExpr</I> <TT>)</TT>
+<BR>|&nbsp; <TT>( LBLPOS </TT><I>Identifier</I> <I>SpecExpr</I><TT> )</TT>
+<BR>|&nbsp; <TT>( LBLNEG </TT><I>Identifier</I> <I>SpecExpr</I><TT> )</TT></UL>
+where
+<UL>
+<LI>
+the grammar for <I>ExtendedExpr</I> is the same as for a Java <I>Expression</I>
+[<I>JLS</I>, 19.12] but with every right-hand side occurrence of <I>Expression</I>
+replaced by <I>SpecExpr</I>,</LI>
+
+<LI>
+the grammar for <I>Type</I> is the same as in Java [<I>JLS</I>, 19.4],
+but with the addition of the special type <TT>TYPE</TT> (described below),
+and</LI>
+
+<LI>
+the grammar for <I>BoundVariableDeclarationStatement</I> is the same as
+for a Java <I>LocalVariableDeclarationStatement</I> [<I>JLS</I>, 19.11],
+except that initializers are forbidden.</LI>
+
+<BR><FONT SIZE=-1>Java 1.1 apparently allows modifiers in local variable
+declarations.&nbsp; As far as we can tell, there is no reason to allow
+them in bound variable declarations.</FONT></UL>
+Unlike the [<I>JLS</I>, 19.11] grammar, the <I>SpecExpr</I> grammar above
+does not encode operator binding precedence, so here it is:&nbsp; The binary
+operator <TT>==></TT> binds less strongly than <TT>&amp;&amp;</TT> and
+<TT>||</TT>, but more strongly than the ternary conditional operator <TT>?
+:</TT>.&nbsp; The operator <TT>&lt;:</TT> has the same precedence as the
+relational operators <TT>&lt;</TT>, <TT>&lt;=</TT>, <TT>>=</TT>, and <TT>></TT>.
+
+<P>The labeled expressions (<TT>LBLPOS</TT> and <TT>LBLNEG</TT>) are advanced
+features of the specification language.&nbsp; A labeled expression is logically
+equivalent to the contained <I>SpecExpr</I>.&nbsp; The <I>Identifier</I>
+(called the label of the expression) is passed through to the theorem prover
+(which has built-in support for labeled formulas) and is used partly to
+generate tracing information and partly to identify a part of a counterexample
+context.
+<UL><FONT SIZE=-1>Implementation note:&nbsp; If the parser sees&nbsp;<TT>
+</TT><I>Identifier</I> <TT>(&nbsp;</TT> , it compares the <I>Identifier</I>
+with "<TT>type</TT>" and with "<TT>classlock</TT>".&nbsp; If it matches,
+the parser continues to match a <I>Type</I> followed by&nbsp;<TT> )&nbsp;</TT>
+.&nbsp; If it does not match, the parser continues as if the <I>Identifier</I>
+were a method name.&nbsp; Since actual method calls are disallowed in specification
+expressions (see <A HREF="#furtherSpecExprRestrictions">section 1.0.4</A>),&nbsp;
+the only legal <I>Identifier</I> in the latter case would be one of the
+ESC/Java special function symbols <TT>typeof</TT>, <TT>elemtype</TT>, <TT>max</TT>,
+<TT>fresh</TT>, or <TT>PRE</TT>, as explained in <A HREF="#nameResolutionSpecExpr">section
+1.0.1</A>.</FONT></UL>
+
+<UL><FONT SIZE=-1>Implementation note:&nbsp; If the parser sees&nbsp; <TT>(</TT>
+<I>Identifier</I><TT>&nbsp;</TT> , it compares the <I>Identifier</I> with
+the strings "<TT>forall</TT>", "<TT>exists</TT>", "<TT>LBLPOS</TT>", and
+"<TT>LBLNEG</TT>".&nbsp; If the <I>Identifier</I> is <TT>forall</TT> or
+<TT>exists</TT>, and the next token is either a <I>PrimitiveType</I> or
+an <I>Identifier</I>, then the parser parses the quantified expression.&nbsp;
+If the <I>Identifier</I> is <TT>LBLPOS</TT> or <TT>LBLNEG</TT>, and the
+next token is an <I>Identifier</I>, then the parser parses the labeled
+expression.&nbsp; Otherwise, the parser continues as if the&nbsp; <TT>(</TT>
+<I>Identifier</I><TT>&nbsp;</TT> were the beginning of a <I>CastExpression</I>
+[<I>JLS</I>, 19.12] or parenthesized expression.&nbsp; No place in the
+Java grammar allows an <I>Identifier </I>immediately followed by another
+<I>Identifier</I> or <I>PrimitiveType</I>; hence, there is no danger that
+the parser will parse an expression as a quantified or labeled expression
+when there is some other legitimate way to parse the expression.</FONT></UL>
+
+<H4>
+<A NAME="nameResolutionSpecExpr"></A>1.0.1&nbsp; Name resolution in specification
+expressions</H4>
+Name resolution for specification expressions differs in several ways from
+that for Java expressions.
+
+<P>First, the space of declared names is extended to include the special
+variables <TT>LS</TT> and <TT>RES</TT> (as defined in the <I>Java to Guarded
+Command Translation</I>), the function symbols <TT>typeof</TT>, <TT>elemtype</TT>,
+and <TT>max</TT> (as defined in the <I>Logic of ESC/Java</I>), the function
+symbols <TT>elemsnonnull</TT>, <TT>fresh</TT>, and <TT>PRE</TT> (explained
+below).
+
+<P>The special variables <TT>LS</TT> and <TT>RES</TT> hide any local variable,
+parameter, or unqualified field of the same name.&nbsp; This hiding applies
+even in specification expressions where use of <TT>LS</TT> or <TT>RES</TT>
+is disallowed (see <A HREF="#furtherSpecExprRestrictions">section 1.0.4</A>
+and <A HREF="#axiomAnnot">section 2.2</A>).
+
+<P>Applications of the function symbols <TT>typeof</TT>, <TT>elemtype</TT>,
+<TT>max</TT>, <TT>elemsnonnull</TT>, <TT>fresh</TT>, and <TT>PRE</TT> are
+parsed like method invocations and must always appear unqualified.&nbsp;
+Since ordinary method invocations are not allowed in specification expressions
+(see <A HREF="#furtherSpecExprRestrictions">section 1.0.4</A>), any name
+conflict between an ESC/Java function symbol and a method is resolved in
+favor of the function symbol.
+
+<P>Second, bound variables are scoped like Java local variables.&nbsp;
+For example, in a quantified expression <TT>(forall int k;&nbsp; a[k] ==
+0)</TT>, the declaration <TT>int k;</TT> introduces the bound variable
+<TT>k</TT>, whose scope is the <I>SpecExpr</I><TT> a[k] == 0</TT>.&nbsp;
+Furthermore, just as Java forbids declaration of an identifier as a local
+variable within the scope of a parameter or local variable of the same
+name [<I>JLS</I>, 14.3.2], so ESC/Java forbids declaration of an identifier
+as a bound variable within the scope of a parameter, local variable, or
+bound variable of the same name.&nbsp; Consequently, the quantified expression
+<TT>(forall int k;&nbsp; a[k] == 0)</TT> cannot occur in a scope where
+there is already a parameter, local variable, or bound variable named <TT>k</TT>.&nbsp;
+ESC/Java also forbids declaration of <TT>LS</TT> or <TT>RES</TT> as a bound
+variable.
+
+<P>Third, the scoping rules of parameters, <TT>this</TT>, and <TT>super</TT>
+are slightly different from those in Java.&nbsp; In particular:
+<UL>
+<LI>
+When a <I>SpecExpr</I> occurs in a modifier annotation (see <A HREF="#annotations">section
+2</A>) applied to a field, names in the <I>SpecExpr</I> are resolved as
+if the <I>SpecExpr</I> were part of the initializer of the field.&nbsp;
+Consequently, if the field is an instance variable, then <TT>this</TT>
+and <TT>super</TT> can be mentioned and any unqualified field name <TT>f</TT>
+is a synonym for <TT>this.f</TT>.</LI>
+
+<LI>
+When a <I>SpecExpr</I> occurs in a modifier annotation of a method declaration,
+names in the <I>SpecExpr</I> are resolved as if the <I>SpecExpr</I> were
+placed at the beginning of the method body.&nbsp; Consequently, the names
+of the method's parameters are in scope.&nbsp; Furthermore, if the method
+is an instance method, then <TT>this</TT> and <TT>super</TT> can be mentioned
+and any unqualified field name <TT>f</TT> is a synonym for <TT>this.f</TT>.</LI>
+
+<LI>
+When a <I>SpecExpr</I> occurs in a modifier annotation of an abstract method
+declaration, names in the <I>SpecExpr</I> are resolved as if the method
+could have a body and the <I>SpecExpr</I> were placed there.&nbsp; That
+is, the names of the method's parameters are in scope, <TT>this</TT> can
+be mentioned, any unqualified field name <TT>f</TT> is a synonym for <TT>this.f</TT>,
+and if the abstract method declaration occurs in a class (rather than in
+an interface) then <TT>super</TT> can be mentioned.</LI>
+
+<LI>
+In any other <I>SpecExpr</I>, the same parameters, local variables, and
+fields are in scope as in the Java context where the annotation containing
+the <I>SpecExpr</I> occurs; <TT>this</TT> can be mentioned (and any unqualified
+field name <TT>f</TT> is a synonym for <TT>this.f</TT>) if the <I>SpecExpr</I>
+occurs in a Java context where <TT>this</TT> can be mentioned; and <TT>super</TT>
+can be mentioned if the <I>SpecExpr</I> occurs in a Java context where
+<TT>super</TT> can be mentioned.&nbsp; Moreover, in a <I>SpecExpr</I> that
+occurs in a declaration annotation (see <A HREF="#annotations">section
+2</A>) in a class, <TT>this</TT> and <TT>super</TT> can be mentioned and
+any unqualified field name <TT>f</TT> is a synonym for <TT>this.f</TT>.</LI>
+</UL>
+Finally, the label <I>Identifier</I> in a <TT>LBLPOS</TT> or <TT>LBLNEG</TT>
+expression is part of a separate name space.&nbsp; The label does not become
+available for use inside the <I>SpecExpr</I>.&nbsp; A label is permitted
+to have the same name as an identifier already in scope or as a label in
+an enclosing labeled expression.&nbsp; If a label has the same name as
+an identifier already in scope, it does not hide that identifier.
+<H4>
+1.0.2&nbsp; Types of specification expressions</H4>
+Like expressions in Java, every specification expression has a statically
+determined type [<I>JLS</I>, 15.3].&nbsp; This type can either be a Java
+type, the special type <TT>TYPE</TT>, or the special type <TT>LockSet</TT>.&nbsp;
+The type of a specification expression is determined in the same way as
+that of a Java expression, with the following additions:
+<UL>
+<LI>
+The type of <TT>e0 ==> e1</TT> is <TT>boolean</TT>.</LI>
+
+<LI>
+The type of <TT>e0 &lt;: e1</TT> is <TT>boolean</TT>.</LI>
+
+<LI>
+The type of <TT>type(T)</TT> is <TT>TYPE</TT>.</LI>
+
+<LI>
+The type of <TT>classlock(T)</TT> is <TT>Object</TT>.</LI>
+
+<LI>
+The type of <TT>(forall </TT>...<TT>)</TT> is <TT>boolean</TT>.</LI>
+
+<LI>
+The type of <TT>(exists </TT>...<TT>)</TT> is <TT>boolean</TT>.</LI>
+
+<LI>
+The type of <TT>(LBLPOS n e)</TT> is the same as the type of <TT>e</TT>.</LI>
+
+<LI>
+The type of <TT>(LBLNEG n e)</TT> is the same as the type of <TT>e</TT>.</LI>
+
+<LI>
+The type of a bound variable is determined by its declaration in the same
+way that the type of a local variable is determined.</LI>
+
+<LI>
+The type of an application of a Logic of ESC/Java function is as follows:</LI>
+
+<UL>
+<LI>
+The type of <TT>typeof(e)</TT> is <TT>TYPE</TT>.</LI>
+
+<LI>
+The type of <TT>elemtype(e)</TT> is <TT>TYPE</TT>.</LI>
+
+<LI>
+The type of <TT>max(e)</TT> is <TT>Object</TT>.</LI>
+</UL>
+
+<LI>
+The type of <TT>elemsnonnull(e)</TT> is <TT>boolean</TT>.</LI>
+
+<LI>
+The type of <TT>fresh(e)</TT> is <TT>boolean</TT>.</LI>
+
+<LI>
+The type of <TT>PRE(e)</TT> is the type of <TT>e</TT>.</LI>
+
+<LI>
+The type of a special variable is as as follows:</LI>
+
+<UL>
+<LI>
+The type of <TT>LS</TT> is <TT>LockSet</TT>.</LI>
+
+<LI>
+The type of <TT>RES</TT> is the same as the result type of the current
+method (here, we regard a constructor as a method whose result type is
+the class containing the constructor).</LI>
+</UL>
+
+<LI>
+The type of <TT>e0[e1]</TT>, where <TT>e0</TT> is of type <TT>LockSet</TT>
+and <TT>e1</TT> is of type <TT>Object</TT>, is <TT>boolean</TT>.</LI>
+</UL>
+
+<H4>
+1.0.3&nbsp; Type correctness of specification expressions</H4>
+Just as Java requires expressions to be type correct, so ESC/Java requires
+specification expressions to be type correct.&nbsp; The type-correctness
+rules are the same as in Java, with the following exceptions and additions
+(where <TT>e</TT>, <TT>e0</TT>, and <TT>e1</TT> are well-typed):
+<UL>
+<LI>
+The expression <TT>e0 ==> e1</TT> is well-typed if both <TT>e0</TT> and
+<TT>e1</TT> are of type <TT>boolean</TT>.</LI>
+
+<LI>
+The expression <TT>e0 &lt;: e1</TT> is well-typed if both <TT>e0</TT> and
+<TT>e1</TT> are of type <TT>TYPE</TT>.</LI>
+
+<LI>
+The expression <TT>type(T)</TT> is well-typed if <TT>T</TT> is a reference
+type.</LI>
+
+<LI>
+The expression <TT>classlock(T)</TT> is well-typed if <TT>T</TT> is a class
+type.</LI>
+
+<LI>
+The expression <TT>(forall ...; e)</TT> is well-typed if <TT>e</TT> is
+of type <TT>boolean</TT>.</LI>
+
+<LI>
+The expression <TT>(exists ...; e)</TT> is well-typed if <TT>e</TT> is
+of type <TT>boolean</TT>.</LI>
+
+<LI>
+The expression <TT>(LBLPOS n e)</TT> is well-typed (recall the assumption
+that <TT>e</TT> is well-typed).</LI>
+
+<LI>
+The expression <TT>(LBLNEG n e)</TT> is well-typed.</LI>
+
+<LI>
+A bound variable is well-typed.</LI>
+
+<LI>
+The expression <TT>typeof(e)</TT> is well-typed if <TT>e</TT> is of a reference
+type.</LI>
+
+<LI>
+The expression <TT>elemtype(e)</TT> is well-typed if <TT>e</TT> is of type
+<TT>TYPE</TT>.</LI>
+
+<LI>
+The expression <TT>max(e)</TT> is well-typed if <TT>e</TT> is of type <TT>LockSet</TT>.</LI>
+
+<LI>
+The expression <TT>elemsnonnull(e)</TT> is well-typed if <TT>e</TT> is
+of an array type.</LI>
+
+<LI>
+The expression <TT>fresh(e)</TT> is well-typed if <TT>e</TT> is of a reference
+type.</LI>
+
+<LI>
+The expression <TT>PRE(e)</TT> is well-typed.</LI>
+
+<LI>
+<TT>RES</TT> is well-typed if the current method is declared with a non-<TT>void</TT>
+result type (<TT>RES</TT> is not allowed in the specification of constructors).</LI>
+
+<LI>
+<TT>LS</TT> is well-typed.</LI>
+
+<LI>
+The expressions <TT>e0 == e1</TT> and <TT>e0 != e1</TT> are well-typed
+if</LI>
+
+<UL>
+<LI>
+both operands <TT>e0</TT> and <TT>e1</TT> are of type <TT>boolean</TT>,</LI>
+
+<LI>
+both operands are of numeric types,</LI>
+
+<LI>
+each operand is either of a reference type or of the null type, or</LI>
+
+<LI>
+both operands are of type <TT>TYPE</TT>.</LI>
+</UL>
+Note that the first three of these cases are exactly the cases in which
+an application of <TT>==</TT> or <TT>!=</TT> is well-typed in Java [<I>JLS</I>,
+15.20].
+<LI>
+The expressions <TT>e0 &lt;= e1</TT> and <TT>e0 &lt; e1</TT> are well-typed
+if</LI>
+
+<UL>
+<LI>
+both operands are of numeric types, or</LI>
+
+<LI>
+both operands are of reference types (in this case, the objects are compared
+using the locking order <I>mutex$atmost</I> introduced in the <I>Logic
+of ESC/Java</I>).</LI>
+</UL>
+Note that the first case is exactly the case in which an application of
+<TT>&lt;=</TT> or <TT>&lt;</TT> is well-typed in Java [<I>JLS</I>, 15.19.1].
+<LI>
+The expression <TT>e0[e1]</TT> is well-typed if</LI>
+
+<UL>
+<LI>
+the type of <TT>e0</TT> is an array type <TT>T[]</TT> and the type of <TT>e1</TT>
+(after numeric promotion) is <TT>int</TT>, or</LI>
+
+<LI>
+the type of <TT>e0</TT> is <TT>LockSet</TT> and the type of <TT>e1</TT>
+is a reference type.</LI>
+</UL>
+Note that the first case is exactly the case in which an application of
+<TT>[]</TT> is well-typed in Java [<I>JLS</I>, 15.12].</UL>
+
+<H4>
+<A NAME="furtherSpecExprRestrictions"></A>1.0.4&nbsp; Further restrictions
+on specification expressions</H4>
+In addition to the requirement of type correctness, there are some further
+restrictions on specification expressions.
+
+<P>First, specification expressions must be free of subexpressions that,
+in general, may have side effects.&nbsp; In particular, specification expressions
+may not contain any:
+<UL>
+<LI>
+assignment (<TT>=</TT>, <TT>+=</TT>, etc.),</LI>
+
+<LI>
+pre-increment, pre-decrement, post-increment, post-decrement (<TT>++</TT>
+or <TT>--</TT>),</LI>
+
+<LI>
+array or object creation (<TT>new</TT>), or</LI>
+
+<LI>
+method invocation.</LI>
+</UL>
+Note that in spite of this rule, specification expressions may have subexpressions
+that are parsed as if they were method invocations, namely applications
+of <TT>typeof</TT>, <TT>elemtype</TT>, <TT>max</TT>, <TT>elemsnonnull</TT>,
+<TT>fresh</TT>, and <TT>PRE</TT>.&nbsp; Since method invocations are not
+allowed specification expressions, no ambiguity arises if one of these
+names is used as a method.&nbsp; Similarly, there is no danger that <TT>type(</TT>...<TT>)</TT>
+could be confused with a method application.
+
+<P>Second, applications of <TT>fresh</TT> and <TT>PRE</TT> are allowed
+only in postconditions (<TT>ensures</TT>, <TT>also_ensures</TT>, <TT>exsures</TT>,
+and <TT>also_exsures</TT> annotations) and <TT>loop_invariant</TT> annotations.&nbsp;
+Furthermore, applications of <TT>fresh</TT> and <TT>PRE</TT> are forbidden
+in the argument to <TT>PRE</TT>.
+<BR><FONT SIZE=-1>Revisit this if we ever add <TT>POST</TT> to the specification
+language.</FONT>
+
+<P>Third, the special variable <TT>RES</TT> is allowed only in normal postconditions
+(<TT>ensures</TT> and <TT>also_ensures</TT> annotations) and modifies lists
+(<TT>modifies</TT> and <TT>also_modifies</TT> annotations).&nbsp; (Note
+that although <TT>RES</TT> is allowed in modifies lists, it is not a designator,
+see <A HREF="#specDesignators">section 1.1</A>.)
+
+<P>Finally, there are restrictions on the use of quantified expressions
+and labeled expressions.&nbsp; A <I>SpecExpr</I> having a quantified expression
+or labeled expression as a (not necessarily proper) sub-expression may
+occur only in one of the following contexts:
+<UL>
+<LI>
+as an argument to one of the following operators:</LI>
+
+<UL>
+<LI>
+<TT>==></TT></LI>
+
+<LI>
+<TT>&amp;&amp;</TT></LI>
+
+<LI>
+<TT>||</TT></LI>
+
+<LI>
+<TT>==</TT></LI>
+
+<LI>
+<TT>!=</TT></LI>
+
+<LI>
+<TT>!</TT></LI>
+</UL>
+
+<LI>
+as the body <TT>E</TT> of</LI>
+
+<UL>
+<LI>
+a parenthesized expression <TT>(E)</TT>,</LI>
+
+<LI>
+a quantified expression <TT>(forall </TT>...<TT>; E)</TT> or <TT>(exists
+</TT>...<TT>; E)</TT>, or</LI>
+
+<LI>
+a labeled expression <TT>(LBLPOS n E)</TT> or <TT>(LBLNEG n E)</TT>.</LI>
+</UL>
+</UL>
+As a consequence of this restriction, all legal specification expressions
+containing quantified or labeled subexpressions are of type <TT>boolean</TT>.&nbsp;
+In particular, a quantified or labeled expression may not occur in an argument
+to the ternary conditional operator <TT>? :</TT> (and this restriction
+cannot be evaded by use of the <TT>(boolean)</TT> cast operator).
+<BR><FONT SIZE=-1>We have considered a <TT>-wizard</TT> mode that allows
+applications of arbitrary functions whose names simply get passed to the
+prover.&nbsp; Such functions might take <TT>boolean</TT> arguments, but
+even in <TT>-wizard</TT> mode, these arguments must not contain quantifiers
+or labels.&nbsp; That is, the limitations just listed apply even in <TT>-wizard</TT>
+mode.</FONT>
+
+<P>Any further restrictions are explained in the descriptions of the particular
+annotations where they apply.
+<H3>
+<A NAME="specDesignators"></A>1.1&nbsp; Specification designators</H3>
+
+<H4>
+1.1.0&nbsp; Syntax of specification designators</H4>
+The grammar for <I>SpecDesignator</I> is an extension of the grammar for
+a Java <I>LeftHandSide</I> [<I>JLS</I>, 19.12]:
+<UL><I>SpecDesignator</I> ::=
+<BR>&nbsp;&nbsp; <I>Name</I>
+<BR>|&nbsp; <I>ExtendedFieldAccess</I>
+<BR>|&nbsp; <I>ExtendedArrayAccess</I>
+
+<P><I>ExtendedArrayAccess</I> ::=
+<BR>&nbsp;&nbsp; <I>Name</I> <TT>[</TT> <I>SpecExpr</I> <TT>]</TT>
+<BR>|&nbsp; <I>Name</I> <TT>[ * ]</TT>
+<BR>|&nbsp; <I>ExtendedPrimaryNoNewArray</I> <TT>[</TT> <I>SpecExpr</I>
+<TT>]</TT>
+<BR>|&nbsp; <I>ExtendedPrimaryNoNewArray</I> <TT>[ * ]</TT>
+<BR><FONT SIZE=-1>In the future, we may want to allow multiple <TT>*</TT>-ed
+dimensions.</FONT></UL>
+where the grammars for <I>ExtendedFieldAccess</I> and <I>ExtendedPrimaryNoNewArray</I>
+are the same as for the Java non-terminals <I>FieldAccess</I> and <I>PrimaryNoNewArray</I>
+[<I>JLS</I>, 19.12] but with every right-hand side occurrence of <I>Expression</I>
+replaced by <I>SpecExpr</I>.
+<H4>
+1.1.1&nbsp; Name resolution in specification designators</H4>
+Names in a <I>SpecDesignator</I> are resolved as in a <I>SpecExpr</I>.
+<H4>
+1.1.2&nbsp; Type correctness of specification designators</H4>
+The type-correctness rules for a specification designator are as follows:
+<UL>
+<LI>
+A name <TT>n</TT> is well-typed if it denotes a field.</LI>
+
+<LI>
+An <I>ExtendedFieldAccess</I> is well-typed if it is well-typed as a <I>SpecExpr</I>.</LI>
+
+<LI>
+A specification designator <TT>e0[e1]</TT> is well-typed if it is well-typed
+as a <I>SpecExpr</I> and <TT>e0</TT> is of an array type (that is, <TT>e0</TT>
+must not be <TT>LS</TT>).</LI>
+
+<LI>
+A specification designator <TT>e[*]</TT> is well-typed if <TT>e</TT> is
+of an array type.</LI>
+</UL>
+
+<H4>
+1.1.3&nbsp; Further restrictions on specification designators</H4>
+The following restrictions apply to specification designators:
+<UL>
+<LI>
+A specification designator <TT>n</TT>, where <TT>n</TT> is a <I>Name</I>,
+must denote a non-<TT>final</TT> field.</LI>
+
+<LI>
+The field <TT>f</TT> in a specification designator <TT>e.f</TT> must not
+be <TT>final</TT>.</LI>
+</UL>
+
+<H2>
+<A NAME="annotations"></A>2&nbsp; Annotations</H2>
+ESC/Java annotations are supplied in special Java comments.&nbsp; When
+the very first character after the <TT>/*</TT> or <TT>//</TT> that begins
+a Java comment is <TT>@</TT>, ESC/Java parses the body of the comment as
+a sequence of zero or more ESC/Java annotations.&nbsp; Such a comment is
+called a <I>pragma</I>.
+
+<P>Many annotations end with an optional semi-colon.&nbsp; If such an annotation
+is followed by another annotation in the same pragma, then this semi-colon
+is required.
+
+<P>Annotations fall into four categories:
+<UL>
+<LI>
+lexical annotations</LI>
+
+<LI>
+statement annotations</LI>
+
+<LI>
+declaration annotations</LI>
+
+<LI>
+modifier annotations</LI>
+</UL>
+All annotations occurring within the same pragma must be of the same category,
+and the pragma is said to be of the same category as the annotations it
+contains.&nbsp; An empty pragma is a lexical pragma.
+
+<P>A lexical pragma can occur anywhere a comment can occur.
+
+<P>A statement pragma can occur only where a <I>BlockStatement</I> [<I>JLS</I>,
+19.11] can occur.
+
+<P>A declaration pragma can occur only where a <I>ClassMemberDeclaration</I>
+[<I>JLS</I>, 19.8.1] or an <I>InterfaceMemberDeclaration</I> [<I>JLS</I>,
+19.9.1] can occur.
+
+<P>A modifier pragma can occur only
+<UL>
+<LI>
+where a <I>Modifier</I> [<I>JLS</I>, 19.7] can occur,</LI>
+
+<LI>
+between the <I>VariableDeclarators</I> and the&nbsp;<TT> ;&nbsp;</TT> in
+a <I>FieldDeclaration</I> [<I>JLS</I>, 19.8.2],</LI>
+
+<LI>
+between the <I>MethodHeader</I> and the <I>MethodBody</I> in a <I>MethodDeclaration</I>
+[<I>JLS</I>, 19.8.3],</LI>
+
+<LI>
+before the <I>Type</I> or after the <I>VariableDeclaratorId</I> in a <I>FormalParameter</I>
+[<I>JLS</I>, 19.8.3],</LI>
+
+<BR><FONT SIZE=-1>We currently don't have any annotations that go in this
+position, but <TT>unused</TT> is an example of one that would.</FONT>
+<LI>
+between the <I>Throws</I> (or the <I>ConstructorDeclarator</I> if there
+is no <I>Throws</I>) and the <I>ConstructorBody</I> in a <I>ConstructorDeclaration</I>
+[<I>JLS</I>, 19.8.5],</LI>
+
+<LI>
+between the <I>MethodHeader</I> and the&nbsp;<TT> ;&nbsp;</TT> in an <I>AbstractMethodDeclaration</I>
+[<I>JLS</I>, 19.9.1], or</LI>
+
+<LI>
+before the <I>LocalVariableDeclaration</I> or between the <I>LocalVariableDeclaration</I>
+and the&nbsp;<TT> ;&nbsp;</TT> in a <I>LocalVariableDeclarationStatement</I>
+[<I>JLS</I>, 19.11].</LI>
+</UL>
+Particular annotations may have further restrictions on where they may
+occur.&nbsp; These restrictions will be described in the sections describing
+the respective annotations.
+
+<P>The following is a complete list of the annotations supported by ESC/Java:
+<UL><I>LexicalAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <I>NowarnAnnotation</I>
+<BR><FONT SIZE=-1>Consider adding <I>EnableWarnAnnotation</I> and <I>DisableWarnAnnotation</I>.</FONT>
+
+<P><I>StatementAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <I>AssumeAnnotation</I>
+<BR>|&nbsp; <I>AssertAnnotation</I>
+<BR>|&nbsp; <I>UnreachableAnnotation</I>
+<BR>|&nbsp; <I>LoopInvariantAnnotation</I>&nbsp;<BR>
+|&nbsp; <I>SetStatementAnnotation</I>
+
+<P><I>DeclarationAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <I>AxiomAnnotation</I>
+<BR>|&nbsp; <I>ObjectInvariantAnnotation</I>&nbsp;<BR>
+|&nbsp; <I>GhostDeclarationAnnotation</I>
+<BR>|&nbsp; <I>WriteableDeferredDeclarationAnnotation</I>
+
+<P><I>ModifierAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <I>UninitializedAnnotation</I>
+<BR>|&nbsp; <I>NonNullAnnotation</I>
+<BR>|&nbsp; <I>DefinedIfAnnotation</I>
+<BR>|&nbsp; <I>MonitoredByAnnotation</I>
+<BR>|&nbsp; <I>MonitoredAnnotation</I>
+<BR>|&nbsp; <I>SpecPublicAnnotation</I>
+<BR>|&nbsp; <I>RequiresAnnotation</I>
+<BR>|&nbsp; <I>EnsuresAnnotation</I>
+<BR>|&nbsp; <I>AlsoEnsuresAnnotation</I>
+<BR>|&nbsp; <I>ExsuresAnnotation</I>
+<BR>|&nbsp; <I>AlsoExsuresAnnotation</I>
+<BR>|&nbsp; <I>ModifiesAnnotation</I>
+<BR>|&nbsp; <I>AlsoModifiesAnnotation</I>
+<BR>|&nbsp; <I>WriteableDeferredModifierAnnotation</I></UL>
+<FONT SIZE=-1>Consider adding the following modifier annotations:&nbsp;
+<TT>writeable_private</TT>, <TT>writeable_package</TT>, <TT>writeable_protected</TT></FONT>,
+<FONT SIZE=-1><TT>unused</TT>.&nbsp; Consider leaving out <TT>writeable_deferred</TT>
+and <TT>still_deferred</TT>.</FONT>
+<H3>
+2.0&nbsp; nowarn (lexical annotation)</H3>
+
+<UL><I>NowarnAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>nowarn</TT> <I>Check</I>*<TT> </TT>[<TT>;</TT>]
+
+<P><I>Check</I> ::=
+<BR>&nbsp;&nbsp; <TT>NullPointerException</TT>
+<BR>|&nbsp; <TT>IndexOutOfBoundsException</TT>
+<BR>|&nbsp; <TT>ClassCastException</TT>
+<BR>|&nbsp; <TT>ArrayStoreException</TT>
+<BR>|&nbsp; <TT>ArithmeticException</TT>
+<BR>|&nbsp; <TT>NegativeArraySizeException</TT>
+<BR>|&nbsp; <TT>AssertViolation</TT>
+<BR>|&nbsp; <TT>PreconditionViolation</TT>
+<BR>|&nbsp; <TT>PostconditionViolation</TT>
+<BR>|&nbsp; <TT>ModifiesViolation</TT>
+<BR>|&nbsp; <TT>ObjectInvariantViolation</TT>
+<BR>|&nbsp; <TT>InitialLoopInvariantViolation</TT>
+<BR>|&nbsp; <TT>IterativeLoopInvariantViolation</TT>
+<BR>|&nbsp; <TT>SharingViolation</TT>
+<BR>|&nbsp; <TT>LockingOrderViolation</TT>
+<BR>|&nbsp; <TT>InitializationViolation</TT>
+<BR>|&nbsp; <TT>DefinednessViolation</TT>
+<BR>|&nbsp; <TT>CodeReachabilityViolation</TT>
+<BR>|&nbsp; <TT>ConstructorLeakWarning</TT>
+<BR>|&nbsp; <TT>InitializerLeakWarning</TT>
+<BR>|&nbsp; <TT>WriteableDeferredWarning</TT>
+<BR>|&nbsp; <TT>UnenforcableObjectInvariantWarning</TT>
+<BR>|&nbsp; <TT>ModifiesExtensionWarning</TT></UL>
+
+<H3>
+2.1&nbsp; assume (statement annotation)</H3>
+
+<UL><I>AssumeAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>assume </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate, that is, it must be of type <TT>boolean</TT>.
+<H3>
+<A NAME="axiomAnnot"></A>2.2&nbsp; axiom (declaration annotation)</H3>
+
+<UL><I>AxiomAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>axiom </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate, and is not allowed to mention
+<TT>this</TT>, <TT>LS</TT>, or <TT>RES</TT>.
+<H3>
+2.3&nbsp; assert (statement annotation)</H3>
+
+<UL><I>AssertAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>assert </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate.
+<H3>
+2.4&nbsp; unreachable (statement annotation)</H3>
+
+<UL><I>UnreachableAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>unreachable </TT>[<TT>;</TT>]</UL>
+
+<H3>
+2.5&nbsp; loop_invariant (statement annotation)</H3>
+
+<UL><I>LoopInvariantAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>loop_invariant </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate.
+
+<P>A <TT>loop_invariant</TT> annotation may occur only within a <I>Block</I>
+[<I>JLS</I>, 19.1.1] that is the body of a Java <TT>for</TT>, <TT>while</TT>,
+or <TT>do</TT> statement, and it must occur before any Java <I>BlockStatement</I>
+of that <I>Block</I>.
+
+<P>Any occurrence of a variable (other than a variable introduced in the
+<I>ForInit</I> if the loop is a <TT>for</TT> loop), field, or array access
+within the argument of any <TT>PRE</TT> in the <I>SpecExpr</I> refers to
+the value of that variable, field, or array access as of just before the
+start of the execution of the loop.&nbsp; Specification expressions such
+as <TT>PRE(x).f</TT> and <TT>PRE(a)[i]</TT> that mix <TT>PRE</TT> with
+<TT>.</TT> or <TT>[]</TT> are legal and meaningful, but their meanings
+may be surprising to the naive user.&nbsp; <FONT SIZE=-1>Consider adding
+a section with some examples of such mixed expressions and what they mean.</FONT>&nbsp;
+If the loop is a <TT>for</TT> loop, any variable introduced in the <I>ForInit</I>
+and occurring within the argument to <TT>PRE</TT> in the <I>SpecExpr</I>
+refers to the current value of that variable at the time the loop invariant
+is asserted or assumed.
+
+<P>Any occurrence of <TT>fresh(e)</TT> in the <I>SpecExpr</I> evaluates
+to <TT>true</TT> if the object denoted by <TT>e</TT> was not allocated
+before the start of the execution of the loop, and to <TT>false</TT> otherwise.
+<UL><FONT SIZE=-1>The current implementation does not support <TT>PRE</TT>
+and <TT>fresh</TT> in invariants.</FONT></UL>
+
+<H3>
+2.6&nbsp; uninitialized (modifier annotation)</H3>
+
+<UL><I>UninitializedAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>uninitialized</TT></UL>
+An <TT>uninitialized</TT> annotation can occur only as a modifier of a
+local variable declaration that has an initializer.&nbsp; For example,
+the first of the following declarations is allowed:
+<UL><TT>/*@ uninitialized */ T x = null, y = new(T) ;</TT>
+<BR><TT>/*@ uninitialized */ T w, z = null ;</TT>
+<BR><TT>/*@ uninitialized */ T v ;</TT></UL>
+whereas the others are not, because they contain variable declarations
+with no initializing expressions.
+
+<P>Recall that ESC/Java allows local variable declarations to have modifier
+annotations, even though Java doesn't allow them to have modifiers.
+<H3>
+2.7&nbsp; non_null (modifiers annotation)</H3>
+
+<UL><I>NonNullAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>non_null</TT></UL>
+The <TT>non_null</TT> pragma may be used as a modifier to a formal parameter,
+a local variable, a static field, or an instance variable.
+
+<P>If applied to <TT>x</TT>, the type of <TT>x</TT> must be a reference
+type.
+<BR>&nbsp;
+<BR>If applied to a static field <TT>x</TT>, the declaration of <TT>x</TT>
+must have an initializer (which in a future version of ESC/Java will be
+checked to result in a non-<TT>null</TT> value).
+<BR>&nbsp;
+<BR>If a local variable <TT>x</TT> is declared with both <TT>non_null</TT>
+and <TT>uninitialized</TT> and has an initializing expression <TT>E</TT>,
+then the check that <TT>E</TT> results in a non-<TT>null</TT> value is
+suppressed.
+<H3>
+2.8&nbsp; defined_if (modifier annotation)</H3>
+
+<UL><I>DefinedIfAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>defined_if </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate.&nbsp; It is allowed to mention
+<TT>this</TT> if the pragma modifies an instance field, or if the pragma
+modifies a local variable inside a instance method or constructor.
+
+<P>A <TT>defined_if</TT> annotation can occur only as a modifier of a field
+declaration or local variable declaration.
+
+<P>If the modifier annotation is applied to a field, the free variables
+of <I>SpecExpr</I> must be as accessible as the field.
+
+<P><FONT SIZE=-1>Note:&nbsp; The current implementation does not allow
+a local variable to be mentioned in its own <TT>defined_if</TT> pragma.&nbsp;
+This is probably not a feature.</FONT>
+<H3>
+2.9&nbsp; monitored_by (modifier annotation)</H3>
+
+<UL><I>MonitoredByAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>monitored_by</TT> <I>SpecExpr</I> ( <TT>,</TT> <I>SpecExpr</I>
+)*<TT> </TT>[<TT>;</TT>]</UL>
+Each <I>SpecExpr</I> must be of a reference type.&nbsp; If the modifier
+pragma is applied to an instance variable, each <I>SpecExpr</I> is allowed
+to mention <TT>this</TT>.&nbsp; The free variables of each <I>SpecExpr</I>
+must be as accessible as the field to which the modifier applies.&nbsp;
+For example,
+<UL><TT>public Object mu ;</TT>
+<BR><TT>private int x /*@ monitored_by mu */ ;</TT></UL>
+is allowed, but
+<UL><TT>private Object mu ;</TT>
+<BR><TT>public int x /*@ monitored_by mu */ ;</TT></UL>
+is not.
+
+<P>A <TT>monitored_by</TT> annotation may occur only as a modifier of a
+field declaration.
+<H3>
+2.10&nbsp; monitored (modifier annotation)</H3>
+
+<UL><I>MonitoredAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>monitored</TT></UL>
+A <TT>monitored</TT> annotation may occur only as a modifier of an instance
+variable declaration.
+<H3>
+2.11&nbsp; requires (modifier annotation)</H3>
+
+<UL><I>RequiresAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>requires </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate, which can mention <TT>this</TT>
+if the pragma modifies an instance method (not a static method or constructor).
+
+<P>A <TT>requires</TT> annotation can occur as a modifier only of a method
+or constructor declaration, and only when the method declaration does not
+override [<I>JLS</I>, 4.8.6, "Inheritance, overriding, and hiding"] a method
+declared in a proper superclass.
+
+<P>Each field mentioned in the <I>SpecExpr</I> must be as accessible as
+the method or constructor.
+<H3>
+2.12&nbsp; ensures (modifier annotation)</H3>
+
+<UL><I>EnsuresAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>ensures </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate.&nbsp; It can mention <TT>RES</TT>
+if the pragma modifies a non-<TT>void</TT> instance method (not a static
+method or constructor).&nbsp; It can mention <TT>this</TT> if the pragma
+modifies an instance method or constructor (not a static method).&nbsp;
+It can always mention <TT>PRE</TT> and <TT>fresh</TT>.
+
+<P>An <TT>ensures</TT> annotation can occur as a modifier only of a method
+or constructor declaration, and only when the method declaration does not
+override [<I>JLS</I>, 4.8.6, "Inheritance, overriding, and hiding"] a method
+declared in a proper superclass.
+
+<P>If the pragma modifies a non-<TT>final</TT> non-<TT>private</TT> instance
+method, then every field mentioned in the <I>SpecExpr</I> must be non-<TT>private</TT>
+or <TT>spec_public</TT>.
+<H3>
+2.13&nbsp; also_ensures (modifier annotation)</H3>
+
+<UL><I>AlsoEnsuresAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>also_ensures </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate.&nbsp; It can mention <TT>this</TT>,
+<TT>RES</TT> (if the method has a non-<TT>void</TT> result type), <TT>PRE</TT>,
+and <TT>fresh</TT>.
+
+<P>An <TT>also_ensures</TT> annotation can occur as a modifier only of
+a method declaration, and only when the method declaration overrides [<I>JLS</I>,
+4.8.6, "Inheritance, overriding, and hiding"] a method declared in a proper
+superclass.
+
+<P>If the pragma modifies a non-<TT>final</TT> non-<TT>private</TT> instance
+method, then every field mentioned in the <I>SpecExpr</I> must be non-<TT>private</TT>
+or <TT>spec_public</TT>.
+<H3>
+2.14&nbsp; exsures (modifier annotation)</H3>
+
+<UL><I>ExsuresAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>exsures ( </TT><I>Type</I><TT> </TT><I>Identifier</I><TT>
+) </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate.&nbsp; It can mention the <I>Identifier</I>,
+<TT>PRE</TT>, and <TT>fresh</TT> (but not <TT>RES</TT>).&nbsp; It can mention
+<TT>this</TT> if the method is an instance method (not a static method
+or a constructor).
+
+<P>An <TT>exsures</TT> annotation can occur as a modifier only of a method
+or constructor declaration, and only when the method declaration does not
+override [<I>JLS</I>, 4.8.6, "Inheritance, overriding, and hiding"] a method
+declared in a proper superclass.
+
+<P>The <I>Type</I> must be a reference type that is a subtype of some type
+mentioned in the method's or constructor's throws set.&nbsp; The name of
+the <I>Identifier</I> follows the same rules as would a bound variable
+in a quantified expression surrounding the <I>SpecExpr</I>.
+
+<P>If the pragma modifies a non-<TT>final</TT> non-<TT>private</TT> instance
+method, then every field mentioned in the <I>SpecExpr</I> must be non-<TT>private</TT>
+or <TT>spec_public</TT>.
+<H3>
+2.15&nbsp; also_exsures (modifier annotation)</H3>
+
+<UL><I>AlsoExsuresAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>also_exsures ( </TT><I>Type</I><TT> </TT><I>Identifier</I><TT>
+) </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate.&nbsp; It can mention <TT>this</TT>,
+the <I>Identifier</I>, <TT>PRE</TT>, and <TT>fresh</TT> (but not <TT>RES</TT>).
+
+<P>An <TT>also_exsures</TT> annotation can occur as a modifier only of
+a method declaration, and only when the method declaration overrides [<I>JLS</I>,
+4.8.6, "Inheritance, overriding, and hiding"] a method declared in a proper
+superclass.
+
+<P>The <I>Type</I> must be a reference type that is a subtype of some type
+mentioned in the method's throws set.&nbsp; The name of the <I>Identifier</I>
+follows the same rules as would a bound variable in a quantified expression
+surrounding the <I>SpecExpr</I>.
+
+<P>If the pragma modifies a non-<TT>final</TT> non-<TT>private</TT> instance
+method, then every field mentioned in the <I>SpecExpr</I> must be non-<TT>private</TT>
+or <TT>spec_public</TT>.
+<H3>
+2.16&nbsp; modifies (modifier annotation)</H3>
+
+<UL><I>ModifiesAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>modifies </TT>[ <I>SpecDesignator</I><TT> </TT>( <TT>,</TT>
+<I>SpecDesignator</I> )* ]<TT> </TT>[<TT>;</TT>]</UL>
+A <TT>modifies</TT> annotation can occur as a modifier only of a method
+or constructor declaration, and only when the method declaration does not
+override [<I>JLS</I>, 4.8.6, "Inheritance, overriding, and hiding"] a method
+declared in a proper superclass.
+<H3>
+2.17&nbsp; also_modifies (modifier annotation)</H3>
+
+<UL><I>AlsoModifiesAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>also_modifies </TT>[ <I>SpecDesignator</I><TT> </TT>(
+<TT>,</TT> <I>SpecDesignator</I> )* ]<TT> </TT>[<TT>;</TT>]</UL>
+An <TT>also_modifies</TT> annotation can occur as a modifier only of a
+method declaration, and only when the method declaration overrides [<I>JLS</I>,
+4.8.6, "Inheritance, overriding, and hiding"] a method declared in a proper
+superclass.
+<H3>
+2.18&nbsp; invariant (declaration annotation)</H3>
+
+<UL><I>ObjectInvariantAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>invariant </TT><I>SpecExpr</I><TT> </TT>[<TT>;</TT>]</UL>
+The <I>SpecExpr</I> must be a predicate, but is not allowed to mention
+<TT>LS</TT>.
+<H3>
+2.19&nbsp; spec_public (modifier annotation)</H3>
+
+<UL><I>SpecPublicAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>spec_public</TT></UL>
+A <TT>spec_public</TT> annotation may occur only as a modifier of a non-<TT>public</TT>
+field declaration.
+<H3>
+2.20&nbsp; ghost (declaration annotation)</H3>
+
+<UL><I>GhostDeclarationAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>ghost </TT>[ <TT>public</TT> ]<TT> </TT>[ <TT>static</TT>
+]<TT> </TT><I>Type</I><TT> </TT><I>VariableDeclarator</I><TT> </TT>[<TT>;</TT>]</UL>
+The <TT>public</TT> modifier must be given, but can be given either before
+or after the optional <TT>static</TT> modifier.
+
+<P>The <I>Type</I> may make use of the special type <TT>TYPE</TT>.
+
+<P>The <I>VariableDeclarator</I> declares one identifier and must not give
+an initial value.
+<H3>
+2.21&nbsp; set (statement annotation)</H3>
+
+<UL><I>SetStatementAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>set </TT><I>PrimarySpecExpr</I><TT> = </TT><I>SpecExpr</I><TT>
+</TT>[<TT>;</TT>]</UL>
+The <I>PrimarySpecExpr</I> must denote a ghost variable.&nbsp; Both the
+<I>PrimarySpecExpr</I> and <I>SpecExpr</I> denote terms, that is, they
+may not contain quantifiers or labeled expressions.
+<H3>
+2.22&nbsp; writeable_deferred (modifier annotation)</H3>
+Not supported in ESC/Java 1.0.
+<UL><I>WriteableDeferredModifierAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>writeable_deferred</TT></UL>
+A <TT>writeable_deferred</TT> modifier annotation can occur only as a modifier
+of an instance variable declaration <I>V</I>.&nbsp; The annotation declares
+each of the instance variables declared in <I>V</I> to be <I>writeable
+deferred</I> in the current class.
+<H3>
+2.23&nbsp; still_deferred (declaration annotation)</H3>
+Not supported in ESC/Java 1.0.
+<UL><I>StillWriteableDeferredDeclarationAnnotation</I> ::=
+<BR>&nbsp;&nbsp; <TT>still_deferred </TT><I>VariableDeclarators</I><TT>
+</TT>[<TT>;</TT>]</UL>
+A <TT>still_deferred</TT> declaration annotation can be placed only in
+a class.&nbsp; The <I>VariableDeclarators</I> must not contain any initializers.&nbsp;
+Each identifier in <I>VariableDeclarators</I> must have been declared as
+writeable deferred in the direct superclass of the current class.
+
+<P>The <TT>still_deferred</TT> annotation declares each of the instance
+variables named in the <I>VariableDeclarators</I> to be writeable deferred
+in the current class.
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

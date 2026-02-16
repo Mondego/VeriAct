@@ -1,0 +1,139 @@
+ESC/Java version VERSION
+    [TIME]
+
+non_null ...
+  Prover started:TIME
+    [TIME]
+
+non_null: non_null() ...
+    [TIME]  passed
+  [TIME total]
+
+NonNull ...
+    [TIME]
+
+NonNull: qq(non_null) ...
+    [TIME]  passed
+
+NonNull: q(java.lang.Object) ...
+    [TIME]  passed
+
+NonNull: m(int) ...
+    [TIME]  passed immediately
+
+NonNull: m(java.lang.Object) ...
+    [TIME]  passed immediately
+
+NonNull: m(non_null) ...
+    [TIME]  passed immediately
+
+NonNull: NonNull(int) ...
+    [TIME]  passed immediately
+
+NonNull: NonNull(java.lang.Object) ...
+    [TIME]  passed immediately
+
+NonNull: NonNull(non_null) ...
+    [TIME]  passed immediately
+
+NonNull: p() ...
+------------------------------------------------------------------------
+NonNull.java:20: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                m(o);
+                 ^
+Associated declaration is "NonNull.java", line 11, col 19:
+        model pure void m(non_null Object i);
+                          ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNull: p2() ...
+------------------------------------------------------------------------
+NonNull.java:24: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                new NonNull(o);
+                           ^
+Associated declaration is "NonNull.java", line 15, col 20:
+        model pure NonNull(non_null Object i);
+                           ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNull: p3() ...
+    [TIME]  passed
+
+NonNull: p4() ...
+------------------------------------------------------------------------
+NonNull.java:34: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                q(o);
+                 ^
+Associated declaration is "NonNull.java", line 8, col 24:
+        /*@ pure */ void q(/*@ non_null */ Object o) {}
+                               ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNull: r() ...
+------------------------------------------------------------------------
+NonNull.java:40: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                q(o);
+                 ^
+Associated declaration is "NonNull.java", line 8, col 24:
+        /*@ pure */ void q(/*@ non_null */ Object o) {}
+                               ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNull: NonNull() ...
+    [TIME]  passed
+  [TIME total]
+
+nullable ...
+    [TIME]
+
+nullable: nullable() ...
+    [TIME]  passed
+  [TIME total]
+
+Nullable ...
+    [TIME]
+
+Nullable: q2(java.lang.Object) ...
+    [TIME]  passed
+
+Nullable: m2(int) ...
+    [TIME]  passed immediately
+
+Nullable: m2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+Nullable: m2(nullable) ...
+    [TIME]  passed immediately
+
+Nullable: Nullable(int) ...
+    [TIME]  passed immediately
+
+Nullable: Nullable(java.lang.Object) ...
+    [TIME]  passed immediately
+
+Nullable: Nullable(nullable) ...
+    [TIME]  passed immediately
+
+Nullable: pp() ...
+    [TIME]  passed
+
+Nullable: pp2() ...
+    [TIME]  passed
+
+Nullable: pp3() ...
+    [TIME]  passed
+
+Nullable: pp4() ...
+    [TIME]  passed
+
+Nullable: r2() ...
+    [TIME]  passed
+
+Nullable: Nullable() ...
+    [TIME]  passed
+  [TIME total]
+4 warnings

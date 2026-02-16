@@ -1,0 +1,272 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 10:  Locking in Java.</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>
+ESCJ 10:&nbsp; Locking in Java.</H1>
+<B>Raymie Stata.</B>
+
+<P>[From post to src.sparta dated 16 Oct 96.]
+
+<P>The following is a discussion of the "thread re-entrant" property of
+<BR>Java's locking primitives and its implications for program design and
+<BR>ESC/Java.&nbsp; It is a joint effort of Rustan Leino and myself and
+<BR>captures conversations among myself, Rustan, Roy Levin, Paul McJones,
+<BR>and Greg Nelson.
+
+<P>** Java's synchronized statement
+
+<P>In Java, a thread can acquire the same lock multiple times (it has to
+<BR>release it the same number of times before another thread can acquire
+<BR>it).&nbsp; These are known as "thread re-entrant monitors," as against
+the
+<BR>"non-re-entrant" locks found in Modula-3 where a thread will block
+<BR>forever if it attempts to acquire a lock it already holds.
+
+<P>In Java, locks are usually described as having a counter indicating
+<BR>how many times the current thread has acquired it.&nbsp; Rustan proposed
+a
+<BR>translation for Java's synchronized statement into guarded commands
+<BR>that does not require the introduction of explicit counters:
+
+<P>&nbsp; synchronized (m) { S } ==>
+<BR>&nbsp;&nbsp;&nbsp; var LL_0 in
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL_0 := LL
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL := LL \union { m }
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try S finally LL := LL_0 end
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end
+
+<P>This translation depends on the fact that Java does not have routines
+<BR>analogous to Thread.Acquire and .Release, but only has a synchronized
+<BR>statement that matches an acquire with a release.
+<BR>&nbsp;
+
+<P>** Preconditions on "Thread.Acquire" that avoid deadlocks
+
+<P>In ESC/Modula-3, to keep threads from deadlocking with themselves, we
+<BR>would specify Thread.Acquire(m) as having the precondition that "m
+<BR>\not\in LL" (where LL is the set of locks held by the current thread).
+<BR>In Java, a thread cannot deadlock with itself, so no precondition is
+<BR>needed to avoid this problem.
+
+<P>ESC/Modula-3 goes further in trying to prevent a thread from
+<BR>deadlocking with other threads.&nbsp; The standard approach to deadlock
+<BR>avoidance is to define a partial order on locks and require that
+<BR>threads acquire locks according to this order.&nbsp; This leads to
+a
+<BR>stronger precondition for Thread.Acquire(m): "Sup(LL) &lt; m" (ie,
+"the
+<BR>'largest' lock held by the current thread ('Sup(LL)') is smaller than
+<BR>m").&nbsp; In ESC/Java, one can liberalize this.&nbsp; The more obvious
+<BR>liberalization would be: "Sup(LL) &lt;= m," but an even more liberal
+<BR>precondition works: "Sup(LL) &lt; m \/ m \in LL".
+
+<P>Adding this precondition to the translation of synchronized proposed
+<BR>above:
+
+<P>&nbsp; synchronized (m) { S } ==>
+<BR>&nbsp;&nbsp;&nbsp; var LL_0 in
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; assert Sup(LL) &lt; m \/ m \in LL&nbsp;&nbsp;
+//// Add some checking...
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL_0 := LL
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL := LL \union { m }
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try S finally LL := LL_0 end
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end
+<BR>&nbsp;
+
+<P>** Thread re-entrant locks and preconditions on routines
+
+<P>To follow the deadlock-avoidance methodology outlined above, routines
+<BR>that acquire locks usually have preconditions that help ensure that
+the
+<BR>routines will acquire locks in the correct order.
+
+<P>With Modula-3-like, non-re-entrant locks, such preconditions follow
+<BR>the pattern "Sup(LL) &lt; MU", where MU is the lowest lock in the locking
+<BR>order that the routine might want to acquire.&nbsp; With Java's thread
+<BR>re-entrant locks, there are three patterns that such preconditions
+may
+<BR>take:
+
+<P>&nbsp;&nbsp; 1.&nbsp; Sup(LL) &lt; MU \/ MU \in LL
+<BR>&nbsp;&nbsp; 2.&nbsp; Sup(LL) &lt;= MU
+<BR>&nbsp;&nbsp; 3.&nbsp; Sup(LL) &lt; MU&nbsp; (Note: this is the Modula-3
+pattern)
+
+<P>We consider the pro's and con's of each pattern in turn.
+
+<P>Preconditions patterned after (1) allow routines routines to be
+<BR>called under the widest set of circumstances.&nbsp; While the other
+two
+<BR>patterns rule out callers who hold a lock greater than MU in the
+<BR>locking order, (1) does not.
+
+<P>The trade-off, however, is that routines with preconditions patterned
+<BR>after (1) can acquire only MU and no other locks.&nbsp; To see why,
+imagine
+<BR>that the routine tried to acquire a lock MU2 in addition to MU.&nbsp;
+Before
+<BR>MU is acquired, all we know about the locking set is "Sup(LL) &lt;
+MU \/
+<BR>MU \in LL."&nbsp; This condition does not imply "Sup(LL) &lt; MU2 \/
+MU2 \in
+<BR>LL", even for "MU &lt; MU2", so MU2 can not be safely acquired before
+MU.
+<BR>After MU is acquired, all we know is that "MU \in LL /\ (MU \in LL_0
+<BR>\/ Sup(LL) = MU)".&nbsp; Again, this does not imply that "Sup(LL) &lt;
+MU2 \/
+<BR>MU2 \in LL", even for "MU &lt; MU2" (because of the disjunct "MU \in
+<BR>LL_0"), so MU2 can not be safely acquired after MU either.
+
+<P>This implies that when routines are specified with preconditions
+<BR>patterned after (1), the preconditions must mention every lock the
+<BR>routine may want to acquire.&nbsp; This is often too much information,
+<BR>revealing locks that should be hidden from clients.&nbsp; Further,
+it makes
+<BR>it impossible to change the locks used by a routine's implementation
+<BR>without changing its specification (potentially breaking clients of
+<BR>the routine).
+
+<P>Preconditions patterned after (2) do not have this limitation: such
+<BR>preconditions allow a routine to lock any lock after MU in the locking
+<BR>order and thus do not have to mention every lock that might be
+<BR>acquired by the routine.&nbsp; However, this added flexibility for
+the
+<BR>implementation comes at the expense of flexibility for clients by
+<BR>restricting calls to program states in which nothing greater than MU
+<BR>has been previously acquired.
+
+<P>Preconditions patterned after (2) have another problem, a problem
+<BR>shared by preconditions patterned after (1): they make it impossible
+<BR>to assume monitor invariants inside the bodies of routines.&nbsp; A
+monitor
+<BR>invariant is a relation among the variables protected by the monitor.
+<BR>Threads establish a lock's monitor invariant before they leave the
+<BR>monitor; this means that a thread entering the monitor may assume the
+<BR>monitor invariant.&nbsp; However, with thread re-entrant locks, a thread
+<BR>can only assume a monitor invariant when it enters the monitor for
+the
+<BR>"first time" (ie, whenever the thread increments the lock's count from
+<BR>zero to one).&nbsp; When the thread re-enters the monitor, there is
+no
+<BR>guarantee that the monitor's invariant has been re-established, so
+it
+<BR>cannot be assumed.&nbsp; Connecting this back to preconditions,
+<BR>preconditions patterned after (1) and (2) allow "MU \in LL" on entry
+<BR>to a routine; this means that when the routine acquires MU, it might
+<BR>not be doing so for the first time, so it cannot assume the monitor
+<BR>invariant.
+
+<P>Preconditions patterned after (3) do not have the limitations of
+<BR>either (1) or (2): they allow routines to acquire locks in addition
+to
+<BR>MU, and they allow routines to assume the monitor invariant associated
+<BR>with MU with MU is acquired.&nbsp; However, preconditions patterned
+after
+<BR>(3) are the most restrictive in terms of the program states in which
+<BR>they allows routines to be called: they restrict calls to program
+<BR>states in which nothing greater than MU nor MU itself have been
+<BR>locked.&nbsp; When preconditions patterned after (3) are used, the
+<BR>re-entrant property of monitors is not used; this explains why, as
+<BR>noted above, pattern (3) is the pattern used in Modula-3.
+
+<P>(If programs re-established monitor invariants at every procedure-call
+<BR>in addition to every monitor exit, then the monitor invariant could
+be
+<BR>safely assumed _every_ time a thread entered.&nbsp; This would solve
+the
+<BR>monitor-invariant problem associated with (1) and (2).&nbsp; However,
+it
+<BR>seems impractical to require that the code inside a monitor
+<BR>re-establish the monitor invariant before calling, eg, a library's
+<BR>square-root routine.)
+<BR>&nbsp;
+
+<P>** Thread re-entrant locks and program design
+
+<P>Roy Levin, Paul McJones, and Greg Nelson all agree that (in Roy's
+<BR>words) "thread re-entrant monitors are evil."&nbsp; They say this because
+<BR>of the monitor invariant issue: when writing large systems with thread
+<BR>re-entrant locks, it is easy to lose track of where one can and cannot
+<BR>assume the monitor invariant, leading to errors that are difficult
+to
+<BR>find.
+
+<P>Greg points out that thread re-entrant locks seem like a convenience
+<BR>at first.&nbsp; For example:
+
+<P>&nbsp; o With non-re-entrant locks, it is often necessary to write two
+<BR>&nbsp;&nbsp;&nbsp; versions of a routine, one that grabs the lock first
+and another
+<BR>&nbsp;&nbsp;&nbsp; that assumes the lock has already been grabbed.&nbsp;
+With re-entrant
+<BR>&nbsp;&nbsp;&nbsp; locks, only one version is needed.
+
+<P>&nbsp; o With non-re-entrant locks, one is often faced with a routine
+R
+<BR>&nbsp;&nbsp;&nbsp; that calls another routine R' that eventually (through
+a long
+<BR>&nbsp;&nbsp;&nbsp; series of calls) wants to acquire a lock already
+acquired by the
+<BR>&nbsp;&nbsp;&nbsp; original routine R.&nbsp; The fix for these situations
+often requires
+<BR>&nbsp;&nbsp;&nbsp; some awkward coding.&nbsp; With thread re-entrant
+locks, R' is
+<BR>&nbsp;&nbsp;&nbsp; allowed to reacquire the lock so no awkward fix
+is required.
+
+<P>These and other situations lead people to advocate re-entrant locks.
+<BR>However, although re-entrant locks can be a convenience, they turn
+out
+<BR>to cause more trouble than they are worth.&nbsp; Greg explains that
+when
+<BR>locks are not re-entrant, errors lead to deadlocks, which are
+<BR>relatively easy to find.&nbsp; When locks are re-entrant, errors lead
+to
+<BR>corrupted state that might not manifest itself visibly until program
+<BR>execution has wandered far from the actual error, making errors
+<BR>difficult to find.&nbsp; Greg points to Ivy as a system in which thread
+<BR>re-entrant monitors led to many difficult-to-find, corrupted-state
+<BR>bugs.
+
+<P>The difficulties associated with thread re-entrant locks suggests that
+<BR>Java programs should avoid using the re-entrant property of locks.
+<BR>This means that preconditions patterned after (3) should be preferred.
+<BR>It also suggests that perhaps re-entrant uses of locks should be ruled
+<BR>out in ESC/Java by rewriting synchronized statements as follows:
+
+<P>&nbsp; synchronized (m) { S } ==>
+<BR>&nbsp;&nbsp;&nbsp; var LL_0 in
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; assert Sup(LL) &lt; m&nbsp;&nbsp; ////
+Stronger check
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL_0 := LL
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL := LL \union { m }
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try S finally LL := LL_0 end
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end
+
+<P>Or, as a compromise, the above rewrite could be used as a default and
+<BR>an annotation can be used to indicate where the more liberal rewrite
+<BR>should be used:
+
+<P>&nbsp; synchronized /* reentrant */ (m) { S } ==>
+<BR>&nbsp;&nbsp;&nbsp; var LL_0 in
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; assert Sup(LL) &lt; m \/ m \in LL&nbsp;&nbsp;
+//// More liberal check
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL_0 := LL
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LL := LL \union { m }
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try S finally LL := LL_0 end
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; end
+<BR>&nbsp;
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

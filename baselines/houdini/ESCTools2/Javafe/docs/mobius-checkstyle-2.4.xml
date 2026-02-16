@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.1//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_1.dtd">
+
+<!--
+  CheckStyle configuration that checks the Mobius coding conventions.
+
+  Author: Joe Kiniry (kiniry@ucd.ie)
+  Version: 1.0 - 1 April 2007
+
+  These conventions are based upon:
+
+    - the Java Language Specification at
+      http://java.sun.com/docs/books/jls/second_edition/html/index.html
+
+    - the Sun Code Conventions at http://java.sun.com/docs/codeconv/
+
+    - the Javadoc guidelines at
+      http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
+
+    - the JDK Api documentation http://java.sun.com/j2se/docs/api/index.html
+
+    - the KindSoftware code standard
+      http://www.kindsoftware.com/documents/whitepapers/code_standards/
+
+    - some best practices
+-->
+
+<module name="Checker">
+
+    <module name="PackageHtml"/>
+
+    <module name="NewlineAtEndOfFile">
+      <property name="lineSeparator" value="lf"/>
+    </module>
+
+    <module name="TreeWalker">
+        <property name="tabWidth" value="2"/>
+
+        <!-- Checks for Javadoc comments.                     -->
+        <!-- See http://checkstyle.sf.net/config_javadoc.html -->
+        <module name="JavadocType">
+          <property name="authorFormat" value=".*(.*@.*)"/>
+          <property name="versionFormat" value="^[0-9]+ [A-Z][a-z]+ [0-9][0-9][0-9][0-9]$"/>
+        </module>
+        <module name="JavadocVariable"/>
+        <module name="JavadocMethod"/>
+        <module name="JavadocStyle"/>
+
+        <!-- Checks for Naming Conventions.                  -->
+        <!-- See http://checkstyle.sf.net/config_naming.html -->
+        <module name="ConstantName"/>
+        <module name="LocalFinalVariableName">
+          <property name="format" value="^[a-z][_a-zA-Z0-9]*$"/>
+        </module>
+        <module name="LocalVariableName">
+          <property name="format" value="^[a-z][_a-z0-9]*$"/>
+        </module>
+        <module name="MemberName">
+          <property name="format" value="^my_[a-z][_a-zA-Z0-9]*$"/>
+        </module>
+        <module name="MethodName">
+          <property name="format" value="^[a-z][_a-zA-Z0-9]*$"/>
+        </module>
+<!--         <module name="PackageName"> -->
+<!--           <property name="format" value="^[a-z]+(\.[_a-z]+)*$"/> -->
+<!--         </module> -->
+        <module name="ParameterName">
+          <property name="format" 
+                    value="(^a_[a-z][_a-z0-9]*$)|(^an_[a-z][_a-z0-9]*$)|(^the_[a-z][_a-z0-9]*$)|(^some_[a-z][_a-z0-9]*$)"/>
+        </module>
+        <module name="StaticVariableName">
+          <property name="format" value="^[a-z][_a-zA-Z0-9]*$"/>
+        </module>
+        <module name="TypeName"/>
+
+
+        <!-- Checks for Headers  -->                           
+        <!-- See http://checkstyle.sf.net/config_header.html -->
+<!--         <module name="Header"> -->
+<!--           <property name="headerFile" value="csi.header"/> -->
+<!--           <property name="ignoreLines" value="2"/> -->
+<!--         </module> -->
+
+        <!-- Following interprets the header file as regular expressions. -->
+        <!-- <module name="RegexpHeader"/>                                -->
+
+
+        <!-- Checks for Imports                              -->
+        <!-- See http://checkstyle.sf.net/config_import.html -->
+        <module name="AvoidStarImport"/>
+        <module name="IllegalImport"/>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+
+
+        <!-- Checks for Size Violations.                    -->
+        <!-- See http://checkstyle.sf.net/config_sizes.html -->
+        <module name="ExecutableStatementCount">
+          <property name="max" value="10"/>
+          <property name="tokens" value="CTOR_DEF"/>
+        </module>
+        <module name="ExecutableStatementCount">
+          <property name="max" value="20"/>
+          <property name="tokens" value="METHOD_DEF"/>
+        </module>
+        <module name="ExecutableStatementCount">
+          <property name="max" value="5"/>
+          <property name="tokens" value="INSTANCE_INIT"/>
+        </module>
+        <module name="ExecutableStatementCount">
+          <property name="max" value="0"/>
+          <property name="tokens" value="STATIC_INIT"/>
+        </module>
+        <module name="FileLength">
+          <property name="max" value="500"/>
+        </module>
+        <module name="LineLength">
+          <property name="max" value="95"/>
+          <property name="ignorePattern" value="(^ *//\*@ .+$)|(^ *@.+$)"/>
+        </module>
+        <module name="MethodLength">
+          <property name="tokens" value="CTOR_DEF"/>
+          <property name="max" value="20"/>
+        </module>
+        <module name="MethodLength">
+          <property name="tokens" value="METHOD_DEF"/>
+          <property name="max" value="40"/>
+        </module>
+        <module name="AnonInnerLength"/>
+        <module name="ParameterNumber">
+          <property name="max" value="8"/>
+          <property name="tokens" value="CTOR_DEF,METHOD_DEF"/>
+        </module>
+
+        <!-- Checks for whitespace                               -->
+        <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+        <module name="EmptyForIteratorPad"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="OperatorWrap">
+          <property name="tokens" value="ASSIGN, BAND, BAND_ASSIGN, BOR, 
+             BOR_ASSIGN, BSR, BSR_ASSIGN, BXOR, BXOR_ASSIGN, COLON, DIV, 
+             DIV_ASSIGN, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, 
+             LT, MINUS, MINUS_ASSIGN, MOD, MOD_ASSIGN, NOT_EQUAL, PLUS, 
+             PLUS_ASSIGN, QUESTION, SL, SL_ASSIGN, SR, SR_ASSIGN, STAR, 
+             STAR_ASSIGN"/>
+          <property name="option" value="eol"/>
+        </module>
+        <module name="ParenPad">
+          <property name="option" value="nospace"/>
+        </module>
+        <module name="TabCharacter"/>
+        <module name="WhitespaceAfter">
+          <property name="tokens" value="COMMA, SEMI"/>
+        </module>
+        <module name="WhitespaceAround"/>
+
+
+        <!-- Modifier Checks                                    -->
+        <!-- See http://checkstyle.sf.net/config_modifiers.html -->
+        <module name="ModifierOrder"/>
+        <module name="RedundantModifier"/>
+
+
+        <!-- Checks for Blocks                               -->
+        <!-- See http://checkstyle.sf.net/config_blocks.html -->
+        <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock"/>
+        <module name="RightCurly"/>
+
+
+        <!-- Checks for Common Coding Problems               -->
+        <!-- See http://checkstyle.sf.net/config_coding.html -->
+        <module name="CovariantEquals"/>
+        <module name="DoubleCheckedLocking"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsHashCode"/>
+        <module name="FinalLocalVariable"/>
+        <module name="HiddenField"/>
+        <module name="InnerAssignment"/>
+        <module name="MagicNumber">
+          <property name="ignoreNumbers" value="-1, 0, 1, 10"/>
+        </module>
+        <module name="MissingSwitchDefault"/>
+        <module name="RedundantThrows"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+        <module name="NestedIfDepth">
+          <property name="max" value="2"/>
+        </module>
+        <module name="NestedTryDepth">
+          <property name="max" value="2"/>
+        </module>
+        <module name="SuperClone"/>
+        <module name="SuperFinalize"/>
+        <module name="IllegalCatch"/>
+        <module name="PackageDeclaration"/>
+        <module name="ReturnCount">
+          <property name="max" value="3"/>
+        </module>
+        <module name="IllegalType"/>
+        <module name="DeclarationOrder"/>
+        <module name="ParameterAssignment"/>
+        <module name="ExplicitInitialization"/>
+
+        <!-- Checks for Class Design                         -->
+        <!-- See http://checkstyle.sf.net/config_design.html -->
+        <module name="VisibilityModifier">
+          <property name="packageAllowed" value="true"/>
+        </module>
+        <module name="FinalClass"/>
+        <module name="InterfaceIsType"/>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="DesignForExtension"/>
+        <module name="MutableException"/>
+        <module name="ThrowsCount">
+          <property name="max" value="3"/>
+        </module>
+
+        <!-- Checks for various Metrics                       -->
+        <!-- See http://checkstyle.sf.net/config_metrics.html -->
+        <module name="CyclomaticComplexity"/>
+
+        <!-- Miscellaneous Other Checks                    -->
+        <!-- See http://checkstyle.sf.net/config_misc.html -->
+        <module name="GenericIllegalRegexp">
+            <property name="format" value="\s+$"/>
+            <property name="message" value="Line has trailing spaces."/>
+        </module>
+        <module name="GenericIllegalRegexp">
+            <property name="format" value="System\.out\.println"/>
+            <property name="message" value="Never use System.out."/>
+        </module>
+        <module name="GenericIllegalRegexp">
+            <property name="format" value="(@review)|(@todo)|(@design)"/>
+            <property name="message" value="Some code still needs review."/>
+        </module>
+        <module name="UncommentedMain"/>
+        <module name="UpperEll"/>
+        <module name="ArrayTypeStyle"/>
+        <module name="FinalParameters"/>
+
+        <!-- Make sure that assert statement do not have side effects. -->
+        <module name="DescendantToken">
+            <property name="tokens" value="LITERAL_ASSERT"/>
+            <property name="limitedTokens" value="ASSIGN,DEC,INC,POST_DEC,
+                POST_INC,PLUS_ASSIGN,MINUS_ASSIGN,STAR_ASSIGN,DIV_ASSIGN,MOD_ASSIGN,
+                BSR_ASSIGN,SR_ASSIGN,SL_ASSIGN,BAND_ASSIGN,BXOR_ASSIGN,BOR_ASSIGN,
+                METHOD_CALL"/>
+            <property name="maximumNumber" value="0"/>
+        </module>
+
+        <!-- Consider adding some more of these general
+             DescendantToken checks for things like anonymous and
+             inline class abuse. -->
+
+        <module name="Indentation">
+          <property name="basicOffset" value="2"/>
+          <property name="caseIndent" value="2"/>
+        </module>
+
+        <!-- Checks for Usage                               -->
+        <!-- See http://checkstyle.sf.net/config_usage.html -->
+        <module name="usage.OneMethodPrivateField"/>
+        <module name="usage.UnusedLocalVariable"/>
+        <module name="usage.UnusedParameter"/>
+        <module name="usage.UnusedPrivateField"/>
+        <module name="usage.UnusedPrivateMethod"/>
+
+    </module>
+
+    <!-- Checks for Duplicate Code                           -->
+    <!-- See http://checkstyle.sf.net/config_duplicates.html -->
+    <module name="StrictDuplicateCode">
+      <property name="min" value="15"/>
+    </module>
+
+</module>

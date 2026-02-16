@@ -1,0 +1,16 @@
+ThisTest.java:14: Error: Undefined variable: ThisTest2.this
+    int t2 = ThisTest2.this.i;                 // error (current javac ...
+             ^
+ThisTest.java:15: Error: Undefined variable: ThisTest.this
+    static int t3 = ThisTest.this.j;           // error
+                    ^
+ThisTest.java:16: Error: Undefined variable: Inner.this
+    int t4 = Inner.this.t1;                    // error
+             ^
+ThisTest.java:21: Error: Undefined variable: ThisTest2.this
+        int t2 = ThisTest2.this.i;                 // error
+                 ^
+ThisTest.java:26: Error: Undefined variable: ThisTest2.this
+            int t2 = ThisTest2.this.i;                 // error
+                     ^
+5 errors

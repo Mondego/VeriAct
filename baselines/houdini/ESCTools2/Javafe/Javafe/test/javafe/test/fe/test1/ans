@@ -1,0 +1,4 @@
+Duplicates.java:11: Fatal error: type p.Duplicates already defined at "Duplicates.java", line 9, col 0
+class Duplicates {}     // This is a duplicate definition and hence in ...
+^
+1 error

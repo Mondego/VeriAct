@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|C.java: Caution: Using given file as the .java file, even though it is not the java file for C on the classpath
+    [TIME]
+
+C ...
+  Prover started:TIME
+    [TIME]
+
+C: C() ...
+    [TIME]  passed
+
+C: helperMethod() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution

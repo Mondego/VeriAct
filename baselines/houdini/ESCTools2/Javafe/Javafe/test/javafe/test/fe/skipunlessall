@@ -1,0 +1,2 @@
+## This file lists tests that are only performed when ALLTESTS=1
+test1102

@@ -1,0 +1,40 @@
+ESC/Java version VERSION
+    [TIME]
+
+UnchangedInner ...
+  Prover started:TIME
+    [TIME]
+
+UnchangedInner: test() ...
+------------------------------------------------------------------------
+UnchangedInner.java:28: Warning: Possible assertion failure (Assert)
+        //@ assert x>0 ;        // error
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UnchangedInner: test2() ...
+------------------------------------------------------------------------
+UnchangedInner.java:34: Warning: Possible assertion failure (Assert)
+        //@ assert x>0 ;        // error
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UnchangedInner: UnchangedInner() ...
+    [TIME]  passed
+  [TIME total]
+
+UnchangedInner$Inner ...
+    [TIME]
+
+UnchangedInner$Inner: Inner() ...
+    [TIME]  passed
+
+UnchangedInner$Inner: Inner(int) ...
+    [TIME]  passed
+
+UnchangedInner$Inner: modify() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

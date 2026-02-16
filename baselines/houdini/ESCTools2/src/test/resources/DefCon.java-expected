@@ -1,0 +1,55 @@
+ESC/Java version VERSION
+src|test|resources|DefCon.java: Caution: Using given file as the .java file, even though it is not the java file for DefCon on the classpath
+    [TIME]
+
+DefCon ...
+  Prover started:TIME
+    [TIME]
+
+DefCon: DefCon() ...
+    [TIME]  passed
+  [TIME total]
+
+DefCon$AE ...
+    [TIME]
+
+DefCon$AE: AE() ...
+------------------------------------------------------------------------
+src|test|resources|DefCon.java:20: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|DefCon.java", line 17, col 12:
+        //@ signals(SE se) gg == 17;
+            ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|DefCon.java", line 18, col 30.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+DefCon$AE: AE(int) ...
+    [TIME]  passed
+  [TIME total]
+
+DefCon$E ...
+    [TIME]
+
+DefCon$E: E() ...
+    [TIME]  passed
+  [TIME total]
+
+DefCon$ST ...
+    [TIME]
+
+DefCon$ST: ST() ...
+    [TIME]  passed
+  [TIME total]
+
+DefCon$SE ...
+    [TIME]
+
+DefCon$SE: SE() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

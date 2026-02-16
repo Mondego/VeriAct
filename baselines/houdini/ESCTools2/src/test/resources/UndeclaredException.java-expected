@@ -1,0 +1,139 @@
+ESC/Java version VERSION
+src|test|resources|UndeclaredException.java: Caution: Using given file as the .java file, even though it is not the java file for UndeclaredException on the classpath
+    [TIME]
+
+UndeclaredException ...
+  Prover started:TIME
+    [TIME]
+
+UndeclaredException: UndeclaredException() ...
+    [TIME]  passed immediately
+
+UndeclaredException: q(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:8: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException: qx(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:16: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException: q1(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredException: q1x(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredException: q3(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:38: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException: q3x(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:45: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException: q4(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:57: Warning: Possible unexpected exception (Exception)
+}  // Exception WARNING with bug fixed; previously OK - we don't know  ...
+^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException.java", line 54, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException: q4x(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:63: Warning: Possible unexpected exception (Exception)
+}  // WARNING - an exception might be thrown
+^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException.java", line 62, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException: rr(UndeclaredException$NEx) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:73: Warning: Possible assertion failure (Assert)
+//@ assert false; // WARNING - but not until a bug is fixed
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException.java", line 68, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException: rrx(UndeclaredException$Ex) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:84: Warning: Possible assertion failure (Assert)
+//@ assert false;  // WARNING
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredException.java", line 79, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredException$NEx ...
+    [TIME]
+
+UndeclaredException$NEx: NEx() ...
+    [TIME]  passed immediately
+
+UndeclaredException$NEx: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:99: Warning: Possible violation of modifies clause (Modifies)
+      if (o == null) throw new NullPointerException();
+                                                   ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/NullPointerException.class":
+Associated declaration is "src|test|resources|UndeclaredException.java", line 91, col 4:
+    //@ public normal_behavior ...
+    ^
+Execution trace information:
+    Executed then branch in "src|test|resources|UndeclaredException.java", line 99, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredException$Ex ...
+    [TIME]
+
+UndeclaredException$Ex: Ex() ...
+    [TIME]  passed immediately
+
+UndeclaredException$Ex: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredException.java:115: Warning: Possible violation of modifies clause (Modifies)
+      if (o == null) throw new NullPointerException();
+                                                   ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/NullPointerException.class":
+Associated declaration is "src|test|resources|UndeclaredException.java", line 107, col 4:
+    //@ public normal_behavior ...
+    ^
+Execution trace information:
+    Executed then branch in "src|test|resources|UndeclaredException.java", line 115, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+10 warnings

@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|NotSpecified.java: Caution: Using given file as the .java file, even though it is not the java file for NotSpecified on the classpath
+    [TIME]
+
+NotSpecified ...
+  Prover started:TIME
+    [TIME]
+
+NotSpecified: m() ...
+    [TIME]  passed immediately
+
+NotSpecified: NotSpecified() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

@@ -1,0 +1,753 @@
+Nowarn.java:32: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+        while (true) {
+              ^
+Associated declaration is "Nowarn.java", line 31, col 5:
+        //@ decreases x;  // should give 2 warnings
+            ^
+Nowarn.java:32: Warning: Loop variant function possible not decreased (Decreases)
+        while (true) {
+              ^
+Associated declaration is "Nowarn.java", line 31, col 5:
+        //@ decreases x;  // should give 2 warnings
+            ^
+Nowarn.java:38: Warning: Loop variant function possible not decreased (Decreases)
+        while (true) {  //@ nowarn DecreasesBound
+              ^
+Associated declaration is "Nowarn.java", line 37, col 5:
+        //@ decreases x;  // should give 1 warning
+            ^
+Nowarn.java:44: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+        while (true) {  //@ nowarn Decreases
+              ^
+Associated declaration is "Nowarn.java", line 43, col 5:
+        //@ decreases x;  // should give 1 warning
+            ^
+Nowarn.java:92: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+        while (true) {
+              ^
+Associated declaration is "Nowarn.java", line 91, col 5:
+        //@ decreases x;  // should give 2 warnings
+            ^
+Nowarn.java:92: Warning: Loop variant function possible not decreased (Decreases)
+        while (true) {
+              ^
+Associated declaration is "Nowarn.java", line 91, col 5:
+        //@ decreases x;  // should give 2 warnings
+            ^
+6 warnings
+----- loop 1.5
+C.java:66: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 65, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:80: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 79, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:90: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 88, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:97: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 96, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:104: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do {
+    ^
+Associated declaration is "C.java", line 103, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:111: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 110, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:121: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 119, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+7 warnings
+D.java:5: Error: 'decreases' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ decreases x;   // wrong placement
+          ^
+D.java:10: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:17: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:24: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+4 errors
+E.java:22: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x-- >= 0) { }  // variant negative
+          ^
+Associated declaration is "E.java", line 21, col 8:
+    //@ decreases x-1;
+        ^
+E.java:31: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 30, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Loop variant function possible not decreased (Decreases)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Loop variant function possible not decreased (Decreases)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Loop variant function possible not decreased (Decreases)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:83: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {  // does not necessarily decrease variant functio ...
+          ^
+Associated declaration is "E.java", line 82, col 8:
+    //@ decreases x;
+        ^
+E.java:94: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:94: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:102: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // does not decrease variant function
+          ^
+Associated declaration is "E.java", line 101, col 8:
+    //@ decreases x;
+        ^
+E.java:132: Warning: Possible assertion failure (Assert)
+      //@ assert b;  // just to check we get here
+          ^
+15 warnings
+----- loop 1.0
+C.java:66: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 65, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:80: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 79, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:90: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 88, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:97: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 96, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:104: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do {
+    ^
+Associated declaration is "C.java", line 103, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:111: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 110, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:121: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 119, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+7 warnings
+D.java:5: Error: 'decreases' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ decreases x;   // wrong placement
+          ^
+D.java:10: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:17: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:24: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+4 errors
+E.java:22: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x-- >= 0) { }  // variant negative
+          ^
+Associated declaration is "E.java", line 21, col 8:
+    //@ decreases x-1;
+        ^
+E.java:31: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 30, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Loop variant function possible not decreased (Decreases)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Loop variant function possible not decreased (Decreases)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Loop variant function possible not decreased (Decreases)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:83: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {  // does not necessarily decrease variant functio ...
+          ^
+Associated declaration is "E.java", line 82, col 8:
+    //@ decreases x;
+        ^
+E.java:94: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:94: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:102: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // does not decrease variant function
+          ^
+Associated declaration is "E.java", line 101, col 8:
+    //@ decreases x;
+        ^
+E.java:132: Warning: Possible assertion failure (Assert)
+      //@ assert b;  // just to check we get here
+          ^
+15 warnings
+----- loop 5
+C.java:66: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 65, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:80: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 79, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:90: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 88, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:97: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 96, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:104: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do {
+    ^
+Associated declaration is "C.java", line 103, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:111: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 110, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:121: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 119, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+7 warnings
+D.java:5: Error: 'decreases' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ decreases x;   // wrong placement
+          ^
+D.java:10: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:17: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:24: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+4 errors
+E.java:22: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x-- >= 0) { }  // variant negative
+          ^
+Associated declaration is "E.java", line 21, col 8:
+    //@ decreases x-1;
+        ^
+E.java:31: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 30, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Loop variant function possible not decreased (Decreases)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Loop variant function possible not decreased (Decreases)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Loop variant function possible not decreased (Decreases)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:83: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {  // does not necessarily decrease variant functio ...
+          ^
+Associated declaration is "E.java", line 82, col 8:
+    //@ decreases x;
+        ^
+E.java:94: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:94: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:102: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // does not decrease variant function
+          ^
+Associated declaration is "E.java", line 101, col 8:
+    //@ decreases x;
+        ^
+E.java:132: Warning: Possible assertion failure (Assert)
+      //@ assert b;  // just to check we get here
+          ^
+15 warnings
+----- loop safe
+C.java:66: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 65, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:80: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 79, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:90: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 88, col 8:
+    //@ decreases 8-x;  // variant negative
+        ^
+C.java:97: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 96, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:104: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do {
+    ^
+Associated declaration is "C.java", line 103, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:111: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for (int x = t; x < 10; x++) {
+                  ^
+Associated declaration is "C.java", line 110, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+C.java:121: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x < 10) {
+          ^
+Associated declaration is "C.java", line 119, col 8:
+    //@ decreases 7-x;  // variant negative
+        ^
+7 warnings
+D.java:5: Error: 'decreases' pragmas can occur only immediately prior to a loop statement.  Loop statement expected (and not found) here.
+      //@ decreases x;   // wrong placement
+          ^
+D.java:10: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:17: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+D.java:24: Error: Undefined variable 'x'
+    //@ decreases x;   // undefined variable
+                  ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+4 errors
+E.java:22: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x-- >= 0) { }  // variant negative
+          ^
+Associated declaration is "E.java", line 21, col 8:
+    //@ decreases x-1;
+        ^
+E.java:31: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 30, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:38: Warning: Loop variant function possible not decreased (Decreases)
+    while ((tmp = x) == (x = 1000) || true) {
+          ^
+Associated declaration is "E.java", line 37, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:70: Warning: Loop variant function possible not decreased (Decreases)
+    while (true) { }
+          ^
+Associated declaration is "E.java", line 69, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    for ( ; ; ) { }
+          ^
+Associated declaration is "E.java", line 73, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:78: Warning: Loop variant function possible not decreased (Decreases)
+    do { } while (true);
+    ^
+Associated declaration is "E.java", line 77, col 8:
+    //@ decreases x;
+        ^
+E.java:83: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {  // does not necessarily decrease variant functio ...
+          ^
+Associated declaration is "E.java", line 82, col 8:
+    //@ decreases x;
+        ^
+E.java:94: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:94: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // negative variant function does not lead to e ...
+          ^
+Associated declaration is "E.java", line 93, col 8:
+    //@ decreases x;   // not decreased, and
+        ^
+E.java:102: Warning: Loop variant function possible not decreased (Decreases)
+    while (-2 <= x) {  // does not decrease variant function
+          ^
+Associated declaration is "E.java", line 101, col 8:
+    //@ decreases x;
+        ^
+E.java:132: Warning: Possible assertion failure (Assert)
+      //@ assert b;  // just to check we get here
+          ^
+15 warnings
+----- loop 1.5
+F.java:11: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 10, col 8:
+    //@ decreases x;
+        ^
+F.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 73, col 8:
+    //@ decreases x;
+        ^
+2 warnings
+----- loop 1.0
+F.java:11: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 10, col 8:
+    //@ decreases x;
+        ^
+F.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 73, col 8:
+    //@ decreases x;
+        ^
+2 warnings
+----- loop 5
+F.java:11: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 10, col 8:
+    //@ decreases x;
+        ^
+F.java:19: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 18, col 8:
+    //@ decreases x;
+        ^
+F.java:27: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 26, col 8:
+    //@ decreases x;
+        ^
+F.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 73, col 8:
+    //@ decreases x;
+        ^
+F.java:84: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 83, col 8:
+    //@ decreases x;
+        ^
+F.java:94: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 93, col 8:
+    //@ decreases x;
+        ^
+6 warnings
+----- loop safe
+F.java:11: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 10, col 8:
+    //@ decreases x;
+        ^
+F.java:19: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 18, col 8:
+    //@ decreases x;
+        ^
+F.java:27: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 26, col 8:
+    //@ decreases x;
+        ^
+F.java:35: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (true) {
+          ^
+Associated declaration is "F.java", line 34, col 8:
+    //@ decreases x;
+        ^
+F.java:43: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+    while (x != 0) {
+          ^
+Associated declaration is "F.java", line 42, col 8:
+    //@ decreases x;
+        ^
+F.java:74: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 73, col 8:
+    //@ decreases x;
+        ^
+F.java:84: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 83, col 8:
+    //@ decreases x;
+        ^
+F.java:94: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 93, col 8:
+    //@ decreases x;
+        ^
+F.java:104: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 103, col 8:
+    //@ decreases x;
+        ^
+F.java:114: Warning: Loop variant function possible not decreased (Decreases)
+    while (0 <= x) {
+          ^
+Associated declaration is "F.java", line 113, col 8:
+    //@ decreases x;
+        ^
+10 warnings

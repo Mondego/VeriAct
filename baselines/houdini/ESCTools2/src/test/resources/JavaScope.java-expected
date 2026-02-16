@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|JavaScope.java: Caution: Using given file as the .java file, even though it is not the java file for JavaScope on the classpath
+    [TIME]
+
+JavaScope ...
+src|test|resources|JavaScope.java:20: Error: Variable 'b' is already defined here.
+                                int b = 0; // ERROR
+                                    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+JSA ...
+  [TIME total]
+2 cautions
+1 error

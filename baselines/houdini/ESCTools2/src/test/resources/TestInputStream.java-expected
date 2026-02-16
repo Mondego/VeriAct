@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|TestInputStream.java: Caution: Using given file as the .java file, even though it is not the java file for TestInputStream on the classpath
+    [TIME]
+
+TestInputStream ...
+src|test|resources|TestInputStream.java:17: Error: No such field in type java.io.InputStream
+  //@ requires s != null && s.isOpen;
+                              ^
+src|test|resources|TestInputStream.java:19: Error: No such field in type java.io.InputStream
+    //@ assume s.availableBytes > 10;
+                 ^
+src|test|resources|TestInputStream.java:28: Fatal error: No method named assertTrue is in scope here.
+        assertTrue( true) ;
+        ^
+1 caution
+3 errors

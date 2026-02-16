@@ -1,0 +1,45 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModifiesUse ...
+  Prover started:TIME
+    [TIME]
+
+ModifiesUse: ModifiesUse() ...
+    [TIME]  passed immediately
+
+ModifiesUse: m() ...
+    [TIME]  passed immediately
+
+ModifiesUse: mm() ...
+------------------------------------------------------------------------
+ModifiesUse.java:15: Warning: Possible assertion failure (Assert)
+                //@ assert j == 25; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModifiesUse: mx() ...
+    [TIME]  passed immediately
+
+ModifiesUse: mmx() ...
+------------------------------------------------------------------------
+ModifiesUse.java:24: Warning: Possible assertion failure (Assert)
+                //@ assert j == 25; // ERROR - should be
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModifiesUse: mn() ...
+    [TIME]  passed immediately
+
+ModifiesUse: me() ...
+    [TIME]  passed immediately
+
+ModifiesUse: ma() ...
+    [TIME]  passed immediately
+
+ModifiesUse: mmm() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

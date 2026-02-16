@@ -1,0 +1,17 @@
+ESC/Java version VERSION
+    [TIME]
+
+BadRepresents ...
+BadRepresents.java:5: Error: Undefined variable 'badd'
+        //@ represents badd = 7;
+                       ^
+BadRepresents.java:8: Error: A represents clause must name a model field
+        //@ represents ii = 7;
+                       ^
+BadRepresents.java:7: Associated declaration: 
+        public int ii;
+                   ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+2 errors

@@ -1,0 +1,11 @@
+ESC/Java version VERSION
+    [TIME]
+
+CausedAnErrorOnce00 ...
+CausedAnErrorOnce00.java:12: Error: No such field in type java.lang.Object
+    return instancevar + this.instancevar + super.instancevar;
+                                                  ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+1 error

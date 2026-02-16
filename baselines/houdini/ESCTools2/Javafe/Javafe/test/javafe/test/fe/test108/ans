@@ -1,0 +1,26 @@
+TestStaticMembers.java:40: Error: Only top-level classes may contain static initializer blocks
+        static { }                     // error
+               ^
+TestStaticMembers.java:43: Error: Inner classes may not declare static members, unless they are compile-time constant fields
+        static int x;                  // error
+                   ^
+TestStaticMembers.java:45: Error: Only methods of top-level classes may be static
+        static void m() {};            // error
+                    ^
+TestStaticMembers.java:47: Error: Nested type OutsideClass3$InnerClass$S cannot be static; static types can be members of only interfaces and top-level classes.
+        static class S {};             // error
+               ^
+TestStaticMembers.java:49: Error: Static types can be members of only interfaces and top-level classes.  (Interfaces are implicitly static.)
+        interface I {};                // error (implicitly static)
+        ^
+TestStaticMembers.java:60: Error: Modifier 'static' not allowed on interface method declarations
+        static void m();               // error: interface methods nev ...
+        ^
+TestStaticMembers.java:60: Error: Incompatible modifiers for abstract method
+        static void m();               // error: interface methods nev ...
+                    ^
+7 errors
+TestStaticMembers2.java:9: Fatal error: Cannot have initializer blocks in an interface
+        static { }                     // error (no initializers in in ...
+               ^
+1 error

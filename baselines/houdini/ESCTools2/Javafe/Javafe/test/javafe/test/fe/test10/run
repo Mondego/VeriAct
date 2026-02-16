@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Check that superclasses from java.lang work properly
+
+${TOOL} JavaLang.java

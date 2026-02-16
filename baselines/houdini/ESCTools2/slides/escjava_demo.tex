@@ -1,0 +1,434 @@
+\documentclass[
+%a4,
+nocolorBG,
+%colorBG,
+slideColor,
+pdf,
+%accumulate,ps,
+%draft,
+erik,
+%frames,
+]{prosper}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{alltt}
+\usepackage{pstricks,pst-node,pst-text,pst-3d}
+\usepackage{textcomp}
+%\usepackage{colordvi}
+\newcommand{\Red}[1]{{\red #1}}
+\usepackage[all]{xy}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newrgbcolor{Yellowish}{0.90 0.85 0.650}
+
+%\newrgbcolor{red}{1 0 0}
+%\newrgbcolor{purple}{0.4 0 0.7}
+%\newrgbcolor{lightpurple}{0.63 0.13 0.94}
+
+%\newrgbcolor{lime}{0.73 1 0}
+\newrgbcolor{green}{0.133 0.56 0} % lichter
+%\newrgbcolor{green}{0.10 0.43 0}
+
+%\newrgbcolor{knalblue}{0 0 1}
+\newrgbcolor{blue}{.2 .36 .77}
+%\newrgbcolor{darkblue}{0.28 0.24 0.55}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\embf}[1]{\textit{\textbf{#1}}}
+\newcommand{\rmbf}[1]{\textrm{\textbf{#1}}}
+\newcommand{\ttbf}[1]{\mbox{\tt \textbf{#1}}}
+\newcommand{\code}[1]{{\rm \texttt{\textbf{\small #1}}}}
+
+\myitem{1}{\mbox{{$\bullet$}}}
+\newcommand{\old}{\(\backslash\)old}
+\newcommand{\vooralle}{\(\backslash\)forall}
+\newcommand{\result}{\(\backslash\)result}
+\renewcommand{\familydefault}{phv}
+\renewcommand{\rmdefault}{phv}
+\newif\ifignore
+
+\newrgbcolor{Bluish}{0.9 0.9 1.0}
+\newcommand{\doos}[1]{\psshadowbox[fillstyle=solid,
+                        fillcolor=Bluish,
+                        framearc=0.2,
+                        framesep=2mm]
+                        {#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\embf{\blue 
+       {\huge ESC/Java 
+       \\ \medskip
+       {\Large extended static checking for Java }}
+      }}
+\author{\embf{\Large{\red Erik Poll, Joe Kiniry, David Cok}}
+       }
+\institution{\embf{\large University of Nijmegen; Eastman Kodak Company}}
+\slideCaption{{\blue Erik Poll - JML}}
+%\Logo{{\blue Erik Poll}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle 
+
+\boldmath
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\overlays{4}{
+\begin{slide}{ESC/Java}
+\vspace*{-3ex}
+
+{\blue Extended static checker}
+{\rm by Rustan Leino et.al. [Compaq].}
+\begin{itemstep}
+\item$\!$ {\blue {\em tries} to {\em prove} correctness of specifications,}\\
+  {\green at compile-time, fully automatically}
+\item$\!$ {\em not sound}, {\em not complete}, but {\blue finds lots
+    of potential bugs quickly}
+\item good at proving absence of runtime exceptions {\scriptsize (eg
+    Null-, ArrayIndexOutOfBounds-, ClassCast-)} and verifying
+  relatively simple properties.
+\item ESC/Java only supported a subset of full JML, but ESC/Java2 by
+  Joe Kiniry [KUN] \& David Cok [Kodak] remedies this.
+\end{itemstep}
+
+\end{slide}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{static checking vs runtime checking}
+\vspace*{-3ex}
+
+Important differences:
+
+\begin{itemize}
+\item ESC/Java checks specs at {\blue compile-time}, \\
+      jmlc checks specs at {\green run-time}
+\item ESC/Java {\blue proves} correctness of specs,\\
+      jml only {\green tests} correctness of specs.
+\\
+Hence
+\begin{itemize}
+\item ESC/Java independent of any test suite, \\
+      results of runtime testing only as good as the test suite,
+\item ESC/Java provided higher degree of confidence.
+\end{itemize}
+
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a;
+  int   n;
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 1; i <= n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \} 
+}}
+\end{alltt} %}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a;
+  int   n;
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 1; i <= n; i++) \{
+        if (\Red{a[i]} < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-3ex}
+\doos{Warning: {\red possible null deference}. Plus other warnings}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null;}
+  int   n;
+  int{\green extractMin}() \{ 
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 1; i <= n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-3ex}
+\end{slide}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null;}
+  int   n;
+  int{\green extractMin}() \{ 
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 1; i <= n; i++) \{
+        if (\Red{a[i]} < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-3ex}
+\doos{Warning: {\red  Array index possibly too large }}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null;}
+  int   n; {\blue //@ invariant 0 <= n && n <= a.length;}
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 1; i <= n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-3ex}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null;}
+  int   n; {\blue //@ invariant 0 <= n && n <= a.length;}
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 1; i <= n; i++) \{
+        if (\Red{a[i]} < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-3ex}
+\doos{Warning: {\red  Array index possibly too large }}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null; }
+  int   n; {\blue //@ invariant 0 <= n && n <= a.length;}
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = \Red{0}; i \Red{<} n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-6ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null; }
+  int   n; {\blue //@ invariant 0 <= n && n <= a.length;}
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 0; i < n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = \Red{a[n]};
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-3ex}
+\doos{Warning: {\red  Possible negative array index }}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-7ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null; }
+  int   n; {\blue //@ invariant 0 <= n && n <= a.length;}
+ {\blue //@ requires n > 0;}
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 0; i < n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-7ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null; }
+  int   n; {\blue //@ invariant 0 <= n && n <= a.length;}
+ {\blue //@ requires n > 0;}
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 0; i < n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-4ex}
+\doos{No more warnings about this code}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java ``demo''}
+\vspace*{-7ex}
+\begin{alltt}
+\texttt{\textbf{\footnotesize
+class Bag \{
+  int[] a; {\blue //@ invariant a != null; }
+  int   n; {\blue //@ invariant 0 <= n && n <= a.length;}
+ {\blue //@ requires n > 0;}
+  int{\green extractMin}() \{
+   int m = Integer.MAX_VALUE;
+   int mindex = 0;
+   for (int i = 0; i < n; i++) \{
+        if (a[i] < m) \{ mindex =i; m = a[i]; \} \}
+   n--;
+   a[mindex] = a[n];
+   return m;
+ \}
+}}
+\end{alltt} %}
+\vspace*{-4ex}
+\doos{\parbox{24em}{\ldots but warnings about calls to
+    \code{extractMin()} that do not ensure precondition}}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\overlays{3}{
+\begin{slide}{Some points to note}
+\vspace*{-3ex}
+\begin{itemstep}
+\item
+ESC/Java {\em {\green forces}} one to specify some properties.
+\medskip
+\item
+If you understand the code, \\
+then these properties are obvious.
+\medskip
+
+{\em But for larger programs this may not be the case!}
+\medskip
+\item
+If you have these properties documented, \\
+then understanding the code is easier.
+\end{itemstep}
+\end{slide}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java vs runtime checking (cont.)}
+\vspace*{-3ex}
+\begin{itemize}
+\item For {\green runtime assertion checking}, we could {\green choose
+    what we specify}, e.g. all, one, or none of the properties we have
+  written for \code{Bag}.
+\item But for {\blue ESC/Java} to accept a spec, we are {\em {\blue
+      forced}} to specify {\em {\blue all properties}} (e.g.\ 
+  invariants, preconditions) that this spec relies on.
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Limitations of ESC/Java}
+\vspace*{-3ex}
+
+Like most tools, ESC/Java is
+\begin{itemize}
+\item {\blue not complete}: it may {\green complain about a correct spec}
+\item {\blue not sound}: it may {\green fail to warn about an incorrect spec}
+\end{itemize}
+ESC/Java warns about {\green many potential bugs}, but {\green not
+  about all actual bugs.}
+
+\medskip
+
+These are unavoidable concessions to main goal:\\
+{\green pointing out lots of potential bugs quickly \& completely
+  automatically}
+
+\medskip
+
+In practice ESC/Java is quite good at checking simple specs, e.g.\ 
+ruling out any \code{NullPointer-} and
+\code{IndexOutOfBounds\-Exceptions}
+
+\end{slide}
+
+\end{document}
+

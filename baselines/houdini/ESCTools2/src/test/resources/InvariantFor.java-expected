@@ -1,0 +1,34 @@
+ESC/Java version VERSION
+src|test|resources|InvariantFor.java: Caution: Using given file as the .java file, even though it is not the java file for InvariantFor on the classpath
+    [TIME]
+
+InvariantFor ...
+  Prover started:TIME
+    [TIME]
+
+InvariantFor: m() ...
+------------------------------------------------------------------------
+src|test|resources|InvariantFor.java:9: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|InvariantFor.java", line 6, col 5:
+        //@ ensures \invariant_for(a);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|InvariantFor.java", line 9, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InvariantFor: InvariantFor() ...
+    [TIME]  passed
+  [TIME total]
+
+InvariantForA ...
+    [TIME]
+
+InvariantForA: InvariantForA() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

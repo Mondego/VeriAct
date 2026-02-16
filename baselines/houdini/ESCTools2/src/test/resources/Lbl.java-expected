@@ -1,0 +1,41 @@
+ESC/Java version VERSION
+src|test|resources|Lbl.java: Caution: Using given file as the .java file, even though it is not the java file for Lbl on the classpath
+    [TIME]
+
+Lbl ...
+  Prover started:TIME
+    [TIME]
+
+Lbl: m() ...
+------------------------------------------------------------------------
+src|test|resources|Lbl.java:6: Warning: Postcondition possibly not established (Post)
+        void m() {}
+                  ^
+Associated declaration is "src|test|resources|Lbl.java", line 5, col 5:
+        //@ ensures (\lblneg A false);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|Lbl.java", line 6, col 11.
+
+Counterexample labels:
+    A
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Lbl: mm() ...
+------------------------------------------------------------------------
+src|test|resources|Lbl.java:9: Warning: Possible assertion failure (Assert)
+        //@ assert !(\lblpos B true);
+            ^
+Counterexample labels:
+    B
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Lbl: Lbl() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

@@ -1,0 +1,19 @@
+TestSet2.java:39: Warning: Possible assertion failure (Assert)
+    //@ assert (/forall Object o; s.containsObject(o); o == e);
+        ^
+TestSet2.java:42: Warning: Possible assertion failure (Assert)
+    //@ assert !s.containsObject(ee);
+        ^
+TestSet2.java:43: Warning: Precondition possibly not established (Pre)
+    assertTrue( !s.contains(ee));
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestSet2.java:44: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestSet2.java:55: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+5 warnings

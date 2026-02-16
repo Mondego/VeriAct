@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Checks that formal paras hide fields
+
+${TOOL} C.java

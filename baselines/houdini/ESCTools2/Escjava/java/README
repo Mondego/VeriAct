@@ -1,0 +1,20 @@
+From top-level README.txt:
+
+  By the way, the Escjava/java/instrumenter directory contains some
+  files that once were used in a source-to-source convertion of
+  many ESC/Java annotations into run-time checks.  The code is probably
+  out of date with respect to the other source and ESC/Java's current
+  annotation language, but the sources may be a good starting point
+  for an effort to do this.
+
+  ...
+
+  Note, the Escjava envelope contains some files in its subdirectories
+  "java/escwizard" and "java/houdini".  The first of these is an
+  old annotation assistant for ESC/Java, whose code is probably
+  out of date with the rest of the sources, and you probably wouldn't
+  want to run it anyway.  The second of these directories contains
+  some sources that may possibly be used by the Houdini envelope,
+  and probably also contains some files that may have the appearance
+  of being "the" Houdini.  Don't be fooled by these directories;
+  instead, start here in the Houdini envelope.

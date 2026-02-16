@@ -1,0 +1,597 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (X11; U; OSF1 V5.0 alpha) [Netscape]"><title>ESC/Java Quick Reference</title></head>
+
+<body bgcolor="#ffffff">
+
+<hr>
+<center>
+<h2>
+<b>SRC Technical Note</b></h2></center>
+
+<center>
+<h3>
+<b>2000-004</b></h3></center>
+
+<center>
+<h3>
+October 12, 2000</h3></center>
+
+<center>
+<hr></center>
+
+<center>
+<h2>
+ESC/Java Quick Reference</h2></center>
+
+<center>
+<h3>
+Silvija Seres, June 1999</h3></center>
+
+<center>
+<h4>
+Revised by K. Rustan M. Leino and James B. Saxe, October 2000</h4></center>
+
+<center>
+<hr>
+<p><img src="SRC-2000-004_files/cpq-logo.gif" alt="Compaq" height="40" width="150">
+<br><b>Compaq Computer Corporation</b>
+<br><b>Systems Research Center</b>
+<br>130 Lytton Avenue
+<br>Palo Alto, CA 94301
+<br><a href="http://research.compaq.com/SRC/">http://research.compaq.com/SRC/</a></p></center>
+
+<p>
+</p><hr>Copyright © 1999, 2000 Compaq Computer Corporation. All rights
+reserved
+<hr>
+<br><a name="Limitation of liability:"></a>Limitation of liability: 
+This publication and the software it describes are provided ``as is'' without
+warranty of any kind, express or implied, including, but not limited to,
+the implied warranties of merchantability, fitness for a particular purpose,
+or non-infringement.
+<p>This publication could include technical inaccuracies or typographical
+errors.  Furthermore, the Compaq Extended Static Checker for Java
+(ESC/Java) is currently under development.  Compaq therefore expects
+that changes will occur in the ESC/Java software and documentation, from
+time to time.  Compaq reserves the right to adopt such changes, or
+to cause or recommend that ESC/Java users adopt such changes, upon such
+notice as is practicable under the circumstances or without any notice,
+in its discretion.
+</p><p>The Compaq Extended Static Checker for Java (ESC/Java) is not a product
+of Sun Microsystems, Inc.
+</p><p>Compaq is a registered trademark of Compaq Computer Corporation. 
+Java is a trademark or registered trademark of Sun Microsystems, Inc. 
+Any other trademarks or registered trademarks mentioned herein are the
+property of their respective holders.
+</p><h2>
+
+<hr width="100%"></h2>
+
+<h3>
+Abstract</h3>
+This document is intended to be a non-detailed, trimmed-down version of
+the <a href="http://gatekeeper.dec.com/pub/DEC/SRC/technical-notes/abstracts/src-tn-2000-002.html">ESC/Java
+User's Manual</a>, for people who would like to get an overview of the
+annotation language supported by the Compaq Extended Static Checker for
+Java (ESC/Java) without getting immersed in all its technical intricacies.
+<p>For more detailed information, please refer to the <a href="http://gatekeeper.dec.com/pub/DEC/SRC/technical-notes/abstracts/src-tn-2000-002.html">ESC/Java
+User's Manual</a>. For information about the invocation of the ESC/Java
+checker, please see the escjava(1) man page included with the ESC/Java
+download available from <a href="http://research.compaq.com/SRC/esc/">http://research.compaq.com/SRC/esc/</a>.
+</p><hr width="100%">
+<h3>
+0.  What does ESC/Java do anyway?</h3>
+Type annotation and static type checking of programs have proved to be
+one of biggest engineering successes of computer science. Typing provides
+a coarse semantics for programs, since it pays no attention to the semantics
+of any language constructs that are not related to types. Nevertheless,
+the automatic type checking of programs weeds out already at compile time
+many of the most common programming errors, thus making them less costly
+for the developers. Also, typing forces a certain discipline upon the programmer,
+which results in better programs.
+<p>The Compaq Extended Static Checker for Java (ESC/Java) pushes the idea
+behind type checkers a few steps further. The class of errors that it looks
+for is much larger and more varied: it addresses, among others, the potential
+run-time errors that arise from illegal array operations, null-pointer
+dereferencing, deadlocks and race conditions of threads. Given a Java program,
+it automatically infers and checks a set of <i>verification conditions</i>
+that correspond to the described classes of errors.  It also allows
+the programmer to record design decisions, and to influence the choice
+of verification conditions by annotating the program with a set of <i>pragmas</i>.
+These can be used to specify the pre- and postconditions of routines, properties
+of abstract data types, invariants of loops, and much more.
+</p><p>The errors that ESC/Java looks for are chosen on a pragmatic basis;
+they are the errors that, according to the engineering experience, occur
+often and are relatively cheap to find, but the ESC/Java system is flexible
+and can be extended to allow for checking of other types of errors. Currently,
+ESC/Java checks almost the entire Java 1.2 language, including all of Java
+1.0.
+</p><p>In terms of program verification, ESC/Java is <i>unsound</i>, because
+it can miss real programming errors (from the targeted class), and it is
+<i>incomplete</i>,
+because it can give some spurious warnings. Some degree of inaccuracy is
+inevitable in a tool such as ESC/Java due to theoretical limits of decidability. 
+Additionally, the design of ESC/Java intentionally sacrifices some accuracy
+in trade for efficiency of the tool.  The user has some control over
+ESC/Java's unsoundness and incompleteness thanks to pragmas. These pragmas
+not only enable modular program checking, but are also a convenient formalism
+for recording programmers' design decisions and program specifications.
+</p><p>The remainder of this page gives a rough description of the kinds of
+pragmas available in the current ESC/Java, the <i>specification expressions</i>
+that can occur in those pragmas, and the kinds of warnings ESC/Java reports..
+</p><h3>
+1.  There are four syntactic categories of ESC/Java pragmas:</h3>
+A pragma (annotation) is enlosed in a Java comment whose first character
+is an <tt>@</tt>. For example, <tt>/*@ non_null */</tt> is an ESC/Java
+pragma.
+<ul>
+<li>
+<b>lexical</b> pragmas may occur in the same places as Java comments,</li>
+
+<li>
+<b>statement</b> pragmas may occur in the same places as Java statements,</li>
+
+<li>
+<b>declaration</b> pragmas may occur in the same places as Java declarations
+of class and interface members,</li>
+
+<li>
+<b>modifier</b> pragmas may occur in certain places within Java declarations
+of variables or routines.</li>
+</ul>
+All pragmas enclosed in a single Java comment must be of the same syntactic
+category.
+<h3>
+2.  The list of ESC/Java pragmas with their (syntactic, semantic)
+contexts:</h3>
+For pragmas terminated by semicolon, the semicolon is optional if there
+are no further pragmas enclosed in the same comment.
+<ul>
+<li>
+<b><tt>nowarn L;</tt></b> (lexical, general):</li>
+
+<br><tt>L</tt> denotes a possibly empty comma-separated list of <a href="#warnings">warning
+types</a>; ESC/Java will suppress any warning messages of the types in
+<tt>L</tt>
+(or of all types, if <tt>L</tt> is empty) at the line where the pragma
+appears.
+<li>
+<b><tt>assume E;</tt></b> (statement, general):</li>
+
+<br><tt>E</tt> denotes a boolean <a href="#specexprs">specification expression</a>;
+ESC/Java will assume that <tt>E</tt> is true whenever control reaches the
+pragma and ignores the remainder of all execution paths in which <tt>E</tt>
+is false.
+<li>
+<b><tt>assert E;</tt></b> (statement, general):</li>
+
+<br><tt>E</tt> denotes a boolean <a href="#specexprs">specification expression</a>;
+ESC/Java will issue a warning if it cannot establish that <tt>E</tt> is
+true whenever control reaches the pragma.
+<li>
+<b><tt>unreachable;</tt></b> (statement,general): semantically equivalent
+to <tt>assert false;</tt></li>
+
+<li>
+<b><tt>requires E;</tt></b> (modifier, non-overriding routine):</li>
+
+<br><tt>E</tt> denotes a boolean <a href="#specexprs">specification expression</a>
+that is a precondition of the routine the pragma modifies; ESC/Java will
+assume that <tt>E</tt> holds initially when checking the implementation
+of the routine, and will issue a warning if it cannot establish that <tt>E</tt>
+holds at a call site.
+<li>
+<b><tt>modifies S;</tt></b> (modifier, non-overriding routine):</li>
+
+<br><tt>S</tt> denotes a nonempty comma-separated list of <a href="#modtargets">modification
+targets</a>; ESC/Java will assume that calls to the routine modify only
+the modification targets in <tt>S</tt> and freshly allocated state components,
+but will not check the routine implementation correspondingly (that is,
+ESC/Java does not warn about implementations that modify more targets than
+<tt>S</tt>
+allows).
+<li>
+<b><tt>ensures E;</tt></b> (modifier, non-overriding routine):</li>
+
+<br><tt>E</tt> denotes a boolean <a href="#specexprs">specification expression</a>
+that is a normal (i.e. non-exceptional) postcondition of the routine the
+pragma modifies; ESC/Java will assume that <tt>E</tt> holds just after
+each call site the routine, and will issue a warning if it cannot prove
+from the routine implementation that <tt>E</tt> holds whenever the routine
+terminates normally.
+<li>
+<b><tt>exsures (T t) E;</tt></b> (modifier, non-overriding routine):</li>
+
+<br><tt>T</tt> is a subtype of <tt>java.lang.Throwable</tt>, <tt>t</tt>
+is an (optional) identifier, and <tt>E</tt> denotes a boolean <a href="#specexprs">specification
+expression</a> that is an exceptional postcondition of the routine the
+pragma modifies; ESC/Java will assume that <tt>E</tt> holds whenever the
+a call to the routine completes abruptly by throwing an exception
+<tt>t</tt>
+whose type is a subtype of <tt>T</tt>, and will issue a warning if it cannot
+prove from the routine implementation that <tt>E</tt> holds whenever the
+routine terminates completes abruptly by throwing an exception
+<tt>t</tt>
+whose type is a subtype of <tt>T</tt>.
+<li>
+<b><tt>also_ensures E;</tt></b> (modifier, overriding routine):</li>
+
+<br>This pragma may modify only a method declaration that overrides another
+method declaration; otherwise, it has the same meaning as <tt>ensures E;</tt>
+<li>
+<b><tt>also_exsures (T t) E;</tt></b> (modifier, overriding routine):</li>
+
+<br>This pragma may modify only method declaration that overrides another
+method declaration; otherwise, it has the same meaning as <tt>exsures (T
+t) E;</tt>
+<li>
+<b><tt>also_requires E;</tt></b> (modifier, overriding routine):</li>
+
+<br>This pragma may modify only a method declaration that occurs in a class
+declaration, overrides a method of a superinterface, and does not override
+a method of a superclass; otherwise, it has the same meaning as <tt>requires
+E;</tt>
+<li>
+<b><tt>also_modifies S;</tt></b> (modifier, overriding routine):</li>
+
+<br>This pragma may modify only a method declaration that overrides another
+method declaration; otherwise, it has the same meaning as <tt>modifies
+S;</tt>
+<li>
+<b><tt>non_null</tt></b> (modifier, data invariant):</li>
+
+<br>Modifies the declaration of a variable of a reference type, where the
+variable may be a static field, instance variable, local variable, or parameter;
+ESC/Java will check at each assignment to the variable that the value assigned
+is not null, and assume at each use that the value is not null.
+<li>
+<b><tt>invariant E;</tt></b> (declaration, data invariant):</li>
+
+<br><tt>E</tt> denotes a boolean <a href="#specexprs">specification expression</a>
+that is an object invariant of the class within whose declaration the pragma
+occurs. If <tt>E</tt> does not mention <tt>this</tt>, the invariant is
+called a <i>static invariant</i>, and is assumed on entry to implementations,
+checked at call sites, assumed upon call returns, and checked on exit from
+implementations. If <tt>E</tt> mentions <tt>this</tt>, the invariant is
+called an <i>instance invariant</i>. An instance invariant is assumed to
+hold for all objects of the class on entry to an implementation and is
+checked to hold for all objects of the class on exit from an implementation.
+At a call site, an instance invariant is checked only for those objects
+passed in the parameters of the call and in static fields. A call is assumed
+not to falsify the instance invariant for any object.
+<li>
+<b><tt>axiom E;</tt></b> (declaration, data invariant):</li>
+
+<br>ESC/Java assumes that <tt>E</tt> is true at the start of every routine
+body
+<li>
+<b><tt>loop_invariant E;</tt></b> (statement, data invariant):</li>
+
+<br>This pragma may appear only just before a Java <tt>for</tt>,
+<tt>while</tt>,
+or <tt>do</tt> statement. ESC/Java will check that <tt>E</tt> holds at
+the start of each iteration of the loop.
+<li>
+<b><tt>spec_public</tt></b> (modifier, variable referencing):</li>
+
+<br>This pragma may modify only non-public field declarations, and it will
+cause the fields in the declaration to be as accessible in pragmas as they
+would have been if the declaration had been public.
+<li>
+<b><tt>readable_if E;</tt></b> (modifier, variable referencing):</li>
+
+<br>This pragma may modify only the declaration of a field or a local variable;
+<tt>E</tt>
+denotes a boolean <a href="#specexprs">specification expression</a> that
+has to be true at any read access of the fields or variable.
+<li>
+<b><tt>uninitialized</tt></b> (modifier, variable referencing):</li>
+
+<br>This pragma may modify only a local variable declaration that has an
+initializer; ESC/Java will check that no execution path accesses the variable
+without first performing an assignment (other than the initializer) to
+the variable.
+<li>
+<b><tt>ghost M S v;</tt></b> (declaration, ghost variables):</li>
+
+<br><tt>S</tt> is a <a href="#specexprs">specification type</a>, <tt>v</tt>
+is an identifier, and <tt>M</tt> is a sequence of modifiers including <tt>public</tt>;
+this pragma is like an ordinary Java variable declaration <tt>M S v;</tt>
+except that it makes the declaration visible only to ESC/Java, and not
+to the compiler; such variables are called <i>ghost variables</i>.
+<li>
+<b><tt>set D = E;</tt></b> (statement, ghost variables):</li>
+
+<br><tt>D</tt> refers to a ghost field of some object or class and <tt>E</tt>is
+a <a href="#specexprs">specification expression</a> containing no quantifiers
+or labels; this pragma has the analagous meaning to the Java assignment
+statement
+<tt>D = E;</tt>
+<li>
+<b><tt>monitored_by SL;</tt></b> (modifier, synchronization):</li>
+
+<br>This pragma can be applied only to fields.  The modified field
+is a shared variable monitored by the locks in <tt>SL</tt>, which is a
+nonempty, comma-separated list of <a href="#specexprs">specification expressions</a>.
+ESC/Java checks that the field is never read except by a thread holding
+at least one non-null lock in <tt>SL</tt> and that the field is never written
+except by a thread holding all non-null locks in
+<tt>SL</tt>, of which
+there must be at least one.
+<li>
+<b><tt>monitored</tt></b> (modifier, synchronization):</li>
+
+<br>This pragma may modify only an instance variable declaration, and is
+the same as <tt>monitored_by this;</tt></ul>
+
+<h3>
+<a name="specexprs"></a>3.  The ESC/Java specification expressions:</h3>
+A specification type is either a Java type or one of the special types
+<tt>\TYPE</tt>
+or <tt>\LockSet</tt> (or an array of special types, for example
+<tt>\TYPE[][]</tt>).
+The specification type <tt>\LockSet</tt> cannot be mentioned explicitly
+in annotations.
+<p>Specification expressions must be free of subexpressions that may potentially
+have side effects, so they may not contain any assignment (<tt>=</tt>,
+<tt>+=</tt>,
+etc.), pre/post-increment/decrement (<tt>++</tt> or <tt>--</tt>), array
+or object creation (<tt>new</tt>), or method invocation (even for methods
+that have no side-effects).
+</p><p>The additional constructs that are allowed in specification expressions
+beyond those allowed in Java expressions are:
+</p><ul>
+<li>
+<tt><b>\type(T)</b>: \TYPE</tt></li>
+
+<br>denotes the specification type <tt>T</tt>.
+<li>
+<tt><b>\typeof(E)</b>: \TYPE</tt></li>
+
+<br>denotes the dynamic type of the value of specification expression
+<tt>E</tt>,
+where <tt>E</tt> is of a reference type.
+<li>
+<tt><b>\elemtype(E)</b>: \TYPE</tt></li>
+
+<br>denotes the specification type <tt>T</tt> if <tt>E</tt> denotes an
+array type <tt>T[]</tt>, unspecified otherwise.
+<li>
+<tt><b>S &lt;: T</b>: boolean</tt></li>
+
+<br>denotes that
+<tt>S</tt> is a subtype of <tt>T</tt>, where <tt>S</tt>
+and
+<tt>T</tt> are specification expressions of type
+<tt>\TYPE</tt>.
+<li>
+<tt><b>\lockset</b>: \LockSet</tt></li>
+
+<br>denotes the set of locks held by the current thread.
+<li>
+<tt><b>S[L]</b>: boolean</tt></li>
+
+<br>denotes that
+<tt>L</tt> is a member of <tt>S</tt>, where <tt>S</tt>
+is a specification expression of type <tt>\LockSet</tt> and
+<tt>L</tt>
+is a specification expression of a reference type.
+<li>
+<tt><b>E &lt; F</b>: boolean</tt></li>
+
+<br>denotes that object <tt>E</tt> precedes object <tt>F</tt> in the locking
+order.
+<li>
+<tt><b>E &lt;= F</b>: boolean</tt></li>
+
+<br>denotes that object <tt>E</tt> precedes object <tt>F</tt> in the locking
+order or <tt>E == F</tt>.
+<li>
+<tt><b>\max(S)</b>: Object</tt></li>
+
+<br>denotes the maximum element of <tt>S</tt> in the locking order, where
+<tt>S</tt>
+is a specification expression of type
+<tt>\LockSet</tt>.
+<li>
+<tt><b>E ==&gt; F</b>: boolean</tt></li>
+
+<br>denotes the condition that <tt>E</tt> implies <tt>F</tt>, where
+<tt>E</tt>
+and <tt>F</tt> are specification expression of type <tt>boolean</tt>.
+<li>
+<tt><b>(\forall T V; E)</b>: boolean</tt></li>
+
+<br>denotes that <tt>E</tt> is true for all substitutions of values of
+type <tt>T</tt> for the bound variables <tt>V</tt>, where <tt>T</tt> is
+a specification type, <tt>V</tt> is a nonempty comma-separated list of
+identifiers, and <tt>E</tt> is a specification expression of type <tt>boolean</tt>.
+<li>
+<tt><b>(\exists T V; E)</b>: boolean</tt></li>
+
+<br>denotes that <tt>E</tt> is true for some substitution of values of
+type <tt>T</tt> for the bound variables <tt>V</tt>, where <tt>E</tt>, <tt>T</tt>
+and <tt>V</tt> are as above.
+<li>
+<tt><b>\nonnullelements(A)</b>: boolean</tt></li>
+
+<br>denotes that <tt>A</tt> and all its elements are non-null, where <tt>A</tt>
+is a specification expression of a reference array type.
+<li>
+<tt><b>\fresh(E)</b>: boolean</tt></li>
+
+<br>used in postconditions, denotes that <tt>E</tt> is non-null and was
+not allocated in the pre-state of the routine call, where <tt>E</tt> is
+a specification expression of a reference type.
+<li>
+<b><tt>\result</tt></b></li>
+
+<br>is a specification expression whose type is the return type of the
+non-void method in whose normal postcondition or modification target it
+appears, denoting the value returned by the method.
+<li>
+<b><tt>\old(E)</tt></b></li>
+
+<br>is a specification expression of the same type as the specification
+expression <tt>E</tt> and is used in a postcondition to denote the same
+thing as <tt>E</tt> except that (1) any occurrence in <tt>E</tt> of a target
+field of the routine is interpreted according to the pre-state value of
+the field, and (2) if any modification target of the routine has the form
+<tt>X[i]</tt>
+or <tt>X[*]</tt>, then all array accesses within
+<tt>E</tt> are interpreted
+according to the pre-state contents of arrays.
+<li>
+<tt><b>E.owner</b>: Object</tt></li>
+
+<br>is a specification expression of type object, denoting the ``owner''
+of object <tt>E</tt>.  The standard specification library shipped
+with ESC/Java declares <tt>owner</tt> as a ghost field of <tt>java.lang.Object</tt>. 
+The pragma <tt>/*@ invariant f.owner = this; */</tt> in the declaration
+of a type <tt>T</tt> is the conventional way to specify that the objects
+of type <tt>T</tt> do not share their <tt>f</tt> fields.  All constructors
+have the implicit postcondition <tt>this.owner != null</tt>.</ul>
+
+<h3>
+<a name="modtargets"></a>4.  The ESC/Java modification targets (or
+specification designators):</h3>
+
+<ul>
+<li>
+<b>a simple name</b> denoting a non-final field,</li>
+
+<li>
+<b>a field access</b> <tt>O.f</tt>, where <tt>O</tt> is a specification
+expression of a reference type <tt>T</tt> and
+<tt>f</tt> denotes one of
+the fields (possibly a ghost field) of
+<tt>T</tt>,</li>
+
+<li>
+an <b>array access</b> of the form <tt>A[I]</tt>, where
+<tt>A</tt> is a
+specification expression of an array type, and
+<tt>I</tt> is a specification
+expression of an integral type other than <tt>long</tt>, or</li>
+
+<li>
+an <b>array range</b> of the form <tt>A[*]</tt>, where <tt>A</tt> is a
+specification expression of an array type.</li>
+</ul>
+
+<h3>
+<a name="warnings"></a>5.  The ESC/Java warning types:</h3>
+ESC/Java issues warnings for conditions that it regards as run-time errors,
+and that, so far is it can tell, might actually occur at run-time.
+<ul>
+<li>
+<b><tt>ArrayStore</tt></b> warns that the control may reach an assignment
+<tt>A[I]
+= E</tt> when the value of
+<tt>E</tt> is not assignment compatible with
+the actual element type of <tt>A</tt>.</li>
+
+<li>
+<b><tt>Assert</tt></b> warns that control may reach a pragma <tt>assert
+E</tt> when the value of <tt>E</tt> is false.</li>
+
+<li>
+<b><tt>Cast</tt></b> warns that control may reach a cast
+<tt>(T)E</tt>
+when the value of <tt>E</tt> cannot be cast to the type <tt>E</tt>.</li>
+
+<li>
+<b><tt>Deadlock</tt></b> warns that control may reach a <tt>synchronized</tt>
+statement that would acquire a lock in violation of the locking order,
+or that the a <tt>synchronized</tt> method may start by acquiring a lock
+in violation of the locking order.</li>
+
+<li>
+<b><tt>Exception</tt></b> warns that a routine may terminate abruptly by
+throwing an exception that is not an instance of any type listed explicitly
+in the routine's throws clause.</li>
+
+<li>
+<b><tt>IndexNegative</tt></b> warns that control may reach an array access
+<tt>A[I]</tt>
+when the value of the index
+<tt>I</tt> is negative.</li>
+
+<li>
+<b><tt>IndexTooBig</tt></b> warns that control may reach an array access
+<tt>A[I]</tt>
+when <tt>A.length &lt;= I</tt>.</li>
+
+<li>
+<b><tt>Invariant</tt></b> warns that some object invariant may not hold
+when control reaches a routine call, or that some object invariant may
+not hold on exit from the current body.</li>
+
+<li>
+<b><tt>LoopInv</tt></b> warns that some loop invariant may not hold when
+it is supposed to.</li>
+
+<li>
+<b><tt>OwnerNull</tt></b> warns that a constructor may violate the implicit
+postcondition <tt>this.owner != null</tt>.</li>
+
+<li>
+<b><tt>NegSize</tt></b> warns of a possible attempt to allocate an array
+of negative length.</li>
+
+<li>
+<b><tt>NonNull</tt></b> warns of a possible attempt to assign the value
+null to a variable whose declaration is modified by a <tt>non_null</tt>
+pragma, or to call a routine with an actual parameter value of null when
+the declaration of the corresponding formal parameter is modified by (or
+inherits) a <tt>non_null</tt> pragma.</li>
+
+<li>
+<b><tt>NonNullInit</tt></b> warns that a constructor may fail to establish
+a non-null value for an instance field of the constructed object when the
+declaration of that instance field is modified by a <tt>non_null</tt> pragma.</li>
+
+<li>
+<b><tt>Null</tt></b> warns of a possible attempt to dereference null, for
+example, by field access <tt>O.f</tt>, an array access <tt>O[i]</tt>, a
+method call <tt>O.m(...)</tt>, a synchronized statement <tt>synchronized
+(O) ...</tt>, or a throw statement <tt>throw O</tt>, where <tt>O</tt> evaluates
+to <tt>null</tt>.</li>
+
+<li>
+<b><tt>Post</tt></b> warns that a routine body may fail to establish some
+normal postcondition (on terminating normally) or some exceptional postcondition
+(when terminating by throwing an exception of a relevant type).</li>
+
+<li>
+<b><tt>Pre</tt></b> warns that control may reach a routine call when some
+precondition of the routine does not hold.</li>
+
+<li>
+<b><tt>Race</tt></b> warns of a possible attempt to access a monitored
+field while not holding the requisite lock(s).</li>
+
+<li>
+<b><tt>Reachable</tt></b> warns that control may reach an <tt>unreachable</tt>
+pragma.</li>
+
+<li>
+<b><tt>Uninit</tt></b> warns that control may reach a read access to a
+local variable before execution of any assignment to the variable other
+than an initializer in a declaration modified by an <tt>uninitialized</tt>
+pragma.</li>
+
+<li>
+<b><tt>Unreadable</tt></b> warns that control may reach a read access of
+a field or variable <tt>x</tt> when the expression in a <tt>readable_if</tt>
+pragma modifying <tt>x</tt>'s declaration is false.</li>
+
+<li>
+<b><tt>ZeroDiv</tt></b> warns of a possible attempt to apply the integer
+division (<tt>/</tt>) or remainder (<tt>%</tt>) operator with zero as the
+divisor.</li>
+</ul>
+
+<hr width="100%">
+</body></html>

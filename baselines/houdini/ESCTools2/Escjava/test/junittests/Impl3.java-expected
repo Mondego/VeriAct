@@ -1,0 +1,38 @@
+ESC/Java version VERSION
+    [TIME]
+
+Impl3 ...
+  Prover started:TIME
+    [TIME]
+
+Impl3: shrink() ...
+    [TIME]  passed
+
+Impl3: clear() ...
+------------------------------------------------------------------------
+Impl3.java:13: Warning: Postcondition possibly not established (Post)
+        }  // ERROR - no represents clause for isEmpty
+        ^
+Associated declaration is "Impl3.java", line 26, col 5:
+        //@ ensures isEmpty;
+            ^
+Execution trace information:
+    Executed implicit return in "Impl3.java", line 13, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Impl3: Impl3() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: shrink() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

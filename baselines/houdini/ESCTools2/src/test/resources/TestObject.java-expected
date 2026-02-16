@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+src|test|resources|TestObject.java: Caution: Using given file as the .java file, even though it is not the java file for TestObject on the classpath
+    [TIME]
+
+TestObject ...
+src|test|resources|TestObject.java:5: Error: No such field in type java.lang.Object
+        //@ assert o.owner == null;
+                     ^
+src|test|resources|TestObject.java:7: Error: No such field in type java.lang.Object
+        //@ assert o.owner == null;
+                     ^
+src|test|resources|TestObject.java:15: Error: No such field in type java.lang.Object
+        //@ ghost Object ooo = o.owner;
+                                 ^
+src|test|resources|TestObject.java:17: Fatal error: No method named assertTrue is in scope here.
+        assertTrue( o.getClass() == Object.class);
+        ^
+1 caution
+4 errors

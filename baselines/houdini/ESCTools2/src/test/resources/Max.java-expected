@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|Max.java: Caution: Using given file as the .java file, even though it is not the java file for Max on the classpath
+    [TIME]
+
+Max ...
+  Prover started:TIME
+    [TIME]
+
+Max: m() ...
+    [TIME]  passed immediately
+
+Max: Max() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

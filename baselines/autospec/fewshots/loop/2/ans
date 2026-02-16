@@ -1,0 +1,3 @@
+//@ maintaining 0 <= i && i <= n;
+//@ maintaining (\forall int k; 0 <= k && k < i; arr[k] == \old(arr[k]) + c);
+//@ decreases n - i;

@@ -1,0 +1,50 @@
+ESC/Java version VERSION
+    [TIME]
+
+JavaAndJmlAssert ...
+  Prover started:TIME
+    [TIME]
+
+JavaAndJmlAssert: trivial_true() ...
+    [TIME]  passed
+
+JavaAndJmlAssert: trivial_false() ...
+------------------------------------------------------------------------
+JavaAndJmlAssert.java:12: Warning: Possible assertion failure (Assert)
+        //@ assert false;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAndJmlAssert: constant_boolean_expression() ...
+------------------------------------------------------------------------
+JavaAndJmlAssert.java:19: Warning: Possible assertion failure (Assert)
+        //@ assert true == false;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAndJmlAssert: assert_matches_precondition(int) ...
+    [TIME]  passed
+
+JavaAndJmlAssert: assert_weaker_than_precondition(int) ...
+    [TIME]  passed
+
+JavaAndJmlAssert: assert_stronger_than_precondition(int) ...
+------------------------------------------------------------------------
+JavaAndJmlAssert.java:37: Warning: Possible assertion failure (Assert)
+        //@ assert p >= 1;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAndJmlAssert: constant_arithmetic(int, int) ...
+    [TIME]  passed
+
+JavaAndJmlAssert: non_trivial_arithmetic(int, int) ...
+    [TIME]  passed
+
+JavaAndJmlAssert: JavaAndJmlAssert() ...
+    [TIME]  passed
+  [TIME total]
+3 warnings

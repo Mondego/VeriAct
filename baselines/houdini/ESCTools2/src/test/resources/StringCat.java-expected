@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|StringCat.java: Caution: Using given file as the .java file, even though it is not the java file for StringCat on the classpath
+    [TIME]
+
+StringCat ...
+src|test|resources|StringCat.java:22: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+    return xxx+"a";
+              ^
+src|test|resources|StringCat.java:38: Error: No such method _infixConcat_(java.lang.String, java.lang.String) in type java.lang.String
+    return xxx+"a";
+              ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+2 errors

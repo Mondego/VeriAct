@@ -1,0 +1,34 @@
+GoodSpecExpr.j:1: /*@ ensures idn; */
+GoodSpecExpr.j:2: /*@ ensures this; */
+GoodSpecExpr.j:3: /*@ ensures 1; */
+GoodSpecExpr.j:4: /*@ ensures 1.0D; */
+GoodSpecExpr.j:5: /*@ ensures 1.0D; */
+GoodSpecExpr.j:6: /*@ ensures ""; */
+GoodSpecExpr.j:7: /*@ ensures "literals"; */
+GoodSpecExpr.j:8: /*@ ensures 'a'; */
+GoodSpecExpr.j:9: /*@ ensures true; */
+GoodSpecExpr.j:10: /*@ ensures false; */
+GoodSpecExpr.j:11: /*@ ensures null; */
+GoodSpecExpr.j:12: /*@ ensures compound.name; */
+GoodSpecExpr.j:13: /*@ ensures l.o.n.g._.c.o.m.p.o.u.n.d._.n.a.m.e; */
+GoodSpecExpr.j:15: /*@ ensures a ==> (b ==> c); */
+GoodSpecExpr.j:16: /*@ ensures \type(Integer) <: \type(java.lang.Number) <: \type(Object); */
+GoodSpecExpr.j:18: /*@ ensures \fresh(a); */
+GoodSpecExpr.j:19: /*@ ensures \elemtype(b); */
+GoodSpecExpr.j:20: /*@ ensures \max(1); */
+GoodSpecExpr.j:21: /*@ ensures \old(x + y); */
+GoodSpecExpr.j:22: /*@ ensures \typeof(this); */
+GoodSpecExpr.j:24: /*@ ensures \type(int); */
+GoodSpecExpr.j:25: /*@ ensures \type(float[]); */
+GoodSpecExpr.j:26: /*@ ensures \type(boolean[][]); */
+GoodSpecExpr.j:27: /*@ ensures \type(java.lang.Object); */
+GoodSpecExpr.j:29: /*@ ensures (\lblpos label1 hi); */
+GoodSpecExpr.j:30: /*@ ensures (\lblneg label1 there); */
+GoodSpecExpr.j:32: /*@ ensures (\forall int a:0.32.25; true); */
+GoodSpecExpr.j:33: /*@ ensures (\forall float[] t1:0.33.29,  t2:0.33.33; t1 == t2); */
+GoodSpecExpr.j:34: /*@ ensures (\forall java.lang.String s1:0.34.38,  s2:0.34.42,  s3:0.34.46; false); */
+GoodSpecExpr.j:35: /*@ ensures (\exists long a:0.35.26; a == 1); */
+GoodSpecExpr.j:36: /*@ ensures (\exists long[] a:0.36.28,  b:0.36.30,  c:0.36.32; true); */
+GoodSpecExpr.j:38: /*@ ensures \java_math(0); */
+GoodSpecExpr.j:39: /*@ ensures \safe_math(0); */
+GoodSpecExpr.j:40: /*@ ensures \bigint_math(0); */

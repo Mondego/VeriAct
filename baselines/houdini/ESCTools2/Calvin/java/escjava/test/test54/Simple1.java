@@ -1,0 +1,20 @@
+/* Copyright Hewlett-Packard, 2002 */
+
+class Simple1 {
+  Simple1() {
+  }
+
+  int x;
+  
+  void m() {
+    x = 5;
+    int y = n();
+    //@ assert y == 5;
+  }
+
+  //@ helper
+  private int n() {
+    //@ assert 0 <= x;
+    return x;
+  }
+}

@@ -1,0 +1,10 @@
+
+public class A {
+    public static final int i = 10;
+    public static class B {
+	public static class C extends java.util.Hashtable {
+	    public static final int i = 10;
+	    public static int getI() { return i; }
+	}
+    }
+}

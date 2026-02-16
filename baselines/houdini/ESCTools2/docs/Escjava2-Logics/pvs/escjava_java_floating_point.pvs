@@ -1,0 +1,53 @@
+escjava_java_floating_point : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem
+
+    % === A few floating point axioms - DRCok
+
+    floatingEQ, floatingGE, floatingGT, floatingLE, floatingLT, floatingNE : [ S, S -> S ]
+    floatingADD, floatingMUL, floatingMOD : [ S, S -> S ]
+    floatingNEG : [ S -> S ]
+
+    order_axiom : AXIOM
+      FORALL (d, dd : S):
+        (floatingLT(d, dd) = bool_true OR
+         floatingEQ(d, dd) = bool_true OR
+         floatingGT(d, dd) = bool_true) AND
+        floatingLE(d, dd) = bool_true IFF floatingEQ(d, dd) = bool_true OR floatingLT(d, dd) = bool_true AND
+        floatingGE(d, dd) = bool_true IFF floatingEQ(d, dd) = bool_true OR floatingGT(d, dd) = bool_true AND
+        floatingLT(d, dd) = bool_true IFF floatingGT(dd, d) = bool_true AND
+        floatingLE(d, dd) = bool_true IFF floatingGE(dd, d) = bool_true AND
+        NOT (floatingLT(d, dd) = bool_true IFF floatingGE(d, dd) = bool_true) AND
+        NOT (floatingGT(d, dd) = bool_true IFF floatingLE(d, dd) = bool_true)
+
+    floatingNE_definition : AXIOM
+      FORALL (d, dd : S): floatingEQ(d, dd) = bool_true IFF NOT floatingNE(d, dd) = bool_true
+
+    F_0_0 : S
+
+    floatingADD_definition : AXIOM
+      FORALL (d, dd : S): (floatingGT(d, floatingNEG(dd)) = bool_true) IMPLIES
+                          floatingGT(floatingADD(d, dd), F_0_0) = bool_true
+
+    % currently commented out/incomplete in ESC/Java unsorted logic
+    % floatingMUL_definition : AXIOM
+    %   FORALL (d, dd : S): ...
+
+    floatingMOD_definition1 : AXIOM
+      FORALL (d, dd : S): (floatingNE(d, F_0_0) = bool_true) IMPLIES
+                          (floatingGE(d, F_0_0) = bool_true AND
+                           floatingGE(floatingMOD(d, dd), F_0_0) = bool_true AND
+                           floatingLE(d, F_0_0) = bool_true AND
+                           floatingLE(floatingMOD(d, dd), F_0_0) = bool_true)
+    floatingMOD_definition2 : AXIOM
+      FORALL (d, dd : S): (floatingGT(d, F_0_0) = bool_true) IMPLIES
+                          (floatingGT(floatingMOD(d, dd), floatingNEG(dd)) = bool_true AND
+                           floatingLT(floatingMOD(d, dd), dd) = bool_true)
+    floatingMOD_definition3 : AXIOM
+      FORALL (d, dd : S): (floatingLT(dd, F_0_0) = bool_true) IMPLIES
+                          floatingLT(floatingMOD(d, dd), floatingNEG(dd)) = bool_true
+    floatingMOD_definition4 : AXIOM
+      FORALL (d, dd : S): (floatingLT(dd, F_0_0) = bool_true) IMPLIES
+                          floatingGT(floatingMOD(d, dd), dd) = bool_true
+
+  END escjava_java_floating_point

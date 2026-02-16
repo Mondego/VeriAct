@@ -1,0 +1,53 @@
+ESC/Java version VERSION
+    [TIME]
+
+Super ...
+  Prover started:TIME
+    [TIME]
+
+Super: m() ...
+    [TIME]  passed immediately
+
+Super: Super() ...
+    [TIME]  passed
+  [TIME total]
+
+Sub ...
+    [TIME]
+
+Sub: m() ...
+    [TIME]  passed immediately
+
+Sub: Sub() ...
+    [TIME]  passed
+  [TIME total]
+
+Inheritance ...
+    [TIME]
+
+Inheritance: Inheritance() ...
+    [TIME]  passed immediately
+
+Inheritance: mm(Super) ...
+    [TIME]  passed
+
+Inheritance: m3(Super) ...
+------------------------------------------------------------------------
+Inheritance.java:26: Warning: Possible assertion failure (Assert)
+            //@ assert s.m() == 0;         // FIXME should be ok
+                ^
+Execution trace information:
+    Executed then branch in "Inheritance.java", line 25, col 30.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Inheritance: m2(Super) ...
+------------------------------------------------------------------------
+Inheritance.java:31: Warning: Possible assertion failure (Assert)
+        //@ assert s.m() == 0; // ERROR
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+2 warnings

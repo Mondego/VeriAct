@@ -1,0 +1,65 @@
+ESC/Java version VERSION
+    [TIME]
+
+SignalsOnly ...
+  Prover started:TIME
+    [TIME]
+
+SignalsOnly: m(int) ...
+    [TIME]  passed
+
+SignalsOnly: m1(int) ...
+------------------------------------------------------------------------
+SignalsOnly.java:17: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "SignalsOnly.java", line 13, col 5:
+        //@ signals_only A;    // WARNING (line 16)
+            ^
+Execution trace information:
+    Executed else branch in "SignalsOnly.java", line 15, col 3.
+    Executed then branch in "SignalsOnly.java", line 16, col 15.
+    Executed throw in "SignalsOnly.java", line 16, col 15.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+SignalsOnly: m2(int) ...
+------------------------------------------------------------------------
+SignalsOnly.java:23: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "SignalsOnly.java", line 19, col 5:
+        //@ signals_only B;    // WARNING (line 21)
+            ^
+Execution trace information:
+    Executed then branch in "SignalsOnly.java", line 21, col 15.
+    Executed throw in "SignalsOnly.java", line 21, col 15.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+SignalsOnly: mp(int) ...
+    [TIME]  passed
+
+SignalsOnly: mm(int) ...
+    [TIME]  passed
+
+SignalsOnly: SignalsOnly() ...
+    [TIME]  passed
+  [TIME total]
+
+SignalsOnly$A ...
+    [TIME]
+
+SignalsOnly$A: A() ...
+    [TIME]  passed
+  [TIME total]
+
+SignalsOnly$B ...
+    [TIME]
+
+SignalsOnly$B: B() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

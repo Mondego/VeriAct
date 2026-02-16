@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|SetComprehension.java: Caution: Using given file as the .java file, even though it is not the java file for SetComprehension on the classpath
+    [TIME]
+
+SetComprehension ...
+src|test|resources|SetComprehension.java:6: Fatal error: Can't find type named "JMLObjectSet"
+        //@ ghost JMLObjectSet oo;
+                  ^
+1 caution
+1 error

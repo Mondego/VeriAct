@@ -1,0 +1,491 @@
+Hotspot.java:38: Warning: Possible null dereference (Null)
+    return h.ff;
+            ^
+Hotspot.java:42: Warning: Possible null dereference (Null)
+    h.ff = 2;
+     ^
+Hotspot.java:46: Warning: Possible null dereference (Null)
+    h.ff += 2;
+     ^
+Hotspot.java:50: Warning: Possible null dereference (Null)
+    h.ff++;
+     ^
+Hotspot.java:54: Warning: Possible null dereference (Null)
+    ++h.ff;
+       ^
+Hotspot.java:58: Warning: Possible null dereference (Null)
+    return a.length;
+            ^
+Hotspot.java:62: Warning: Possible null dereference (Null)
+    return a[0];
+            ^
+Hotspot.java:66: Warning: Possible null dereference (Null)
+    a[0] = 8;
+     ^
+Hotspot.java:70: Warning: Possible null dereference (Null)
+    a[0] += 8;
+     ^
+Hotspot.java:74: Warning: Possible null dereference (Null)
+    a[0]++;
+     ^
+Hotspot.java:78: Warning: Possible null dereference (Null)
+    ++a[0];
+       ^
+Hotspot.java:82: Warning: Possible null dereference (Null)
+    h.mNullCall(h);
+     ^
+Hotspot.java:87: Warning: Possible null dereference (Null)
+    throw e;
+    ^
+Hotspot.java:92: Warning: Possible null dereference (Null)
+    Label: throw e;
+           ^
+Hotspot.java:96: Warning: Possible null dereference (Null)
+    synchronized (mu) {
+                 ^
+Hotspot.java:102: Warning: Possible negative array index (IndexNegative)
+      return a[n];
+              ^
+Hotspot.java:110: Warning: Array index possibly too large (IndexTooBig)
+      return a[n];
+              ^
+Hotspot.java:119: Warning: Possible division by zero (ZeroDiv)
+    return x / y;
+             ^
+Hotspot.java:125: Warning: Possible division by zero (ZeroDiv)
+    x /= y;
+      ^
+Hotspot.java:131: Warning: Possible division by zero (ZeroDiv)
+    ff /= y;
+       ^
+Hotspot.java:142: Warning: Possible division by zero (ZeroDiv)
+      ai[0] /= ai[0];
+            ^
+Hotspot.java:149: Warning: Possible division by zero (ZeroDiv)
+    return x % y;
+             ^
+Hotspot.java:155: Warning: Possible division by zero (ZeroDiv)
+    x %= y;
+      ^
+Hotspot.java:161: Warning: Possible division by zero (ZeroDiv)
+    ff %= y;
+       ^
+Hotspot.java:172: Warning: Possible division by zero (ZeroDiv)
+      ai[0] %= ai[0];
+            ^
+Hotspot.java:177: Warning: Possible type cast error (Cast)
+    return (Hotspot)o;
+           ^
+Hotspot.java:182: Warning: Possible assignment of null to variable declared non_null (NonNull)
+    x = o;
+      ^
+Associated declaration is "Hotspot.java", line 181, col 8:
+    /*@ non_null */ Object x;
+        ^
+Hotspot.java:186: Warning: Possible assignment of null to variable declared non_null (NonNull)
+    /*@ non_null */ Object x = o;
+                             ^
+Associated declaration is "Hotspot.java", line 186, col 8:
+    /*@ non_null */ Object x = o;
+        ^
+Hotspot.java:190: Warning: Possible assignment of null to variable declared non_null (NonNull)
+    nn = o;
+       ^
+Associated declaration is "Hotspot.java", line 25, col 16:
+  Object nn /*@ non_null */;
+                ^
+Hotspot.java:196: Warning: Possible assignment of null to variable declared non_null (NonNull)
+    mNonNullParam(o, (5 < 2 ? p : o));  // this is not
+                 ^
+Associated declaration is "Hotspot.java", line 193, col 35:
+  void mNonNullParam(Object o, /*@ non_null */ Object p) {
+                                   ^
+Hotspot.java:201: Warning: Type of right-hand side possibly not a subtype of array element type (ArrayStore)
+      a[7] = this;
+           ^
+Hotspot.java:206: Warning: Possible assertion failure (Assert)
+    //@ assert x < 2;
+        ^
+Hotspot.java:215: Warning: Code marked as unreachable may possibly be reached (Reachable)
+          //@ unreachable;
+              ^
+Hotspot.java:225: Warning: Precondition possibly not established (Pre)
+    mPreRequires0(  x -1 );
+                 ^
+Associated declaration is "Hotspot.java", line 223, col 6:
+  //@ requires x != 0;
+      ^
+Hotspot.java:230: Warning: Precondition possibly not established (Pre)
+    this.mPreRequires1(x-1);
+                      ^
+Associated declaration is "Hotspot.java", line 228, col 6:
+  //@ requires x != 0;
+      ^
+Hotspot.java:235: Warning: Precondition possibly not established (Pre)
+    h.mPreRequires2(this, x-1);
+                   ^
+Associated declaration is "Hotspot.java", line 233, col 6:
+  //@ requires h != null && x != 0;
+      ^
+Hotspot.java:240: Warning: Precondition possibly not established (Pre)
+    mPreRequires3(x-1);
+                 ^
+Associated declaration is "Hotspot.java", line 238, col 6:
+  //@ requires x != 0;
+      ^
+Hotspot.java:244: Warning: Precondition possibly not established (Pre)
+    Hotspot h = new Hotspot(x);
+                           ^
+Associated declaration is "Hotspot.java", line 32, col 21:
+  Hotspot(int x) /*@ requires 10 <= x && gg != 4;
+                     ^
+Hotspot.java:248: Warning: Precondition possibly not established (Pre)
+    super(-5);  // fails to meet HotspotSuper(int) precondition
+         ^
+Associated declaration is "Hotspot.java", line 15, col 6:
+  //@ requires 0 < z;
+      ^
+Hotspot.java:257: Warning: Precondition possibly not established (Pre)
+    this(x+y);  // fails to meet Hotspot(int) precondition
+        ^
+Associated declaration is "Hotspot.java", line 32, col 21:
+  Hotspot(int x) /*@ requires 10 <= x && gg != 4;
+                     ^
+Hotspot.java:260: Warning: Precondition possibly not established (Pre)
+  Hotspot(double d) {  // fails to meet HotspotSuper() precondition
+                    ^
+Associated declaration is "Hotspot.java", line 11, col 6:
+  //@ requires gg != 4;
+      ^
+Hotspot.java:265: Warning: Possible violation of object invariant (Invariant)
+    mPreInvariant0();
+                  ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:270: Warning: Possible violation of object invariant (Invariant)
+    this.mPreInvariant1();
+                       ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:276: Warning: Possible violation of object invariant (Invariant)
+      h.mPreInvariant2(this);
+                      ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:282: Warning: Possible violation of object invariant (Invariant)
+    Hotspot h = new Hotspot(12, 14);
+                           ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:286: Warning: Possible violation of object invariant (Invariant)
+    super(- (gg= -3)); // meets HotspotSuper(int) precondition, but vi ...
+         ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:291: Warning: Possible violation of object invariant (Invariant)
+    this((float)(gg= -3), f1);  // meets Hotspot(float, double) precon ...
+        ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:298: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 295, col 22:
+  /*@ requires x < 0; ensures \result == 12; */
+                      ^
+Hotspot.java:303: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 300, col 6:
+  /*@ ensures ff == 12; */
+      ^
+Hotspot.java:308: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 305, col 6:
+  /*@ exsures (SomeException se) se == null; */
+      ^
+Hotspot.java:314: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 310, col 6:
+  //@ ensures kk == 0;
+      ^
+Hotspot.java:322: Warning: Possible violation of object invariant (Invariant)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:326: Warning: Possible violation of object invariant (Invariant)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 26, col 40:
+  int kk = 6;  /*@ invariant kk == kk;  invariant 0 <= kk; */
+                                        ^
+Hotspot.java:333: Warning: Possible violation of object invariant (Invariant)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 26, col 40:
+  int kk = 6;  /*@ invariant kk == kk;  invariant 0 <= kk; */
+                                        ^
+Hotspot.java:338: Warning: Possible violation of object invariant (Invariant)
+  }
+  ^
+Associated declaration is "Hotspot.java", line 9, col 22:
+  static int gg;  //@ invariant 0 <= gg;
+                      ^
+Hotspot.java:344: Warning: Possible unexpected exception (Exception)
+  }
+  ^
+Hotspot.java:350: Warning: Possible unexpected exception (Exception)
+  }
+  ^
+Hotspot.java:355: Warning: Possible dynamic use before meaningful assignment of local variable (Uninit)
+    if (x < y) {
+        ^
+Associated declaration is "Hotspot.java", line 353, col 19:
+    int x = 13 /*@ uninitialized */;
+                   ^
+Hotspot.java:374: Warning: Possible dynamic use before meaningful assignment of local variable (Uninit)
+    x++;  // possible read of meaningless value
+    ^
+Associated declaration is "Hotspot.java", line 361, col 18:
+    int x = 0 /*@ uninitialized */;
+                  ^
+Hotspot.java:380: Warning: Read of variable when its value may be meaningless (Unreadable)
+    return c;  // but can read c only if a is non-null
+           ^
+Associated declaration is "Hotspot.java", line 378, col 8:
+    /*@ readable_if a != null; */ int c;
+        ^
+Hotspot.java:387: Warning: Write of variable when disallowed (Writable)
+        c = 3;    // error: not ok to write to c if a==null
+          ^
+Associated declaration is "Hotspot.java", line 384, col 8:
+    /*@ writable_if a != null; */ int c;
+        ^
+Hotspot.java:402: Warning: Read of variable when its value may be meaningless (Unreadable)
+    return z + c;
+               ^
+Associated declaration is "Hotspot.java", line 394, col 8:
+    /*@ readable_if a != null; */ int c = 12;
+        ^
+Hotspot.java:407: Warning: Read of variable when its value may be meaningless (Unreadable)
+    return uuCount;  // but can read uuCount only if uuArray is non-nu ...
+           ^
+Associated declaration is "Hotspot.java", line 28, col 18:
+  int uuCount /*@ readable_if uuArray != null; */;
+                  ^
+Hotspot.java:416: Warning: Read of variable when its value may be meaningless (Unreadable)
+    a[1] *= 20;  // not okay
+    ^
+Associated declaration is "Hotspot.java", line 411, col 30:
+    int[] a = new int[10] //@ readable_if gg < 10;
+                              ^
+Hotspot.java:424: Warning: Read of variable when its value may be meaningless (Unreadable)
+    return c;
+           ^
+Associated declaration is "Hotspot.java", line 421, col 14:
+    int c /*@ readable_if b; */;
+              ^
+Hotspot.java:440: Warning: Loop invariant possibly does not hold (LoopInv)
+    while (true) {
+          ^
+Associated declaration is "Hotspot.java", line 439, col 8:
+    //@ loop_invariant x != 0;
+        ^
+Hotspot.java:447: Warning: Loop invariant possibly does not hold (LoopInv)
+    while (true) {
+          ^
+Associated declaration is "Hotspot.java", line 446, col 8:
+    //@ loop_invariant x != 0;
+        ^
+Hotspot.java:455: Warning: Loop invariant possibly does not hold (LoopInv)
+    do {
+    ^
+Associated declaration is "Hotspot.java", line 454, col 8:
+    //@ loop_invariant x != 0;
+        ^
+Hotspot.java:462: Warning: Loop invariant possibly does not hold (LoopInv)
+    Label: do {
+           ^
+Associated declaration is "Hotspot.java", line 461, col 8:
+    //@ loop_invariant x != 0;
+        ^
+Hotspot.java:469: Warning: Loop invariant possibly does not hold (LoopInv)
+    do {
+    ^
+Associated declaration is "Hotspot.java", line 468, col 8:
+    //@ loop_invariant x != 0;
+        ^
+Hotspot.java:477: Warning: Loop invariant possibly does not hold (LoopInv)
+    Label: do {
+           ^
+Associated declaration is "Hotspot.java", line 476, col 8:
+    //@ loop_invariant x != 0;
+        ^
+Hotspot.java:484: Warning: Loop invariant possibly does not hold (LoopInv)
+    for (int x = 0; x < 10; x++) {
+                  ^
+Associated declaration is "Hotspot.java", line 483, col 8:
+    //@ loop_invariant x != 0;
+        ^
+Hotspot.java:490: Warning: Loop invariant possibly does not hold (LoopInv)
+    for (int x = 0;; x++) {
+                  ^
+Associated declaration is "Hotspot.java", line 489, col 8:
+    //@ loop_invariant x == 0;
+        ^
+Hotspot.java:495: Warning: Possible violation of object invariant (Invariant)
+class HotspotInvariant0 {
+                        ^
+Associated declaration is "Hotspot.java", line 498, col 15:
+  int hs;  //@ invariant hs == 3;
+               ^
+Hotspot.java:501: Warning: Possible violation of object invariant (Invariant)
+class HotspotInvariant1 {
+                        ^
+Associated declaration is "Hotspot.java", line 504, col 19:
+  int hs = 2;  //@ invariant hs == 3;
+                   ^
+75 warnings
+SynchHotspot.java:22: Warning: Possible race condition (Race)
+    return x;
+           ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:26: Warning: Possible race condition (Race)
+    return this.x;
+                ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:30: Warning: Possible race condition (Race)
+    x = 5;
+      ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:34: Warning: Possible race condition (Race)
+    this.x = 5;
+           ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:38: Warning: Possible race condition (Race)
+    this.x += 5;
+         ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:42: Warning: Possible race condition (Race)
+    this.x++;
+         ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:46: Warning: Possible race condition (Race)
+    ++this.x;
+           ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:50: Warning: Possible race condition (Race)
+    return d;
+           ^
+Associated declaration is "SynchHotspot.java", line 13, col 17:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                 ^
+SynchHotspot.java:54: Warning: Possible race condition (Race)
+    d = new double[100];
+      ^
+Associated declaration is "SynchHotspot.java", line 13, col 35:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                                   ^
+SynchHotspot.java:58: Warning: Possible race condition (Race)
+    return d[1];
+           ^
+Associated declaration is "SynchHotspot.java", line 13, col 17:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                 ^
+SynchHotspot.java:63: Warning: Possible race condition (Race)
+    this.d[0] = 0.1e2;
+         ^
+Associated declaration is "SynchHotspot.java", line 13, col 17:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                 ^
+SynchHotspot.java:69: Warning: Possible race condition (Race)
+    d = null;  // not okay
+      ^
+Associated declaration is "SynchHotspot.java", line 13, col 35:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                                   ^
+SynchHotspot.java:84: Warning: Possible race condition (Race)
+      d = null;  // race condition (mu1 is not held)
+        ^
+Associated declaration is "SynchHotspot.java", line 13, col 35:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                                   ^
+SynchHotspot.java:105: Warning: Possible race condition (Race)
+      d = a;  // race condition (mu0 not held)
+        ^
+Associated declaration is "SynchHotspot.java", line 13, col 30:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                              ^
+SynchHotspot.java:111: Warning: Possible race condition (Race)
+    double[] a = d;  // okay
+                 ^
+Associated declaration is "SynchHotspot.java", line 13, col 17:
+  double[] d /*@ monitored_by mu0, this.mu1; */;
+                 ^
+SynchHotspot.java:120: Warning: Possible race condition (Race)
+      return y + h.x;  // race condition (h not held)
+                   ^
+Associated declaration is "SynchHotspot.java", line 9, col 6:
+  //@ monitored
+      ^
+SynchHotspot.java:125: Warning: Possible null dereference (Null)
+    synchronized (mu0) {  // trying to lock null
+                 ^
+SynchHotspot.java:134: Warning: Possible deadlock (Deadlock)
+          synchronized (mu0) {  // possible deadlock
+                       ^
+SynchHotspot.java:142: Warning: Precondition possibly not established (Pre)
+    mDeadlock1();  // does not respect locking order
+              ^
+Associated declaration is "SynchHotspot.java", line 129, col 6:
+  //@ requires \max(\lockset) < this || \lockset[this];
+      ^
+SynchHotspot.java:146: Warning: Precondition possibly not established (Pre)
+    this.mDeadlock1();  // does not respect locking order
+                   ^
+Associated declaration is "SynchHotspot.java", line 129, col 6:
+  //@ requires \max(\lockset) < this || \lockset[this];
+      ^
+SynchHotspot.java:151: Warning: Precondition possibly not established (Pre)
+      h.mDeadlock1();  // does not respect locking order
+                  ^
+Associated declaration is "SynchHotspot.java", line 129, col 6:
+  //@ requires \max(\lockset) < this || \lockset[this];
+      ^
+SynchHotspot.java:160: Warning: Precondition possibly not established (Pre)
+      h.mDeadlock1();  // does not respect locking order
+                  ^
+Associated declaration is "SynchHotspot.java", line 129, col 6:
+  //@ requires \max(\lockset) < this || \lockset[this];
+      ^
+SynchHotspot.java:165: Warning: Precondition possibly not established (Pre)
+    mDeadlock5(null);  // does not respect locking order
+              ^
+Associated declaration is "SynchHotspot.java", line 155, col 6:
+  //@ requires \max(\lockset) < SynchHotspot.class || \lockset[SynchHo ...
+      ^
+23 warnings

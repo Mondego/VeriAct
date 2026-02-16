@@ -1,0 +1,24 @@
+ESC/Java version VERSION
+src|test|resources|ModelModifies.java: Caution: Using given file as the .java file, even though it is not the java file for ModelModifies on the classpath
+    [TIME]
+
+ModelModifies ...
+  Prover started:TIME
+    [TIME]
+
+ModelModifies: m() ...
+    [TIME]  passed
+
+ModelModifies: mm() ...
+    [TIME]  passed
+
+ModelModifies: p(int) ...
+    [TIME]  passed
+
+ModelModifies: mmm() ...
+    [TIME]  passed
+
+ModelModifies: ModelModifies() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

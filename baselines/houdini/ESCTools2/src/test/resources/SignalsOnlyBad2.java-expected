@@ -1,0 +1,33 @@
+ESC/Java version VERSION
+src|test|resources|SignalsOnlyBad2.java: Caution: Using given file as the .java file, even though it is not the java file for SignalsOnlyBad2 on the classpath
+    [TIME]
+
+SignalsOnlyBad2 ...
+src|test|resources|SignalsOnlyBad2.java:9: Error: The signals_only clause may not contain an exception type java.lang.Exception that is not a subtype of either RuntimeException or a type in the routine's throws clause
+        //@ signals_only Exception;    // ERROR
+                         ^
+src|test|resources|SignalsOnlyBad2.java:13: Associated declaration: 
+        public void mmm() throws ArrayStoreException;
+                          ^
+src|test|resources|SignalsOnlyBad2.java:18: Error: Only one signals_only clause is allowed per specification case
+        //@ signals_only NullPointerException; // ERROR - not more tha ...
+            ^
+src|test|resources|SignalsOnlyBad2.java:17: Associated declaration: 
+        //@ signals_only RuntimeException;
+            ^
+src|test|resources|SignalsOnlyBad2.java:22: Error: Only one signals_only clause is allowed per specification case
+        //@ signals_only NullPointerException; // ERROR - not more tha ...
+            ^
+src|test|resources|SignalsOnlyBad2.java:21: Associated declaration: 
+        //@ signals_only RuntimeException;
+            ^
+src|test|resources|SignalsOnlyBad2.java:23: Error: Only one signals_only clause is allowed per specification case
+        //@ signals_only ClassCastException; // ERROR - not more than  ...
+            ^
+src|test|resources|SignalsOnlyBad2.java:21: Associated declaration: 
+        //@ signals_only RuntimeException;
+            ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+4 errors

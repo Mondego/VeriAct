@@ -1,0 +1,9 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* DttfsaDoesntEvenParse0.java
+${ESCJ} $* DttfsaDoesntEvenParse1.java
+${ESCJ} $* DttfsaDoesntEvenParse2.java
+${ESCJ} $* DttfsaDoesntEvenParse3.java
+${ESCJ} $* DttfsaTypecheck.java
+${ESCJ} $* Dttfsa.java

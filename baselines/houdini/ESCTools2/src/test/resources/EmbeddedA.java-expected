@@ -1,0 +1,66 @@
+ESC/Java version VERSION
+src|test|resources|EmbeddedA.java:6: Error: Pragma in javadoc comment is not correctly terminated (missing </jml>)
+        <jml>
+        ^
+src|test|resources|EmbeddedA.java:13: Error: Pragma in javadoc comment is not correctly terminated (missing </JML>)
+        <JML>
+        ^
+src|test|resources|EmbeddedA.java:19: Error: Pragma in javadoc comment is not correctly terminated (missing </JML>)
+        <JML>
+        ^
+src|test|resources|EmbeddedA.java:26: Error: Pragma in javadoc comment is not correctly terminated (missing </JML>)
+        <JML>
+        ^
+src|test|resources|EmbeddedA.java: Caution: Using given file as the .java file, even though it is not the java file for EmbeddedA on the classpath
+    [TIME]
+
+EmbeddedA ...
+  Prover started:TIME
+    [TIME]
+
+EmbeddedA: m() ...
+    [TIME]  passed immediately
+
+EmbeddedA: n() ...
+    [TIME]  passed immediately
+
+EmbeddedA: n1() ...
+    [TIME]  passed immediately
+
+EmbeddedA: n2() ...
+    [TIME]  passed immediately
+
+EmbeddedA: p() ...
+------------------------------------------------------------------------
+src|test|resources|EmbeddedA.java:38: Warning: Postcondition possibly not established (Post)
+        public void p() {}
+                         ^
+Associated declaration is "src|test|resources|EmbeddedA.java", line 35, col 2:
+                ensures false; // Should read this one
+                ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|EmbeddedA.java", line 38, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EmbeddedA: p2() ...
+------------------------------------------------------------------------
+src|test|resources|EmbeddedA.java:47: Warning: Postcondition possibly not established (Post)
+        public void p2() {}
+                          ^
+Associated declaration is "src|test|resources|EmbeddedA.java", line 43, col 2:
+                ensures false; // Should read this one
+                ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|EmbeddedA.java", line 47, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EmbeddedA: EmbeddedA() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings
+4 errors

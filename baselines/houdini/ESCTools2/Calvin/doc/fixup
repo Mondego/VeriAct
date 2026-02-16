@@ -1,0 +1,8 @@
+# Copyright Hewlett-Packard, 2002
+
+#/bin/csh -f
+
+rm -f /tmp/FIXITUP
+
+sed 's/#_top_//g' $1 > /tmp/FIXITUP
+mv /tmp/FIXITUP $1

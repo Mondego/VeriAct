@@ -1,0 +1,33 @@
+ESC/Java version VERSION
+FMCKeywords.java:6: Error: Expected a declaration within the annotation following the ghost keyword
+        //@ ghost requires j; // ERROR
+            ^
+FMCKeywords.java:9: Error: Expected a declaration within the annotation following the model keyword
+        //@ model requires j; // ERROR
+            ^
+FMCKeywords.java:12: Caution: Access modifiers are not allowed prior to requires
+        //@ public model requires ensures() { int signals = 0; }  // E ...
+                         ^
+FMCKeywords.java:12: Fatal error: Semicolon required when a requires pragma is followed by another pragma (found { instead).
+        //@ public model requires ensures() { int signals = 0; }  // E ...
+                                            ^
+FMCKeywords.java:19: Caution: Access modifiers are not allowed prior to requires
+        //@ public model requires(Object o) {} // ERROR
+                         ^
+FMCKeywords.java:19: Fatal error: Unexpected token 'IDENT', expected ')'
+        //@ public model requires(Object o) {} // ERROR
+                                         ^
+FMCKeywords.java:21: Error: The type name in a constructor declaration may not be a primitive or array type
+        //@ public model constructor int() {} // ERROR
+                                     ^
+FMCKeywords.java:22: Error: The type name in a constructor declaration may not be a primitive or array type
+        //@ public model constructor requires[]() {} // ERROR
+                                     ^
+FMCKeywords.java:23: Error: The type name in a constructor must be a simple name that matches the name of the enclosing type
+        //@ public model constructor sub.badname() {} // ERROR
+                                     ^
+FMCKeywords.java:25: Fatal error: Invalid name 'R' for constructor; expected 'requires'
+        public R() {}
+                ^
+2 cautions
+8 errors

@@ -1,0 +1,77 @@
+ESC/Java version VERSION
+    [TIME]
+
+DefInh ...
+  Prover started:TIME
+    [TIME]
+
+DefInh: DefInh() ...
+    [TIME]  passed
+  [TIME total]
+
+DefS ...
+    [TIME]
+
+DefS: DefS() ...
+    [TIME]  passed
+
+DefS: m() ...
+    [TIME]  passed
+  [TIME total]
+
+DefD ...
+DefInh.java:34: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+        public void m() {
+                    ^
+DefInh.java:21: Associated declaration: 
+        public void m(){
+               ^
+    [TIME]
+
+DefD: DefD() ...
+------------------------------------------------------------------------
+DefInh.java:29: Warning: Possible violation of modifies clause (Modifies)
+        public DefD() {  // FIXME - should be ok
+                      ^
+Associated declaration is "DefInh.java", line 14, col 14:
+        //@ modifies si,sj;
+                     ^
+Associated declaration is "DefInh.java", line 28, col 6:
+        //@  modifies sj, ((DefS)this).si;
+             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+DefD: m() ...
+    [TIME]  passed
+  [TIME total]
+
+DefIS ...
+    [TIME]
+
+DefIS: DefIS() ...
+    [TIME]  passed
+  [TIME total]
+
+DefII ...
+    [TIME]
+
+DefII: DefII() ...
+    [TIME]  passed
+  [TIME total]
+
+DefDD ...
+    [TIME]
+
+DefDD: DefDD() ...
+    [TIME]  passed
+  [TIME total]
+
+DefSS ...
+    [TIME]
+
+DefSS: DefSS() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

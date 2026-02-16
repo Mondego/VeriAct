@@ -1,0 +1,37 @@
+ESC/Java version VERSION
+src|test|resources|AnonClass.java: Caution: Using given file as the .java file, even though it is not the java file for AnonClass on the classpath
+    [TIME]
+
+AnonClass ...
+  Prover started:TIME
+    [TIME]
+
+AnonClass: p() ...
+src|test|resources|AnonClass.java:4: Caution: Not checking body of anonymous class (subclass of AnonClassS)
+        AnonClassS a = new AnonClassS() {
+                                        ^
+------------------------------------------------------------------------
+src|test|resources|AnonClass.java:11: Warning: Precondition possibly not established (Pre)
+        a.m(-1);
+           ^
+Associated declaration is "src|test|resources|AnonClass.java", line 18, col 8:
+    //@ requires i > 0;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AnonClass: AnonClass() ...
+    [TIME]  passed
+  [TIME total]
+
+AnonClassS ...
+    [TIME]
+
+AnonClassS: m(int) ...
+    [TIME]  passed
+
+AnonClassS: AnonClassS() ...
+    [TIME]  passed
+  [TIME total]
+2 cautions
+1 warning

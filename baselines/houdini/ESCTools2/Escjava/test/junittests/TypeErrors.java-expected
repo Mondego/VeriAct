@@ -1,0 +1,11 @@
+ESC/Java version VERSION
+    [TIME]
+
+TypeErrors ...
+TypeErrors.java:10: Error: The function \typeof takes one argument
+        //-@ ensures \typeof(i,i) <: \type(i);
+                     ^
+TypeErrors.java:10: Fatal error: Can't find type named "i"
+        //-@ ensures \typeof(i,i) <: \type(i);
+                                           ^
+2 errors

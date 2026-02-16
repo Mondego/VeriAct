@@ -1,0 +1,25 @@
+ESC/Java version VERSION
+    [TIME]
+
+Weakly ...
+  Prover started:TIME
+    [TIME]
+
+Weakly: m() ...
+    [TIME]  passed
+
+Weakly: Weakly() ...
+    [TIME]  passed
+  [TIME total]
+
+A ...
+    [TIME]
+  [TIME total]
+
+B ...
+    [TIME]
+  [TIME total]
+
+C ...
+    [TIME]
+  [TIME total]

@@ -1,0 +1,47 @@
+ESC/Java version VERSION
+ModelConstructors.java:6: Error: The type name in a constructor must be a simple name that matches the name of the enclosing type
+        //@ model constructor sub.badname(float i) {  } // ERROR
+                              ^
+ModelConstructors.java:5: Error: A constructor-like declaration has an id which is not the same as the id of the enclosing type: badname vs. ModelConstructors
+        //@ model constructor badname(int i) {  } // ERROR
+                              ^
+ModelConstructors.java:3: Associated declaration: 
+public class ModelConstructors {
+             ^
+    [TIME]
+
+ModelConstructors ...
+ModelConstructors.java:12: Error: Undefined variable 'ooo'
+                ooo == null; // ERROR
+                ^
+ModelConstructors.java:34: Error: Undefined variable 'ooo'
+                ooo == null; // ERROR
+                ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+ModelConstructorZ ...
+ModelConstructors.java:43: Error: No such constructor in type ModelConstructors
+                oo = new ModelConstructors(0,0,0); // ERROR - no such  ...
+                     ^
+  [TIME total] (aborted)
+
+ModelConstructorA ...
+ModelConstructors.java:51: Error: Undefined variable 'o'
+        public ModelConstructorA() { o = null; } // ERROR
+                                     ^
+ModelConstructors.java:53: Error: Undefined variable 'o'
+        public void m() { o = null; } // ERROR
+                          ^
+  [TIME total] (aborted)
+
+ModelConstructorB ...
+ModelConstructors.java:61: Error: Duplicate declaration of constructor with same signature
+        //@ model public ModelConstructorB(int i) {}  // ERROR
+                         ^
+ModelConstructors.java:59: Associated declaration: 
+        public ModelConstructorB(int i) {}
+        ^
+  [TIME total] (aborted)
+1 caution
+8 errors

@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|ModelVarSet.java: Caution: Using given file as the .java file, even though it is not the java file for ModelVarSet on the classpath
+    [TIME]
+
+ModelVarSet ...
+  Prover started:TIME
+    [TIME]
+
+ModelVarSet: ModelVarSet() ...
+    [TIME]  passed immediately
+
+ModelVarSet: m() ...
+    [TIME]  passed
+
+ModelVarSet: sm() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

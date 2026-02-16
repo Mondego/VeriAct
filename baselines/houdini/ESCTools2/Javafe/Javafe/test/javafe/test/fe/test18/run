@@ -1,0 +1,15 @@
+#!/bin/sh
+
+## Check for detection of cycles
+
+${TOOL} Simple.java
+${TOOL} Loop.java
+${TOOL} Trans.java
+
+${TOOL} Object.java
+${TOOL} Object2.java
+${TOOL} Object3.java
+
+${TOOL} Interface.java
+${TOOL} TwoHeaded.java
+${TOOL} OnWay.java

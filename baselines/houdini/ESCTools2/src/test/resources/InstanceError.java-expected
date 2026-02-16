@@ -1,0 +1,102 @@
+ESC/Java version VERSION
+src|test|resources|InstanceError.java: Caution: Using given file as the .java file, even though it is not the java file for InstanceError on the classpath
+    [TIME]
+
+InstanceSuperC ...
+src|test|resources|InstanceError.java:6: Error: May not specify both static and instance on a declaration
+        //@ static instance ghost public int fff; // ERROR
+                   ^
+src|test|resources|InstanceError.java:7: Error: May not specify both static and instance on a declaration
+        //@ static ghost instance public int ffff; // ERROR
+                         ^
+src|test|resources|InstanceError.java:8: Error: May not specify both static and instance on a declaration
+        //@ ghost static instance public int fffff; // ERROR
+                         ^
+src|test|resources|InstanceError.java:10: Error: May not specify both static and instance on a declaration
+        //@ static instance model public int mmm; // ERROR
+                   ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+InstanceSuper ...
+src|test|resources|InstanceError.java:23: Error: May not specify both static and instance on a declaration
+        //@ static instance ghost public int fff; // ERROR
+                   ^
+src|test|resources|InstanceError.java:24: Error: May not specify both static and instance on a declaration
+        //@ static ghost instance public int ffff; // ERROR
+                         ^
+src|test|resources|InstanceError.java:25: Error: May not specify both static and instance on a declaration
+        //@ ghost static instance public int fffff; // ERROR
+                         ^
+src|test|resources|InstanceError.java:27: Error: May not specify both static and instance on a declaration
+        //@ static instance model public int mmm; // ERROR
+                   ^
+  [TIME total] (aborted)
+
+InstanceError ...
+src|test|resources|InstanceError.java:38: Error: May not specify both static and instance on a declaration
+        //@ public instance static ghost boolean b1; // ERROR
+                   ^
+src|test|resources|InstanceError.java:39: Error: May not specify both static and instance on a declaration
+        //@ public static instance ghost boolean b2; // ERROR
+                          ^
+src|test|resources|InstanceError.java:40: Error: May not specify both static and instance on a declaration
+        //@ public instance ghost static boolean b3; // ERROR
+                   ^
+src|test|resources|InstanceError.java:41: Error: May not specify both static and instance on a declaration
+        //@ public static ghost instance boolean b4; // ERROR
+                                ^
+src|test|resources|InstanceError.java:42: Error: May not specify both static and instance on a declaration
+        //@ public ghost instance static boolean b5; // ERROR
+                         ^
+src|test|resources|InstanceError.java:43: Error: May not specify both static and instance on a declaration
+        //@ public ghost static instance boolean b6; // ERROR
+                                ^
+src|test|resources|InstanceError.java:68: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                set ii = gi; // ERROR
+                         ^
+src|test|resources|InstanceError.java:71: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                set ii = gmi; // ERROR
+                         ^
+src|test|resources|InstanceError.java:73: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                set ii = cg; // ERROR
+                         ^
+src|test|resources|InstanceError.java:74: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                set ii = cgi; // ERROR
+                         ^
+src|test|resources|InstanceError.java:76: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                set ii = cgm; // ERROR
+                         ^
+src|test|resources|InstanceError.java:77: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+                set ii = cgmi; // ERROR
+                         ^
+src|test|resources|InstanceError.java:82: Error: An instance modifier may only be applied to ghost and model fields
+        //@ instance model interface I {}   // ERROR
+            ^
+src|test|resources|InstanceError.java:83: Error: An instance modifier may only be applied to ghost and model fields
+        //@ instance model class C {}   // ERROR
+            ^
+src|test|resources|InstanceError.java:84: Error: An instance modifier may only be applied to ghost and model fields
+        //@ instance model void mz() {}   // ERROR
+            ^
+src|test|resources|InstanceError.java:84: Error: Unknown kind of pragma for a routine declaration: instance
+        //@ instance model void mz() {}   // ERROR
+            ^
+src|test|resources|InstanceError.java:85: Error: An instance modifier may only be applied to ghost and model fields
+        //@ instance model InstanceError(double d) {}   // ERROR
+            ^
+src|test|resources|InstanceError.java:85: Error: Unknown kind of pragma for a routine declaration: instance
+        //@ instance model InstanceError(double d) {}   // ERROR
+            ^
+src|test|resources|InstanceError.java:86: Error: An instance modifier may only be applied to ghost and model fields
+        //@ instance   // ERROR
+            ^
+  [TIME total] (aborted)
+
+InstanceError$I ...
+  [TIME total]
+
+InstanceError$C ...
+  [TIME total]
+2 cautions
+27 errors

@@ -1,0 +1,4 @@
+//
+// We need better error messages that point to the 2 method declarations in
+// conflict, not to the original definition of the method.
+//

@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestBitSet.java: Caution: Using given file as the .java file, even though it is not the java file for TestBitSet on the classpath
+    [TIME]
+
+TestBitSet ...
+src|test|resources|TestBitSet.java:12: Fatal error: No method named assertTrue is in scope here.
+    assertTrue ( b.isEmpty() );
+    ^
+1 caution
+1 error

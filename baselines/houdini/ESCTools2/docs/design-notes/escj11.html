@@ -1,0 +1,265 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 11: Enforcing Object Invariants</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>
+ESCJ 11:&nbsp; Enforcing Object Invariants.</H1>
+<B>Rustan Leino</B>
+
+<P>[From posts to src.sparta dated 11 Dec 97 and 19 Dec 97.]
+
+<P>
+<HR WIDTH="100%">
+
+<P>At the Sparta meeting today, Greg, Raymie, and I discussed when ESC/Java
+<BR>should assume and check that object invariants hold.&nbsp; Here is
+what
+<BR>we thought seemed like a good idea.&nbsp; (These rules pertain to non-constructor
+<BR>methods; constructors have slightly different rules.)
+<BR>&nbsp;
+
+<P>On entry to the method whose body is being checked, assume that
+<BR>the following objects satisfy their invariants:
+
+<P>&nbsp;*&nbsp; all allocated objects
+
+<P>On exit from the method whose body is being checked, check that the
+<BR>following objects satisfy their invariants:
+
+<P>&nbsp;*&nbsp; all allocated objects
+
+<P>At a call to a method, check that the following objects satisfy their
+<BR>invariants:
+
+<P>&nbsp;*&nbsp; all actual in-parameters (including "this") and all global
+variables
+<BR>&nbsp;&nbsp;&nbsp; (aka static fields)
+
+<P>On return from a method call, assume that the following objects satisfy
+<BR>their invariants:
+
+<P>&nbsp;*&nbsp; every object "x" where "x.f" (for some field "f", possibly
+"elems")
+<BR>&nbsp;&nbsp;&nbsp; occurs in the modifies list of the method being
+called, and all objects
+<BR>&nbsp;&nbsp;&nbsp; that are allocated during the call
+<BR>&nbsp;
+
+<P>&lt;30-minute break>
+<BR>I just spoke with Cormac about these rules and realized that they
+<BR>need improvement.&nbsp; Consider the following code fragment:
+
+<P>&nbsp;&nbsp;&nbsp; class C {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int x;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*@ invariant 0 &lt;= x */
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Y y;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*@ invariant y != null */
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; void m() {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = -1;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y.n();
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = 0;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+<BR>&nbsp;&nbsp;&nbsp; }
+
+<P>We had hoped that the rules above would allow the body of "C.m" to
+<BR>check:&nbsp; the invariant of "this" doesn't hold at the call to "y.n()",
+<BR>but it also doesn't have to, because "C.m.this" is not an actual
+<BR>parameter to "y.n()".&nbsp; But it might be the contents of a global
+variable!
+<BR>Suppose that this verification is done where the following global
+<BR>variable is visible:
+
+<P>&nbsp;&nbsp;&nbsp; static Object g;
+
+<P>Then, the rules above would require that invariant of "g" hold at
+<BR>the call to "y.n()".&nbsp; The prover would not miss this opportunity
+<BR>to point out the possibility that "g == this".
+
+<P>To solve this problem with the rules given above, one would need
+<BR>to have a way to conclude that "g" differs from "this".&nbsp; I think
+<BR>that would end up being a mess.&nbsp; It's probably better to adjust
+the
+<BR>rules above to say something different about global variables.
+
+<P>&nbsp; Rustan
+
+<P>
+<HR WIDTH="100%">
+
+<P>In yesterday's Sparta meeting, we revisited last week's discussion
+<BR>of which object invariants to check and assume when.&nbsp; Here's an
+attempt
+<BR>at specifying the behavior that we (or at least I) currently think
+<BR>we should implement.&nbsp; (I have totally changed the formulation
+of
+<BR>the last rule.)&nbsp; I'll try to be more concrete than in my message
+<BR>from a week ago.
+
+<P>An object invariant is a boolean condition that is written down
+<BR>in a class.&nbsp; For example, consider the following class.
+
+<P>&nbsp;&nbsp;&nbsp; class C {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int x, y;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*@ invariant x &lt; y */
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; T t;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*@ invariant t != null
+*/
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+
+<P>This class contains two object invariants about the fields of "C"
+<BR>objects.&nbsp; Expanding out the implicit "this" object, the same code
+<BR>reads:
+
+<P>&nbsp;&nbsp;&nbsp; class C {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int x, y;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*@ invariant this.x &lt;
+this.y */
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; T t;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*@ invariant this.t !=
+null */
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+
+<P>For the rest of this message, I will assume that "this" is always
+<BR>given explicitly.
+
+<P>I will say "C-invariant" to refer to any object invariant declared
+<BR>inside class "C".
+
+<P>To avoid unnecessary cases, I will treat the self parameter of
+<BR>instance methods as being just another ordinary parameter.
+<BR>I will ignore constructors for now, focusing only on ordinary instance
+<BR>methods and static methods.
+
+<P>Here we go.
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*&nbsp;&nbsp;&nbsp;&nbsp; *
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*
+
+<P>Consider the verification of a method "m".
+<BR>&nbsp;
+
+<P>Here's what the ESC/Java tutorial/cookbook would say:
+
+<P>&nbsp;&nbsp;&nbsp; All object invariants of all objects are assumed
+at the beginning
+<BR>&nbsp;&nbsp;&nbsp; of "m" and checked at the end of "m".&nbsp; In addition,
+the object
+<BR>&nbsp;&nbsp;&nbsp; invariants of the actual parameters to a method
+"n" and of globals
+<BR>&nbsp;&nbsp;&nbsp; are checked for every call to "n".&nbsp; The call
+to a method "n"
+<BR>&nbsp;&nbsp;&nbsp; is assumed not to falsify any invariant.
+
+<P>&nbsp;* *
+
+<P>Now for the details.
+
+<P>Just inside the body of "m", the translation (of Java into Guarded
+<BR>Commands) would generate an assumption
+
+<P>&nbsp;&nbsp;&nbsp; (ALL this: C&nbsp; ::&nbsp; J )&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(*)
+
+<P>for every C-invariant "J" (for every "C").
+<BR>&nbsp;
+
+<P>&nbsp;&nbsp;&nbsp; Remark.&nbsp; With the quantification (*), I actually
+mean
+<BR>&nbsp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (ALL this&nbsp; ::
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+this instanceof C&nbsp; &amp;&amp;&nbsp; isAllocated(this, alloc)&nbsp;
+&amp;&amp;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+this != null
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ==>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+J
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )
+
+<P>&nbsp;&nbsp;&nbsp; For the benefit of the uninitiated, let me explain
+the first two
+<BR>&nbsp;&nbsp;&nbsp; conjuncts of the antecedent.&nbsp; Recall that the
+logic underlying ESC/Java
+<BR>&nbsp;&nbsp;&nbsp; is untyped, so the quantification is really over
+all values of a
+<BR>&nbsp;&nbsp;&nbsp; variable conveniently called "this".&nbsp; The first
+conjunct of the antecedent
+<BR>&nbsp;&nbsp;&nbsp; says that the dynamic type of "this" is a subtype
+of "C".&nbsp; The second
+<BR>&nbsp;&nbsp;&nbsp; conjunct in the antecedent states that "this" is
+allocated (before
+<BR>&nbsp;&nbsp;&nbsp; the allocation time "alloc", which in this example
+refers to
+<BR>&nbsp;&nbsp;&nbsp; the time of entry to the body of "m").
+
+<P>&nbsp;&nbsp;&nbsp; To keep things palatable, I will continue to write
+quantification in
+<BR>&nbsp;&nbsp;&nbsp; the form (*).&nbsp; (End of Remark.)
+
+<P>&nbsp;* *
+
+<P>Just before the end of the body of "m", the translation will generate
+<BR>a check
+
+<P>&nbsp;&nbsp;&nbsp; (ALL this: C&nbsp; ::&nbsp; J )
+
+<P>for every C-invariant "J".
+
+<P>&nbsp;* *
+
+<P>Just before a call to a method "n", the translation will generate
+<BR>a check
+
+<P>&nbsp;&nbsp;&nbsp; (ALL this: C&nbsp; ::&nbsp; (this == x || this ==
+y || ... || this == z)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+==> J )
+
+<P>for every C-invariant "J", where for a particular "C" the
+<BR>"x", "y", ..., "z" are the global variables (that is, static fields)
+<BR>whose static types are subtypes of "C" and the actual parameters of
+"n"
+<BR>whose static types are subtypes of "C".
+
+<P>(Note that this formula is equivalent to:
+
+<P>&nbsp;&nbsp;&nbsp; J[this := x]&nbsp; &amp;&amp;&nbsp; J[this := y]&nbsp;
+&amp;&amp;&nbsp; ...&nbsp; &amp;&amp;&nbsp; J[this := z]
+
+<P>Which of the two should we use?)
+
+<P>&nbsp;* *
+
+<P>Just after the invocation of a method "n", the translation will generate
+<BR>an assumption
+
+<P>&nbsp;&nbsp;&nbsp; (ALL this: C&nbsp; ::&nbsp;&nbsp; J0 || ! isAllocated(this,
+alloc0)&nbsp;&nbsp; ==>&nbsp;&nbsp; J )
+
+<P>(where "alloc0" and "J0" denotes the values of "alloc0" and "J" before
+<BR>the call to "n") for every C-invariant "J" that mentions any field
+<BR>or global variable allowed--on account of a MODIFIES clause--to be
+<BR>modified by "n".
+<BR>&nbsp;
+
+<P>&nbsp; Rustan
+
+<P>
+<HR WIDTH="100%">
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

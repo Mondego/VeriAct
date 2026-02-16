@@ -1,0 +1,10 @@
+C.java:9: Warning: Possible assertion failure (Assert)
+            //@ assert a[0] instanceof Object;
+                ^
+C.java:13: Warning: Possible attempt to allocate array of negative length (NegSize)
+        Object[] a = new Object[-1];
+                               ^
+D.java:12: Warning: Possible assertion failure (Assert)
+            //@ assert a[0] instanceof Object;
+                ^
+3 warnings

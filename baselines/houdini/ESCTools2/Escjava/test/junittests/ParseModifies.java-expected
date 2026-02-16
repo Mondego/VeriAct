@@ -1,0 +1,34 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParseModifies ...
+  Prover started:TIME
+    [TIME]
+
+ParseModifies: m() ...
+    [TIME]  passed immediately
+
+ParseModifies: mm() ...
+    [TIME]  passed immediately
+
+ParseModifies: q() ...
+    [TIME]  passed immediately
+
+ParseModifies: z() ...
+------------------------------------------------------------------------
+ParseModifies.java:27: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "ParseModifies.java", line 24, col 5:
+        //@ ensures j == i;
+            ^
+Execution trace information:
+    Executed implicit return in "ParseModifies.java", line 27, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParseModifies: ParseModifies() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

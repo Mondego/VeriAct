@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|CausedAnErrorOnce00.java: Caution: Using given file as the .java file, even though it is not the java file for CausedAnErrorOnce00 on the classpath
+    [TIME]
+
+CausedAnErrorOnce00 ...
+src|test|resources|CausedAnErrorOnce00.java:12: Error: No such field in type java.lang.Object
+    return instancevar + this.instancevar + super.instancevar;
+                                                  ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+1 error

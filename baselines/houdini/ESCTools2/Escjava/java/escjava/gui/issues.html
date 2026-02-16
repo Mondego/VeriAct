@@ -1,0 +1,70 @@
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+  <title>ESC/Java2 GUI - Issues and Notes</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body bgcolor="#FFFFFF">
+<h1>
+  ESC/Java2 GUI - Issues and Release Notes
+</h1>
+This is the first and current version of this program.  Details of its use
+are shown by the "Documentation" menu item.  Ideas for improvement are 
+welcome.
+
+<h3>Problems</h3>
+<UL>
+<LI>The text of a text field is saved when a return is typed or when focus is lost.  Focus is not lost if one simply types in a text field or in the input text area and then selects a menu item.  For example, changing the classpath without
+typeing a return and then selecting the Save menu item may result in the change
+not being recorded.
+<LI> There is currently a race condition between the running of checks and various GUI 
+operations.  You should wait for checking to complete or stop checking using the STOP
+button (and wait for the stop to take effect), before saving, loading, or reinitializing
+the project.
+<LI>When an editor is requested for a given error message or routine, the
+editor scrolls to the appropriate place in the file as well.  It should also
+highlight the appropriate line.  However, the highlighting does not appear to
+work unless the user manually highlights something first.
+<LI>When a compilation unit is type-checked, it initiates the type checking of 
+compilation units upon which it relies.  Hence the time taken for the first
+item type-checked may be extraordinarily long.  The status message will not
+show that these nested checks are being performed.
+<LI>The documentation window's scrollbars cut off some of the text sometimes.
+</UL>
+
+
+
+
+<h3>Features</h3>
+<LI>It would be nice to integrate the tool with the JML tools and with Daikon.
+<LI>Some of the color coding could be cleaned up.
+<LI>It would be nice if the title showed the current project name.
+<LI>It would be nice to coordinate the showing of the files of a refinement sequence.
+<LI>It would be nice if, when input files are reloaded, the tree of classes and methods was not totally regenerated.  In fact it would be great if parsing
+and type-checking could be done incrementally, so simple chagnes in specs
+would not necessitate a total restart.
+<LI>The tool should integrate with the system Preferences.
+<LI>The tool should say something useful in response to the About menu item.
+<LI>Accelerator keys should be implemented.
+<LI>Should be a way to select an editor window by browsing.
+<LI>It would be nice to be able to adjust the L&F
+</UL>
+
+
+<h3>Changes since the limited edition alpha release</h3>
+<UL>
+<LI>Fixed the use of spec path so that it is now properly used before the
+classpath or the application jar file.
+<LI>Fixed handling of type designators on input entries.  Now they remain
+as the user specified them, both in the GUI window and in project files.
+<LI>Changed the defaults to be -source 1.4 and -nowarn Deadlock .
+<LI>Made error handling, especially of parser errors, more robust.
+<LI>The verbose option was added to the ESC Options pane.
+<LI>The testMode option was removed.
+<LI>Implementation of a menu providing a choice of look and feel.
+</UL>
+</UL>
+<! Server supplied footer starts here>
+</body>
+</html>

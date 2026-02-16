@@ -1,0 +1,4 @@
+//@ refine "RefineB.java";
+
+public class RefineB {
+}

@@ -1,0 +1,8 @@
+public class increment_arr {
+    void increment_array_by(int[] arr, int n, int c) {
+        // >>>INFILL<<<
+        for (int i = 0; i < n; i++) {
+            arr[i] = arr[i] + c;
+        }
+    } 
+}

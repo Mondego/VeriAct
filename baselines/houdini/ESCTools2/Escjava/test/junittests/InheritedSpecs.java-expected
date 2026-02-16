@@ -1,0 +1,242 @@
+ESC/Java version VERSION
+  Prover started:TIME
+    [TIME]
+
+InheritedSpecs ...
+    [TIME]
+
+InheritedSpecs: m(int, int) ...
+------------------------------------------------------------------------
+InheritedSpecs.java:11: Warning: Postcondition possibly not established (Post)
+        } // FAILS
+        ^
+Associated declaration is "InheritedSpecs.java", line 112, col 5:
+        //@ ensures \result >= 0;
+            ^
+Execution trace information:
+    Executed return in "InheritedSpecs.java", line 10, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritedSpecs: mm1() ...
+    [TIME]  passed
+
+InheritedSpecs: mm2() ...
+    [TIME]  passed
+
+InheritedSpecs: mm3() ...
+    [TIME]  passed
+
+InheritedSpecs: mm4() ...
+------------------------------------------------------------------------
+InheritedSpecs.java:16: Warning: Precondition possibly not established (Pre)
+        public void mm4() { m(-1,-1); } // FAILS
+                             ^
+Associated declaration is "InheritedSpecs.java", line 111, col 5:
+        //@ requires j >= 0;
+            ^
+Associated declaration is "InheritedSpecs.java", line 7, col 5:
+        //@ requires i >= 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritedSpecs: mm5() ...
+    [TIME]  passed
+
+InheritedSpecs: mm6() ...
+------------------------------------------------------------------------
+InheritedSpecs.java:18: Warning: Precondition possibly not established (Pre)
+        public void mm6() { (new ISHelper()).m(1,-1); } // FAILS
+                                              ^
+Associated declaration is "InheritedSpecs.java", line 111, col 5:
+        //@ requires j >= 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritedSpecs: mm7() ...
+    [TIME]  passed
+
+InheritedSpecs: mm8() ...
+------------------------------------------------------------------------
+InheritedSpecs.java:20: Warning: Precondition possibly not established (Pre)
+        public void mm8() { (new ISHelper()).m(-1,-1); } // FAILS
+                                              ^
+Associated declaration is "InheritedSpecs.java", line 111, col 5:
+        //@ requires j >= 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritedSpecs: n(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: nn() ...
+    [TIME]  passed
+
+InheritedSpecs: InheritedSpecs() ...
+    [TIME]  passed immediately
+
+InheritedSpecs: n1(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: n2(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: n3(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: n4(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: n5(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: n6(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: n7(int) ...
+    [TIME]  passed immediately
+
+InheritedSpecs: nn1() ...
+    [TIME]  passed
+
+InheritedSpecs: nn1e() ...
+------------------------------------------------------------------------
+InheritedSpecs.java:55: Warning: Precondition possibly not established (Pre)
+                n1(-1); // FAILS
+                  ^
+Associated declaration is "InheritedSpecs.java", line 140, col 5:
+        //@ requires i>=0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritedSpecs: nn2() ...
+    [TIME]  passed
+
+InheritedSpecs: nn3() ...
+    [TIME]  passed
+
+InheritedSpecs: nn3e() ...
+------------------------------------------------------------------------
+InheritedSpecs.java:71: Warning: Precondition possibly not established (Pre)
+                n3(-1); // FAILS
+                  ^
+Associated declaration is "InheritedSpecs.java", line 125, col 5:
+        //@ requires i>1 || i< -10;
+            ^
+Associated declaration is "InheritedSpecs.java", line 144, col 5:
+        //@ requires i>=0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritedSpecs: nn4() ...
+    [TIME]  passed
+
+InheritedSpecs: nn5() ...
+    [TIME]  passed
+
+InheritedSpecs: nn5e() ...
+------------------------------------------------------------------------
+InheritedSpecs.java:85: Warning: Precondition possibly not established (Pre)
+                n5(-1); // FAILS
+                  ^
+Associated declaration is "InheritedSpecs.java", line 147, col 5:
+        //@ requires i>=0;
+            ^
+Associated declaration is "InheritedSpecs.java", line 41, col 5:
+        //@ requires i%2 == 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritedSpecs: nn6() ...
+    [TIME]  passed
+
+InheritedSpecs: nn7() ...
+    [TIME]  passed
+
+InheritedSpecs: nn7e() ...
+------------------------------------------------------------------------
+InheritedSpecs.java:105: Warning: Precondition possibly not established (Pre)
+                n7(-1); // FAILS
+                  ^
+Associated declaration is "InheritedSpecs.java", line 133, col 5:
+        //@ requires i>1 || i< -10;
+            ^
+Associated declaration is "InheritedSpecs.java", line 150, col 5:
+        //@ requires i>=0;
+            ^
+Associated declaration is "InheritedSpecs.java", line 47, col 5:
+        //@ requires i%2 == 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+ISHelper ...
+    [TIME]
+
+ISHelper: m(int, int) ...
+    [TIME]  passed
+
+ISHelper: n(int) ...
+    [TIME]  passed immediately
+
+ISHelper: ISHelper() ...
+    [TIME]  passed immediately
+
+ISHelper: n1(int) ...
+    [TIME]  passed immediately
+
+ISHelper: n2(int) ...
+    [TIME]  passed immediately
+
+ISHelper: n3(int) ...
+    [TIME]  passed immediately
+
+ISHelper: n4(int) ...
+    [TIME]  passed immediately
+
+ISHelper: n5(int) ...
+    [TIME]  passed immediately
+
+ISHelper: n6(int) ...
+    [TIME]  passed immediately
+
+ISHelper: n7(int) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+ISSHelper ...
+    [TIME]
+
+ISSHelper: ISSHelper() ...
+    [TIME]  passed immediately
+
+ISSHelper: n1(int) ...
+    [TIME]  passed immediately
+
+ISSHelper: n2(int) ...
+    [TIME]  passed immediately
+
+ISSHelper: n3(int) ...
+    [TIME]  passed immediately
+
+ISSHelper: n4(int) ...
+    [TIME]  passed immediately
+
+ISSHelper: n5(int) ...
+    [TIME]  passed immediately
+
+ISSHelper: n6(int) ...
+    [TIME]  passed immediately
+
+ISSHelper: n7(int) ...
+    [TIME]  passed immediately
+  [TIME total]
+8 warnings

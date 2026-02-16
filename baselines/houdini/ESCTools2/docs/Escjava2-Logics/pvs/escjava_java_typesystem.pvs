@@ -1,0 +1,98 @@
+escjava_java_typesystem : THEORY
+  BEGIN
+    IMPORTING escjava_simplify,
+              orders[S]
+
+    % === ESCJ 8: Section 1.1
+    % +++ Escjava2-Logics.texinfo @node Types and Subtypes
+
+    % We will use '<=' in PVS for '<:' in the Simplify logic.  Thus,
+    % <= is reflexive, transitive, and antisymmetric.
+    <= : ({R : PRED[[S, S]] | 
+         reflexive?(R) AND transitive?(R) AND antisymmetric?(R)})
+
+    % Primitive type definitions.
+
+    T_boolean, T_char, T_byte, T_short, T_int, T_long, T_float, T_double : S
+
+    primitive?(c : S): bool = (c = T_boolean) OR
+                              (c = T_char) OR 
+                              (c = T_byte) OR 
+                              (c = T_short) OR 
+                              (c = T_int) OR
+                              (c = T_long) OR
+                              (c = T_float) OR
+                              (c = T_double)
+
+    primitive_types_are_final : AXIOM
+      FORALL (c, p : S): c <= p AND primitive?(p) IMPLIES c = p
+    primitive_types_have_no_proper_supertypes : AXIOM
+      FORALL (c, p : S): c <= p AND primitive?(c) IMPLIES p = c
+
+    % The base type in Java (java.lang.Object).
+    T_java_lang_Object : S
+
+    java_lang_Object_is_Top : AXIOM
+      FORALL (c : S): NOT primitive?(c) IMPLIES c <= T_java_lang_Object
+    % This could be expressed also using upper_bound?
+
+    % === ESCJ 8: Section 1.2
+
+    % Another employment of the 'as' trick, faking types/sorts on an
+    % untyped/unsorted logic.
+    % 'as' trick in use.
+    asChild : [S, S -> S]
+    % If t0 is a proper subclass of t2, then classDown(t2, t0) is
+    % the direct subclass of t2 that is a superclass of t0.
+    classDown : [S, S -> S]
+
+    classDown_definition : AXIOM
+      FORALL (t0, t1, t2 : S): t0 <= asChild(t1, t2) IMPLIES 
+                               classDown(t2, t0) = asChild(t1, t2)
+
+    % === ESCJ 8: Section 1.3
+
+    T_java_lang_Cloneable : S
+
+    elemtype : [S -> S]
+    array_constructor : [S -> S]
+
+    arrays_are_cloneable : AXIOM
+      FORALL (t : S): array_constructor(t) <= T_java_lang_Cloneable
+    elemtype_definition : AXIOM
+      FORALL (t : S): elemtype(array_constructor(t)) = t
+    array_subtyping : AXIOM
+      FORALL (t0, t1 : S): t0 <= array_constructor(t1) IFF
+                           (t0 = array_constructor(elemtype(t0)) AND 
+                            elemtype(t0) <= t1)
+
+    % === ESCJ 8: Section 2.1
+
+    is : [ S, S -> bool ]
+    cast : [ S, S -> S ]
+
+    redundant_cast_removal : AXIOM
+      FORALL (x, t : S): is(x, t) IMPLIES cast(x, t) = x
+
+    % === ESCJ 8: Section 2.2
+
+    bool_false, bool_true : S
+
+    java_false_and_true_are_distinct : AXIOM
+      bool_false /= bool_true;
+
+    java_null : S
+
+    Javas_boolTrue_differs_from_Javas_boolFalse : AXIOM
+      bool_false /= bool_true
+
+    % Not in ESCJ8, but should be
+    refEQ, refNE : [ S, S -> S ]
+
+    refEQ : AXIOM
+      FORALL (x, y : S): refEQ(x, y) = bool_true IFF x = y
+
+    refNE : AXIOM
+      FORALL (x, y : S): refNE(x, y) = bool_true IFF x /= y
+
+  END escjava_java_typesystem

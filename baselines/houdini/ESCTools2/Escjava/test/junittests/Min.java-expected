@@ -1,0 +1,82 @@
+ESC/Java version VERSION
+    [TIME]
+
+Min ...
+  Prover started:TIME
+    [TIME]
+
+Min: Min() ...
+    [TIME]  passed immediately
+
+Min: f(int) ...
+    [TIME]  passed immediately
+
+Min: id(int) ...
+    [TIME]  passed immediately
+
+Min: ex1(int) ...
+    [TIME]  passed immediately
+
+Min: ex2(int) ...
+    [TIME]  passed immediately
+
+Min: ex3(int) ...
+    [TIME]  passed immediately
+
+Min: x() ...
+    [TIME]  passed
+
+Min: x2() ...
+    [TIME]  passed
+
+Min: x3() ...
+    [TIME]  passed
+
+Min: x4() ...
+------------------------------------------------------------------------
+Min.java:27: Warning: Possible assertion failure (Assert)
+            //@  assert (\max int i; 1<=i && i<0 && ex2(i); id(i)) >=  ...
+                 ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Min: x5() ...
+------------------------------------------------------------------------
+Min.java:30: Warning: Possible assertion failure (Assert)
+            //@  assert (\max int i; 1<=i && i<10 && ex2(i); id(i)) == ...
+                 ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Min: m() ...
+    [TIME]  passed
+
+Min: m2() ...
+    [TIME]  passed
+
+Min: m3() ...
+    [TIME]  passed
+
+Min: m4() ...
+------------------------------------------------------------------------
+Min.java:43: Warning: Possible assertion failure (Assert)
+            //@  assert (\min int i; 1<=i && i<0 && ex2(i); id(i)) <=  ...
+                 ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Min: m5() ...
+------------------------------------------------------------------------
+Min.java:46: Warning: Possible assertion failure (Assert)
+            //@  assert (\min int i; 1<=i && i<10 && ex2(i); id(i)) == ...
+                 ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Min: pp() ...
+    [TIME]  passed
+
+Min: pp2() ...
+    [TIME]  passed
+  [TIME total]
+4 warnings

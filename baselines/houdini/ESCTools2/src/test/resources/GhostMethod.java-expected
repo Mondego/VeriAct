@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+src|test|resources|GhostMethod.java:4: Error: A method may not be declared ghost
+        //@ public ghost int n();
+                   ^
+src|test|resources|GhostMethod.java: Caution: Using given file as the .java file, even though it is not the java file for GhostMethod on the classpath
+    [TIME]
+
+GhostMethod ...
+  Prover started:TIME
+    [TIME]
+
+GhostMethod: GhostMethod() ...
+    [TIME]  passed
+
+GhostMethod: n() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+1 error

@@ -1,0 +1,53 @@
+ESC/Java version VERSION
+    [TIME]
+
+Duration ...
+  Prover started:TIME
+    [TIME]
+
+Duration: m() ...
+------------------------------------------------------------------------
+Duration.java:8: Warning: Postcondition possibly not established (Post)
+        void m() {}
+                  ^
+Associated declaration is "Duration.java", line 7, col 5:
+        //@ ensures \space(o) > 0;
+            ^
+Execution trace information:
+    Executed implicit return in "Duration.java", line 8, col 11.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Duration: mm() ...
+------------------------------------------------------------------------
+Duration.java:11: Warning: Postcondition possibly not established (Post)
+        void mm() {}
+                   ^
+Associated declaration is "Duration.java", line 10, col 5:
+        //@ ensures \duration(m()) > 0;
+            ^
+Execution trace information:
+    Executed implicit return in "Duration.java", line 11, col 12.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Duration: mmm() ...
+------------------------------------------------------------------------
+Duration.java:14: Warning: Postcondition possibly not established (Post)
+        void mmm() {}
+                    ^
+Associated declaration is "Duration.java", line 13, col 5:
+        //@ ensures \working_space(new Duration()) > 0;
+            ^
+Execution trace information:
+    Executed implicit return in "Duration.java", line 14, col 13.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Duration: Duration() ...
+    [TIME]  passed
+  [TIME total]
+3 warnings

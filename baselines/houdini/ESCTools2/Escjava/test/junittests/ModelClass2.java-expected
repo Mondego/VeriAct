@@ -1,0 +1,43 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModelClass2 ...
+  Prover started:TIME
+    [TIME]
+
+ModelClass2: mjava() ...
+    [TIME]  passed
+
+ModelClass2: ModelClass2() ...
+    [TIME]  passed
+
+ModelClass2: z(int) ...
+------------------------------------------------------------------------
+ModelClass2.java:50: Warning: Possible assertion failure (Assert)
+                assert k == 1;
+                ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+ModelClass2$M ...
+    [TIME]
+
+ModelClass2$M: m() ...
+    [TIME]  passed immediately
+
+ModelClass2$M: n() ...
+    [TIME]  passed immediately
+
+ModelClass2$M: p(int) ...
+------------------------------------------------------------------------
+ModelClass2.java:33: Warning: Possible assertion failure (Assert)
+                assert k == 1;
+                ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelClass2$M: M() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

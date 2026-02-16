@@ -1,0 +1,20 @@
+ESC/Java version VERSION
+    [TIME]
+
+Diverges ...
+Diverges.java:24: Error: A pure method may not have a diverges clause
+    //@ diverges p;      // ERROR
+        ^
+Diverges.java:25: Associated declaration: 
+    //@ pure
+        ^
+Diverges.java:31: Error: A pure method may not have a diverges clause
+    //@ diverges !p;     // ERROR
+        ^
+Diverges.java:32: Associated declaration: 
+    //@ pure
+        ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+2 errors

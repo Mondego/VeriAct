@@ -1,0 +1,48 @@
+ESC/Java version VERSION
+    [TIME]
+
+JavaScopeB ...
+  Prover started:TIME
+    [TIME]
+
+JavaScopeB: main(java.lang.String[]) ...
+    [TIME]  passed
+
+JavaScopeB: mm() ...
+------------------------------------------------------------------------
+JavaScopeB.java:21: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "JavaScopeB.java", line 13, col 5:
+        //@ ensures \result == 1; // ERROR
+            ^
+Execution trace information:
+    Executed return in "JavaScopeB.java", line 20, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaScopeB: JavaScopeB() ...
+    [TIME]  passed
+  [TIME total]
+
+JavaScopeB$Inn ...
+    [TIME]
+
+JavaScopeB$Inn: m() ...
+    [TIME]  passed
+
+JavaScopeB$Inn: Inn() ...
+    [TIME]  passed
+  [TIME total]
+
+JavaScopeB$HINN ...
+    [TIME]
+
+JavaScopeB$HINN: p() ...
+    [TIME]  passed
+
+JavaScopeB$HINN: HINN() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

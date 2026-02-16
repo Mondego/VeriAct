@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|SourcePath.java: Caution: Using given file as the .java file, even though it is not the java file for SourcePath on the classpath
+    [TIME]
+
+SourcePath ...
+  Prover started:TIME
+    [TIME]
+
+SourcePath: m() ...
+    [TIME]  passed
+
+SourcePath: SourcePath() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

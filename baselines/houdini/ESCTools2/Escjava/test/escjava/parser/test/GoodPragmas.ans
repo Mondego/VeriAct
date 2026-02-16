@@ -1,0 +1,62 @@
+GoodPragmas.j:17: /*@ unreachable */
+GoodPragmas.j:18: /*@ unreachable */
+GoodPragmas.j:19: /*@ assume false == false; */
+GoodPragmas.j:20: /*@ assume true; */
+GoodPragmas.j:21: /*@ unreachable */
+GoodPragmas.j:21: /*@ assume assertt + modifies; */
+GoodPragmas.j:22: /*@ assert assertt + assume; */
+GoodPragmas.j:22: /*@ unreachable */
+GoodPragmas.j:23: /*@ unreachable */
+GoodPragmas.j:23: /*@ loop_invariant assertt; */
+GoodPragmas.j:23: /*@ unreachable */
+GoodPragmas.j:25: /*@ still_deferred x; */
+GoodPragmas.j:26: /*@ still_deferred x; */
+GoodPragmas.j:27: /*@ still_deferred x; */
+GoodPragmas.j:27: /*@ still_deferred y; */
+GoodPragmas.j:29: /*@ still_deferred axiom; */
+GoodPragmas.j:29: /*@ still_deferred invariant; */
+GoodPragmas.j:29: /*@ still_deferred still_deferred; */
+GoodPragmas.j:30: /*@ still_deferred x; */
+GoodPragmas.j:30: /*@ still_deferred y; */
+GoodPragmas.j:30: /*@ still_deferred z; */
+GoodPragmas.j:30: /*@ still_deferred a; */
+GoodPragmas.j:39: /*@ axiom invariant; */
+GoodPragmas.j:40: /*@ axiom invariant; */
+GoodPragmas.j:41: /*@ invariant false == true; */
+GoodPragmas.j:44: /*@ uninitialized */
+GoodPragmas.j:44: /*@ monitored */
+GoodPragmas.j:44: /*@ non_null */
+GoodPragmas.j:44: /*@ writable_deferred */
+GoodPragmas.j:45: /*@ readable_if uninitialized; */
+GoodPragmas.j:45: /*@ requires true; */
+GoodPragmas.j:45: /*@ ensures false; */
+GoodPragmas.j:46: /*@ uninitialized */
+GoodPragmas.j:46: /*@ ensures monitored; */
+GoodPragmas.j:46: /*@ monitored */
+GoodPragmas.j:46: /*@ non_null */
+GoodPragmas.j:50: /*@ monitored */
+GoodPragmas.j:50: /*@ monitored_by a; */
+GoodPragmas.j:51: /*@ monitored_by a; */
+GoodPragmas.j:51: /*@ monitored_by b; */
+GoodPragmas.j:53: /*@ monitored_by monitored_by; */
+GoodPragmas.j:53: /*@ monitored_by monitored; */
+GoodPragmas.j:53: /*@ monitored_by non_null; */
+GoodPragmas.j:53: /*@ monitored_by a.b.c; */
+GoodPragmas.j:53: /*@ uninitialized */
+GoodPragmas.j:54: /*@ modifies a; @*/
+GoodPragmas.j:55: /*@ requires true; */
+GoodPragmas.j:55: /*@ modifies a[x], a[a[x]], a.b.c, a.b[q], a.b[*]; @*/
+GoodPragmas.j:56: /*@ modifies this; @*/
+GoodPragmas.j:57: /*@ modifies this, this.bar; @*/
+GoodPragmas.j:57: /*@ modifies this[10], this.a[this]; @*/
+GoodPragmas.j:58: /*@ modifies this.a[*]; @*/
+GoodPragmas.j:1: //@ nowarn
+GoodPragmas.j:2: //@ nowarn
+GoodPragmas.j:3: //@ nowarn
+GoodPragmas.j:4: //@ nowarn NullPointerException
+GoodPragmas.j:5: //@ nowarn IndexOutOfBoundsException, ClassCastException
+GoodPragmas.j:6: //@ nowarn ArrayStoreException, ArithmeticException, NegativeArraySizeException, AssertViolation, PreconditionViolation
+GoodPragmas.j:7: //@ nowarn ModifiesViolation
+GoodPragmas.j:8: //@ nowarn ObjectInvariantViolation, InitialLoopInvariantViolation
+GoodPragmas.j:9: //@ nowarn IterativeLoopInvariantViolation, SharingViolation, LockingOrderViolation, InitializationViolation, DefinednessViolation
+GoodPragmas.j:10: //@ nowarn CodeReachabilityViolation, ConstructorLeakWarning, InitializerLeakWarning, WritableDeferredWarning, UnenforcableObjectInvariantWarning, ModifiesExtensionWarning

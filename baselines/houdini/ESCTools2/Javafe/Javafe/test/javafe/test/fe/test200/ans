@@ -1,0 +1,25 @@
+RootInterface.java:37: Error: No such method getPac() in type java.lang.J
+        i.getPac();          // error
+          ^
+RootInterface.java:38: Error: No such method getProt() in type java.lang.J
+        i.getProt();         // error
+          ^
+RootInterface.java:39: Error: No such method getPri() in type java.lang.J
+        i.getPri();          // error
+          ^
+RootInterface.java:42: Error: No such method bar() in type java.lang.J
+        i.bar();             // error
+          ^
+RootInterface.java:46: Error: No such field in type java.lang.J
+        int x1 = i.pub;      // error
+                   ^
+RootInterface.java:47: Error: No such field in type java.lang.J
+        int x2 = i.pac;      // error
+                   ^
+RootInterface.java:48: Error: No such field in type java.lang.J
+        int x3 = i.prot;     // error
+                   ^
+RootInterface.java:49: Error: No such field in type java.lang.J
+        int x4 = i.pri;      // error
+                   ^
+8 errors

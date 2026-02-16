@@ -1,0 +1,46 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id$
+ *
+ */
+
+package javacard.framework.service;
+
+import javacard.framework.APDU;
+
+public interface Service {
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      ensures true;
+      assignable apdu._buffer[*];
+  @*/
+  public boolean processDataIn(APDU apdu);
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      ensures true;
+      assignable apdu._buffer[*];
+  @*/
+  public boolean processCommand(APDU apdu);
+
+  /*@
+    public normal_behavior
+      requires apdu != null;
+      ensures true;
+      assignable apdu._buffer[*];
+  @*/
+  public boolean processDataOut(APDU apdu);
+
+} 

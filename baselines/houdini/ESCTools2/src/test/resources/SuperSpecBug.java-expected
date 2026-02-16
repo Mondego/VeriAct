@@ -1,0 +1,43 @@
+src|test|resources|SuperSpecBug.java: Caution: Using given file as the .java file, even though it is not the java file for SuperSpecBug on the classpath
+    [TIME]
+
+SuperSpecBug ...
+  Prover started:TIME
+    [TIME]
+
+SuperSpecBug: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|SuperSpecBug.java:20: Warning: Possible violation of modifies clause (Modifies)
+        if(Object.class != o.getClass())
+                                     ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|SuperSpecBug.java", line 8, col 4:
+    //@ also ...
+    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+SuperSpecBug: SuperSpecBug() ...
+    [TIME]  passed
+  [TIME total]
+
+CSuperSpecBug ...
+    [TIME]
+
+CSuperSpecBug: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|SuperSpecBug.java:37: Warning: Possible violation of modifies clause (Modifies)
+        if(Object.class != o.getClass())
+                                     ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|SuperSpecBug.java", line 26, col 4:
+    /*@ public exceptional_behavior ...
+    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+CSuperSpecBug: CSuperSpecBug() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

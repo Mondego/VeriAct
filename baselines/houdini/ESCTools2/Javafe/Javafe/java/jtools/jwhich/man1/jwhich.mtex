@@ -1,0 +1,157 @@
+\manpage{The Jwhich Command}{jwhich}{1}
+
+
+\section{NAME}
+
+\bf{jwhich} - Locates the class and/or source files for a given Java
+class or interface
+
+
+\section{SYNOPSIS}
+
+\bf{jwhich} ( [\bf{-bdsx}] | \bf{-X}\it{extension} | \bf{-bootclasspath} \it{path} | \bf{-classpath} \it{path} | \it{typename} )...
+
+
+\section{DESCRIPTION}
+
+The \bf{jwhich} command takes a list of Java class and interface type
+names (\it{typenames}) and looks for their associated class and/or
+source files using a Java classpath.  Type names may be qualified with a
+package name (e.g., \tt{java.lang.String}).  Inner types are supported
+using either ``.''  or ``$'' as separators.  The same lookup algorithm
+is used as in the \bf{javac} program.  The locations of any files found
+are printed to standard out, one per line.  Locations of the form
+\it{archive}\tt{:}\it{pathname} indicate a file stored in the \bf{JAR}
+or \bf{zip} archive \it{archive} under the name \it{pathname}.
+
+By default, \bf{jwhich} lists the canonical source, class, and extra
+(cf. \bf{-X}) files, if any, for each class and interface.  The
+classpath \bf{jwhich} uses to search for these files is composed of a
+system path followed by a user path.  The user path defaults to the
+setting of the \bf{CLASSPATH} environmental variable, while the system
+path defaults to the default bootclasspath for the version of \bf{java}
+being used (cf. \bf{JAVA}) if available, otherwise the empty path.
+These defaults may be overridden using the following options:
+
+
+\section{FLAGS}
+
+\begin{description}
+
+\item{\bf{-b}}
+List only binary files (aka class files) for the remaining \it{typename}
+arguments.
+
+\item{\bf{-d}}
+List all files for a given class or interface, not just the canonical
+ones, which appear first in the classpath.
+
+\item{\bf{-s}}
+List only source files for the remaining \it{typename} arguments.
+
+\item{\bf{-x}}
+List only extra files (cf. \bf{-X}) for the remaining \it{typename}
+arguments.
+
+\end{description}
+
+When you specify the following mutually exclusive flags, the last one on
+the command line takes effect:
+
+\begin{itemize}
+
+\item \bf{-b}, \bf{-s}, and \bf{-x}
+
+\end{itemize}
+
+
+\section{OPTIONS}
+
+\begin{description}
+
+\item{\bf{-bootclasspath} \it{path}}
+Search for the remaining \it{typename} arguments using the system path
+\it{path}.  In addition to directories, \it{path} may contain \bf{JAR}
+and \bf{zip} archives.
+
+\item{\bf{-classpath} \it{path}}
+Search for the remaining \it{typename} arguments using the user path
+\it{path}.  In addition to directories, \it{path} may contain \bf{JAR}
+and \bf{zip} archives.  This option overrides the \bf{CLASSPATH}
+environment variable.
+
+\item{\bf{-X}\it{extension}}
+Adds an extra category of files that a class or interface may have in
+addition to source and binary files for the remaining \it{typename}
+arguments.  Files belonging to this category have \it{extension} instead
+of \tt{".java"} or \tt{".class"} as an extension.  (Note that
+\it{extension} should start with a \tt{"."} in most cases.)  This option
+may be repeated as many times as desired, generating a new category each
+time.
+
+\end{description}
+
+
+\section{DIAGNOSTICS}
+
+A diagnostic is given if a \it{typename} does not name a class or
+interface in the current Java classpath.
+
+
+\section{ENVIRONMENT VARIABLES}
+
+The following environment variables affect the execution of \bf{jwhich}:
+
+\begin{description}
+
+\item{\bf{CLASSPATH}}
+If set, specifies the path to be used to locate user classes.  Defaults
+to the current working directory.  The \bf{-classpath} option overrides
+this variable.  Where to find the system classes is specified separately
+using the \bf{-bootclasspath} option.
+
+\item{\bf{JAVA}}
+This environment variable specifies the java runtime system to use for
+running \bf{jwhich}.  The default is "java", which hopefully results in
+the system installed version of \bf{java} being used.
+
+\end{description}
+
+
+\section{BUGS AND LIMITATIONS}
+
+\bf{jwhich} attempts to use the same classpath as \bf{JAVA} would, given
+the same environment variables and \bf{-[boot]classpath} arguments.  It
+fails to do so in a number of cases:
+
+\begin{enumerate}
+
+\item
+The handling of \bf{-classpath} was changed in Java 1.2; previously
+\bf{-classpath} set the bootclasspath to the empty path.  Since
+\bf{jwhich} implements the Java 1.2 behaviour, you will need to
+translate `\bf{java1.* -classpath} \it{path}' to `\bf{jwhich -classpath}
+\it{path} \bf{-bootclasspath} ""' to get the same classpath.
+
+\item
+Unlike \bf{javac}, any archives contained in directories listed in the
+bootclasspath will be ignored.  A similar effect can be gotten by
+listing each of these archives as a separate component of the
+bootclasspath.
+
+\item
+Because of current API limitations, \bf{jwhich} may be unable to determine
+the default bootclasspath for non-Sun implementations of Java 1.2 and
+later.
+
+\end{enumerate}
+
+
+\section{AUTHOR}
+
+Mark Lillibridge, Compaq Systems Research Center  (mdl@pa.dec.com)
+
+
+\section{SEE ALSO}
+
+\bf{jls}(1), \bf{javac}(1), \bf{jar}(1), \bf{zip}(1L), \bf{gzip}(1), \bf{CLASSPATH}

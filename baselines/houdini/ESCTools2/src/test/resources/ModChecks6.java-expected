@@ -1,0 +1,30 @@
+ESC/Java version VERSION
+src|test|resources|ModChecks6.java: Caution: Using given file as the .java file, even though it is not the java file for ModChecks6 on the classpath
+    [TIME]
+
+ModChecks6 ...
+  Prover started:TIME
+    [TIME]
+
+ModChecks6: ModChecks6() ...
+    [TIME]  passed immediately
+
+ModChecks6: m() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks6.java:19: Warning: Possible violation of modifies clause (Modifies)
+            o.mm();
+                ^
+Associated declaration is "src|test|resources|ModChecks6.java", line 25, col 14:
+        //@ modifies ModChecks6.*;  // WARNING
+                     ^
+Associated declaration is "src|test|resources|ModChecks6.java", line 12, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks6: mm() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+1 warning

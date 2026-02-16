@@ -1,0 +1,30 @@
+ESC/Java version VERSION
+src|test|resources|ParseRepresents.java: Caution: Using given file as the .java file, even though it is not the java file for ParseRepresents on the classpath
+    [TIME]
+
+ParseRepresents ...
+  Prover started:TIME
+    [TIME]
+
+ParseRepresents: m() ...
+    [TIME]  passed
+
+ParseRepresents: p() ...
+------------------------------------------------------------------------
+src|test|resources|ParseRepresents.java:20: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|ParseRepresents.java", line 17, col 5:
+        //@ ensures size > 1;
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|ParseRepresents.java", line 20, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParseRepresents: ParseRepresents() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

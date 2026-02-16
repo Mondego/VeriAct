@@ -1,0 +1,24 @@
+ESC/Java version VERSION
+src|test|resources|MethodAnnotations.java: Caution: Using given file as the .java file, even though it is not the java file for MethodAnnotations on the classpath
+    [TIME]
+
+MethodAnnotations ...
+  Prover started:TIME
+    [TIME]
+
+MethodAnnotations: capacity() ...
+    [TIME]  passed immediately
+
+MethodAnnotations: size() ...
+    [TIME]  passed
+
+MethodAnnotations: push(int) ...
+    [TIME]  passed
+
+MethodAnnotations: pop() ...
+    [TIME]  passed
+
+MethodAnnotations: MethodAnnotations() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

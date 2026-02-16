@@ -1,0 +1,118 @@
+test0   Good    relative assignment to fields, side-effects in LHS, casts in LHS
+test1	Omit	Typechecking and resolution of pragmas
+test2	Omit	Typechecking and resolution of pragmas
+test3	FIX 	Simple assumes, asserts
+test4	Good	if
+test5	Good	Worst case for exp blowup under old assignment rule
+test6	Good	final class axiom and distinct types axiom
+test7	Good	array ref, cast, divmod, fieldref, gets, getsplus, 
+		inc, newarray, setfield, unary plus
+test8	FIX	switch, sync, try, unreachable - fails, mjm
+test9	Good	uninitialized
+
+test10	Good	Sort 2 element array
+test11  Good	OwnerNull
+test12  Empty	Empty
+test13	Good	loops
+test14	Good	labels, breaks, and continues
+test15	Drop	InitialState fn equates vars with their pre values -- no longer valid with change in specification inheritance
+test16	Empty	Empty
+test17	Good	Method calls
+test18	FIX	sumarray - fails, mjm
+test19	FIX	The Bag demo - fails, mjm
+
+test20	Good	Simple non_null assumption tests
+test20B Good    Non-null by default tests.
+test21	Empty	Pascal-F program
+test22  Good	ghost fields (ints and bools) in postconditions and invariants
+test23	Good	loops
+test24	Good	reference of pragma in another file
+test25	Good	Tests that FindContrbutors finds enough contributors
+test26	Good	postconditions
+test27	Good	type predicates
+test28	Omit	invariants
+test29  Empty	Empty (created with the intension of testing CorrelatedReader)
+
+test30  Empty	Empty (created with the intension of testing SPVC)
+test31  Good	Limited tests that FindContributors doesn't find too much
+test32  Good	error message caret positions
+test33	Empty	Empty
+test34	Good	annotation type checking 
+test35	Good	fresh
+test36	Good	Exceptional return from constructors
+test37	Good	exsures and also_exsures
+test38	FIX	Tests knowledge of constants and final fields with initializers - fails, mjm
+test39  Good    relative assignments (op=) with shift operators
+
+test40	Drop	non_null -- dropped since rules on inheriting non_null have changed
+test41  Good    test for a previously discovered bug in MODIFIES substitution
+test42	Good	class literals (see also fe/test100)
+test43  Good    substitution for "this" in field-decl modifier pragmas
+test44  Good    inclusion of types of literals into FindContributors
+test45  Good    "alloc morass" (that something new is not the field of something old)
+test46	Good	test escjava's reasoning about member inner classes [1.1]
+test47	Good	invariants that don't mention any program variables
+test48	Good	execution traces
+test49	FIX	writeCheck for set/modifiers on ghost fields - fails, mjm
+
+test50  FIX	parsing pragmas out of comments - fails, mjm
+test51  Good	multiple loop iterations
+test52  Good	tests previous problem with sibling constructors
+test53	Good	array subtypes
+test54	FIX	helper pragma - fails, mjm
+test55	FIX	3 inline flags - fails, mjm
+test56	Good	parsing of modifier pragmas after formal parameters
+test57	Good	DTTFSA
+test58	FIX	"invariant" and "non_null" inheritance from interfaces - fails, mjm
+test59	FIX	instance initializers  - fails, mjm
+
+test60	Omit	inheriting method specifications and non_null from interfaces - Omitted because the also_ syntax and the inheritance semantics are now obsolete
+test61	FIX	elements left unchanged by arraycopy (based on ex from Bart Jacobs) - fails, mjm
+test62	FIX	order of testing assertions - fails, mjm
+test63	Good	integer division
+test64	FIX	-inlineFromConstructors flag - fails, mjm
+test65	FIX	continued-line ellipses at the end of associated declarations - fails, mjm
+test66	FIX	-excuseNullInitializers flag - fails, mjm
+test67	FIX	comment parsing, including @-signs at beginning of lines - fails, mjm
+test68	FIX	Various loop tests supplied - fails, mjm
+test69	Good	Extended quantifier syntax
+
+test70	Good	Informal predicates
+test71	FIX	==>, <==, <==>, <=!=> - fails, mjm
+test72	FIX	decreases - fails, mjm
+
+test95	Good	simple ghost field tests, and checking that a.length is not set
+test96	Good	Unknown ghost fields test
+test97  Good    ghost fields of array type
+test98  Good	ghost fields of type object
+test99	Empty	Empty
+
+test100 FIX    safe checking of loop invariants - fails, mjm
+test101 Omit    predicate abstraction
+
+test102 Good    See https://mobius.ucd.ie/ticket/28 - dcochran
+test103 Omit	benchmarks for predicate abstraction
+test200 Good
+test201 Good
+test202 FIX	Tests error messages with a bad sourcepath - fails, mjm
+test203 Drop    See https://mobius.ucd.ie/ticket/34 - dcochran
+test204 Good    See https://mobius.ucd.ie/ticket/437 - dcochran
+
+test262 Good	See https://mobius.ucd.ie/ticket/262 - dcochran
+
+test300   FIX 	IDC: covers null, divZero spec errors for ctors, methods w/ and w/o bodies - g_karab
+test301   Good 	IDC: static methods (and blocks?)
+test301a  Good 	IDC: static methods (and blocks?) using quantifiers.
+test302   Good 	IDC: constructors.
+test303   FIX	IDC: ... .
+test303a  Good 	IDC: ... .
+test304   Good 	IDC: ... .
+test305   Good 	IDC: ... .
+test306   Good	IDC: non-null declarations and invariants.
+test307   Good	IDC: non-null array declarations and invariants over them. SEE FIXME IN TEST FILE.
+
+test495 Good    See https://mobius.ucd.ie/ticket/495 - dcochran
+
+testA0	Good	non_null on array types imposes nonnullelements.
+testB1	Omit	new assertion semantics (idc) test 1: not ready to commit it yet.
+

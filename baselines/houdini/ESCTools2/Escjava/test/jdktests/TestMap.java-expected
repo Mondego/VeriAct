@@ -1,0 +1,61 @@
+TestMap.java:29: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:31: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestMap.java", line 25, col 25.
+
+TestMap.java:51: Warning: Possible assertion failure (Assert)
+        //@ assert (/forall Object oo; map.containsKey(oo) ==> oo.equa ...
+            ^
+TestMap.java:52: Warning: Precondition possibly not established (Pre)
+        assertTrue ( map.get(o) == null); // FIXME
+                   ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestMap.java:57: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:59: Warning: Possible assertion failure (Assert)
+ //@ assert false;  // TEST FOR CONSISTENCY
+     ^
+Execution trace information:
+    Routine call returned exceptionally in "TestMap.java", line 46, col 24.
+
+TestMap.java:76: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:87: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:106: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:125: Warning: Possible assertion failure (Assert)
+        //@ assert map.content.mapsObject(sone) == one;  // FIXME
+            ^
+TestMap.java:126: Warning: Possible assertion failure (Assert)
+        //@ assert map.get(sone) == one;    // FIXME
+            ^
+TestMap.java:131: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:147: Warning: Possible assertion failure (Assert)
+        //@ assert map.get("one") == one;   // FIXME
+            ^
+TestMap.java:155: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:175: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+TestMap.java:186: Warning: Possible assertion failure (Assert)
+//@ assert false;  // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestMap.java", line 181, col 14.
+
+16 warnings

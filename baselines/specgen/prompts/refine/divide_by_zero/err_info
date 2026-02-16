@@ -1,0 +1,4 @@
+Div.java:5: verify: verify: The prover cannot establish an assertion (PossiblyDivideByZero) in method calculate
+		return x / y;
+		         ^
+1 verification failure

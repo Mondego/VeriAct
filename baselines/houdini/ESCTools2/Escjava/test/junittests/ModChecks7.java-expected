@@ -1,0 +1,77 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModChecks7 ...
+  Prover started:TIME
+    [TIME]
+
+ModChecks7: ModChecks7() ...
+    [TIME]  passed immediately
+
+ModChecks7: mi() ...
+    [TIME]  passed
+
+ModChecks7: mi2() ...
+------------------------------------------------------------------------
+ModChecks7.java:23: Warning: Possible violation of modifies clause (Modifies)
+                o.pi(); // ERROR
+                    ^
+Associated declaration is "ModChecks7.java", line 31, col 14:
+        //@ modifies i;
+                     ^
+Associated declaration is "ModChecks7.java", line 21, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks7: mi3() ...
+------------------------------------------------------------------------
+ModChecks7.java:28: Warning: Possible violation of modifies clause (Modifies)
+                pi(); // ERROR
+                  ^
+Associated declaration is "ModChecks7.java", line 31, col 14:
+        //@ modifies i;
+                     ^
+Associated declaration is "ModChecks7.java", line 26, col 5:
+        //@ modifies o.i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks7: pi() ...
+    [TIME]  passed immediately
+
+ModChecks7: mo1() ...
+    [TIME]  passed
+
+ModChecks7: mo2() ...
+------------------------------------------------------------------------
+ModChecks7.java:44: Warning: Possible violation of modifies clause (Modifies)
+                o = oo;
+                ^
+Associated declaration is "ModChecks7.java", line 42, col 5:
+        //@ modifies o.i;
+            ^
+------------------------------------------------------------------------
+ModChecks7.java:45: Warning: Possible violation of modifies clause (Modifies)
+                o.i = 0; // ERROR
+                ^
+Associated declaration is "ModChecks7.java", line 42, col 5:
+        //@ modifies o.i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks7: mo3() ...
+------------------------------------------------------------------------
+ModChecks7.java:50: Warning: Possible violation of modifies clause (Modifies)
+                o = oo;
+                ^
+Associated declaration is "ModChecks7.java", line 48, col 5:
+        //@ modifies oo.i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+5 warnings

@@ -1,0 +1,146 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModChecks9 ...
+  Prover started:TIME
+    [TIME]
+
+ModChecks9: m() ...
+    [TIME]  passed immediately
+
+ModChecks9: mi() ...
+------------------------------------------------------------------------
+ModChecks9.java:15: Warning: Possible violation of modifies clause (Modifies)
+    public void mi() { m(); }  // Not allowed to modify j
+                        ^
+Associated declaration is "ModChecks9.java", line 6, col 12:
+        modifies i,j;
+                   ^
+Associated declaration is "ModChecks9.java", line 14, col 8:
+    //@ modifies i;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks9: mj() ...
+------------------------------------------------------------------------
+ModChecks9.java:19: Warning: Possible violation of modifies clause (Modifies)
+    public void mj() { m(); } // Not allowed to modify i
+                        ^
+Associated declaration is "ModChecks9.java", line 6, col 10:
+        modifies i,j;
+                 ^
+Associated declaration is "ModChecks9.java", line 18, col 8:
+    //@ modifies j;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks9: mij() ...
+    [TIME]  passed
+
+ModChecks9: mk() ...
+------------------------------------------------------------------------
+ModChecks9.java:27: Warning: Possible violation of modifies clause (Modifies)
+    public void mk() { m(); } // Not allowed to modify i,j
+                        ^
+Associated declaration is "ModChecks9.java", line 6, col 10:
+        modifies i,j;
+                 ^
+Associated declaration is "ModChecks9.java", line 26, col 8:
+    //@ modifies k;
+        ^
+------------------------------------------------------------------------
+ModChecks9.java:27: Warning: Possible violation of modifies clause (Modifies)
+    public void mk() { m(); } // Not allowed to modify i,j
+                        ^
+Associated declaration is "ModChecks9.java", line 6, col 12:
+        modifies i,j;
+                   ^
+Associated declaration is "ModChecks9.java", line 26, col 8:
+    //@ modifies k;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks9: mik() ...
+------------------------------------------------------------------------
+ModChecks9.java:31: Warning: Possible violation of modifies clause (Modifies)
+    public void mik() { m(); } // Not allowed to modify j
+                         ^
+Associated declaration is "ModChecks9.java", line 6, col 12:
+        modifies i,j;
+                   ^
+Associated declaration is "ModChecks9.java", line 30, col 8:
+    //@ modifies i,k;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks9: mijk() ...
+    [TIME]  passed
+
+ModChecks9: pi() ...
+    [TIME]  passed
+
+ModChecks9: pj() ...
+------------------------------------------------------------------------
+ModChecks9.java:43: Warning: Possible violation of modifies clause (Modifies)
+    public void pj() { m(); }  // Not allowed to modify i - twice,k
+                        ^
+Associated declaration is "ModChecks9.java", line 6, col 10:
+        modifies i,j;
+                 ^
+Associated declaration is "ModChecks9.java", line 42, col 8:
+    //@ modifies j;
+        ^
+------------------------------------------------------------------------
+ModChecks9.java:43: Warning: Possible violation of modifies clause (Modifies)
+    public void pj() { m(); }  // Not allowed to modify i - twice,k
+                        ^
+Associated declaration is "ModChecks9.java", line 9, col 17:
+        modifies i,k;
+                 ^
+Associated declaration is "ModChecks9.java", line 42, col 8:
+    //@ modifies j;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks9: pk() ...
+------------------------------------------------------------------------
+ModChecks9.java:47: Warning: Possible violation of modifies clause (Modifies)
+    public void pk() { m(); } // Not allowed to modify i - twice,j
+                        ^
+Associated declaration is "ModChecks9.java", line 6, col 10:
+        modifies i,j;
+                 ^
+Associated declaration is "ModChecks9.java", line 46, col 8:
+    //@ modifies k;
+        ^
+------------------------------------------------------------------------
+ModChecks9.java:47: Warning: Possible violation of modifies clause (Modifies)
+    public void pk() { m(); } // Not allowed to modify i - twice,j
+                        ^
+Associated declaration is "ModChecks9.java", line 9, col 17:
+        modifies i,k;
+                 ^
+Associated declaration is "ModChecks9.java", line 46, col 8:
+    //@ modifies k;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks9: pij() ...
+    [TIME]  passed
+
+ModChecks9: pik() ...
+    [TIME]  passed
+
+ModChecks9: pijk() ...
+    [TIME]  passed
+
+ModChecks9: ModChecks9() ...
+    [TIME]  passed
+  [TIME total]
+9 warnings

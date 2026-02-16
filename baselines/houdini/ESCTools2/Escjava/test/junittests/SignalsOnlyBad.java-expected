@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+SignalsOnlyBad.java:6: Caution: Use either \nothing or a comma-separated list of type names after a signals_only keyword
+        signals_only;  // OK
+                    ^
+SignalsOnlyBad.java:7: Error: Expected a type name
+        signals_only NullPointerException ,, Exception;
+                                           ^
+SignalsOnlyBad.java:8: Error: Expected a type name
+        signals_only , Exception;
+                     ^
+SignalsOnlyBad.java:16: Error: A signals clause is not allowed in a normal_behavior section
+        //@ signals_only Exception;  // ERROR - not in normal_behavior
+            ^
+SignalsOnlyBad.java:15: Associated declaration: 
+        //@ public normal_behavior
+                   ^
+    [TIME]
+
+SignalsOnlyBad ...
+SignalsOnlyBad.java:9: Error: Invalid instanceof operation: A value of type java.lang.Exception can never be an instance of java.lang.String
+        signals_only  String;
+                      ^
+SignalsOnlyBad.java:10: Fatal error: Can't find type named "Q"
+        signals_only Q;
+                     ^
+1 caution
+5 errors

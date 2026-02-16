@@ -1,0 +1,13 @@
+initstate.java:21: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "initstate.java", line 17, col 6:
+  //@ ensures \result < 10;
+      ^
+initstate.java:31: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "initstate.java", line 28, col 6:
+  //@ ensures \old(g) < 10;
+      ^
+2 warnings

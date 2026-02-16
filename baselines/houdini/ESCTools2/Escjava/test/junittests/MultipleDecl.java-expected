@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+MultipleDecl ...
+  Prover started:TIME
+    [TIME]
+
+MultipleDecl: m() ...
+    [TIME]  passed immediately
+
+MultipleDecl: MultipleDecl() ...
+    [TIME]  passed
+  [TIME total]

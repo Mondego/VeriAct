@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModelMethod ...
+  Prover started:TIME
+    [TIME]
+
+ModelMethod: m(int) ...
+    [TIME]  passed immediately
+
+ModelMethod: n() ...
+    [TIME]  passed immediately
+
+ModelMethod: ModelMethod() ...
+    [TIME]  passed
+
+ModelMethod: ModelMethod(int) ...
+    [TIME]  passed
+  [TIME total]

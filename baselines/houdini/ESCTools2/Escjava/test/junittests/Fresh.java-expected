@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+    [TIME]
+
+Fresh ...
+  Prover started:TIME
+    [TIME]
+
+Fresh: m() ...
+    [TIME]  passed
+
+Fresh: mm() ...
+------------------------------------------------------------------------
+Fresh.java:13: Warning: Postcondition possibly not established (Post)
+        public void mm() {} // FAILS
+                          ^
+Associated declaration is "Fresh.java", line 12, col 5:
+        //@ ensures \fresh(o);
+            ^
+Execution trace information:
+    Executed implicit return in "Fresh.java", line 13, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Fresh: mmm() ...
+    [TIME]  passed
+
+Fresh: Fresh() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

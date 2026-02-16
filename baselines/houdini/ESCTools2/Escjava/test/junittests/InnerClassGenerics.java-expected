@@ -1,0 +1,42 @@
+ESC/Java version VERSION
+    [TIME]
+
+IsInitialized ...
+  Prover started:TIME
+    [TIME]
+
+IsInitialized: m() ...
+------------------------------------------------------------------------
+IsInitialized.java:9: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "IsInitialized.java", line 5, col 5:
+        //@ ensures \is_initialized(java.util.Vector);
+            ^
+Execution trace information:
+    Executed implicit return in "IsInitialized.java", line 9, col 1.
+
+------------------------------------------------------------------------
+IsInitialized.java:9: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "IsInitialized.java", line 6, col 5:
+        //@ ensures \is_initialized(IsInitializedA);
+            ^
+Execution trace information:
+    Executed implicit return in "IsInitialized.java", line 9, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+IsInitialized: IsInitialized() ...
+    [TIME]  passed
+  [TIME total]
+
+IsInitializedA ...
+    [TIME]
+
+IsInitializedA: IsInitializedA() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

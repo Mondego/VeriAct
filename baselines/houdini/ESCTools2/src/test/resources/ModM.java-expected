@@ -1,0 +1,51 @@
+ESC/Java version VERSION
+src|test|resources|ModM.java: Caution: Using given file as the .java file, even though it is not the java file for ModM on the classpath
+    [TIME]
+
+ModM ...
+  Prover started:TIME
+    [TIME]
+
+ModM: m() ...
+    [TIME]  passed
+
+ModM: mm() ...
+    [TIME]  passed immediately
+
+ModM: me() ...
+------------------------------------------------------------------------
+src|test|resources|ModM.java:23: Warning: Possible violation of modifies clause (Modifies)
+        public void me() { mee(); } // ERROR
+                              ^
+Associated declaration is "src|test|resources|ModM.java", line 25, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "src|test|resources|ModM.java", line 22, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModM: mee() ...
+    [TIME]  passed immediately
+
+ModM: mp() ...
+    [TIME]  passed
+
+ModM: mp2() ...
+    [TIME]  passed
+
+ModM: mmp() ...
+    [TIME]  passed immediately
+
+ModM: mq() ...
+    [TIME]  passed
+
+ModM: mqq() ...
+    [TIME]  passed immediately
+
+ModM: ModM() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

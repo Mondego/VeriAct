@@ -1,0 +1,24 @@
+ESC/Java version VERSION
+src|test|resources|Unreachable.java: Caution: Using given file as the .java file, even though it is not the java file for Unreachable on the classpath
+    [TIME]
+
+Unreachable ...
+  Prover started:TIME
+    [TIME]
+
+Unreachable: m() ...
+    [TIME]  passed
+
+Unreachable: mm() ...
+------------------------------------------------------------------------
+src|test|resources|Unreachable.java:17: Warning: Code marked as unreachable may possibly be reached (Reachable)
+                //@ unreachable //FAILS
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unreachable: Unreachable() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

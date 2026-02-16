@@ -1,0 +1,94 @@
+ESC/Java version VERSION
+src|test|resources|AssertEA.java:7: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert true : "Hi";
+                ^
+src|test|resources|AssertEA.java:8: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert false : 0;
+                ^
+src|test|resources|AssertEA.java:16: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert true : "Hi";
+                ^
+src|test|resources|AssertEA.java:17: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert false : 0; 
+                ^
+src|test|resources|AssertEA.java:22: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert true : "Hi";
+                ^
+src|test|resources|AssertEA.java:23: Error: Java keyword "assert" is only supported if the -source 1.4 option is provided.
+                assert false : 0; //@ nowarn Assert;
+                ^
+src|test|resources|AssertEA.java: Caution: Using given file as the .java file, even though it is not the java file for AssertEA on the classpath
+    [TIME]
+
+AssertEA ...
+  Prover started:TIME
+    [TIME]
+
+AssertEA: m_Exception_Assert(int) ...
+    [TIME]  passed
+
+AssertEA: mm_Exception_Assert(int) ...
+    [TIME]  passed
+
+AssertEA: mm_Nowarn_Nowarn(int) ...
+    [TIME]  passed
+
+AssertEA: nAssertWarn(int) ...
+------------------------------------------------------------------------
+src|test|resources|AssertEA.java:29: Warning: Possible assertion failure (Assert)
+                //@ assert false;
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertEA: nNowarn(int) ...
+    [TIME]  passed
+
+AssertEA: pPostwarning() ...
+------------------------------------------------------------------------
+src|test|resources|AssertEA.java:42: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|AssertEA.java", line 39, col 5:
+        //@ exsures (java.lang.AssertionError e) false;
+            ^
+Execution trace information:
+    Executed throw in "src|test|resources|AssertEA.java", line 41, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertEA: pExceptionwarningShouldCompilerError() ...
+------------------------------------------------------------------------
+src|test|resources|AssertEA.java:51: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "src|test|resources|AssertEA.java", line 50, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertEA: qNoWarning(int) ...
+    [TIME]  passed
+
+AssertEA: qqExceptionWarning(int) ...
+------------------------------------------------------------------------
+src|test|resources|AssertEA.java:62: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "src|test|resources|AssertEA.java", line 61, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertEA: rNowarning() ...
+    [TIME]  passed
+
+AssertEA: AssertEA() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+4 warnings
+6 errors

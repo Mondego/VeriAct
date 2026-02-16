@@ -1,0 +1,35 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModifiesPure ...
+ModifiesPure.java:7: Error: A pure method may not have a modifies clause
+        //@ modifies i;                 // WARNING
+                     ^
+ModifiesPure.java:2: Associated declaration: 
+//@ pure
+    ^
+ModifiesPure.java:12: Error: A pure method may not have a modifies clause
+        //@     assignable i;           // WARNING
+                           ^
+ModifiesPure.java:2: Associated declaration: 
+//@ pure
+    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+ModifiesPureA ...
+ModifiesPure.java:24: Error: A pure method may not have a modifies clause
+        //@ modifies i;                 // WARNING
+                     ^
+ModifiesPure.java:25: Associated declaration: 
+        //@ pure
+            ^
+ModifiesPure.java:30: Error: A pure method may not have a modifies clause
+        //@     assignable i;           // WARNING
+                           ^
+ModifiesPure.java:34: Associated declaration: 
+        public /*@ pure @*/ void n();
+                   ^
+  [TIME total] (aborted)
+1 caution
+4 errors

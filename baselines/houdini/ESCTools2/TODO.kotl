@@ -1,0 +1,57 @@
+* Automated Tests
+
+** Determine why the following Javafe tests fail:
+*** test6 (platform-dependent output problem)
+*** test1007
+*** test1103
+
+** Currently being skipped (Javafe/test/javafe/test/fe)
+*** always: 1103, 1104
+*** skipunlessall: 1102
+
+** Old tests that used to (?) fail:
+*** 14, 17, 1001, 1003, 1102
+
+** Put jars for various JDK releases in the classpath for the JDK
+   typechecking tests in /usr/local/Java/src/...
+
+* ASTGen's childAt() generation.
+
+ Why does the generated childAt() method not include a throws
+ IndexOutOfBoundsException?  It is currently commented out.
+
+* Existing specifications cleanup.
+
+** Add semicolons to the end of all existing specification expressions.
+** Put type annotations like non_null inside of /*@ @*/ blocks.
+** Standard clean spacing in expressions (i.e., "!=null").
+
+* Update abstract syntax grammar for Java 1.1 features.
+
+** Javafe/doc/abstract-syntax.html
+*** Inner classes.
+
+* Documentation
+
+** Need to augment naming.html for resolution in spec files, jml files, etc.
+
+* Full JML Support
+
+** Support non_null in method declaration for return value.  E.g. SubProcess
+
+    //@ requires P != null;
+    //@ ensures \result != null
+    public /*@ non_null @*/ SList readSList() {
+
+** Duplicate existing parser tests with also_* uses to extract out JML
+  "also" keyword.
+
+** Replace Assert with assert.
+
+* New reasoning
+
+** Darvas/Muller semantics (FTFJP05)
+
+* Parser
+
+** Why is DecreasesInfo not in hierarchy.j

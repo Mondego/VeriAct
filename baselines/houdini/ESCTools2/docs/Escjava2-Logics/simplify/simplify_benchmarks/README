@@ -1,0 +1,7 @@
+This directory contains two test suites for automatic theoreom
+provers.  The first test suite, in the subdirectory front_end_suite,
+consists of 207 files containing 2331 valid verification conditions.
+The second test suite, in the subdirectory small_suite, consists of 18
+files each containing a single valid conjecture.  The format of these
+files is described in the file format.txt.
+

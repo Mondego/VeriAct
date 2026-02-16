@@ -1,0 +1,60 @@
+TestLong.java:13: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY -1
+    ^
+TestLong.java:72: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 2
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestLong.java", line 28, col 10.
+    Routine call returned exceptionally in "TestLong.java", line 35, col 10.
+    Routine call returned exceptionally in "TestLong.java", line 42, col 15.
+    Routine call returned exceptionally in "TestLong.java", line 49, col 15.
+    Routine call returned exceptionally in "TestLong.java", line 58, col 10.
+    Routine call returned exceptionally in "TestLong.java", line 65, col 15.
+
+TestLong.java:82: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 3
+    ^
+TestLong.java:126: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 4
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestLong.java", line 106, col 8.
+    Routine call returned exceptionally in "TestLong.java", line 113, col 8.
+    Routine call returned exceptionally in "TestLong.java", line 120, col 8.
+
+TestLong.java:167: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 5
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestLong.java", line 133, col 13.
+    Routine call returned exceptionally in "TestLong.java", line 140, col 13.
+    Routine call returned exceptionally in "TestLong.java", line 147, col 13.
+    Routine call returned exceptionally in "TestLong.java", line 154, col 13.
+    Routine call returned exceptionally in "TestLong.java", line 162, col 6.
+
+TestLong.java:173: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY -6
+    ^
+TestLong.java:179: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 7
+    ^
+TestLong.java:197: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 8a
+    ^
+TestLong.java:215: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 8b
+    ^
+TestLong.java:231: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 9
+    ^
+TestLong.java:246: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 9b
+    ^
+TestLong.java:260: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 9c
+    ^
+TestLong.java:269: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 10
+    ^
+13 warnings

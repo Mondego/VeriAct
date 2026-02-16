@@ -1,0 +1,293 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 1: Translating Java into units</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>
+ESCJ 1:&nbsp; Translating Java into units.</H1>
+<B>Raymie Stata and Rustan Leino.</B>
+
+<P>[From post to src.sparta dated 25 Mar 97.]
+
+<P>[From Raymie and Rustan. Update of previous message based on discussion
+<BR>last Thursday.]
+
+<P>This message describes a translation of Java declarations into
+<BR>declarations in a language like Ecstatic [KRML 65] plus units.&nbsp;
+We are
+<BR>considering using this translation inside the ESC/Java tool.&nbsp;
+We feel
+<BR>that it provides a nice framework for generating "small" verification
+<BR>conditions (in particular, it makes it easy to include checking of
+<BR>only the "necessary" invariants in the verification condition).&nbsp;
+In
+<BR>that respect, it also provides a philosophy for what declarations and
+<BR>invariants ought to be visible where.&nbsp; Also, it provides a nice
+<BR>framework for generating "small" background predicates.
+<BR>&nbsp;
+
+<P>** Background on Java
+
+<P>Java classes and interfaces live in "packages" (open-ended collections
+<BR>of classes).
+
+<P>Java defines four levels of "access protection" on members of classes:
+<BR>private, package, protected, and public.&nbsp; Private members of a
+class
+<BR>are visible only in the class itself; package members are visible in
+<BR>any class inside the class's package; protected members are likewise
+<BR>visible in any class inside the class's package and are also visible
+<BR>to subclasses; public members are visible to all classes.
+
+<P>Classes and interfaces themselves have two levels of protection.&nbsp;
+A
+<BR>"public" class or interfaces is visible to all classes and interfaces
+<BR>in all packages.&nbsp; A "package" class or interface in package P
+is
+<BR>visible only to other classes and interfaces inside P.&nbsp; Java allows
+<BR>members to be declared "public" in "package" classes and interfaces,
+<BR>but it turns around and treats such members as if they were "package."
+<BR>In our discussion below, we ignore "public" members declared in
+<BR>"package" classes and interfaces, assuming instead that they've been
+<BR>desugared into "package" members.
+
+<P>Java doesn't use the keyword "package" to designate package-level
+<BR>protection; the lack of a keyword designates this level, and this
+<BR>level is often called "default-access" in the official Java spec.&nbsp;
+To
+<BR>be more explicit, below we use the made-up keyword "package".
+<BR>&nbsp;
+
+<P>** Background on Ecstatic plus units
+
+<P>A unit is a collection of declarations.&nbsp; A unit M is defined using
+the
+<BR>syntax:
+
+<P>&nbsp; unit M
+
+<P>A declaration is included in M using the syntax:
+
+<P>&nbsp; M: &lt;decl>
+
+<P>where &lt;decl> is one of:
+
+<P>&nbsp; import N,...&nbsp; // Make decls of N and other units visible
+in M
+<BR>&nbsp; type T &lt;: U,... // Declare T and make it a subtype of U,...
+<BR>&nbsp; var x : T&nbsp; // Declare a variable of type T
+<BR>&nbsp; proc m(...) S&nbsp; // Declare a procedure m with specification
+S
+<BR>&nbsp;&nbsp; // (specifications are not discussed in this message)
+<BR>&nbsp; impl m(...) is S // Declare an implementation of m with body
+S.
+<BR>&nbsp;&nbsp; // (More than one impl can be given for a proc,
+<BR>&nbsp;&nbsp; // and an impl may be given with a more
+<BR>&nbsp;&nbsp; // specific signature.)
+<BR>&nbsp; invariant J&nbsp; // Declare an object invariant J
+
+<P>The syntax "unit M imports N,O" is shorthand for "unit M", "M: import
+<BR>N", "M: import O".
+
+<P>We say that a unit "contains" identifiers declared in the unit.&nbsp;
+We
+<BR>say that a unit "makes visible" identifiers contained in the unit and
+<BR>identifiers made visible by other units imported by the unit.&nbsp;
+A unit
+<BR>is allowed to references only those identifiers it makes visible.
+
+<P>** The translation
+
+<P>We assume that all Java names have been mangled so as to all be
+<BR>distinct.
+
+<P>Every Java program gives rise to the following Ecstatic declarations:
+
+<P>&nbsp;&nbsp;&nbsp; --> unit Public
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Public: type Object
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Public: ...a bunch of other,
+boiler-plate declarations
+
+<P>For every C -- either public or package -- our translation produces
+a
+<BR>declaration "type C..." contained in the Public unit.&nbsp; In addition,
+<BR>for each "public" member m of a public class, our translation produces
+<BR>a declaration for m contained in the Public unit.
+
+<P>Each package in Java gives rise to a unit:
+
+<P>&nbsp; package P
+<BR>&nbsp;&nbsp;&nbsp; --> unit P import Public
+
+<P>In our translation, a unit like P makes visible all declarations
+<BR>visible to all classes in P.&nbsp; It does this by importing the Public
+<BR>unit, by importing special units containing declarations of
+<BR>"protected" members defined in P, and by itself containing
+<BR>declarations of all "package" members of classes and interfaces
+<BR>defined in P.&nbsp; This will be explained in more detail below.
+
+<P>Every Java class definition produces three units and two declarations.
+<BR>Assume "public class C extends D implements J, K { ... }" appears in
+<BR>package P; the following translation results:
+
+<P>&nbsp; public class C extends D implements J, K
+<BR>&nbsp;&nbsp;&nbsp; --> unit protC import Public
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unit allprotC import protC,
+allprotD
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unit privC import P, allprotC
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Public: type C &lt;: D,J,K
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; P: import protC
+
+<P>The unit "protC" contains protected members declared by C.&nbsp; This
+unit
+<BR>is imported by P, making these members visible to all classes defined
+<BR>in P.&nbsp; The unit "allprotC" makes visible all protected members
+of C
+<BR>including inherited ones (note that allprotC is _not_ imported by P,
+<BR>because protected members inherited from other classes are not
+<BR>necessarily visible to all classes in P).&nbsp; Finally, the unit "privC"
+<BR>contains both private members and the code of C.
+
+<P>The following declarations are assumed to be declared in the class
+<BR>"C" just mentioned.
+
+<P>&nbsp; private T x;
+<BR>&nbsp;&nbsp;&nbsp; --> privC:&nbsp; var x: C --> T
+
+<P>&nbsp; package T x;
+<BR>&nbsp;&nbsp;&nbsp; --> P:&nbsp; var x: C --> T
+
+<P>&nbsp; protected T x;
+<BR>&nbsp;&nbsp;&nbsp; --> protC:&nbsp; var x: C --> T
+
+<P>&nbsp; public T x;
+<BR>&nbsp;&nbsp;&nbsp; --> Public:&nbsp; var x: C --> T
+
+<P>If a variable "x" is declared as "static", then the rules above change
+<BR>only in that "var x: C --> T" becomes "var x: T".&nbsp; For example:
+
+<P>&nbsp; private static T x;
+<BR>&nbsp;&nbsp;&nbsp; --> privC:&nbsp; var x: T
+
+<P>A Java method declaration turns into two Ecstatic declarations, one
+<BR>declaring the method and one giving an implementation thereof:
+
+<P>&nbsp; protected T m(...) { S };
+<BR>&nbsp;&nbsp;&nbsp; --> protC:&nbsp; method res: T := m(this: C, ...)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; privC:&nbsp; impl res: T
+:= m(this: C, ...) is S
+
+<P>This example shows a protected method.&nbsp; A method declared with
+a
+<BR>different access modifier is placed in the unit suggested by the
+<BR>instance variable translation above.&nbsp; If the Java method is declared
+<BR>as "static", then the "this: C" parameter is omitted in the Ecstatic
+<BR>translation.&nbsp; If the Java declaration declares a new, "abstract"
+<BR>method, then only the Escstatic "method" declaration is generated and
+<BR>no "impl".&nbsp; If the Java declaration overrides a superclass method
+<BR>without changing the access protection of the method, then only the
+<BR>Ecstatic "impl" declaration is generated, not the "method"
+<BR>declaration.&nbsp; If the method override also widens the access protection
+<BR>of a method -- for example, turning a protected method public -- then
+<BR>both the "method" and "impl" are generated.&nbsp; (If we allow subclasses
+<BR>to refine specifications of methods, then this would cause a new
+<BR>"method" declaration to be generated.)
+
+<P>We have shown a class "C" declared as a "public class".&nbsp; Had "C"
+been
+<BR>declared as a "package class", then the translation would've been the
+<BR>same (keeping in mind that "public" members are really "package"
+<BR>members in the context of "package" classes).&nbsp; This implies that
+<BR>"package" classes are still declared in the Public unit.&nbsp; This
+is
+<BR>necessary because the signature of a public or protected method might
+<BR>include a "package" class in it.&nbsp; If this signature is inherited
+by
+<BR>classes in another package, the type generated by this "package" class
+<BR>must still be visible.
+<BR>&nbsp;
+
+<P>Now for interfaces:
+
+<P>&nbsp; interface J extends K
+<BR>&nbsp;&nbsp;&nbsp; --> Public:&nbsp; type J &lt;: K
+
+<P>Interfaces are different from classes.&nbsp; Every member of a "public
+<BR>interface" is "public", and every member of a "package interface" is
+<BR>"package".&nbsp; Further, all methods are "abstract", and all fields
+are
+<BR>"static" and "final".&nbsp; With these caveats, translation of interface
+<BR>members is as for classes.
+<BR>&nbsp;
+
+<P>** Annotations
+
+<P>Now for our annotations.&nbsp; As stated above, every variable is declared
+<BR>as "private", "package", "protected", or "public".&nbsp; In addition,
+our
+<BR>annotations declare each variable as "writable-deferred",
+<BR>"writable-private", "writable-package", "writable-protected", or
+<BR>"writable-public" a la KRML 74.&nbsp; By default, the write attribute
+<BR>matches the corresponding read attribute.&nbsp; We define a function
+<BR>"write-unit(x, C)" for every variable "x" and class "C".&nbsp; In the
+<BR>context of a class "C" and package "P", variable declarations give
+<BR>rise to the following rules about "write-unit":
+
+<P>&nbsp; writable-deferred x
+<BR>&nbsp;&nbsp;&nbsp; --> write-unit(x, C) is not defined
+
+<P>&nbsp; writable-private x
+<BR>&nbsp;&nbsp;&nbsp; --> write-unit(x, C) = privC
+
+<P>&nbsp; writable-package x
+<BR>&nbsp;&nbsp;&nbsp; --> write-unit(x, C) = P
+
+<P>&nbsp; writable-protected x
+<BR>&nbsp;&nbsp;&nbsp; --> write-unit(x, C) = protC
+
+<P>&nbsp; writable-private x
+<BR>&nbsp;&nbsp;&nbsp; --> write-unit(x, C) = Public
+
+<P>Also, the following rule about subtypes applies to any inherited
+<BR>variable "x" for which the subtype contains no write attribute:
+
+<P>&nbsp; class D extends C
+<BR>&nbsp;&nbsp;&nbsp; --> write-unit(x, D) = write-unit(x, C) if write-unit(x,
+C) defined
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; otherwise write-unit(x,
+D) is not defined
+
+<P>For an update statement
+
+<P>&nbsp; o.x = E
+
+<P>mentioned in a class "C", the checker emits a warning unless
+<BR>"write-unit(x, T)" is imported by "privC", where "T" is the
+<BR>*static* type of "o".
+<BR>&nbsp;
+
+<P>A class may contain invariant declarations.&nbsp; If the context of
+a class
+<BR>"C", we have:
+
+<P>&nbsp; invariant J;
+<BR>&nbsp;&nbsp;&nbsp; --> X:&nbsp; invariant (ALL this: C ::&nbsp; this
+== null&nbsp; \/&nbsp; J)
+
+<P>where "X" is a unit such that for every variable "y" mentioned in "J",
+<BR>"write-unit(y, C) = X".&nbsp; If no such "X" exists, the Java invariant
+<BR>declaration in not allowed.&nbsp; (If "J" contains no variables, the
+<BR>Ecstatic invariant declaration is placed in unit "privC".)
+<BR>&nbsp;
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

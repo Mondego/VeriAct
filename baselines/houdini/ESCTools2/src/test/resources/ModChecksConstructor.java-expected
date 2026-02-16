@@ -1,0 +1,39 @@
+ESC/Java version VERSION
+src|test|resources|ModChecksConstructor.java: Caution: Using given file as the .java file, even though it is not the java file for ModChecksConstructor on the classpath
+    [TIME]
+
+ModChecksConstructor ...
+  Prover started:TIME
+    [TIME]
+
+ModChecksConstructor: ModChecksConstructor() ...
+src|test|resources|ModChecksConstructor.java:4: Error: There is no assignable clause allowing this method call
+        public ModChecksConstructor() {
+                                      ^
+/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class: Associated declaration: 
+src|test|resources|ModChecksConstructor.java:3: Associated declaration: 
+        //@ pure 
+        ^
+    [TIME]  passed
+
+ModChecksConstructor: ModChecksConstructor(int) ...
+    [TIME]  passed
+
+ModChecksConstructor: ModChecksConstructor(java.lang.Object) ...
+src|test|resources|ModChecksConstructor.java:17: Error: There is no assignable clause allowing this method call
+        public ModChecksConstructor(Object o) {
+                                              ^
+/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class: Associated declaration: 
+src|test|resources|ModChecksConstructor.java:16: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+src|test|resources|ModChecksConstructor.java:18: Error: There is no assignable clause allowing this assignment
+            i = 0; // WARNING
+            ^
+src|test|resources|ModChecksConstructor.java:16: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+    [TIME]  passed
+  [TIME total]
+1 caution
+3 errors

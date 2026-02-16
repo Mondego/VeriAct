@@ -1,0 +1,52 @@
+D.java:5: Error: Ambiguous association of ==> and <==.  Use parentheses to disambiguate.
+  //@ invariant b ==> c <== d;
+                ^
+D.java:6: Error: Ambiguous association of ==> and <==.  Use parentheses to disambiguate.
+  //@ invariant b <== c ==> d;
+                ^
+D.java:7: Error: Ambiguous association of ==> and <==.  Use parentheses to disambiguate.
+  //@ invariant b ==> b <== b <== b ==> b ==> b <== b <== b ==> b ==>  ...
+                ^
+D.java:7: Error: Ambiguous association of ==> and <==.  Use parentheses to disambiguate.
+  //@ invariant b ==> b <== b <== b ==> b ==> b <== b <== b ==> b ==>  ...
+                ^
+D.java:7: Error: Ambiguous association of ==> and <==.  Use parentheses to disambiguate.
+  //@ invariant b ==> b <== b <== b ==> b ==> b <== b <== b ==> b ==>  ...
+                ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+5 errors
+E.java:10: Warning: Possible assertion failure (Assert)
+        //@ assert z;  // should generate warning
+            ^
+E.java:13: Warning: Possible assertion failure (Assert)
+      //@ assert y;  // should generate warning
+          ^
+E.java:14: Warning: Possible assertion failure (Assert)
+      //@ assert z;  // should generate warning
+          ^
+E.java:24: Warning: Possible assertion failure (Assert)
+        //@ assert z;  // should generate warning
+            ^
+E.java:27: Warning: Possible assertion failure (Assert)
+      //@ assert y;  // should generate warning
+          ^
+E.java:39: Warning: Possible assertion failure (Assert)
+        //@ assert z;  // should generate warning
+            ^
+E.java:42: Warning: Possible assertion failure (Assert)
+      //@ assert y;  // should generate warning
+          ^
+E.java:43: Warning: Possible assertion failure (Assert)
+      //@ assert z;  // should generate warning
+          ^
+E.java:53: Warning: Possible assertion failure (Assert)
+        //@ assert z;  // should generate warning
+            ^
+E.java:56: Warning: Possible assertion failure (Assert)
+      //@ assert y;  // should generate warning
+          ^
+E.java:74: Warning: Possible assertion failure (Assert)
+    //@ assert y <=!=> x <==> y <==> x;
+        ^
+11 warnings

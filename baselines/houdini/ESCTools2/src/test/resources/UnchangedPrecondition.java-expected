@@ -1,0 +1,33 @@
+ESC/Java version VERSION
+src|test|resources|UnchangedPrecondition.java: Caution: Using given file as the .java file, even though it is not the java file for UnchangedPrecondition on the classpath
+    [TIME]
+
+UnchangedPrecondition ...
+  Prover started:TIME
+    [TIME]
+
+UnchangedPrecondition: m() ...
+    [TIME]  passed immediately
+
+UnchangedPrecondition: mm() ...
+    [TIME]  passed
+
+UnchangedPrecondition: mm1() ...
+------------------------------------------------------------------------
+src|test|resources|UnchangedPrecondition.java:22: Warning: Possible assertion failure (Assert)
+        //@ assert \not_modified(i); // FAILS
+            ^
+Associated declaration is "src|test|resources|UnchangedPrecondition.java", line 22, col 26:
+        //@ assert \not_modified(i); // FAILS
+                                 ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UnchangedPrecondition: mma() ...
+    [TIME]  passed
+
+UnchangedPrecondition: UnchangedPrecondition() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

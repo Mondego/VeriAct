@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+MX ...
+  Prover started:TIME
+    [TIME]
+
+MX: MX() ...
+    [TIME]  passed
+
+MX: mm() ...
+    [TIME]  passed
+  [TIME total]

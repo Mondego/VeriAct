@@ -1,0 +1,519 @@
+\manpage{The escjava command}{escjava}{1}
+
+\section{NAME}
+%
+\bf{escjava} - Checks Java source files for possible errors
+
+
+\section{SYNOPSIS}
+%
+\bf{escjava} \it{options} \it{source_filename}...
+
+
+\section{DESCRIPTION}
+
+The \bf{escjava} command takes a list of Java source files (i.e.,
+\it{filename}\tt{.java}) and checks the classes contained within those
+files for possible errors.  If the \bf{-depend} option is supplied, then
+any class on which a checked class depends will also be checked.
+
+#ifdef PUBLIC
+More information can be obtained from the ESC/Java User's Manual,
+which is provided as
+\link{http://research.compaq.com/SRC/publications/}{Technical Note 2000-002},
+Compaq Systems Research Center.
+#else
+More information can be obtained from the \bf{escjava} user's manual,
+which is located at
+\link{http://src-www.pa.dec.com/SRC/esc/escjava_pkg/doc/user-manual.html}
+{\tt{/proj/cra/pkg/escjava/doc/user-manual.html}}.  For convenience, it
+may be accessed quickly from off of the ESC-for-Java project's internal
+home page.
+#endif
+
+
+#ifdef PUBLIC
+\section{OPTIONS}
+#else
+\section{NORMAL OPTIONS}
+#endif
+
+\begin{description}
+
+\item{\bf{-bootclasspath} \it{path}}
+Overrides \bf{escjava}'s built-in path for locating \tt{.spec} and
+\tt{.class} files for the system classes (\tt{java.lang.String}, etc.)
+with \it{path}.  This option is provided so that files may be checked
+against a different version of JDK than the one escjava comes with
+(currently a version of JDK 1.2 augmented with a limited number of
+spec files).  Note: if the \bf{-v} option is supplied, \bf{escjava} will
+print the complete classpath it is using when it starts up.
+
+\item{\bf{-classpath} \it{path}}
+Sets the path to be used to locate user classes not supplied on the
+command line to \it{path}.  Overrides all previous \bf{-classpath}
+options and the \bf{CLASSPATH} environment variable.  The actual
+classpath \bf{escjava} uses is the user path followed by the
+bootclasspath (see \bf{-bootclasspath}); this allows users to add new
+\tt{.spec} files for the system classes.  Note: if the \bf{-v} option
+is supplied, \bf{escjava} will print the complete classpath it is
+using when it starts up.
+
+\item{\bf{-counterexample}}
+Causes a pretty printed version of the counterexample context to be
+displayed after each warning message.  Elements
+of the counterexample context that are almost certainly irrelevant are
+not printed.  Use the \bf{-pcc} option to get the raw, unadulterated
+counterexample context.
+
+\item{\bf{-depend}}
+Normally, \bf{escjava} checks only the classes contained in the source
+files given to it on the command line.  If the \bf{-depend} option is
+given, however, \bf{escjava} also checks any classes on which those
+classes depend (including indirectly).
+
+\item{\bf{-f} \it{file}}
+Instructs \bf{escjava} to append to the list of source files given
+directly on the command line the files named on separate lines in
+\it{file}.  Multiple \bf{-f} flags may be used.
+
+\item{\bf{-loop} \it{n}}
+Instructs \bf{escjava} to unroll loops \it{n} iterations.  The number
+of iterations \it{n} can be specified in increments of one half; more
+precisely, the syntax of \it{n} is a natural number optionally followed
+by \bf{.0} or \bf{.5}.  A "half" iteration consists of evaluating the
+initial guard, if any.  The default value for \it{n} is 1.5.  For faster,
+less thorough checking, consider using a value of 1.
+
+\item{\bf{-nocheck}}
+Causes no extended static checking to be done.  Syntax and Java type
+checking as well as verification-condition generation is still
+performed, however.
+
+\item{\bf{-notrace}}
+Do not print the execution trace that leads to the potential error
+being warned about.
+
+\item{\bf{-nowarn} \it{category}}
+Turns off all extended static checking of type \it{category}.  See the
+user manual for a complete list of valid categories.  If \it{category}
+is \bf{All}, turns off all checking, which can be a useful option in
+conjunction with the \bf{-warn} switch.
+
+\item{\bf{-plainwarning}}
+By default, \bf{escjava} will sometimes accompany an error message with
+selected details of the counterexample it found.  The \bf{-plainwarning}
+option suppresses this information; this may be helpful when
+\bf{escjava}'s output is to be fed to a program.
+
+\item{\bf{-quiet}}
+Turns off display of the progress messages that \bf{escjava} normally
+prints.
+
+\item{\bf{-routine} \it{routinename}}
+If \bf{-routine} is used, \bf{escjava} checks only the routines specified
+by \bf{-routine} arguments.  The \it{routinename} can either be a simple
+method or constructor name (which specifies all routines with this name), or
+a fully qualified routine signature (which specifies a routine uniquely).
+For example, \it{routinename} may be \tt{String} or
+\tt{java.lang.String.String(char[],int,int)}.
+
+\item{\bf{-routineIndirect} \it{file}}
+This option is equivalent to having the \bf{-routine} flag present and
+using each line of \it{file} as an argument to \bf{-routine}.
+
+\item{\bf{-start} \it{n}}
+This option causes \bf{escjava} to start checking the first file on the
+command line at line number \it{n}.  (Later files are checked from the
+beginning as normal.)  Starting checking at line \it{n} means that
+all possible warnings before line \it{n} are automatically nowarned.
+(Only the possible warnings themselves are so nowarned, not their
+associated declarations.  For example, \bf{escjava} may still issue a
+warning that a method declared after line \it{n} fails to maintain an
+invariant declared before line \it{n}.)  Since no warnings would be
+produced for types and type members whose declarations end before
+line \it{n}, these are skipped.
+
+\item{\bf{-suggest}}
+After each warning, suggest an annotation that will suppress the
+warning.  Although it is human-readable, the suggestion is mainly
+intended for use by the ESC/Java Annotation Wizard.  Note: the
+suggestion may or may not correspond to the programmer's intended
+design, so it may be inappropriate to actually follow the suggestion.
+
+\item{\bf{-v}}
+Turns on verbose mode, which causes \bf{escjava} to print additional
+information that may be helpful in some cases, for example when
+debugging problems related to the classpath (since verbose mode prints
+the complete classpath).
+
+\item{\bf{-vclimit} \it{n}}
+Sets the maximum size verification condition that \bf{escjava} will
+attempt to verify.  Defaults to 500,000.  This limit exists to handle
+the rare cases where \bf{escjava} generates exponential-size VCs.
+
+\item{\bf{-warn} \it{category}}
+Turns on all extended static checking of type \it{category} if it is
+currently turned off.  See the user manual for a complete list of valid
+categories.
+
+\end{description}
+
+
+#ifdef PUBLIC
+#else
+\section{DEBUGGING OPTIONS}
+
+These options are intended mainly for use by \bf{escjava}'s developers,
+but they may occasionally be useful to others.
+
+\begin{description}
+
+\item{\bf{-assertContinue}}
+Experimental feature to try to make Houdini invocations of \bf{escjava}
+refute more annotations in one go.
+
+\item{\bf{-backpredfile} \it{file}}
+Specifies which file to obtain the universal background predicate from.
+
+\item{\bf{-bubbleNotDown}}
+Causes \bf{escjava} to bubble down logic nots in specification formulas
+to literals wherever possible.
+
+\item{\bf{-excuseNullInitializers}}
+Normally, \bf{escjava} performs a NonNull check on the right-hand side
+of every assignment to field declared with \tt{non_null}.  Instance
+fields declared with an initializing expression give rise to an
+assignment in every constructor of the class.  The
+\bf{-excuseNullInitializers} causes \bf{escjava} to suppress the NonNull
+check for this initializing assignment if the initializing expression
+is the literal \tt{null}.  This allows for a programming style where
+fields are given \tt{null} initializing expressions, despite the fact
+that Java implicitly initializes all fields to zero-equivalent values.
+Note that the flag does not affect assignments where the right-hand
+side is not the literal \tt{null}, assignments other than of the
+initializing expressions, or the NonNullInit checks that are performed
+at the end of every constructor.
+
+\item{\bf{-filterInvariants}}
+Causes verification condition generation to ignore invariants and axioms
+that mention variables that are not spec-accessible to the context of
+use.  For example, with this switch, if an invariant of a class mentions
+a private field, then the invariant is ignored when checking public
+clients of the class.
+
+\item{\bf{-filterMethodSpecs}}
+Causes verification condition generation to ignore routine preconditions,
+modifies lists, and postconditions that mention variables that are not
+spec-accessible to the context of use.  For example, with this switch,
+if the postcondition of a routine mentions a protected variable,
+then the postcondition is ignored when checking public callers of the
+routine.
+
+\item{\bf{-guardedVC} \it{directory}} 
+Causes \bf{escjava} to write guarded verification conditions to the
+specified directory.  Each guarded verification condition is written
+to a file "fileno.lineno.colno.method.sx" or
+"fileno.lineno.colno.class.sx" (for the class-specific
+background predicate). This flag also writes a file
+"files.txt" in the specified directory mapping internal file numbers to file
+names; writes a file "guards.txt" containing all the guard variables,
+each of the form "G_fileno.lineno.colno".
+
+\item{\bf{-hidecall}}
+Causes \bf{escjava} to omit the details of calls when printing guarded
+commands.
+
+\item{\bf{-inlineCheckDepth} \it{n}}
+When a method body is translated, at least \it{n} levels of inlining
+of calls are performed (the \bf{-inlineDepthPastCheck} option determines
+if more inlining levels are performed).  The
+\it{n}th level of inlining is checked, while checks at all previous levels
+are turned off.  By default \it{n} is 0.  This flag cannot be used in
+combination with the \bf{-inlineConstructors} flag.
+
+\item{\bf{-inlineConstructors}}
+For each non-static method \it{m}, for each constructor \it{c} in the
+method's class, a new method consisting of an inlined call to \it{c}
+followed by an inlined call to \it{m} is created and checked.  The
+original method \it{m} is not checked.  This flag cannot be used in
+combination with either the \bf{-inlineCheckDepth} or
+\bf{-inlineDepthPastCheck} flag.
+
+\item{\bf{-inlineDepthPastCheck} \it{n}}
+When a method body is translated, \it{n} levels of inlining
+of calls are performed beyond the inlining level that is checked (see the
+\bf{-inlineCheckDepth} option).  Checks at all \it{n} levels
+are turned off.  By default \it{n} is 0.  This flag cannot be used in
+combination with the \bf{-inlineConstructors} flag.
+
+\item{\bf{-inlineFromConstructors}}
+When checking a constructor of a class \it{T}, inline every call
+\it{this.m(...)} transitively from within the constructor, whenever
+\it{m} statically resolves to a non-overridable instance method
+defined in \it{T}.
+
+\item{\bf{-lazySubst}}
+Turns on lazy substitutions.
+
+\item{\bf{-loopFallThru}}
+With this probably undesirable option, \bf{escjava} will insert
+the equivalent of a Java \tt{break} statement after the last unrolling
+of a loop.  More precisely, \bf{escjava} will omit the guarded command
+\bf{fail} that otherwise terminates the fast-desugaring of a loop.
+
+\item{\bf{-mergeinv}}
+Causes \bf{escjava} to merge all invariants for a method or constructor
+into a single invariant.  This makes checking faster at the cost of
+incorrect line #s for any invariant-not-established errors reported.
+
+\item{\bf{-nestQuantifiers}}
+Causes all user-supplied quantifiers to be nested in the translation,
+with one bound variable per quantification.
+
+\item{\bf{-noAllocUseOpt}}
+Causes the variable \it{alloc} in the guarded-command encoding to be
+treated as possibly being modified by every routine call.
+
+\item{\bf{-noDirectTargetsOpt}}
+Uses normal targets, instead of direct targets, when intersecting
+the free variables on invariants to see if the invariant needs to
+be considered.
+
+\item{\bf{-nodsa}}
+Causes \bf{escjava} not to convert guarded commands into dynamic
+single-assignment form before generating a verification condition from
+them.  This flag implies the \bf{-nospvc} flag.
+
+\item{\bf{-noEpeepopt}}
+Turns off peephole optimizations for expressions.
+
+\item{\bf{-noGCpeepopt}}
+Turns off peephole optimizations for guarded commands.  These optimizations
+help pretty printing, and its performance impact seems to be negligible.
+
+\item{\bf{-noLastVarUseOpt}}
+Disables the dead variable analysis and optimization that are otherwise
+applied in the generation of the DSA form of guarded commands.
+
+\item{\bf{-noPeepOptGCAssertFalse}}
+Experimental patch for the benefit of Houdini.  Disengages the guarded
+command peephole optimization that removes what is sequentially composed
+after an \bf{assert} \bf{false}.
+
+\item{\bf{-nospvc}}
+Causes \bf{escjava} to generate verification conditions using weakest
+preconditions, not a version of strongest postconditions.
+
+\item{\bf{-noTrackReadChars}}
+Turns off recording of characters that come back from Simplify,
+which makes unexpected Simplify output messages be less informative.
+
+\item{\bf{-nvu}}
+In the printing done by the -\bf{pgc} switch, name resolution will
+generally append pairs of integers representing program locations to
+names to uniquify them.  For example, a local variable \tt{i} may become
+\tt{i:9.35}. This switch, which stands for "No variable uniquification",
+will disable this behavior, so that all \it{i}'s will be printed as
+\it{i}'s, even if they denote semantically different variables.  (Of
+course, this may lead to the printing of verification conditions that
+are not semantically correct).
+
+\item{\bf{-pcc}}
+Causes the full counterexample context to be displayed after each
+unsuccessful verification attempt.
+
+\item{\bf{-pdsa}}
+For each method and constructor to be verified, the guarded-command
+translation of its body in dynamic single-assignment form is printed if
+available.
+
+\item{\bf{-pjt}}
+Prints out the java source plus annotations, with a comment before each
+expression containing its Java static type.
+
+\item{\bf{-pgc}}
+For each method and constructor to be verified, the guarded-command
+translation of its body, as well as any pre- and post-conditions, are
+printed.
+
+\item{\bf{-printAssumers}}
+Prints the list of annotations that are in some way related to each
+routine.  This switch is provided for the benefit of Houdini.
+
+\item{\bf{-printCompilationUnitsOnLoad}}
+Prints the name of each file that is loaded as it gets loaded.  Each
+line printed has the prefix "LOADED:".
+
+\item{\bf{-showloop}}
+Causes \bf{escjava} to show the details of desugared loops when printing
+guarded commands.
+
+\item{\bf{-stages} \it{n}}
+Causes \bf{escjava} to run at most the first \it{n} stages, where \it{n}
+is a positive integer.  Currently, the stages in order are loading,
+parsing, and type checking; generating the type-specific background
+predicate; translating from Java to guarded commands; optionally
+converting to dynamic-single-assignment form; generating the
+verification condition (VC); and calling the theorem prover to verify
+the VC.
+
+\item{\bf{-stats}}
+Causes \bf{escjava} to display a more detailed breakdown of how it
+spends its time.  The \bf{-quiet} option suppresses this information.
+
+\item{\bf{-strongAssertPostAlways}}
+Causes the strongest-postcondition based verification condition
+generation to, in essence, always assume a condition after it has been
+asserted.
+
+\item{\bf{-strongAssertPostAtomic}}
+Causes the strongest-postcondition based verification condition
+generation to, in essence, assume a condition after it has been
+asserted, provided the condition is \it{simple}, meaning a conjunction
+of atomic formulas.  Among the \bf{-strongAssertPost...} switches,
+this is the default behavior.
+
+\item{\bf{-strongAssertPostNever}}
+Causes the strongest-postcondition based verification condition
+generation to, in essence, never 
+assume a condition after it has been asserted.
+
+\item{\bf{-sxLog} \it{file}}
+Specifies a file to which to log the S-expression also sent to the
+theorem prover.
+
+\item{\bf{-useAllInvPostBody}}
+Causes \bf{escjava} to check all postconditions resulting from invariants,
+even if there's no overlap between the free variables of the invariant
+and the syntactic targets of the body being checked.
+
+\item{\bf{-useAllInvPostCall}}
+Causes \bf{escjava} to assume all invariants in a scope after a call, even
+if there's no overlap between the free variables of the invariant and the
+modifies clause of the call.
+
+\item{\bf{-useAllInvPreBody}}
+Causes \bf{escjava} to check all preconditions resulting from invariants,
+even if there's no overlap between the free variables of the invariant
+and the syntactic targets of the body being checked.
+
+\item{\bf{-useIntQuantAntecedents}}
+Generates type antecedent for user-supplied quantified variables of
+type \tt{int} and \tt{long} (rather than just \tt{true}).
+
+\item{\bf{-verboseTrace}}
+There are three levels of execution trace information that can be printed,
+informing the user of how the potential error being warned about may
+occur.  With \bf{-notrace}, no trace information is printed.  By default,
+a trace showing interesting choice points is printed.  With \bf{-verboseTrace},
+some additional trace information is also printed.  If both \bf{-notrace}
+and \bf{-verboseTrace} are mentioned on the command line, the last one
+to be mentioned rules.
+
+\end{description}
+
+#endif
+
+\section{DIAGNOSTICS}
+
+Source-file line numbers are counted starting at 1, while column numbers
+are counted starting at 0, treating tabs as one character each.  When
+source is displayed, however, tabs are expanded using 8-space tab stops.
+
+For more information, see the user's manual, and especially the section
+entitled Warnings.
+
+
+\section{ENVIRONMENT VARIABLES}
+
+The following environment variables affect the execution of
+\bf{escjava}:
+
+\begin{description}
+
+\item{\bf{CLASSPATH}}
+If set, specifies the path to be used to locate user classes not
+supplied on the command line.  Defaults to the current working
+directory.  The \bf{-classpath} option overrides this variable.  Where
+to find the system classes is specified separately using the
+\bf{-bootclasspath} option.
+
+\item{\bf{ESCJ_SIMPLIFY}}
+If set, specifies the pathname to use to invoke the Simplify Theorem
+prover.
+
+\item{\bf{ESCJ_SIMPLIFY_ARGS}}
+If set, specifies the arguments to pass to the Simplify Theorem prover
+when it is invoked.  Defaults to "-noprune -noplunge".
+
+\item{\bf{ESCJ_STDARGS}}
+If set, specifies a set of default \bf{escjava} arguments.  These
+arguments will be processed before any command-line arguments.
+Currently defaults to "-nowarn Deadlock".
+
+\item{\bf{PROVER_CC_LIMIT}}
+If set, specifies the maximum number of warnings to generate per
+routine.  Should be set to a positive integer.  Defaults to 10.
+
+\item{\bf{PROVER_KILL_TIME}}
+If set, specifies a rough upper bound of how many seconds \bf{escjava}
+should spend attempting to prove error free any given method or
+constructor.  Should be set to a positive integer greater than 50.
+Defaults to 300 (5 minutes).
+
+\end{description}
+
+
+\section{RELATED FILES}
+
+\begin{description}
+
+#ifdef PUBLIC
+\item{escjava/examples/}
+This directory, where \it{escjava} denotes the directory into
+which \bf{escjava} is installed, contains example code.
+#else
+\item{/proj/cra/pkg/escjava/examples/}
+This directory contains examples of annotated code.
+#endif
+
+#ifdef PUBLIC
+\item{escjava/lib/specs/}
+This directory, where \it{escjava} denotes the directory into
+which \bf{escjava} is installed,
+contains \tt{.spec} files for selected JDK library types.
+It is considered part of the system libraries by \bf{escjava} and is
+thus included as part of the bootclasspath (see the \bf{-bootclasspath}
+flag above).
+#else
+\item{/proj/cra/pkg/escjava/specs/}
+This directory contains \tt{.spec} files for selected JDK library types.
+It is considered part of the system libraries by \bf{escjava} and is
+thus included as part of the bootclasspath (see the \bf{-bootclasspath}
+flag above).
+#endif
+
+\end{description}
+
+
+\section{AUTHORS}
+
+#ifdef PUBLIC
+\link{http://research.compaq.com/SRC/esc/}
+{Compaq Systems Research Center}.
+#else
+\begin{flushleft}
+Cormac Flanagan, Compaq SRC <flanagan@pa.dec.com> \newline
+Rustan Leino, Compaq SRC <rustan@pa.dec.com> \newline
+Mark Lillibridge, Compaq SRC <mdl@pa.dec.com> \newline
+Greg Nelson, Compaq SRC <gnelson@pa.dec.com> \newline
+Jim Saxe, Compaq SRC <saxe@pa.dec.com> \newline
+Raymie Stata, Compaq SRC <stata@pa.dec.com>
+\end{flushleft}
+#endif
+
+
+\section{SEE ALSO}
+
+\bf{CLASSPATH}, \bf{JAVA}(5)

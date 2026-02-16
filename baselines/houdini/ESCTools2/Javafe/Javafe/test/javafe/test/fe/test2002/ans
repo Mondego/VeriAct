@@ -1,0 +1,4 @@
+TestTopLevelTypeFive.java:7: Fatal error: Unexpected token '<', expected '{'
+  class MemberType<T, U> {
+                  ^
+1 error

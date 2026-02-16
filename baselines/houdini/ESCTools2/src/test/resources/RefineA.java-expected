@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|RefineA.java: Caution: Using given file as the .java file, even though it is not the java file for junittests.RefineA on the classpath
+src|test|resources|RefineA.java:3: Error: Could not find file referenced in refine annotation: RefineA.java-refined
+//@ refine "RefineA.java-refined";
+    ^
+    [TIME]
+
+junittests.RefineA ...
+src|test|resources|RefineA.java:13: Error: Undefined variable 'b'
+        //@ ensures b;
+                    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+2 errors

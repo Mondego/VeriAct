@@ -1,0 +1,4 @@
+.|Referenced.java:3: Caution: type Local must be declared in a file named Local.java if it is to be declared public.
+public class Local {}           // Caution: this should not be public!
+             ^
+1 caution

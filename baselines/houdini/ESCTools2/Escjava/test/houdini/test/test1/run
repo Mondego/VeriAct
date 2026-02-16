@@ -1,0 +1,6 @@
+#!/bin/sh -f
+# usage: run FLAGS
+
+rm -rf outdir
+${HOUDINI} $* outdir progSources.txt > houdini.out 2>&1
+cat outdir/html/warnings.html

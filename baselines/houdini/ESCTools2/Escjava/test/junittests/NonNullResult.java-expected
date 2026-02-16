@@ -1,0 +1,160 @@
+ESC/Java version VERSION
+  Prover started:TIME
+
+NonNullResult ...
+
+NonNullResult: NonNullResult() ...
+    [TIME]  passed immediately
+
+NonNullResult: m1(int) ...
+    [TIME]  passed
+
+NonNullResult: m2(int) ...
+------------------------------------------------------------------------
+NonNullResult.java:16: Warning: Method declared non_null may return null (NonNullResult)
+        } // FAILS
+        ^
+Associated declaration is "NonNullResult.java", line 13, col 10:
+        //@ pure non_null
+                 ^
+Execution trace information:
+    Executed return in "NonNullResult.java", line 15, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNullResult: m3(int) ...
+------------------------------------------------------------------------
+NonNullResult.java:21: Warning: Method declared non_null may return null (NonNullResult)
+        } // FAILS - super class spec
+        ^
+Associated declaration is "NonNullResult.java", line 67, col 10:
+        //@ pure non_null
+                 ^
+Execution trace information:
+    Executed return in "NonNullResult.java", line 20, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNullResult: m4(int) ...
+------------------------------------------------------------------------
+NonNullResult.java:26: Warning: Method declared non_null may return null (NonNullResult)
+        } // FAILS
+        ^
+Associated declaration is "NonNullResult.java", line 23, col 10:
+        //@ pure non_null
+                 ^
+Execution trace information:
+    Executed return in "NonNullResult.java", line 25, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNullResult: m5(int) ...
+------------------------------------------------------------------------
+NonNullResult.java:32: Warning: Method declared non_null may return null (NonNullResult)
+        } // FAILS - super class spec
+        ^
+Associated declaration is "NonNullResult.java", line 78, col 10:
+        //@ pure non_null
+                 ^
+Execution trace information:
+    Executed return in "NonNullResult.java", line 31, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNullResult: mm() ...
+------------------------------------------------------------------------
+NonNullResult.java:36: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                o = m1(0); // FAILS
+                  ^
+Associated declaration is "NonNullResult.java", line 35, col 6:
+                /*@ non_null */ NonNullResultS o = new NonNullResultS( ...
+                    ^
+------------------------------------------------------------------------
+NonNullResult.java:40: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                o = super.m1(0); // FAILS
+                  ^
+Associated declaration is "NonNullResult.java", line 35, col 6:
+                /*@ non_null */ NonNullResultS o = new NonNullResultS( ...
+                    ^
+------------------------------------------------------------------------
+NonNullResult.java:41: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                o = super.m2(0); // FAILS
+                  ^
+Associated declaration is "NonNullResult.java", line 35, col 6:
+                /*@ non_null */ NonNullResultS o = new NonNullResultS( ...
+                    ^
+------------------------------------------------------------------------
+NonNullResult.java:45: Warning: Precondition possibly not established (Pre)
+                o = m5(-20); // FAILS - Precondition
+                      ^
+Associated declaration is "NonNullResult.java", line 28, col 10:
+        //@ also requires i <= 0 && i >=-10;
+                 ^
+Associated declaration is "NonNullResult.java", line 77, col 5:
+        //@ requires i >= 0;
+            ^
+------------------------------------------------------------------------
+NonNullResult.java:45: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                o = m5(-20); // FAILS - Precondition
+                  ^
+Associated declaration is "NonNullResult.java", line 35, col 6:
+                /*@ non_null */ NonNullResultS o = new NonNullResultS( ...
+                    ^
+------------------------------------------------------------------------
+NonNullResult.java:46: Warning: Possible assignment of null to variable declared non_null (NonNull)
+                o = m5(-1); // FAILS
+                  ^
+Associated declaration is "NonNullResult.java", line 35, col 6:
+                /*@ non_null */ NonNullResultS o = new NonNullResultS( ...
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+NonNullResultS ...
+
+NonNullResultS: NonNullResultS() ...
+    [TIME]  passed immediately
+
+NonNullResultS: m1(int) ...
+    [TIME]  passed
+
+NonNullResultS: m2(int) ...
+    [TIME]  passed
+
+NonNullResultS: m3(int) ...
+------------------------------------------------------------------------
+NonNullResult.java:70: Warning: Method declared non_null may return null (NonNullResult)
+        } // FAILS
+        ^
+Associated declaration is "NonNullResult.java", line 67, col 10:
+        //@ pure non_null
+                 ^
+Execution trace information:
+    Executed return in "NonNullResult.java", line 69, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNullResultS: m4(int) ...
+------------------------------------------------------------------------
+NonNullResult.java:75: Warning: Method declared non_null may return null (NonNullResult)
+        } // FAILS
+        ^
+Associated declaration is "NonNullResult.java", line 72, col 10:
+        //@ pure non_null
+                 ^
+Execution trace information:
+    Executed return in "NonNullResult.java", line 74, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NonNullResultS: m5(int) ...
+    [TIME]  passed
+  [TIME total]
+12 warnings

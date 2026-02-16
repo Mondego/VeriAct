@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Check that superclasses referenced via import statements work
+
+${TOOL} Single.java Package.java Multiple.java

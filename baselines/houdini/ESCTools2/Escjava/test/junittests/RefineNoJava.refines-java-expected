@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+Caution: The file .|RefineNoJava.java is not in the refinement sequence that begins with RefineNoJava.refines-java; it is used to generate a class signature, but no refinements within it are used.
+    [TIME]
+
+RefineNoJava ...
+  Prover started:TIME
+    [TIME]
+
+RefineNoJava: RefineNoJava() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution

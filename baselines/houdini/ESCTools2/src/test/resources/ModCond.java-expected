@@ -1,0 +1,38 @@
+ESC/Java version VERSION
+src|test|resources|ModCond.java: Caution: Using given file as the .java file, even though it is not the java file for ModCond on the classpath
+    [TIME]
+
+ModCond ...
+  Prover started:TIME
+    [TIME]
+
+ModCond: ModCond() ...
+    [TIME]  passed immediately
+
+ModCond: m(int) ...
+    [TIME]  passed immediately
+
+ModCond: m1(int) ...
+------------------------------------------------------------------------
+src|test|resources|ModCond.java:20: Warning: Possible assertion failure (Assert)
+        //@ assert j == 0;  // WARNING
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModCond: m2(int) ...
+    [TIME]  passed
+
+ModCond: m3(int) ...
+    [TIME]  passed
+
+ModCond: m4(int) ...
+------------------------------------------------------------------------
+src|test|resources|ModCond.java:41: Warning: Possible assertion failure (Assert)
+        //@ assert k == 0; // WARNING
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+2 warnings

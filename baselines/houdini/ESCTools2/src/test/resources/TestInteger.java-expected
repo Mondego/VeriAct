@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestInteger.java: Caution: Using given file as the .java file, even though it is not the java file for TestInteger on the classpath
+    [TIME]
+
+TestInteger ...
+src|test|resources|TestInteger.java:6: Fatal error: No method named assertTrue is in scope here.
+    assertTrue( i.intValue() == 7 );
+    ^
+1 caution
+1 error

@@ -1,0 +1,73 @@
+ESC/Java version VERSION
+    [TIME]
+
+AssertNone ...
+  Prover started:TIME
+    [TIME]
+
+AssertNone: m_Exception_Assert(int) ...
+    [TIME]  passed
+
+AssertNone: mm_Exception_Assert(int) ...
+    [TIME]  passed
+
+AssertNone: mm_Nowarn_Nowarn(int) ...
+    [TIME]  passed
+
+AssertNone: nAssertWarn(int) ...
+------------------------------------------------------------------------
+AssertNone.java:29: Warning: Possible assertion failure (Assert)
+                //@ assert false;
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: nNowarn(int) ...
+    [TIME]  passed
+
+AssertNone: pPostwarning() ...
+------------------------------------------------------------------------
+AssertNone.java:42: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "AssertNone.java", line 39, col 5:
+        //@ exsures (java.lang.AssertionError e) false;
+            ^
+Execution trace information:
+    Executed throw in "AssertNone.java", line 41, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: pExceptionwarningShouldCompilerError() ...
+------------------------------------------------------------------------
+AssertNone.java:51: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "AssertNone.java", line 50, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: qNoWarning(int) ...
+    [TIME]  passed
+
+AssertNone: qqExceptionWarning(int) ...
+------------------------------------------------------------------------
+AssertNone.java:62: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "AssertNone.java", line 61, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AssertNone: rNowarning() ...
+    [TIME]  passed
+
+AssertNone: AssertNone() ...
+    [TIME]  passed
+  [TIME total]
+4 warnings

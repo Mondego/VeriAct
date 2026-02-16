@@ -1,0 +1,10 @@
+TestArrayList2.java:20: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+TestArrayList2.java:34: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+TestArrayList2.java:54: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+3 warnings

@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|RefineZ.java: Caution: Using given file as the .java file, even though it is not the java file for sub.RefineZ on the classpath
+    [TIME]
+
+sub.RefineZ ...
+  Prover started:TIME
+    [TIME]
+
+sub.RefineZ: RefineZ() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

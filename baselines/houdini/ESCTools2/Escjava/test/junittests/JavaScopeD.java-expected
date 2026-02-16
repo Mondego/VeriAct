@@ -1,0 +1,8 @@
+ESC/Java version VERSION
+    [TIME]
+
+JavaScopeD ...
+JavaScopeD.java:7: Fatal error: Can't find type named "J"
+                        J j = new J();
+                        ^
+1 error

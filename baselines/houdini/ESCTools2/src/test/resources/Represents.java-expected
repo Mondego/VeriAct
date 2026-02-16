@@ -1,0 +1,36 @@
+ESC/Java version VERSION
+src|test|resources|Represents.java: Caution: Using given file as the .java file, even though it is not the java file for Represents on the classpath
+    [TIME]
+
+Represents ...
+  Prover started:TIME
+    [TIME]
+
+Represents: Represents() ...
+    [TIME]  passed
+
+Represents: m() ...
+    [TIME]  passed
+
+Represents: n() ...
+------------------------------------------------------------------------
+src|test|resources|Represents.java:35: Warning: Postcondition possibly not established (Post)
+        } // ERROR - postcondition not established
+        ^
+Associated declaration is "src|test|resources|Represents.java", line 31, col 5:
+        //@ ensures size > 2;
+            ^
+Execution trace information:
+    Executed return in "src|test|resources|Represents.java", line 34, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Represents: nn() ...
+    [TIME]  passed
+
+Represents: p() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

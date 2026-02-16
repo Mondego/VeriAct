@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|JavaScopeNested.java: Caution: Using given file as the .java file, even though it is not the java file for JavaScopeNested on the classpath
+    [TIME]
+
+JavaScopeNested ...
+src|test|resources|JavaScopeNested.java:2: Error: No such type: sub.JSN
+import sub.JSN;
+       ^
+src|test|resources|JavaScopeNested.java:2: Error: No such type: sub.JSN
+import sub.JSN;
+       ^
+src|test|resources|JavaScopeNested.java:10: Fatal error: Can't find type named "JSN.I"
+                JSN.I i = null;
+                ^
+1 caution
+3 errors

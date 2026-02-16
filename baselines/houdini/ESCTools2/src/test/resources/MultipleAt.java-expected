@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|MultipleAt.java: Caution: Using given file as the .java file, even though it is not the java file for MultipleAt on the classpath
+    [TIME]
+
+MultipleAt ...
+  Prover started:TIME
+    [TIME]
+
+MultipleAt: m() ...
+    [TIME]  passed
+
+MultipleAt: q() ...
+    [TIME]  passed
+
+MultipleAt: MultipleAt() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

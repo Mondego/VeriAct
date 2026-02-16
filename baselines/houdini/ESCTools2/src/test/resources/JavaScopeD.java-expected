@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|JavaScopeD.java: Caution: Using given file as the .java file, even though it is not the java file for JavaScopeD on the classpath
+    [TIME]
+
+JavaScopeD ...
+src|test|resources|JavaScopeD.java:7: Fatal error: Can't find type named "J"
+                        J j = new J();
+                        ^
+1 caution
+1 error

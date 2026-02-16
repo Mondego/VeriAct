@@ -1,0 +1,28 @@
+Simple.java:1: Fatal error: Cycle in inheritance/enclosing hierarchy detected involving type Simple
+class Simple extends Simple {}          // error
+      ^
+1 error
+Loop.java:3: Fatal error: Cycle in inheritance/enclosing hierarchy detected involving type Loop
+class Loop extends Loop1 {}
+      ^
+1 error
+.|Loop.java:3: Fatal error: Cycle in inheritance/enclosing hierarchy detected involving type Loop
+class Loop extends Loop1 {}
+      ^
+1 error
+Object3.java:3: Fatal error: Only java.lang.Object may be the superclass of java.lang.Object
+class Object extends Exception {}               // error!
+^
+1 error
+Interface.java:1: Fatal error: Cycle in inheritance/enclosing hierarchy detected involving type I
+interface I extends I {}        // error
+          ^
+1 error
+TwoHeaded.java:1: Error: Duplicate interface Head
+interface Body extends Head, Head {}    // error -- javac is wrong her ...
+                             ^
+1 error
+OnWay.java:3: Fatal error: Cycle in inheritance/enclosing hierarchy detected involving type Middle
+interface Middle extends Top, Middle, Top {}    // error (crashes java ...
+          ^
+1 error

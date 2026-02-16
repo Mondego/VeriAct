@@ -1,0 +1,16 @@
+#!/bin/sh -f
+
+# use: rtest directory FLAGS
+
+## echo === ESC/Java regression test $1 ===
+echo -n .
+
+dir=$1
+cd ${dir}
+shift
+
+flags="$*"
+
+./run -quiet -plainwarning -notrace -noSemicolonWarnings -nowarn Modifies ${flags} 
+
+cd ..

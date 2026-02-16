@@ -1,0 +1,38 @@
+ESC/Java version VERSION
+    [TIME]
+
+Impl4 ...
+  Prover started:TIME
+    [TIME]
+
+Impl4: unique() ...
+    [TIME]  passed
+
+Impl4: clear() ...
+------------------------------------------------------------------------
+Impl4.java:14: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Impl4.java", line 29, col 5:
+        //@ ensures isEmpty;  // ERROR because of missing modifies cla ...
+            ^
+Execution trace information:
+    Executed implicit return in "Impl4.java", line 14, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Impl4: Impl4() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

@@ -1,0 +1,25 @@
+#!/bin/csh -f
+
+# Checks that "Print.java print" is idempotent
+
+# Use: TestParseIdempotent file1.java ...
+
+if (! $?JAVA) setenv JAVA java
+if (! $?JDK_SOURCES) setenv JDK_SOURCES " "
+
+set TMPA = "/tmp/tpi1"
+set TMPB = "/tmp/tpi2"
+
+  rm -rf $TMPA
+  rm -rf $TMPB
+  ${JAVA} -classpath ${ESCTOOLS}/Javafe/classfiles \
+	javafe.test.Print -classpath ${JDK_SOURCES}:${CLASSPATH} \
+        $argv[*] > $TMPA 
+  ${JAVA} -classpath ${ESCTOOLS}/Javafe/classfiles \
+	javafe.test.Print -classpath ${JDK_SOURCES}:${CLASSPATH} \
+        -typecheck $argv[*] > $TMPB
+  diff -w $TMPA $TMPB 
+
+
+
+

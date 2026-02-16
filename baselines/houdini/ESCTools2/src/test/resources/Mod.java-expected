@@ -1,0 +1,25 @@
+ESC/Java version VERSION
+src|test|resources|Mod.java: Caution: Using given file as the .java file, even though it is not the java file for Mod on the classpath
+    [TIME]
+
+Mod ...
+  Prover started:TIME
+    [TIME]
+
+Mod: mm() ...
+    [TIME]  passed
+
+Mod: mmm() ...
+    [TIME]  passed
+
+Mod: Mod() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+ModA ...
+    [TIME]
+
+ModA: ModA() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution

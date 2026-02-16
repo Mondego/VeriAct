@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+src|test|resources|Weakly.java: Caution: Using given file as the .java file, even though it is not the java file for Weakly on the classpath
+    [TIME]
+
+Weakly ...
+  Prover started:TIME
+    [TIME]
+
+Weakly: m() ...
+    [TIME]  passed
+
+Weakly: Weakly() ...
+    [TIME]  passed
+  [TIME total]
+
+A ...
+    [TIME]
+  [TIME total]
+
+B ...
+    [TIME]
+  [TIME total]
+
+C ...
+    [TIME]
+  [TIME total]
+1 caution

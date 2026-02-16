@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|RefineY.java: Caution: Using given file as the .java file, even though it is not the java file for RefineY on the classpath
+    [TIME]
+
+RefineY ...
+  Prover started:TIME
+    [TIME]
+
+RefineY: RefineY() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

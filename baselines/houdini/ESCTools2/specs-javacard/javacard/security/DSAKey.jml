@@ -1,0 +1,103 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: DSAKey.jml,v 1.6 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public interface DSAKey {
+
+  /*@ public ghost instance boolean _Pset; @*/
+
+  /*@ public ghost instance boolean _Qset; @*/
+
+  /*@ public ghost instance boolean _Gset; @*/
+
+  //@ public ghost instance boolean _DSAinitialized;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Pset;
+      assignable _Pset, _DSAinitialized;
+  @*/
+  public void setP(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Qset;
+      assignable _Qset, _DSAinitialized;
+  @*/
+  public void setQ(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+	  
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Gset;
+      assignable _Gset, _DSAinitialized;
+  @*/
+  public void setG(
+    byte[] buffer, short offset, short length)
+    throws CryptoException;
+	  
+  /*@
+    public normal_behavior
+      requires _DSAinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getP(byte[] buffer, short offset)
+    throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires _DSAinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getQ(byte[] buffer, short offset)
+    throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires _DSAinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getG(byte[] buffer, short offset)
+    throws CryptoException;
+	
+}

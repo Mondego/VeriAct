@@ -1,0 +1,203 @@
+TestString.java:23: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 1
+    ^
+TestString.java:46: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 2
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 41, col 13.
+
+TestString.java:56: Warning: Precondition possibly not established (Pre)
+    assertTrue ( ss.charAt(1) == a[1] );  // FIXME
+               ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:62: Warning: Precondition possibly not established (Pre)
+    assertTrue( !ss.equals(sss));   // FIXME
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:64: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 3
+    ^
+TestString.java:81: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 4
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 75, col 13.
+
+TestString.java:93: Warning: Precondition possibly not established (Pre)
+    assertTrue ( ss.charAt(0) == a[3] );   // FIXME
+               ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:94: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 5
+    ^
+TestString.java:102: Warning: Precondition possibly not established (Pre)
+    assertTrue( a[0] == ss.charAt(0) );   // FIXME
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+Caution: Unable to check method testConstructor4b() of type TestString completely because too much time required
+TestString.java:166: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 6
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 117, col 13.
+    Routine call returned exceptionally in "TestString.java", line 124, col 13.
+    Routine call returned exceptionally in "TestString.java", line 131, col 13.
+    Routine call returned exceptionally in "TestString.java", line 138, col 13.
+    Routine call returned exceptionally in "TestString.java", line 145, col 13.
+    Routine call returned exceptionally in "TestString.java", line 161, col 13.
+
+TestString.java:175: Warning: Precondition possibly not established (Pre)
+     assertTrue ( sbb.equals(sb) );   // FIXME
+                ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:264: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 7
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 192, col 21.
+    Routine call returned exceptionally in "TestString.java", line 199, col 21.
+    Routine call returned exceptionally in "TestString.java", line 206, col 21.
+    Routine call returned exceptionally in "TestString.java", line 214, col 21.
+    Routine call returned exceptionally in "TestString.java", line 223, col 21.
+    Routine call returned exceptionally in "TestString.java", line 230, col 21.
+    Routine call returned exceptionally in "TestString.java", line 237, col 21.
+    Routine call returned exceptionally in "TestString.java", line 244, col 21.
+    Routine call returned exceptionally in "TestString.java", line 259, col 21.
+
+TestString.java:347: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY  - 8
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 272, col 21.
+    Routine call returned exceptionally in "TestString.java", line 279, col 21.
+    Routine call returned exceptionally in "TestString.java", line 288, col 21.
+    Routine call returned exceptionally in "TestString.java", line 297, col 21.
+    Routine call returned exceptionally in "TestString.java", line 308, col 21.
+    Routine call returned exceptionally in "TestString.java", line 317, col 21.
+    Routine call returned exceptionally in "TestString.java", line 329, col 21.
+    Routine call returned exceptionally in "TestString.java", line 342, col 21.
+
+TestString.java:355: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 9
+    ^
+TestString.java:364: Warning: Precondition possibly not established (Pre)
+    assertTrue ( b[1] == s.charAt(1) );   // FIXME
+               ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:383: Warning: Possible assertion failure (Assert)
+    //@ assert( !CharSequence.equal(a,aa) );   // FIXME
+        ^
+TestString.java:385: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 10
+    ^
+TestString.java:396: Warning: Precondition possibly not established (Pre)
+    assertTrue( sss.charAt(0) == s.charAt(0));   // FIXME
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:397: Warning: Precondition possibly not established (Pre)
+    assertTrue( sss.charAt(3) == ss.charAt(0));  // FIXME
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:400: Warning: Precondition possibly not established (Pre)
+    assertTrue( s4.length() == s.length() + ss.length() );  // FIXME
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:424: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 11 
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 418, col 8.
+
+TestString.java:449: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 12
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 436, col 20.
+    Routine call returned exceptionally in "TestString.java", line 443, col 10.
+
+TestString.java:457: Warning: Precondition possibly not established (Pre)
+    assertTrue ( ss.charAt(0) == s.charAt(2) );  // FIXME
+               ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:531: Warning: Precondition possibly not established (Pre)
+    assertTrue( c.charAt(0) == s.charAt(2));  // FIXME
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:535: Warning: Precondition possibly not established (Pre)
+    assertTrue( c.charAt(0) == s.charAt(0));   // FIXME
+              ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:564: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 14
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 538, col 12.
+    Routine call returned exceptionally in "TestString.java", line 545, col 12.
+    Routine call returned exceptionally in "TestString.java", line 552, col 12.
+    Routine call returned exceptionally in "TestString.java", line 559, col 12.
+
+TestString.java:578: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 15
+    ^
+TestString.java:594: Warning: Precondition possibly not established (Pre)
+    assertTrue (s.charAt(2) == data[2]);
+               ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:644: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 15
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 597, col 18.
+    Routine call returned exceptionally in "TestString.java", line 604, col 18.
+    Routine call returned exceptionally in "TestString.java", line 611, col 18.
+    Routine call returned exceptionally in "TestString.java", line 618, col 18.
+    Routine call returned exceptionally in "TestString.java", line 625, col 18.
+    Routine call returned exceptionally in "TestString.java", line 632, col 18.
+    Routine call returned exceptionally in "TestString.java", line 639, col 18.
+
+Caution: Unable to check method testCopyValueOf() of type TestString completely because too much time required
+TestString.java:658: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 16
+    ^
+TestString.java:666: Warning: Precondition possibly not established (Pre)
+    assertTrue ( s.charAt(1) == ss.charAt(1));      // FIXME
+               ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestString.java:682: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 17
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestString.java", line 669, col 8.
+    Routine call returned exceptionally in "TestString.java", line 676, col 8.
+
+2 cautions
+32 warnings

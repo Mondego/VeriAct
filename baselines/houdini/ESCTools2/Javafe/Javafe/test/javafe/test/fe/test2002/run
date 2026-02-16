@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## Tests that inner classes are parsed correctly
+
+${TOOL} TestTopLevelType.java
+${TOOL} TestTopLevelTypeFive.java

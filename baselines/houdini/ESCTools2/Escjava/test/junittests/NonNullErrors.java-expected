@@ -1,0 +1,26 @@
+ESC/Java version VERSION
+    [TIME]
+
+NonNullErrors ...
+NonNullErrors.java:5: Error: 'non_null' can only be used with methods whose result type is a reference type
+        //@ non_null
+        ^
+NonNullErrors.java:8: Error: 'non_null' can only be used with methods whose result type is a reference type
+        //@ non_null
+        ^
+NonNullErrors.java:11: Error: The non_null pragma can be applied only to variables, fields, and parameters of reference types
+        public void mmmm(/*@ non_null */ int i);
+                                             ^
+NonNullErrors.java:13: Error: 'nullable' can only be used with methods whose result type is a reference type
+        //@ nullable
+        ^
+NonNullErrors.java:16: Error: 'nullable' can only be used with methods whose result type is a reference type
+        //@ nullable
+        ^
+NonNullErrors.java:19: Error: The nullable pragma can be applied only to variables, fields, and parameters of reference types
+        public void mmmm2(/*@ nullable */ int i);
+                                              ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+6 errors

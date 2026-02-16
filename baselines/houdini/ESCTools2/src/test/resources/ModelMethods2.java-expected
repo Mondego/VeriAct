@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|ModelMethods2.java: Caution: Using given file as the .java file, even though it is not the java file for ModelMethods2 on the classpath
+    [TIME]
+
+ModelMethods2 ...
+  Prover started:TIME
+    [TIME]
+
+ModelMethods2: m() ...
+    [TIME]  passed immediately
+
+ModelMethods2: n() ...
+    [TIME]  passed
+
+ModelMethods2: ModelMethods2() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

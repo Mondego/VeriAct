@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestBoolean.java: Caution: Using given file as the .java file, even though it is not the java file for TestBoolean on the classpath
+    [TIME]
+
+TestBoolean ...
+src|test|resources|TestBoolean.java:4: Fatal error: No method named assertTrue is in scope here.
+    assertTrue( new Boolean(true).booleanValue() );
+    ^
+1 caution
+1 error

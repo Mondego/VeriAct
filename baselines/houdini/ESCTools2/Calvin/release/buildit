@@ -1,0 +1,212 @@
+#!/usr/bin/csh -f
+
+set PROJ_ROOT = (/udir/rustan/proj)
+set SIMPLIFY_VERSION = (1.5.2)
+set ESCJAVA_VERSION = (1.2.3)
+
+# macro directory structure:
+#
+#  master/
+#    This is the only non-derived directory.  When the buildit script starts
+#    up, it produces some derived files that it also places in this directory.
+#    The derived files are removed by the cleanit script.
+#
+#  tru64/
+#  linux/
+#  solaris/
+#  win/
+#    These directories are created and filled to look like the installed
+#    directories on a user's machine, but with symbolic links in some places
+#    to reduce copying.
+#
+#  lib/
+#    Contains the specification file distribution.
+#  
+#  release/
+#    This directory contains the tar'ed and/or zip'ed versions of the previous
+#    directories, with symbolic links expanded to their actual contents.
+#
+# micro directory structure (within each distribution):
+#  bin/
+#  lib/
+#  doc/
+#  doc/man1/
+#  examples/
+#
+# release files:
+#  escjava-${ESCJAVA_VERSION}-tru64.tar.Z
+#  escjava-${ESCJAVA_VERSION}-linux.tar.Z
+#  escjava-${ESCJAVA_VERSION}-solaris.tar.Z
+#  escjava-${ESCJAVA_VERSION}-win.exe
+#  escjava-specs-${ESCJAVA_VERSION}-unix.tar.Z
+#  escjava-specs-${ESCJAVA_VERSION}-win.exe
+
+set SUBDIRS = (bin lib doc doc/man1)
+set COMMON_FILES = (lib/escjava.zip \
+    doc/escjava.html doc/man1/escjava.1)
+set UNIX_FILES = (README.txt)
+set TRU64_FILES = (bin/escjava bin/Simplify-${SIMPLIFY_VERSION})
+set LINUX_FILES = (bin/escjava bin/Simplify-${SIMPLIFY_VERSION})
+set SOLARIS_FILES = (bin/escjava bin/Simplify-${SIMPLIFY_VERSION})
+set WIN_FILES = (README.txt bin/escjava.bat bin/escjava.nt \
+    bin/Simplify-${SIMPLIFY_VERSION}.exe)
+
+
+# master
+echo Assembling master files...
+cp -f ${PROJ_ROOT}/Escjava/doc/escjava-public.html master/doc/escjava.html
+cp -f ${PROJ_ROOT}/Escjava/doc/man1/escjava-public.1 master/doc/man1/escjava.1
+cp -f ${PROJ_ROOT}/Escjava/classes/escjava.zip master/lib
+
+cp master/README.txt master/README.txt.unix
+sed -e 's/$/
+/' master/README.txt.unix > master/README.txt.win
+
+cp -rf master/examples master/examplesDerived-unix
+rm -rf `find master/examplesDerived-unix -name 'CVS'`
+rm -f `find master/examplesDerived-unix -type f ! -name '*.java'`
+# create master/examplesDerived-win from master/examplesDerived-unix
+mkdir master/examplesDerived-win
+cd master/examplesDerived-unix
+foreach d (`find . -type d ! -name .`)
+    mkdir ../examplesDerived-win/$d
+end
+foreach f (`find . -type f`)
+    sed -e 's/$/
+/' $f > ../examplesDerived-win/$f
+end
+cd ../..
+
+cp -rf master/specs master/lib
+mv master/lib/specs master/lib/specs-unix
+rm -rf `find master/lib/specs-unix -name 'CVS'`
+rm -f `find master/lib/specs-unix -type f ! -name '*.spec'`
+# create master/lib/specs-win from master/lib/specs-unix
+mkdir master/lib/specs-win
+cd master/lib/specs-unix
+foreach d (`find . -type d ! -name .`)
+    mkdir ../specs-win/$d
+end
+foreach f (`find . -type f`)
+    sed -e 's/$/
+/' $f > ../specs-win/$f
+end
+cd ../../..
+
+mkdir lib-unix
+cp -rf ${PROJ_ROOT}/specs lib-unix/specs
+rm -rf `find lib-unix/specs -name 'CVS'`
+rm -f `find lib-unix/specs -type f ! -name '*.spec'`
+# create lib-win from lib-unix
+mkdir lib-win
+cd lib-unix
+foreach d (`find . -type d ! -name .`)
+    mkdir ../lib-win/$d
+end
+foreach f (`find . -type f`)
+    sed -e 's/$/
+/' $f > ../lib-win/$f
+end
+cd ..
+
+# tru64
+echo Building for Tru64...
+mkdir tru64
+cd tru64
+mkdir ${SUBDIRS}
+foreach f (${COMMON_FILES})
+  cp ../master/${f} ${f}
+end
+ln -s ../../master/lib/specs-unix lib/specs
+ln -s ../master/examplesDerived-unix examples
+foreach f (${UNIX_FILES})
+  cp ../master/${f}.unix ${f}
+end
+foreach f (${TRU64_FILES})
+  cp ../master/${f}.tru64 ${f}
+end 
+mv bin/Simplify-${SIMPLIFY_VERSION} bin/Simplify
+cd ..
+
+# linux
+echo Building for Linux...
+mkdir linux
+cd linux
+mkdir ${SUBDIRS}
+foreach f (${COMMON_FILES})
+  cp ../master/${f} ${f}
+end
+ln -s ../../master/lib/specs-unix lib/specs
+ln -s ../master/examplesDerived-unix examples
+foreach f (${UNIX_FILES})
+  cp ../master/${f}.unix ${f}
+end
+foreach f (${LINUX_FILES})
+  cp ../master/${f}.linux ${f}
+end
+mv bin/Simplify-${SIMPLIFY_VERSION} bin/Simplify
+cd ..
+
+# solaris
+echo Building for Solaris...
+mkdir solaris
+cd solaris
+mkdir ${SUBDIRS}
+foreach f (${COMMON_FILES})
+  cp ../master/${f} ${f}
+end
+ln -s ../../master/lib/specs-unix lib/specs
+ln -s ../master/examplesDerived-unix examples
+foreach f (${UNIX_FILES})
+  cp ../master/${f}.unix ${f}
+end
+foreach f (${SOLARIS_FILES})
+  cp ../master/${f}.solaris ${f}
+end
+mv bin/Simplify-${SIMPLIFY_VERSION} bin/Simplify
+cd ..
+
+# win
+echo Building for Windows...
+mkdir win
+cd win
+mkdir ${SUBDIRS}
+foreach f (${COMMON_FILES})
+  cp ../master/${f} ${f}
+end
+ln -s ../../master/lib/specs-win lib/specs
+ln -s ../master/examplesDerived-win examples
+foreach f (${WIN_FILES})
+  cp ../master/${f}.win ${f}
+end
+mv bin/Simplify-${SIMPLIFY_VERSION}.exe bin/Simplify.exe
+mkdir lib/vcafe
+cp ../master/lib/vcafe/escjava-plugin.jar lib/vcafe
+cp ../master/lib/vcafe/tools.properties lib/vcafe
+cd ..
+
+# release
+echo Making tar and zip files...
+mkdir release
+foreach d (tru64 linux solaris)
+  ln -s ${d} escjava
+  tar chf release/escjava-${ESCJAVA_VERSION}-${d}.tar escjava
+  compress release/escjava-${ESCJAVA_VERSION}-${d}.tar
+  rm -f escjava
+end
+# The following isn't quite right.  We'd like a self-extracting .exe file,
+# so one needs to manually take the .zip file produced, load it into WinZip,
+# select Action-->Make .EXE File, and specify c:\Program Files\escjava
+# as the default directory.
+cd win
+zip -q -r ../release/escjava-${ESCJAVA_VERSION}-win.zip *
+cd ..
+ln -s lib-unix lib
+tar chf release/escjava-specs-${ESCJAVA_VERSION}-unix.tar lib
+compress release/escjava-specs-${ESCJAVA_VERSION}-unix.tar
+rm -f lib
+ln -s lib-win lib
+zip -q -r release/escjava-specs-${ESCJAVA_VERSION}-win.zip lib
+rm -f lib
+
+echo Done

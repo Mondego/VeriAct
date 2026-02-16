@@ -1,0 +1,22 @@
+
+**** Source code with types:
+class FormalModifiers
+{
+   void foo(String x /*@ non_null */, Object[] z /*@ non_null */, int[] q /*@ non_null */ /*@ non_null */)
+   {
+   }
+
+   void bar(String a /*@ non_null */ /*@ non_null */)
+   {
+   }
+
+   void b1(int b)
+   {
+   }
+
+   void b2(String b /*@ non_null */)
+   {
+   }
+
+   // <default constructor>
+}

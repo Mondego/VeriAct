@@ -1,0 +1,29 @@
+ESC/Java version VERSION
+    [TIME]
+
+MV ...
+  Prover started:TIME
+    [TIME]
+
+MV: MV() ...
+    [TIME]  passed immediately
+
+MV: value() ...
+    [TIME]  passed immediately
+
+MV: gvalue() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+Client ...
+    [TIME]
+
+Client: Client() ...
+    [TIME]  passed immediately
+
+Client: m() ...
+    [TIME]  passed
+
+Client: mm() ...
+    [TIME]  passed
+  [TIME total]

@@ -1,0 +1,44 @@
+TestSystem.java:30: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = true;
+                      ^
+c:\cygwin\ESC\ESCTools\specs\java\lang\System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem.java:45: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = false;
+                      ^
+c:\cygwin\ESC\ESCTools\specs\java\lang\System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem.java:75: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = true;
+                      ^
+c:\cygwin\ESC\ESCTools\specs\java\lang\System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem.java:91: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = false;
+                      ^
+c:\cygwin\ESC\ESCTools\specs\java\lang\System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem.java:35: Warning: Possible null dereference (Null)
+            int c = System.in.read();  // ERROR
+                             ^
+TestSystem.java:52: Warning: Precondition possibly not established (Pre)
+    System.setIn(null);  // ERROR
+                ^
+Associated declaration is "c:\cygwin\ESC\ESCTools\specs\java\lang\System.spec", line 59, col 8:
+    //@ requires allowNullStreams || i != null;
+        ^
+TestSystem.java:80: Warning: Possible null dereference (Null)
+            System.out.print("");  // ERROR
+                      ^
+TestSystem.java:97: Warning: Precondition possibly not established (Pre)
+    System.setOut(null);           // ERROR
+                 ^
+Associated declaration is "c:\cygwin\ESC\ESCTools\specs\java\lang\System.spec", line 64, col 8:
+    //@ requires allowNullStreams || o != null;
+        ^
+4 cautions
+4 warnings

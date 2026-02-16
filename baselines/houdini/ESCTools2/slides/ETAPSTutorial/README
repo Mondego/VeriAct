@@ -1,0 +1,13 @@
+
+I split David's large collection of files
+
+   ../ECOOPTutorial-cok/escjava2-warnings.tex
+
+into three parts:
+
+  2_tool.tex      - intro of ESC/Java2 tool and command line options
+  3_warnings.tex  - list of ESC/Java2 warnings
+  4_tips.tex      - hints & pitfalls
+
+
+

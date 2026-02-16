@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|Bigint.java: Caution: Using given file as the .java file, even though it is not the java file for Bigint on the classpath
+    [TIME]
+
+Bigint ...
+  Prover started:TIME
+    [TIME]
+
+Bigint: Bigint(int) ...
+    [TIME]  passed
+
+Bigint: Bigint(bigint) ...
+    [TIME]  passed
+  [TIME total]
+1 caution

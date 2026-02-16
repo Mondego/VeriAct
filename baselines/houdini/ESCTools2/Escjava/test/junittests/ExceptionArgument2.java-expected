@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+ExceptionArgument2 ...
+  Prover started:TIME
+    [TIME]
+
+ExceptionArgument2: m() ...
+    [TIME]  passed
+
+ExceptionArgument2: ExceptionArgument2() ...
+    [TIME]  passed
+  [TIME total]

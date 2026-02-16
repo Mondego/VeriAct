@@ -1,0 +1,45 @@
+// Date: Tue, 16 Mar 2004 11:24:26 +0100 (CET)
+// From: Martin Hofmann <mhofmann@tcs.informatik.uni-muenchen.de>
+// Subject: Insertion Sort in ESC Java 
+
+// Hi Joe,
+
+// I was very pleased to meet you at the Cassis WS. Here is the Java program
+// I showed you. Basically, one should prove that the statement
+// 	    System.out.println("Called new within make");
+// in method make() is never executed.
+
+// If that works smoothly I can send you another one that does heapsort.
+
+// I would really appreciate if you could comment on how well etc one can do
+// that sort of thing in ESCJava / JML / JACK etc, it needn't be a full
+// proofscript although that would be most useful too.
+
+// All the best, Martin
+
+// /* Camelot program
+
+// type ilist = !Nil  | Cons of int * ilist
+
+// let insert e l =
+//   match l with Nil        => Cons(e,Nil)
+//   |            Cons(h,t)@_  => if  h >= e  then  Cons(e,Cons(h,t))
+//                                         else  Cons(h,(insert e t))
+// let sort l =
+//   match l with Nil -> Nil | Cons(h,t) -> insert h (sort t)
+
+// let print_list_aux l = match l with [] -> ()
+//     | y::t -> let _ = print_string ", " in
+//               let _ = print_int y       in
+//               print_list_aux t
+
+// let print_list l = let _ = print_string "[" in
+//     match l with [] -> print_string_newline "]"
+//     | y::t -> let _ = print_int y      in
+//               let _ = print_list_aux t in
+//               print_string_newline "]"
+
+// let start l = print_list (sort l)
+// (* the Camelot compiler generates JVM bytecode that corresponds to the
+//     Java program below. *)
+// */

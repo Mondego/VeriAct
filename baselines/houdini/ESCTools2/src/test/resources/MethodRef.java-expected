@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|MethodRef.java: Caution: Using given file as the .java file, even though it is not the java file for MethodRef on the classpath
+    [TIME]
+
+MethodRef ...
+src|test|resources|MethodRef.java:4: Fatal error: Can't find type named "MethodRefHelper"
+        public MethodRefHelper ss;
+               ^
+1 caution
+1 error

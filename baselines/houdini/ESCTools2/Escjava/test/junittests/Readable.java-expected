@@ -1,0 +1,39 @@
+ESC/Java version VERSION
+    [TIME]
+
+Readable ...
+  Prover started:TIME
+    [TIME]
+
+Readable: m() ...
+    [TIME]  passed
+
+Readable: m2() ...
+------------------------------------------------------------------------
+Readable.java:19: Warning: Read of variable when its value may be meaningless (Unreadable)
+            int k = i;
+                    ^
+Associated declaration is "Readable.java", line 9, col 5:
+        //@ readable i if b;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Readable: m3() ...
+    [TIME]  passed
+
+Readable: m4() ...
+------------------------------------------------------------------------
+Readable.java:29: Warning: Write of variable when disallowed (Writable)
+            j = 0;
+              ^
+Associated declaration is "Readable.java", line 10, col 5:
+        //@ writable j if bb;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Readable: Readable() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

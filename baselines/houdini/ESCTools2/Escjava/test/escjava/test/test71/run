@@ -1,0 +1,6 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* C.java
+${ESCJ} $* D.java
+${ESCJ} $* E.java

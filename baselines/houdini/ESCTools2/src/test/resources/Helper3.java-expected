@@ -1,0 +1,66 @@
+ESC/Java version VERSION
+src|test|resources|Helper3.java: Caution: Using given file as the .java file, even though it is not the java file for Helper3 on the classpath
+    [TIME]
+
+Helper3 ...
+  Prover started:TIME
+    [TIME]
+
+Helper3: Helper3() ...
+------------------------------------------------------------------------
+src|test|resources|Helper3.java:20: Warning: Precondition possibly not established (Pre)
+    non_helper();  // ERROR - preconditions not satisfied
+              ^
+Associated declaration is "src|test|resources|Helper3.java", line 14, col 6:
+  //@ non_null
+      ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper3: Helper3(boolean) ...
+------------------------------------------------------------------------
+src|test|resources|Helper3.java:42: Warning: Possible violation of modifies clause (Modifies)
+    o = new Object();
+                  ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|Helper3.java", line 39, col 6:
+  //@ modifies o;
+      ^
+Execution trace information:
+    Executed call in "src|test|resources|Helper3.java", line 24, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper3: m() ...
+------------------------------------------------------------------------
+src|test|resources|Helper3.java:42: Warning: Possible violation of modifies clause (Modifies)
+    o = new Object();
+                  ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|Helper3.java", line 39, col 6:
+  //@ modifies o;
+      ^
+Execution trace information:
+    Executed call in "src|test|resources|Helper3.java", line 30, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper3: non_helper() ...
+------------------------------------------------------------------------
+src|test|resources|Helper3.java:36: Warning: Possible violation of modifies clause (Modifies)
+        o = new Object();
+                      ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class":
+Associated declaration is "src|test|resources|Helper3.java", line 34, col 6:
+  //@ modifies o;
+      ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper3: helper() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+4 warnings

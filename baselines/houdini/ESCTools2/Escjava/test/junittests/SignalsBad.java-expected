@@ -1,0 +1,35 @@
+ESC/Java version VERSION
+SignalsBad.java:31: Caution: Use either \nothing or a comma-separated list of type names after a signals_only keyword
+    //@ signals_only ;   // CAUTION
+                     ^
+    [TIME]
+
+SignalsBad ...
+SignalsBad.java:6: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+    //@ signals (NullPointerException) true; // ERROR - DOES NOT MATCH
+                 ^
+SignalsBad.java:7: Associated declaration: 
+    public void m() throws java.io.IOException;
+                    ^
+SignalsBad.java:18: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+    //@ signals (NullPointerException) true;  // ERROR
+                 ^
+SignalsBad.java:17: Associated declaration: 
+    //@ signals_only java.io.IOException;
+        ^
+SignalsBad.java:22: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+    //@ signals (NullPointerException) true;  // ERROR
+                 ^
+SignalsBad.java:21: Associated declaration: 
+    //@ signals_only StringIndexOutOfBoundsException;
+        ^
+SignalsBad.java:25: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+    //@ signals (NullPointerException) true;  // ERROR - no signals_on ...
+                 ^
+SignalsBad.java:25: Associated declaration: 
+    //@ signals (NullPointerException) true;  // ERROR - no signals_on ...
+    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+4 errors

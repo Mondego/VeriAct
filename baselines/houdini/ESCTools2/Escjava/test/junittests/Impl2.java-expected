@@ -1,0 +1,47 @@
+ESC/Java version VERSION
+    [TIME]
+
+Impl2 ...
+  Prover started:TIME
+    [TIME]
+
+Impl2: shrink() ...
+------------------------------------------------------------------------
+Impl2.java:11: Warning: Postcondition possibly not established (Post)
+        } // FAILS
+        ^
+Associated declaration is "Impl2.java", line 33, col 5:
+        //@ ensures \not_modified(isEmpty);
+            ^
+Execution trace information:
+    Executed implicit return in "Impl2.java", line 11, col 1.
+
+Associated declaration is "Impl2.java", line 33, col 27:
+        //@ ensures \not_modified(isEmpty);
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Impl2: shrinkA() ...
+    [TIME]  passed
+
+Impl2: clear() ...
+    [TIME]  passed
+
+Impl2: Impl2() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: shrink() ...
+    [TIME]  passed immediately
+
+IntList: shrinkA() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

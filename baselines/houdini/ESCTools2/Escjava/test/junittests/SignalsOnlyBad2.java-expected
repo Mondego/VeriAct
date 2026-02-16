@@ -1,0 +1,32 @@
+ESC/Java version VERSION
+    [TIME]
+
+SignalsOnlyBad2 ...
+SignalsOnlyBad2.java:9: Error: The signals_only clause may not contain an exception type java.lang.Exception that is not a subtype of either RuntimeException or a type in the routine's throws clause
+        //@ signals_only Exception;    // ERROR
+                         ^
+SignalsOnlyBad2.java:13: Associated declaration: 
+        public void mmm() throws ArrayStoreException;
+                          ^
+SignalsOnlyBad2.java:18: Error: Only one signals_only clause is allowed per specification case
+        //@ signals_only NullPointerException; // ERROR - not more tha ...
+            ^
+SignalsOnlyBad2.java:17: Associated declaration: 
+        //@ signals_only RuntimeException;
+            ^
+SignalsOnlyBad2.java:22: Error: Only one signals_only clause is allowed per specification case
+        //@ signals_only NullPointerException; // ERROR - not more tha ...
+            ^
+SignalsOnlyBad2.java:21: Associated declaration: 
+        //@ signals_only RuntimeException;
+            ^
+SignalsOnlyBad2.java:23: Error: Only one signals_only clause is allowed per specification case
+        //@ signals_only ClassCastException; // ERROR - not more than  ...
+            ^
+SignalsOnlyBad2.java:21: Associated declaration: 
+        //@ signals_only RuntimeException;
+            ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+4 errors

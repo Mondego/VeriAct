@@ -1,0 +1,26 @@
+ESC/Java version VERSION
+    [TIME]
+
+ReadableBad ...
+ReadableBad.java:3: Error: Undefined variable 'q'
+        //@ readable q if b;
+                     ^
+ReadableBad.java:3: Error: Undefined variable 'b'
+        //@ readable q if b;
+                          ^
+ReadableBad.java:4: Error: Undefined variable 'q'
+        //@ writable q if b;
+                     ^
+ReadableBad.java:4: Error: Undefined variable 'b'
+        //@ writable q if b;
+                          ^
+ReadableBad.java:7: Error: Cannot convert int to boolean
+        //@ readable i+i if i;
+                            ^
+ReadableBad.java:7: Error: Not a specification designator expression
+        //@ readable i+i if i;
+                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+6 errors

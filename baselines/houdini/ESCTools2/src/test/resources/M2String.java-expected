@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|M2String.java: Caution: Using given file as the .java file, even though it is not the java file for M2String on the classpath
+    [TIME]
+
+M2String ...
+src|test|resources|M2String.java:23: Error: No such field in type java.lang.String
+        modifies o.owner;
+                   ^
+src|test|resources|M2String.java:31: Error: No such field in type java.lang.String
+        //@ set o.owner = this;
+                  ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+2 errors

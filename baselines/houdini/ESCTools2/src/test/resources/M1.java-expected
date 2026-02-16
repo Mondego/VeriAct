@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+src|test|resources|M1.java: Caution: Using given file as the .java file, even though it is not the java file for M1 on the classpath
+    [TIME]
+
+M1 ...
+  Prover started:TIME
+    [TIME]
+
+M1: M1() ...
+    [TIME]  passed immediately
+
+M1: P(java.lang.Object) ...
+    [TIME]  passed
+
+M1: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|M1.java:30: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "src|test|resources|M1.java", line 17, col 8:
+        ensures !\result;
+        ^
+Execution trace information:
+    Executed else branch in "src|test|resources|M1.java", line 26, col 4.
+    Executed return in "src|test|resources|M1.java", line 29, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+1 warning

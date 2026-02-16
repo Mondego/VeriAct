@@ -1,0 +1,45 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModelVarState ...
+  Prover started:TIME
+    [TIME]
+
+ModelVarState: m() ...
+    [TIME]  passed
+
+ModelVarState: mm() ...
+------------------------------------------------------------------------
+ModelVarState.java:25: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "ModelVarState.java", line 22, col 5:
+        //@ ensures size == \old(size)*2; // ERROR
+            ^
+Execution trace information:
+    Executed implicit return in "ModelVarState.java", line 25, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelVarState: mmm() ...
+    [TIME]  passed
+
+ModelVarState: mmmm() ...
+------------------------------------------------------------------------
+ModelVarState.java:34: Warning: Possible violation of modifies clause (Modifies)
+                sz = 2;  // ERROR - no modifies
+                ^
+Associated declaration is "ModelVarState.java", line 32, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelVarState: m5() ...
+    [TIME]  passed
+
+ModelVarState: ModelVarState() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

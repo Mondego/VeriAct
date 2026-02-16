@@ -1,0 +1,87 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: PIN.jml,v 1.5 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public interface PIN { 
+
+   //@ public ghost boolean _isValidated;
+
+   //@ public ghost instance byte _maxTries;
+   //@ public ghost instance byte _triesLeft;
+   /*@ public invariant _maxTries > 0; @*/
+   /*@ public invariant _triesLeft >= 0 && _triesLeft <= _maxTries; @*/
+
+
+   //@ public ghost instance byte[] _pin;
+   //@ public ghost instance short _maxPINSize;
+   /*@ public invariant _pin != null; @*/
+   /*@ public invariant _pin.length == _maxPINSize; @*/
+   /*@ public invariant _pin.owner == this; @*/
+
+   /*@ public normal_behavior
+         requires true;
+         ensures \result == _isValidated;
+	 assignable \nothing;	
+    @*/
+   public /*@pure@*/ boolean isValidated();
+
+   /*@ public normal_behavior
+         requires true;
+         ensures \result == _triesLeft;
+	 assignable \nothing;	
+    @*/
+   public /*@pure@*/ byte getTriesRemaining();
+
+
+   /*@ public normal_behavior
+         requires pin != null;
+	 requires length >= 0 && offset >= 0 && offset + length <= pin.length;
+	 requires _triesLeft > 0;
+	 ensures \result == _isValidated;
+	 ensures !_isValidated ==> _triesLeft == \old(_triesLeft) - 1;
+	 assignable _isValidated, _triesLeft;
+       also
+       public normal_behavior
+	 requires _triesLeft == 0;
+	 ensures !_isValidated;
+	 ensures \result == _isValidated;
+	 assignable \nothing;
+       also
+       public exceptional_behavior
+         requires !(pin != null && length >= 0 && offset >= 0 && offset + length <= pin.length);
+	 requires _triesLeft > 0;
+	 signals (NullPointerException npe) !_isValidated && _triesLeft == \old(_triesLeft) - 1;
+	 signals (ArrayIndexOutOfBoundsException aioobe) !_isValidated && _triesLeft == \old(_triesLeft) - 1;
+	 signals_only NullPointerException, ArrayIndexOutOfBoundsException;
+	 assignable _triesLeft, _isValidated;
+   @*/
+   public boolean check(byte[] pin, short offset, byte length);
+      
+   /*@ public normal_behavior
+         requires _isValidated;
+	 ensures !_isValidated;
+	 ensures _triesLeft == _maxTries;
+	 assignable _isValidated, _triesLeft;
+       also
+         public normal_behavior
+	   requires !_isValidated;
+	   ensures !_isValidated;
+	   ensures _triesLeft == \old(_triesLeft);
+	   assignable \nothing;
+     @*/
+   public void reset();
+   
+}

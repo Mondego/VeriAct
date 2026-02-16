@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+src|test|resources|Instance2.java: Caution: Using given file as the .java file, even though it is not the java file for Instance2 on the classpath
+    [TIME]
+
+Instance2 ...
+  Prover started:TIME
+    [TIME]
+
+Instance2: m() ...
+    [TIME]  passed
+
+Instance2: mm() ...
+    [TIME]  passed
+
+Instance2: Instance2() ...
+    [TIME]  passed
+  [TIME total]
+
+INSTI ...
+    [TIME]
+  [TIME total]
+1 caution

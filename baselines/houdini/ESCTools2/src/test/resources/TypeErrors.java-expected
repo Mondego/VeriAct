@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+src|test|resources|TypeErrors.java: Caution: Using given file as the .java file, even though it is not the java file for TypeErrors on the classpath
+    [TIME]
+
+TypeErrors ...
+src|test|resources|TypeErrors.java:10: Error: The function \typeof takes one argument
+        //-@ ensures \typeof(i,i) <: \type(i);
+                     ^
+src|test|resources|TypeErrors.java:10: Fatal error: Can't find type named "i"
+        //-@ ensures \typeof(i,i) <: \type(i);
+                                           ^
+1 caution
+2 errors

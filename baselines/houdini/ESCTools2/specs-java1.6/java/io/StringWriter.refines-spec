@@ -1,0 +1,28 @@
+// $Id: StringWriter.refines-spec 71985 2008-07-14 20:09:17Z chalin $
+
+package java.io;
+
+public class StringWriter extends java.io.Writer {
+
+    // private StringBuffer buf;
+
+    public StringWriter();
+
+    public void close() throws java.io.IOException;
+
+    public void flush();
+
+    public StringWriter(int initialSize);
+
+    public void write(int c);
+
+    public void write(/*@non_null*/ char[] cbuf, int off, int len);
+
+    public /*@non_null*/ java.lang.String toString();
+
+    public void write(/*@non_null*/ java.lang.String str);
+
+    public void write(/*@non_null*/ java.lang.String str, int off, int len);
+
+    public /*@non_null*/ java.lang.StringBuffer getBuffer();
+}

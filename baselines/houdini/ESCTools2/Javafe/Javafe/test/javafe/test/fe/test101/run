@@ -1,0 +1,11 @@
+#!/bin/sh
+
+## Test checking of modifiers of type declarations [1.1]
+
+${TOOL} Modifiers.java
+${TOOL} Modifiers2.java
+
+${TOOL} Modifiers3.java
+${TOOL} Modifiers3a.java
+${TOOL} Modifiers3b.java
+${TOOL} Modifiers3c.java

@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+IntegralDivMod ...
+  Prover started:TIME
+    [TIME]
+
+IntegralDivMod: m(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: ma(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: mb(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: m2(int, int) ...
+    [TIME]  passed
+
+IntegralDivMod: IntegralDivMod() ...
+    [TIME]  passed
+  [TIME total]

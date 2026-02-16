@@ -1,0 +1,96 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModM ...
+  Prover started:TIME
+    [TIME]
+
+ModM: m() ...
+------------------------------------------------------------------------
+ModM.java:11: Warning: Possible violation of modifies clause (Modifies)
+                mm();       // WARNING
+                  ^
+Associated declaration is "ModM.java", line 16, col 14:
+        //@ modifies j;
+                     ^
+Associated declaration is "ModM.java", line 9, col 5:
+        //@ modifies i,k;
+            ^
+------------------------------------------------------------------------
+ModM.java:11: Warning: Possible violation of modifies clause (Modifies)
+                mm();       // WARNING
+                  ^
+Associated declaration is "ModM.java", line 19, col 16:
+        //@ modifies i,k;
+                       ^
+Associated declaration is "ModM.java", line 6, col 5:
+        //@ modifies i,j;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModM: mm() ...
+    [TIME]  passed immediately
+
+ModM: me() ...
+ModM.java:23: Error: There is no assignable clause allowing this method call
+        public void me() { mee(); } // ERROR
+                              ^
+ModM.java:25: Associated declaration: 
+        //@ modifies \everything;
+                     ^
+ModM.java:22: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+    [TIME]  passed
+
+ModM: mee() ...
+    [TIME]  passed immediately
+
+ModM: mp() ...
+    [TIME]  passed
+
+ModM: mp2() ...
+------------------------------------------------------------------------
+ModM.java:44: Warning: Possible violation of modifies clause (Modifies)
+                if (i == 0) mmp(); // WARNING
+                               ^
+Associated declaration is "ModM.java", line 47, col 14:
+        //@ modifies j;
+                     ^
+Associated declaration is "ModM.java", line 42, col 5:
+        //@ modifies i,k;
+            ^
+Execution trace information:
+    Executed then branch in "ModM.java", line 44, col 14.
+
+------------------------------------------------------------------------
+ModM.java:44: Warning: Possible violation of modifies clause (Modifies)
+                if (i == 0) mmp(); // WARNING
+                               ^
+Associated declaration is "ModM.java", line 50, col 16:
+        //@ modifies i,k;
+                       ^
+Associated declaration is "ModM.java", line 39, col 5:
+        //@ modifies i,j;
+            ^
+Execution trace information:
+    Executed then branch in "ModM.java", line 44, col 14.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModM: mmp() ...
+    [TIME]  passed immediately
+
+ModM: mq() ...
+    [TIME]  passed
+
+ModM: mqq() ...
+    [TIME]  passed immediately
+
+ModM: ModM() ...
+    [TIME]  passed
+  [TIME total]
+4 warnings
+1 error

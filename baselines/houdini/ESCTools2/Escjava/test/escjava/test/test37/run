@@ -1,0 +1,5 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* Exsures.java Exsures2.java
+

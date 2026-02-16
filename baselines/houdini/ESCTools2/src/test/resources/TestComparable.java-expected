@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|TestComparable.java: Caution: Using given file as the .java file, even though it is not the java file for TestComparable on the classpath
+    [TIME]
+
+TestComparable ...
+src|test|resources|TestComparable.java:40: Error: No such method sgn(int) in type java.lang.Comparable
+        //@ assert java.lang.Comparable.sgn(i) == -java.lang.Comparabl ...
+                                        ^
+src|test|resources|TestComparable.java:40: Error: No such method sgn(int) in type java.lang.Comparable
+ ... le.sgn(i) == -java.lang.Comparable.sgn(j);
+                                        ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+2 errors

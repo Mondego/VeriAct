@@ -1,0 +1,35 @@
+ESC/Java version VERSION
+    [TIME]
+
+GhostFieldOverride ...
+GhostFieldOverride.java:7: Error: Another field named 'z' already exists in this type
+        //@ ghost public int z;
+                             ^
+GhostFieldOverride.java:6: Associated declaration: 
+        int z;
+            ^
+GhostFieldOverride.java:9: Error: Another field named 'y' already exists in this type
+        //@ model public int y;
+                             ^
+GhostFieldOverride.java:8: Associated declaration: 
+        int y;
+            ^
+GhostFieldOverride.java:10: Error: Another field named 'x' already exists in this type
+        //@ ghost int x;
+                      ^
+GhostFieldOverride.java:11: Associated declaration: 
+        //@ model int x;
+                      ^
+GhostFieldOverride.java:11: Error: Another field named 'x' already exists in this type
+        //@ model int x;
+                      ^
+GhostFieldOverride.java:10: Associated declaration: 
+        //@ ghost int x;
+                      ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+CHA ...
+  [TIME total]
+1 caution
+4 errors

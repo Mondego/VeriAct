@@ -1,0 +1,76 @@
+ESC/Java version VERSION
+src|test|resources|NotModified.java: Caution: Using given file as the .java file, even though it is not the java file for NotModified on the classpath
+    [TIME]
+
+NotModified ...
+  Prover started:TIME
+    [TIME]
+
+NotModified: m() ...
+------------------------------------------------------------------------
+src|test|resources|NotModified.java:9: Warning: Postcondition possibly not established (Post)
+        } // ERROR - i
+        ^
+Associated declaration is "src|test|resources|NotModified.java", line 6, col 5:
+        //@ ensures \not_modified(i,j);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|NotModified.java", line 9, col 1.
+
+Associated declaration is "src|test|resources|NotModified.java", line 6, col 27:
+        //@ ensures \not_modified(i,j);
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NotModified: m2() ...
+------------------------------------------------------------------------
+src|test|resources|NotModified.java:16: Warning: Postcondition possibly not established (Post)
+        } // ERROR - i,j
+        ^
+Associated declaration is "src|test|resources|NotModified.java", line 12, col 5:
+        //@ ensures \not_modified(i,j);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|NotModified.java", line 16, col 1.
+
+Associated declaration is "src|test|resources|NotModified.java", line 12, col 27:
+        //@ ensures \not_modified(i,j);
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NotModified: m3() ...
+    [TIME]  passed
+
+NotModified: m4() ...
+------------------------------------------------------------------------
+src|test|resources|NotModified.java:30: Warning: Postcondition possibly not established (Post)
+        } // ERROR - j,k
+        ^
+Associated declaration is "src|test|resources|NotModified.java", line 26, col 5:
+        //@ ensures \not_modified(i,j,k);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|NotModified.java", line 30, col 1.
+
+Associated declaration is "src|test|resources|NotModified.java", line 26, col 29:
+        //@ ensures \not_modified(i,j,k);
+                                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+NotModified: mm() ...
+    [TIME]  passed
+
+NotModified: mmm() ...
+    [TIME]  passed
+
+NotModified: mold() ...
+    [TIME]  passed
+
+NotModified: NotModified() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+3 warnings

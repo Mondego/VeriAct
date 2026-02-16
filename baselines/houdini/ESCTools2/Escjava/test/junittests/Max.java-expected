@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+Max ...
+  Prover started:TIME
+    [TIME]
+
+Max: m() ...
+    [TIME]  passed immediately
+
+Max: Max() ...
+    [TIME]  passed
+  [TIME total]

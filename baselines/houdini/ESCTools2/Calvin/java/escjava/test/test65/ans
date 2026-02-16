@@ -1,0 +1,140 @@
+#!/bin/sh -f
+# usage: run FLAGS
+
+# Note, escjava is nondeterministic in the order in which it produces
+# the warnings in this test.  Thus, the output of escjava produced
+# from this script file is placed in a file 'out.raw'.  This file is
+# then sorted, which produces the output of this test (as expected by
+# 'rtest').  The file 'out.raw' is not actually needed, but it produced
+# for possible help in future debugging analysis of this test.
+#
+# Similarly, unlike the standard escjava regression tests which store
+# an answer file 'ans' in the CVS repository, this test instead stores
+# a file 'ans.raw', which contains a correct sequence of answers.  (In
+# fact, it will be some snapshot of the 'out.raw' file.)  Since this
+# sequence may be different from the one actually produced by a test
+# run, this script file sorts 'ans.raw' into 'ans', which is the file
+# that 'rtest' will use to compare the results.
+#
+# Finally, anticipating that some escjava developer in the future will
+# look at the 'out' or 'ans' file of this test directory and get confused
+# at the sight of what appears to be impenetrable garbage, it seems
+# prudent to put some comment at the top of the 'ans' and 'out' files.
+# What better comment than the one given here in the 'run' file!  Hence,
+# the 'run' file is prepended to the 'ans' and 'out' files.
+
+${ESCJ} $* C.java > out.raw
+sort out.raw | cat run -
+sort ans.raw | cat run - > ans
+                                                       ^
+                                      ^
+                                  ^
+                               ^
+                            ^
+                        ^
+                       non_null */ int[] a = null; a = a; } break;
+                    ^
+                   ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+                 ^
+             ^
+             ^
+           ^
+      ^
+      ^
+      ^
+      ^
+      ^
+      ^
+      ^
+      case 0:  m0(); break;
+      case 0:  p0(null); break;
+      case 1:  m1(); break;
+      case 1:  p1(); break;
+      case 2:  m2(); break;
+      case 2:  p2(); break;
+      case 3:  m3(); break;
+      case 4:  m4(); break;
+      case 5:  a = null; break;
+      case 6: { /*@ uninitialized
+      case 7:  b = a; break;
+      case 8:  c = a; break;
+      case 9:  /** <esc>unreachable
+   ^
+  /** "//"   <esc> requires b != null ...
+  /** "<esc> monitored
+  /** "<esc> monitored_by this ...
+  /** //   <esc> requires b != null ...
+  /** <esc>ensures 0 <// comment goes here ...
+  /*@ ensures c // why "c" one wonders ...
+  /*@ non_null
+  /*@ requires x && y */
+  /*@ requires x && y;
+  /*@ requires x ...
+  //@ /* h'\\\\\ ;'' a cmnt" y */ ensures \result < -1
+  //@ invariant tz>=0 /* */*0; invariant tz==10||tz%3==0
+  //@ requires true|"*/\""=="</esc>"; ensures \result > -7
+  //@ requires x && y
+  //@ requires x && y;
+  ^
+  ^
+  ^
+  ^
+  ^
+  ^
+  int tz = 20 /* *// 2; /*@ invariant ...
+  }
+  }
+  }
+  }
+  }
+  }
+/*@requires s=="h</esc>\"</esc>'</esc>\n\034"+'c'+'\''+"</esc>" ...
+19 warnings
+Associated declaration is "C.java", line 14, col 6:
+Associated declaration is "C.java", line 18, col 6:
+Associated declaration is "C.java", line 22, col 6:
+Associated declaration is "C.java", line 26, col 6:
+Associated declaration is "C.java", line 29, col 13:
+Associated declaration is "C.java", line 33, col 13:
+Associated declaration is "C.java", line 4, col 6:
+Associated declaration is "C.java", line 45, col 20:
+Associated declaration is "C.java", line 52, col 3:
+Associated declaration is "C.java", line 57, col 17:
+Associated declaration is "C.java", line 62, col 19:
+Associated declaration is "C.java", line 67, col 34:
+Associated declaration is "C.java", line 68, col 38:
+Associated declaration is "C.java", line 82, col 28:
+Associated declaration is "C.java", line 85, col 31:
+Associated declaration is "C.java", line 87, col 11:
+Associated declaration is "C.java", line 9, col 6:
+Associated declaration is "C.java", line 90, col 6:
+C.java:39: Warning: Precondition possibly not established (Pre)
+C.java:40: Warning: Precondition possibly not established (Pre)
+C.java:41: Warning: Precondition possibly not established (Pre)
+C.java:42: Warning: Precondition possibly not established (Pre)
+C.java:43: Warning: Precondition possibly not established (Pre)
+C.java:44: Warning: Possible assignment of null to variable declared non_null (NonNull)
+C.java:46: Warning: Possible dynamic use before meaningful assignment of local variable (Uninit)
+C.java:47: Warning: Possible race condition (Race)
+C.java:48: Warning: Possible race condition (Race)
+C.java:72: Warning: Precondition possibly not established (Pre)
+C.java:73: Warning: Precondition possibly not established (Pre)
+C.java:74: Warning: Precondition possibly not established (Pre)
+C.java:76: Warning: Code marked as unreachable may possibly be reached (Reachable)
+C.java:80: Warning: Possible violation of object invariant (Invariant)
+C.java:80: Warning: Possible violation of object invariant (Invariant)
+C.java:80: Warning: Postcondition possibly not established (Post)
+C.java:80: Warning: Postcondition possibly not established (Post)
+C.java:94: Warning: Postcondition possibly not established (Post)
+C.java:94: Warning: Postcondition possibly not established (Post)

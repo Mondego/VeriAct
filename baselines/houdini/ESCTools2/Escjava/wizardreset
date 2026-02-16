@@ -1,0 +1,14 @@
+#!/bin/tcsh
+# Program to reset what an invocation of the ESC/Java annotation wizard did
+# Copyright (c) 1999, Compaq Computer Corporation
+# Change history:
+#    8 Apr 1999  rustan     Created
+
+set logfileprefix = (wizard-`echo $1 | sed -e 's/[ :]/-/g'`)
+shift
+set sourcefiles = ($*)
+
+# restore source files
+foreach f ($sourcefiles)
+  mv -f ${f}-${logfileprefix} ${f}
+end

@@ -1,0 +1,60 @@
+ESC/Java version VERSION
+src|test|resources|LoopInvariant.java: Caution: Using given file as the .java file, even though it is not the java file for LoopInvariant on the classpath
+    [TIME]
+
+LoopInvariant ...
+  Prover started:TIME
+    [TIME]
+
+LoopInvariant: m() ...
+    [TIME]  passed
+
+LoopInvariant: m2() ...
+------------------------------------------------------------------------
+src|test|resources|LoopInvariant.java:17: Warning: Loop variant function possible not decreased (Decreases)
+                for (int i=0; i<10; ++i) sum++;
+                            ^
+Associated declaration is "src|test|resources|LoopInvariant.java", line 16, col 6:
+                //@ decreases i;
+                    ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "src|test|resources|LoopInvariant.java", line 17, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LoopInvariant: mm() ...
+------------------------------------------------------------------------
+src|test|resources|LoopInvariant.java:24: Warning: Loop invariant possibly does not hold (LoopInv)
+                while (i<5) {
+                      ^
+Associated declaration is "src|test|resources|LoopInvariant.java", line 23, col 6:
+                //@ loop_invariant sum == i;
+                    ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "src|test|resources|LoopInvariant.java", line 24, col 2.
+    Reached top of loop after 1 iteration in "src|test|resources|LoopInvariant.java", line 24, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LoopInvariant: mmm() ...
+------------------------------------------------------------------------
+src|test|resources|LoopInvariant.java:33: Warning: Loop invariant possibly does not hold (LoopInv)
+                for (int i=0; i<10; ++i) sum++;
+                            ^
+Associated declaration is "src|test|resources|LoopInvariant.java", line 31, col 6:
+                //@ loop_invariant sum == 0;
+                    ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "src|test|resources|LoopInvariant.java", line 33, col 2.
+    Reached top of loop after 1 iteration in "src|test|resources|LoopInvariant.java", line 33, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LoopInvariant: LoopInvariant() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+3 warnings

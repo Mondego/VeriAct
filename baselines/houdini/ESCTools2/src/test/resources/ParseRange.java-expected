@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|ParseRange.java: Caution: Using given file as the .java file, even though it is not the java file for ParseRange on the classpath
+    [TIME]
+
+ParseRange ...
+  Prover started:TIME
+    [TIME]
+
+ParseRange: m() ...
+    [TIME]  passed immediately
+
+ParseRange: ParseRange() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

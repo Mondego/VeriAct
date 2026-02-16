@@ -1,0 +1,47 @@
+ESC/Java version VERSION
+src|test|resources|ModelVarState.java: Caution: Using given file as the .java file, even though it is not the java file for ModelVarState on the classpath
+    [TIME]
+
+ModelVarState ...
+  Prover started:TIME
+    [TIME]
+
+ModelVarState: m() ...
+    [TIME]  passed
+
+ModelVarState: mm() ...
+------------------------------------------------------------------------
+src|test|resources|ModelVarState.java:25: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|ModelVarState.java", line 22, col 5:
+        //@ ensures size == \old(size)*2; // ERROR
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|ModelVarState.java", line 25, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelVarState: mmm() ...
+    [TIME]  passed
+
+ModelVarState: mmmm() ...
+------------------------------------------------------------------------
+src|test|resources|ModelVarState.java:34: Warning: Possible violation of modifies clause (Modifies)
+                sz = 2;  // ERROR - no modifies
+                ^
+Associated declaration is "src|test|resources|ModelVarState.java", line 32, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelVarState: m5() ...
+    [TIME]  passed
+
+ModelVarState: ModelVarState() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

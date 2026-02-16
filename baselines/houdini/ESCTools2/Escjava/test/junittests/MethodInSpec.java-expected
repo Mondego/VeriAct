@@ -1,0 +1,87 @@
+ESC/Java version VERSION
+  Prover started:TIME
+    [TIME]
+
+MethodInSpec ...
+    [TIME]
+
+MethodInSpec: meth(int) ...
+    [TIME]  passed immediately
+
+MethodInSpec: meth2(int) ...
+    [TIME]  passed immediately
+
+MethodInSpec: fact(int) ...
+    [TIME]  passed immediately
+
+MethodInSpec: mf() ...
+------------------------------------------------------------------------
+MethodInSpec.java:18: Warning: Postcondition possibly not established (Post)
+        void mf() {} // FAILS - recursive
+                   ^
+Associated declaration is "MethodInSpec.java", line 17, col 5:
+        //@ ensures fact(3) == 6;
+            ^
+Execution trace information:
+    Executed implicit return in "MethodInSpec.java", line 18, col 12.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+MethodInSpec: mr() ...
+    [TIME]  passed
+
+MethodInSpec: m() ...
+------------------------------------------------------------------------
+MethodInSpec.java:24: Warning: Postcondition possibly not established (Post)
+        void m() {} // FAILS
+                  ^
+Associated declaration is "MethodInSpec.java", line 23, col 5:
+        //@ ensures meth(1) == 0;
+            ^
+Execution trace information:
+    Executed implicit return in "MethodInSpec.java", line 24, col 11.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+MethodInSpec: mm() ...
+    [TIME]  passed
+
+MethodInSpec: mmm() ...
+------------------------------------------------------------------------
+MethodInSpec.java:30: Warning: Postcondition possibly not established (Post)
+        void mmm() {} // OK
+                    ^
+Associated declaration is "MethodInSpec.java", line 29, col 5:
+        //@ ensures meth(meth(1)) == 3;
+            ^
+Execution trace information:
+    Executed implicit return in "MethodInSpec.java", line 30, col 13.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+MethodInSpec: m4(int) ...
+    [TIME]  passed
+
+MethodInSpec: m5() ...
+    [TIME]  passed
+
+MethodInSpec: MethodInSpec() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+MMS ...
+    [TIME]
+
+MMS: mms() ...
+    [TIME]  passed immediately
+
+MMS: mmss() ...
+    [TIME]  passed immediately
+
+MMS: MMS() ...
+    [TIME]  passed
+  [TIME total]
+3 warnings

@@ -1,0 +1,200 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: ECKey.jml,v 1.6 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public interface ECKey {
+
+  /*@ public ghost instance boolean _FPset; @*/
+
+  /*@ public ghost instance boolean _F2Mset; @*/
+
+  /*@ public ghost instance boolean _Aset; @*/
+
+  /*@ public ghost instance boolean _Bset; @*/
+
+  /*@ public ghost instance boolean _Gset; @*/
+
+  /*@ public ghost instance boolean _Rset; @*/
+
+  /*@ public ghost instance boolean _Kset; @*/
+
+  //@ public ghost instance boolean _ECinitialized;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _FPset;
+      assignable _FPset, _ECinitialized;
+  @*/
+  public void setFieldFP(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires true;
+      ensures _F2Mset;
+      assignable _F2Mset, _ECinitialized;
+  @*/
+  public void setFieldF2M(short e)
+    throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires true;
+      ensures _F2Mset;
+      assignable _F2Mset, _ECinitialized;
+  @*/
+  public void setFieldF2M(
+    short e1, short e2, short e3)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Aset;
+      assignable _Aset, _ECinitialized;
+  @*/
+  public void setA(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Bset;
+      assignable _Bset, _ECinitialized;
+  @*/
+  public void setB(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Gset;
+      assignable _Gset, _ECinitialized;
+  @*/
+  public void setG(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _Rset;
+      assignable _Rset, _ECinitialized;
+  @*/
+  public void setR(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires true;
+      ensures _Kset;
+      assignable _Kset;
+  @*/
+  public void setK(short K);
+
+  /*@
+    public normal_behavior
+      requires _ECinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getField(
+    byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires _ECinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getA(
+    byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires _ECinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getB(
+    byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires _ECinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getG(
+    byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires _ECinitialized;
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getR(
+    byte[] buffer, short offset)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires _ECinitialized;
+      ensures \result > 0;
+      assignable \nothing;
+  @*/
+  public short getK() throws CryptoException;
+	
+}

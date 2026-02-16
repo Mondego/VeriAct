@@ -1,0 +1,18 @@
+test0   Good    Java2Html as many files
+test1   Good    Java2Html as one file
+test2   Good    Java2Html as many files, one of which is Prog and the other Lib
+test3	Long	Pachyclient, with no library
+test4	Long	WebSampler, with no library
+test5   Good    NeedsHelper 
+test6   Bad     NeedsInline
+test7   Bad  	warning at return statement and tracing
+test8   Good	use invariants instead of modifiers on multiple field declarations
+test9	Bad	Intraprocedural tracing
+test10	Bad	Explicate default constructors as helpers
+test11  Bad	Inferring thrown exceptions
+
+
+
+
+
+

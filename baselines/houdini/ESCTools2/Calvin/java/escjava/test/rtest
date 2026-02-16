@@ -1,0 +1,20 @@
+#!/bin/sh -f
+# use: rtest directory FLAGS
+# Copyright Hewlett-Packard, 2002
+
+echo === ESC/Java regression test $1 ===
+
+dir=$1
+cd ${dir}
+shift
+
+flags="$*"
+
+
+unset CLASSPATH
+export CLASSPATH
+
+run -quiet -plainwarning -notrace ${flags} > out 2>&1
+diff out ans > diff || echo Failed
+
+cd ..

@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestList.java: Caution: Using given file as the .java file, even though it is not the java file for TestList on the classpath
+    [TIME]
+
+TestList ...
+src|test|resources|TestList.java:50: Fatal error: No method named assertTrue is in scope here.
+        assertTrue( c.isEmpty());
+        ^
+1 caution
+1 error

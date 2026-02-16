@@ -1,0 +1,81 @@
+escjava_java_integral_ops : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem
+
+    % === ESCJ 8: Section 5.1
+
+    integralMod : [ S, S -> S ]
+    integralDiv : [ S, S -> S ]
+
+    S_to_numfield : [ S -> numfield ]
+    numfield_to_S : [ numfield -> S ]
+    CONVERSION+ S_to_numfield, numfield_to_S
+
+    integral_mod_div1 : AXIOM
+      FORALL (i, j : S): integralDiv(i, j) * j + integralMod(i, j) = i
+
+    integral_mod_div2 : AXIOM
+      FORALL (i, j : S): 0 < j IMPLIES
+                         (0 <= integralMod(i, j) AND
+                          integralMod(i, j) < j)
+
+    integral_mod_div3 : AXIOM
+      FORALL (i, j : S): j < 0 IMPLIES
+                         (j < integralMod(i, j) AND
+                          integralMod(i, j) <= 0)
+
+    integral_mod_div4 : AXIOM
+      FORALL (i, j : S): integralMod(i + j, j) = integralMod(i, j)
+
+    integral_mod_div5 : AXIOM
+      FORALL (i, j : S): integralMod(j + i, j) = integralMod(i, j)
+
+    integral_mod_div6 : AXIOM
+      FORALL (i, j : S): i /= 0 IMPLIES integralMod(0, i) = 0
+
+    integral_div_definition : AXIOM
+      FORALL (x, y : S): integralDiv(x * y, y) * y = x * y
+
+    integralEQ, integralGE, integralGT, integralLE, integralLT, integralNE : [ S, S -> S ]
+    integralEQ_definition : AXIOM
+      FORALL (x, y : S): integralEQ(x, y) = bool_true IFF x = y
+    integralGE_definition : AXIOM
+      FORALL (x, y : S): integralGE(x, y) = bool_true IFF x >= y
+    integralGT_definition : AXIOM
+      FORALL (x, y : S): integralGT(x, y) = bool_true IFF x > y
+    integralLE_definition : AXIOM
+      FORALL (x, y : S): integralLE(x, y) = bool_true IFF x <= y
+    integralLT_definition : AXIOM
+      FORALL (x, y : S): integralLT(x, y) = bool_true IFF x < y
+    integralNE_definition : AXIOM
+      FORALL (x, y : S): integralNE(x, y) = bool_true IFF x /= y
+
+    % === Axioms about properties of integral &, |, and /
+
+    integralAnd, integralOr, integralXor, intShiftL, longShiftL : [ S, S -> S ]
+    integralAnd_definition1 : AXIOM
+      FORALL (x, y : S): (0 <= x OR 0 <= y) IMPLIES
+                         0 <= integralAnd(x, y)
+    integralAnd_definition2 : AXIOM
+      FORALL (x, y : S): 0 <= x IMPLIES
+                         integralAnd(x, y) <= x
+    integralAnd_definition3 : AXIOM
+      FORALL (x, y : S): 0 <= y IMPLIES
+                         integralAnd(x, y) <= y
+    integralOr_definition : AXIOM
+      FORALL (x, y : S): (0 <= x AND 0 <= y) IMPLIES
+                         x <= integralOr(x, y) AND y <= integralOr(x, y)
+    integralDiv_definition : AXIOM
+      FORALL (x, y : S): (0 <= x AND 0 <= y) IMPLIES
+                         0 <= integralDiv(x, y) AND integralDiv(x, y) <= x
+    integralXor_definition : AXIOM
+      FORALL (x, y : S): (0 <= x AND 0 <= y) IMPLIES
+                         0 <= integralXor(x, y)
+    intShiftL_definition : AXIOM
+      FORALL (n : S): (0 <= n AND n < 31) IMPLIES
+                      1 <= intShiftL(1, n)
+    longShiftL_definition : AXIOM
+      FORALL (n : S): (0 <= n AND n < 63) IMPLIES
+                      1 <= longShiftL(1, n)
+
+  END escjava_java_integral_ops

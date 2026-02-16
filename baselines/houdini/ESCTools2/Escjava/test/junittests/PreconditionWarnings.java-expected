@@ -1,0 +1,88 @@
+ESC/Java version VERSION
+  Prover started:TIME
+
+PreconditionWarnings ...
+
+PreconditionWarnings: m(int, int) ...
+    [TIME]  passed
+
+PreconditionWarnings: mm() ...
+------------------------------------------------------------------------
+PreconditionWarnings.java:13: Warning: Precondition possibly not established (Pre)
+                m(1,0);
+                 ^
+Associated declaration is "PreconditionWarnings.java", line 9, col 5:
+        //@ requires j > 0;
+            ^
+Associated declaration is "PreconditionWarnings.java", line 6, col 5:
+        //@ requires j < 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PreconditionWarnings: mm1() ...
+------------------------------------------------------------------------
+PreconditionWarnings.java:16: Warning: Precondition possibly not established (Pre)
+                m(0,1);
+                 ^
+Associated declaration is "PreconditionWarnings.java", line 8, col 5:
+        //@ requires i > 0;
+            ^
+Associated declaration is "PreconditionWarnings.java", line 5, col 5:
+        //@ requires i < 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PreconditionWarnings: mm2() ...
+------------------------------------------------------------------------
+PreconditionWarnings.java:19: Warning: Precondition possibly not established (Pre)
+                m(-1,0);
+                 ^
+Associated declaration is "PreconditionWarnings.java", line 9, col 5:
+        //@ requires j > 0;
+            ^
+Associated declaration is "PreconditionWarnings.java", line 6, col 5:
+        //@ requires j < 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PreconditionWarnings: mm3() ...
+------------------------------------------------------------------------
+PreconditionWarnings.java:22: Warning: Precondition possibly not established (Pre)
+                m(0,-1);
+                 ^
+Associated declaration is "PreconditionWarnings.java", line 8, col 5:
+        //@ requires i > 0;
+            ^
+Associated declaration is "PreconditionWarnings.java", line 5, col 5:
+        //@ requires i < 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PreconditionWarnings: mm4() ...
+    [TIME]  passed
+
+PreconditionWarnings: mm5() ...
+    [TIME]  passed
+
+PreconditionWarnings: mm6() ...
+------------------------------------------------------------------------
+PreconditionWarnings.java:31: Warning: Precondition possibly not established (Pre)
+                m(1,-1);
+                 ^
+Associated declaration is "PreconditionWarnings.java", line 9, col 5:
+        //@ requires j > 0;
+            ^
+Associated declaration is "PreconditionWarnings.java", line 5, col 5:
+        //@ requires i < 0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PreconditionWarnings: PreconditionWarnings() ...
+    [TIME]  passed
+  [TIME total]
+5 warnings

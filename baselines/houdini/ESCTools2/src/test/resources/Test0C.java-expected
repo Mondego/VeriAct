@@ -1,0 +1,55 @@
+ESC/Java version VERSION
+src|test|resources|Test0C.java: Caution: Using given file as the .java file, even though it is not the java file for Test0C on the classpath
+    [TIME]
+
+Test0C ...
+  Prover started:TIME
+    [TIME]
+
+Test0C: Test0C(int) ...
+    [TIME]  passed
+
+Test0C: test0() ...
+    [TIME]  passed
+
+Test0C: test1() ...
+    [TIME]  passed
+
+Test0C: test2() ...
+    [TIME]  passed
+
+Test0C: test3() ...
+    [TIME]  passed
+
+Test0C: test4() ...
+    [TIME]  passed
+
+Test0C: test5() ...
+    [TIME]  passed
+
+Test0C: test6() ...
+    [TIME]  passed
+
+Test0C: test7() ...
+    [TIME]  passed
+
+Test0C: cast0(byte, int[]) ...
+------------------------------------------------------------------------
+src|test|resources|Test0C.java:176: Warning: Possible negative array index (IndexNegative)
+  int x = a[i];  // "i" may be negative
+           ^
+Execution trace information:
+    Executed then branch in "src|test|resources|Test0C.java", line 173, col 29.
+    Executed then branch in "src|test|resources|Test0C.java", line 175, col 24.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Test0C: cast1(int, int[]) ...
+    [TIME]  passed
+
+Test0C: cast2(int, int[]) ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

@@ -1,0 +1,34 @@
+This.java:11: Error: Unqualified this cannot be used in static contexts
+        Outer O = this;          // error: unqualified this in static  ...
+                  ^
+This.java:24: Error: Unqualified this cannot be used in static contexts
+            super(this);         // error: constructor arguments are s ...
+                  ^
+This.java:24: Error: No constructor Inner(Outer$Lower) matching given argument types
+            super(this);         // error: constructor arguments are s ...
+            ^
+This.java:28: Error: Unqualified this cannot be used in static contexts
+            this.super(O);       // error: enclosing instance args are ...
+            ^
+This.java:28: Error: Cannot convert Outer$Lower to Outer
+            this.super(O);       // error: enclosing instance args are ...
+            ^
+This.java:42: Error: Only methods of top-level classes may be static
+        static void s() {       // error because static not legal here
+                    ^
+This.java:72: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        x = 0;       // error
+        ^
+This.java:76: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        Outer3.x = 0;       // error
+               ^
+This.java:80: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        Outer3.x = 0;       // error
+               ^
+This.java:91: Error: The instance fields of type Outer3 may not be accessed from type Outer3$Inner
+            Outer3.x = 0;   // error
+                   ^
+This.java:104: Error: An instance method may be invoked only via an object and/or from a non-static context or an inner class enclosed by a type possessing that method.
+    static void n() { m(); }
+                      ^
+11 errors

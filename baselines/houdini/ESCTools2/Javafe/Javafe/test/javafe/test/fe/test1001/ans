@@ -1,0 +1,161 @@
+==== BadSwitches.java: ====
+BadSwitches.java:12: Error: The type of a switch expression must be char, byte, short, or int.
+        switch (l) {}    // error!
+                ^
+BadSwitches.java:14: Error: The type of a switch expression must be char, byte, short, or int.
+        switch (true) {}  // error!
+                ^
+BadSwitches.java:15: Error: The type of a switch expression must be char, byte, short, or int.
+        switch (1.0) {}   // error!
+                ^
+BadSwitches.java:16: Error: The type of a switch expression must be char, byte, short, or int.
+        switch ("hello") {}   // error!
+                ^
+BadSwitches.java:17: Error: The type of a switch expression must be char, byte, short, or int.
+        switch (o) {}    // error!
+                ^
+BadSwitches.java:23: Error: Case label value (hello) not assignable to the switch expression type int
+        case "hello":   // error
+        ^
+BadSwitches.java:25: Error: Case label value (true) not assignable to the switch expression type int
+        case true:      // error
+        ^
+7 errors
+==== ParseErrors.java: ====
+ParseErrors.java:11: Fatal error: Switch body must start with a label
+      int i=0;
+      ^
+1 error
+==== TestCatch.java: ====
+==== TypeErrors1.java: ====
+TypeErrors1.java:4: Error: An abstract method cannot include a body
+  abstract void m1() { }
+  ^
+TypeErrors1.java:7: Error: A native method cannot include a body
+  native void m2() { }
+  ^
+TypeErrors1.java:15: Error: Undefined variable 'i'
+    int l = (i+1)++;
+             ^
+TypeErrors1.java:15: Error: Argument of increment/decrement operation is not a location
+    int l = (i+1)++;
+                 ^
+4 errors
+==== TypeErrors2.java: ====
+TypeErrors2.java:4: Error: This routine is not expected to return a value
+  void m4() { return 1; }
+              ^
+TypeErrors2.java:7: Error: Returns are not allowed in a static initializer
+  static { return; }
+           ^
+TypeErrors2.java:10: Error: Cannot convert boolean to return type int
+  int m5() { return false; }
+             ^
+TypeErrors2.java:13: Error: This routine must return a value
+  int m51() { return; }
+              ^
+TypeErrors2.java:17: Error: Keyword super cannot be used in a static context
+    super.foo();
+    ^
+TypeErrors2.java:22: Error: Cannot throw values of type java.lang.Integer
+    throw new Integer(5);
+    ^
+TypeErrors2.java:27: Error: Exception must be caught by an enclosing try or throws clause
+    throw new Exception();
+    ^
+TypeErrors2.java:34: Error: Non-constant value in switch label
+    case b:
+    ^
+TypeErrors2.java:37: Error: Case label value (-1) not assignable to the switch expression type char
+    case -1:
+    ^
+TypeErrors2.java:41: Error: Duplicate case label 0 in switch statement
+    case 0:
+    ^
+TypeErrors2.java:45: Error: Duplicate default label in switch statement
+    default:
+    ^
+TypeErrors2.java:50: Error: Declared type of a catch formal parameter must be a subclass of java.lang.Throwable
+    catch (Object o) {}
+    ^
+TypeErrors2.java:53: Error: Unexpected array value in initializer
+    int i = { 1, 2 };
+            ^
+TypeErrors2.java:55: Error: Variable 'i' is already defined here.
+    int i=0;            // error: duplicate declaration of i
+        ^
+TypeErrors2.java:58: Error: Attempt to index a non-array value
+    int j = i[0];
+             ^
+TypeErrors2.java:62: Error: Array index is not an integer
+    j = a[false];
+         ^
+TypeErrors2.java:65: Error: Cannot create an instance of an interface
+    new I();
+    ^
+TypeErrors2.java:68: Error: Cannot create an instance of an abstract class
+    new AbstractClass();
+    ^
+TypeErrors2.java:71: Error: Incompatible arguments to the ?: operator
+    int k = i==0 ? 0 : false;
+                 ^
+TypeErrors2.java:74: Error: Non-reference type in instanceof operation
+    while( i instanceof int );
+             ^
+TypeErrors2.java:77: Error: Invalid instanceof operation: A value of type int can never be an instance of java.lang.Object
+    while( i instanceof Object );
+             ^
+TypeErrors2.java:80: Error: Bad cast from int to java.lang.Object
+    Object o = (Object)i;
+               ^
+TypeErrors2.java:83: Error: Invalid types (int and boolean) in equality comparison
+    boolean b1 = ( i == false );
+                     ^
+TypeErrors2.java:86: Error: Left hand side of assignment operator is not a location
+    false = false;
+          ^
+TypeErrors2.java:89: Error: Value of type boolean cannot be assigned to location of type int
+    i = false;
+      ^
+TypeErrors2.java:96: Error: Cannot convert int to boolean
+    while( i );
+           ^
+TypeErrors2.java:99: Error: Cannot convert double to an integral type
+    Double asd = ~0.0;
+                  ^
+TypeErrors2.java:102: Error: Cannot convert boolean to a numeric type 
+    i = +false;
+         ^
+TypeErrors2.java:112: Error: Keyword super cannot be used in a static context
+  int i = super.x;
+          ^
+29 errors
+==== TypeErrors3.java: ====
+TypeErrors3.java:7: Caution: Enclosing statement labelled 'x' is not a while, do or for statement
+    continue x;                 // caution
+    ^
+1 caution
+==== TypeErrors4.java: ====
+TypeErrors4.java:9: Caution: Enclosing statement labelled 'b' is not a while, do or for statement
+      continue b;
+      ^
+TypeErrors4.java:23: Error: No enclosing unlabelled while, do or for statement
+    continue;
+    ^
+TypeErrors4.java:30: Error: No enclosing unlabelled switch, while, do, or for statement
+    break;
+    ^
+TypeErrors4.java:40: Error: Label 'a' already used in this scope
+  a: 
+  ^
+TypeErrors4.java:45: Error: Label 'y' already used in this scope
+    y: 
+    ^
+TypeErrors4.java:51: Error: No enclosing while, do or for statement labelled 'y'
+    continue y;
+    ^
+TypeErrors4.java:54: Error: No enclosing switch, while, do, or for statement labelled 'y'
+    break y;
+    ^
+1 caution
+6 errors

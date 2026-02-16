@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## Check that indirectly-loaded source files are checked to make
+## sure they contain the type they are named after.
+
+${TOOL} p/Master.java

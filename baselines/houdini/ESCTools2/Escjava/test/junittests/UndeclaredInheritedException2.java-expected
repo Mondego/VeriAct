@@ -1,0 +1,139 @@
+ESC/Java version VERSION
+    [TIME]
+
+UndeclaredInheritedException2 ...
+  Prover started:TIME
+    [TIME]
+
+UndeclaredInheritedException2: UndeclaredInheritedException2() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException2: q(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:10: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:11: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // WARNING - gets here because x.m is not decla ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException2: qx(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:18: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:19: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // WARNING - gets here because exceptions are i ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException2: q1(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredInheritedException2: q1x(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredInheritedException2: q3(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:40: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException2: q3x(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:47: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException2: q4(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredInheritedException2: q4x(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:67: Warning: Possible unexpected exception (Exception)
+}  // WARNING - an exception might be thrown
+^
+Execution trace information:
+    Routine call returned exceptionally in "UndeclaredInheritedException2.java", line 66, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException2: rr(UndeclaredInheritedException2$NEx) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:74: Warning: Possible assertion failure (Assert)
+        //@ assert false;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException2: rrx(UndeclaredInheritedException2$Ex) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:89: Warning: Possible assertion failure (Assert)
+//@ assert false;  // WARNING
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "UndeclaredInheritedException2.java", line 84, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredInheritedException2$SNEx ...
+    [TIME]
+
+UndeclaredInheritedException2$SNEx: SNEx() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException2$SNEx: m(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredInheritedException2.java:106: Warning: Possible unexpected exception (Exception)
+    } // WARNING - Unexpected Exception
+    ^
+Execution trace information:
+    Executed then branch in "UndeclaredInheritedException2.java", line 104, col 21.
+    Executed throw in "UndeclaredInheritedException2.java", line 104, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredInheritedException2$NEx ...
+    [TIME]
+
+UndeclaredInheritedException2$NEx: NEx() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException2$NEx: m(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+UndeclaredInheritedException2$SEx ...
+    [TIME]
+
+UndeclaredInheritedException2$SEx: SEx() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException2$SEx: m(java.lang.Object) ...
+    [TIME]  passed
+  [TIME total]
+
+UndeclaredInheritedException2$Ex ...
+    [TIME]
+
+UndeclaredInheritedException2$Ex: Ex() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException2$Ex: m(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+10 warnings

@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|AccessMods.java: Caution: Using given file as the .java file, even though it is not the java file for AccessMods on the classpath
+    [TIME]
+
+AccessMods ...
+  Prover started:TIME
+    [TIME]
+
+AccessMods: f(int) ...
+    [TIME]  passed
+
+AccessMods: AccessMods() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

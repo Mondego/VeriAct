@@ -1,0 +1,79 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: OwnerPIN.jml,v 1.5 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public class OwnerPIN implements PIN {
+
+   /*@ normal_behavior
+         requires true;
+         ensures \result == _isValidated;	
+	 assignable \nothing;
+    @*/
+   protected /*@pure@*/ boolean getValidatedFlag();
+
+
+   /*@ normal_behavior
+         requires true;
+         ensures _isValidated == value;	
+         assignable _isValidated;
+    @*/
+   protected void setValidatedFlag(boolean value);
+
+   /*@ public normal_behavior
+         requires maxTries > 0;
+	 requires maxPINSize > 0;
+         ensures _maxPINSize == maxPINSize;
+         ensures _maxTries == maxTries;
+         ensures _triesLeft == maxTries;
+         ensures !_isValidated ;
+         assignable _pin, _isValidated, _triesLeft,
+                    _maxTries, _maxPINSize;
+    @*/
+   public OwnerPIN(byte maxTries, byte maxPINSize) throws PINException;
+
+   /*@ public normal_behavior 
+         requires pin != null;
+	 requires offset >= 0 && length >= 0 && offset + length <= pin.length;
+	 requires length <= _maxPINSize;
+         ensures  (\forall short i; i>=0 && i<length; _pin[i] == pin[offset + i]);
+         ensures  _triesLeft == _maxTries;
+         ensures  !_isValidated;
+         assignable _triesLeft, _isValidated, _pin[0..length-1];
+    @*/
+   public void update(byte[] pin, short offset, byte length)
+  	    throws PINException;
+
+   /*@ public normal_behavior
+         requires true;
+	 ensures !_isValidated;
+         ensures  _triesLeft == _maxTries;
+         assignable _triesLeft, _isValidated;
+    @*/
+   public void resetAndUnblock();
+
+   // specified in PIN
+   public boolean isValidated();
+
+   // specified in PIN   
+   public /*@pure@*/ byte getTriesRemaining();
+
+   // specified in PIN
+   public boolean check(byte[] pin, short offset, byte length);
+  
+   // specified in PIN
+   public void reset();
+   
+}

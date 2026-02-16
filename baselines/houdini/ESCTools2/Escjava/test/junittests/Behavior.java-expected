@@ -1,0 +1,89 @@
+ESC/Java version VERSION
+    [TIME]
+
+Behavior ...
+  Prover started:TIME
+    [TIME]
+
+Behavior: m() ...
+    [TIME]  passed
+
+Behavior: m2() ...
+------------------------------------------------------------------------
+Behavior.java:18: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Behavior.java", line 13, col 12:
+        /*@ public exceptional_behavior ...
+                   ^
+Execution trace information:
+    Executed return in "Behavior.java", line 17, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Behavior: m3() ...
+    [TIME]  passed
+
+Behavior: m4() ...
+------------------------------------------------------------------------
+Behavior.java:32: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Behavior.java", line 27, col 12:
+        /*@ public normal_behavior ...
+                   ^
+Execution trace information:
+    Executed throw in "Behavior.java", line 31, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Behavior: mm(int) ...
+    [TIME]  passed
+
+Behavior: mme(int) ...
+------------------------------------------------------------------------
+Behavior.java:61: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Behavior.java", line 52, col 12:
+            public exceptional_behavior ...
+                   ^
+Execution trace information:
+    Executed then branch in "Behavior.java", line 58, col 11.
+    Executed return in "Behavior.java", line 58, col 11.
+
+------------------------------------------------------------------------
+Behavior.java:61: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Behavior.java", line 48, col 12:
+        /*@ public normal_behavior ...
+                   ^
+Execution trace information:
+    Executed else branch in "Behavior.java", line 58, col 2.
+    Executed then branch in "Behavior.java", line 59, col 11.
+    Executed throw in "Behavior.java", line 59, col 11.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Behavior: n() ...
+------------------------------------------------------------------------
+Behavior.java:66: Warning: Postcondition possibly not established (Post)
+        public void n() { ++j; }
+                               ^
+Associated declaration is "Behavior.java", line 65, col 5:
+        //@ ensures j < \old(j); // Warning here
+            ^
+Execution trace information:
+    Executed implicit return in "Behavior.java", line 66, col 24.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Behavior: Behavior() ...
+    [TIME]  passed
+  [TIME total]
+5 warnings

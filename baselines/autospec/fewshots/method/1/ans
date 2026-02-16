@@ -1,0 +1,1 @@
+//@ ensures (\forall int k; 0 <= k && k < n; arr[k] == \old(arr[k]) + c);

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+## Test the use of new under 1.1
+
+${TOOL} New.java
+${TOOL} New1.java
+${TOOL} New2.java
+${TOOL} New3.java
+${TOOL} New4.java
+
+${TOOL} NewII.java
+
+${TOOL} Anon.java
+${TOOL} Anon2.java
+
+${TOOL} Access.java Access2.java

@@ -1,0 +1,44 @@
+#!/proj/system/bin/lim
+
+PROC Main() IS
+  DO CopyPragma(); Wr('\n') | EVAL Rd() OD
+END;
+
+PROC CopyPragma() IS
+  Rd("//@"); CopyUntilEndOfShortComment()
+  |
+  Rd("/*@"); CopyUntilEndOfLongComment()
+  |
+  Rd("<esc>"); CopyUntilEndOfJavadocComment()
+END;
+
+PROC CopyUntilEndOfShortComment() IS
+  TIL Rd('\n') | Rd("//"); SkipUntilEOL()
+  DO  Wr(Rd())
+  END
+END;
+
+PROC SkipUntilEOL() IS
+  TIL Rd('\n')
+  DO  EVAL Rd()
+  END
+END;
+
+PROC CopyUntilEndOfLongComment() IS
+  TIL Rd("*/")
+  DO  Rd("//"); SkipUntilEOL(); Wr(' ')
+    | Rd('\n'); Wr(' ')
+    | Wr(Rd())
+  END
+END;
+
+PROC CopyUntilEndOfJavadocComment() IS
+  TIL Rd("</esc>")
+  DO  Rd('\n'); Wr(' ')
+    | Wr(Rd())
+  END
+END;
+
+PROC SkipWhite() IS
+  DO Rd('\s') OD
+END;

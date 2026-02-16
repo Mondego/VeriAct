@@ -1,0 +1,409 @@
+escjava_logic : THEORY
+  BEGIN
+    IMPORTING escjava_java_semantics,
+              escjava_jml_semantics,
+              escjava_lock_semantics
+%               escjava_arrays
+
+EXPLIES( a, b : bool) : bool = a OR (NOT b) 
+
+% exceptionEqAxiom : AXIOM
+%   FORALL(a, b : S) :
+%     java_lang_Throwable__stackTrace(a,b) = getStackTrace__state(a,b) 
+
+ecReturn : S
+ecThrow : S;
+
+distinctAxiom : AXIOM
+NOT refEQ
+(ecReturn, ecThrow)
+java_lang_Throwable__stackTrace
+(a : S ,b : S)
+: S
+getStackTrace__state
+(a : S ,b : S)
+: S
+intValue__state
+(a : S ,b : S)
+: S
+;
+
+exceptionEqAxiom : AXIOM
+  FORALL(a, b : S) :
+    java_lang_Throwable__stackTrace(a,b) = getStackTrace__state(a,b) 
+
+testTheorem : THEOREM
+FORALL
+(
+  vc_P_f_3_4 , objectState_pre_5_35_43 , objectState_5_35_43 , T_org_jmlspecs_lang_JMLDataGroup , s , theInteger_pre_40_33_25 , theInteger_40_33_25 , elems_pre , alloc_pre , state_pre , state , x_3_32 , T_java_lang_Integer , brokenObj , java_lang_Throwable__stackTrace , getStackTrace__state , brokenObj_1_ , Null_7_10 , Pre_7_19 , T_java_lang_Number , EC_7_11_7_11 , XRES_7_11_7_11 , T_java_lang_Exception , RES_7_11_7_11 , intValue__state , trace_Return_0_9_1 , Exception_11_4 , Post_3_4_11_4 : S )
+:
+
+
+(EXPLIES
+  (
+    %LBLNEGvc_P_f_3_4% 
+    (
+      (refEQ
+        (objectState_pre_5_35_43, objectState_5_35_43)
+        )
+      AND
+      (refEQ
+        (objectState_5_35_43, asField
+          (objectState_5_35_43, T_org_jmlspecs_lang_JMLDataGroup)
+          )
+        )
+      AND
+      (
+        (FORALL 
+          (s : S)
+          : 
+          (refNE
+            (s, java_null)
+            )
+          IMPLIES
+          (refNE
+            (select
+              (objectState_5_35_43, s)
+              , java_null)
+            )
+          )
+        )
+      AND
+      (refEQ
+        (theInteger_pre_40_33_25, theInteger_40_33_25)
+        )
+      AND
+      (refEQ
+        (theInteger_40_33_25, asField
+          (theInteger_40_33_25, T_int)
+          )
+        )
+      AND
+      (refEQ
+        (elems_pre, elems)
+        )
+      AND
+      (refEQ
+        (elems, asElems
+          (elems)
+          )
+        )
+      AND
+      (refEQ
+        (LS, asLockSet
+          (LS)
+          )
+        )
+      AND
+      (refEQ
+        (state_pre, state)
+        )
+      )
+    IMPLIES
+    (
+      (
+        (is
+          (x_3_32, T_java_lang_Integer)
+          )
+        AND
+        (
+          (FORALL 
+            (brokenObj : S)
+            : 
+            refEQ
+            (java_lang_Throwable__stackTrace
+              (state, brokenObj)
+              , getStackTrace__state
+              (state, brokenObj)
+              )
+            )
+          )
+        AND
+        (
+          (FORALL 
+            (brokenObj_1_ : S)
+            : 
+            refEQ
+            (java_lang_Throwable__stackTrace
+              (state, brokenObj_1_)
+              , getStackTrace__state
+              (state, brokenObj_1_)
+              )
+            )
+          )
+        AND
+        (
+          (
+            (refNE
+              (x_3_32, java_null)
+              )
+            AND
+            (
+              (
+                (%LBLNEGNull_7_10% 
+                  refNE
+                  (x_3_32, java_null)
+                  )
+                )
+              OR
+              (
+                (%LBLNEGNull_7_10% 
+                  refNE
+                  (x_3_32, java_null)
+                  )
+                AND
+                (
+                  (
+                    (%LBLNEGPre_7_19% 
+                      (is
+                        (x_3_32, T_java_lang_Integer)
+                        )
+                      AND
+                      (refNE
+                        (x_3_32, java_null)
+                        )
+                      )
+                    OR
+                    (%LBLNEGPre_7_19% 
+                      (is
+                        (x_3_32, T_java_lang_Number)
+                        )
+                      AND
+                      (refNE
+                        (x_3_32, java_null)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          OR
+          (
+            (refNE
+              (x_3_32, java_null)
+              )
+            AND
+            (%LBLNEGNull_7_10% 
+              refNE
+              (x_3_32, java_null)
+              )
+            AND
+            (
+              (
+                (is
+                  (x_3_32, T_java_lang_Integer)
+                  )
+                AND
+                (refNE
+                  (x_3_32, java_null)
+                  )
+                )
+              OR
+              (
+                (
+                  (is
+                    (x_3_32, T_java_lang_Integer)
+                    )
+                  AND
+                  (refNE
+                    (x_3_32, java_null)
+                    )
+                  )
+                )
+              )
+            AND
+            (
+              (
+                (is
+                  (x_3_32, T_java_lang_Number)
+                  )
+                AND
+                (refNE
+                  (x_3_32, java_null)
+                  )
+                )
+              OR
+              (
+                (
+                  (is
+                    (x_3_32, T_java_lang_Number)
+                    )
+                  AND
+                  (refNE
+                    (x_3_32, java_null)
+                    )
+                  )
+                )
+              )
+            AND
+            (
+              (refEQ
+                (EC_7_11_7_11, ecReturn)
+                )
+              OR
+              (
+                (refEQ
+                  (EC_7_11_7_11, ecThrow)
+                  )
+                AND
+                (<=
+                  (typeof
+                    (XRES_7_11_7_11)
+                    , T_java_lang_Exception)
+                  )
+                )
+              )
+            AND
+            (is
+              (RES_7_11_7_11, T_int)
+              )
+            AND
+            (refEQ
+              (RES_7_11_7_11, intValue__state
+                (state, x_3_32)
+                )
+              )
+            AND
+            (
+              (
+                (refEQ
+                  (EC_7_11_7_11, ecReturn)
+                  )
+                AND
+                (is
+                  (x_3_32, T_java_lang_Integer)
+                  )
+                AND
+                (refNE
+                  (x_3_32, java_null)
+                  )
+                )
+              IMPLIES
+              (=
+                (RES_7_11_7_11, select
+                  (theInteger_40_33_25, x_3_32)
+                  )
+                )
+              )
+            AND
+            (
+              (
+                (refEQ
+                  (EC_7_11_7_11, ecThrow)
+                  )
+                AND
+                (<=
+                  (typeof
+                    (XRES_7_11_7_11)
+                    , T_java_lang_Exception)
+                  )
+                )
+              IMPLIES
+              (
+                (
+                  (is
+                    (x_3_32, T_java_lang_Integer)
+                    )
+                  AND
+                  (refNE
+                    (x_3_32, java_null)
+                    )
+                  )
+                )
+              )
+            AND
+            (
+              (
+                (refEQ
+                  (EC_7_11_7_11, ecThrow)
+                  )
+                AND
+                (<=
+                  (typeof
+                    (XRES_7_11_7_11)
+                    , T_java_lang_Exception)
+                  )
+                )
+              IMPLIES
+              (
+                (
+                  (is
+                    (x_3_32, T_java_lang_Number)
+                    )
+                  AND
+                  (refNE
+                    (x_3_32, java_null)
+                    )
+                  )
+                )
+              )
+            AND
+            (%LBLPOStrace_Return_0_9_1% 
+              true )
+            AND
+            (
+              (FORALL 
+                (brokenObj : S)
+                : 
+                refEQ
+                (java_lang_Throwable__stackTrace
+                  (state, brokenObj)
+                  , getStackTrace__state
+                  (state, brokenObj)
+                  )
+                )
+              )
+            AND
+            (
+              (FORALL 
+                (brokenObj_1_ : S)
+                : 
+                refEQ
+                (java_lang_Throwable__stackTrace
+                  (state, brokenObj_1_)
+                  , getStackTrace__state
+                  (state, brokenObj_1_)
+                  )
+                )
+              )
+            AND
+            (
+              (
+                (%LBLNEGException_11_4% 
+                  refEQ
+                  (ecReturn, ecReturn)
+                  )
+                )
+              OR
+              (
+                (%LBLNEGException_11_4% 
+                  refEQ
+                  (ecReturn, ecReturn)
+                  )
+                AND
+                (
+                  (%LBLNEGPost_3_4_11_4% 
+                    (
+                      (refEQ
+                        (ecReturn, ecThrow)
+                        )
+                      AND
+                      (<=
+                        (typeof
+                          (XRES_7_11_7_11)
+                          , T_java_lang_Exception)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    ,true)
+  )
+
+END escjava_logic

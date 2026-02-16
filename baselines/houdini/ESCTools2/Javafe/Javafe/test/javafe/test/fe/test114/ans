@@ -1,0 +1,19 @@
+LocalClassInStaticMember.java:19: Error: Inner classes may not declare static members, unless they are compile-time constant fields
+            static int w=1;  // error: local types can't contain stati ...
+                       ^
+LocalClassInStaticMember.java:15: Error: The instance fields of type LocalClassInStaticMember may not be accessed from type LocalClassInStaticMember$14$Local
+            int f = i;       // error: outside instance fields not acc ...
+                    ^
+LocalClassInStaticMember.java:23: Error: The instance fields of type LocalClassInStaticMember may not be accessed from type LocalClassInStaticMember$14$Local$Inner
+                int r = i;   // error: still can't access i field
+                        ^
+LocalClassInStaticMember.java:50: Error: Inner classes may not declare static members, unless they are compile-time constant fields
+            static int w=1;  // error: local types can't contain stati ...
+                       ^
+LocalClassInStaticMember.java:46: Error: The instance fields of type LocalClassInStaticMember2 may not be accessed from type LocalClassInStaticMember2$45$<anonymous>
+            int f = i;       // error: outside instance fields not acc ...
+                    ^
+LocalClassInStaticMember.java:54: Error: The instance fields of type LocalClassInStaticMember2 may not be accessed from type LocalClassInStaticMember2$45$<anonymous>$Inner
+                int r = i;   // error: still can't access i field
+                        ^
+6 errors

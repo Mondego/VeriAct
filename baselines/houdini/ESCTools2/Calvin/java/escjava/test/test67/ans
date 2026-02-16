@@ -1,0 +1,33 @@
+Error0.java:10: Fatal error: Unexpected character '@'
+  @             \nonnullelements((Object[])\result);</esc>
+  ^
+1 error
+Error1.java:5: Fatal error: Unexpected character '@'
+  //@@@@@@@@ requires x instanceof Error1
+     ^
+1 error
+Error2.java:5: Fatal error: Unexpected character '@'
+  //@ requires x instanceof Error2    @@@@@
+                                      ^
+1 error
+Error3.java:6: Fatal error: Unexpected character '@'
+  /*@ @@@@@@  requires x instanceof Error3 */
+      ^
+1 error
+Error4.java:6: Fatal error: Unexpected character '@'
+    @@ @@@@@@  x
+       ^
+1 error
+D.java:14: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "D.java", line 7, col 15:
+    *     <esc>ensures \result < 0;</esc>
+               ^
+D.java:14: Warning: Postcondition possibly not established (Post)
+  }
+  ^
+Associated declaration is "D.java", line 9, col 27:
+    *     <esc>modifies x; ensures x < 0;</esc>
+                           ^
+2 warnings

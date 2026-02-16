@@ -1,0 +1,43 @@
+#!/bin/sh -f
+
+# use: rtest directory FLAGS
+
+# Test for required environment variables.  If not set, issue a warning and use
+# a reasonable default -- this allows for simple command line invocation of this
+# script.
+
+if [ -z "${DIFF}" ]; then
+    export DIFF="diff -bw"
+    echo -n "$0: "
+    echo -n " Warning: DIFF environment variable not set."
+    echo    " Will be using '$DIFF'."
+fi
+
+if [ -z "${ESCJ}" ]; then
+    export ESCJ="escj"
+    echo -n "$0: "
+    echo -n " Warning: ESCJ environment variable not set."
+    echo    " Will be using '$ESCJ'."
+fi
+
+## echo === ESC/Java regression test $1 ===
+echo -n .
+
+dir=$1
+cd ${dir}
+shift
+
+flags="$*"
+
+./run -quiet -plainwarning -notrace -noSemicolonWarnings -nowarn Modifies ${flags} > out 2>&1
+
+if ! ${DIFF} out ans > diffs; then
+  echo
+  echo ${dir} Failed
+  cd ..
+  exit 1;
+else
+  rm -f out diffs
+fi
+
+cd ..

@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestException.java: Caution: Using given file as the .java file, even though it is not the java file for TestException on the classpath
+    [TIME]
+
+TestException ...
+src|test|resources|TestException.java:21: Fatal error: No method named assertTrue is in scope here.
+    assertTrue ((new Exception()).getMessage() == null);
+    ^
+1 caution
+1 error

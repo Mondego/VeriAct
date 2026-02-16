@@ -1,0 +1,67 @@
+ESC/Java version VERSION
+    [TIME]
+
+Mod2 ...
+  Prover started:TIME
+    [TIME]
+
+Mod2: m() ...
+------------------------------------------------------------------------
+Mod2.java:17: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Mod2.java", line 10, col 5:
+        //@ ensures j == 3+a;    // WARNING
+            ^
+Execution trace information:
+    Executed implicit return in "Mod2.java", line 17, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Mod2: m1() ...
+------------------------------------------------------------------------
+Mod2.java:26: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Mod2.java", line 19, col 5:
+        //@ ensures jj == 3+a;   // WARNING
+            ^
+Execution trace information:
+    Executed implicit return in "Mod2.java", line 26, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Mod2: m2() ...
+------------------------------------------------------------------------
+Mod2.java:35: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Mod2.java", line 28, col 5:
+        //@ ensures k == 4+\old(a);  // WARNING 
+            ^
+Execution trace information:
+    Executed implicit return in "Mod2.java", line 35, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Mod2: mm(int) ...
+------------------------------------------------------------------------
+Mod2.java:48: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Mod2.java", line 38, col 5:
+        //@ ensures j == 3+a+0*\old(j); // WARNING
+            ^
+Execution trace information:
+    Executed implicit return in "Mod2.java", line 48, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Mod2: Mod2() ...
+    [TIME]  passed immediately
+  [TIME total]
+4 warnings

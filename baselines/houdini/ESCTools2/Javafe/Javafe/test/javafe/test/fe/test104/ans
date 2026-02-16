@@ -1,0 +1,7 @@
+Initializers.java:13: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        s = i;          // Error: this is a static context
+            ^
+Initializers.java:23: Error: Modifier 'final' not allowed on initializer body declarations
+    final { }           // Error: bad modifier
+          ^
+2 errors

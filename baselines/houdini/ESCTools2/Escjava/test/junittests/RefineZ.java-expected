@@ -1,0 +1,17 @@
+ESC/Java version VERSION
+RefineZ.java: Caution: Using given file as the .java file, even though it is not the java file for sub.RefineZ on the classpath
+Error: The command-line argument RefineZ.java was not in the refinement sequence for type sub.RefineZ: .|sub|RefineZ.spec
+.|sub|RefineZ.spec:1: Error: Package name does not match the package name in .|sub|RefineZ.spec:  vs. sub
+public class RefineZ {}
+^
+    [TIME]
+
+sub.RefineZ ...
+  Prover started:TIME
+    [TIME]
+
+sub.RefineZ: RefineZ() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 errors

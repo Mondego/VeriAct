@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestFile.java: Caution: Using given file as the .java file, even though it is not the java file for TestFile on the classpath
+    [TIME]
+
+TestFile ...
+src|test|resources|TestFile.java:15: Fatal error: No method named assertTrue is in scope here.
+      assertTrue (e instanceof NullPointerException);
+      ^
+1 caution
+1 error

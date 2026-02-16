@@ -1,0 +1,29 @@
+ESC/Java version VERSION
+src|test|resources|DupMM.java: Caution: Using given file as the .java file, even though it is not the java file for DupMM on the classpath
+src|test|resources|DupMM.java:2: Error: Could not find file referenced in refine annotation: DupMM.spec
+//@ refine "DupMM.spec";
+    ^
+    [TIME]
+
+DupMM ...
+  Prover started:TIME
+    [TIME]
+
+DupMM: DupMM() ...
+    [TIME]  passed
+
+DupMM: m() ...
+    [TIME]  passed
+
+DupMM: DupMM(int) ...
+    [TIME]  passed
+  [TIME total]
+
+DupMM$C ...
+    [TIME]
+
+DupMM$C: C() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 error

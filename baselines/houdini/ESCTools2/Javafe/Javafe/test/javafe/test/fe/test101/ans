@@ -1,0 +1,172 @@
+Modifiers.java:10: Caution: type PublicClass must be declared in a file named PublicClass.java if it is to be declared public.
+    PublicClass {}            // Error because doesn't match filename
+    ^
+Modifiers.java:37: Caution: type PublicInterface must be declared in a file named PublicInterface.java if it is to be declared public.
+    PublicInterface {}            // Error because doesn't match filen ...
+    ^
+Modifiers.java:11: Error: Modifier 'private' not allowed on package-member type declarations
+private class                 // Error: not private <p-m class>
+^
+Modifiers.java:13: Error: Modifier 'protected' not allowed on package-member type declarations
+protected class               // Parse error: protected <p-m class>
+^
+Modifiers.java:15: Error: Package-member types cannot be declared static
+static class                  // Parse error: static <p-m class>
+^
+Modifiers.java:19: Error: Modifier 'synchronized' not allowed on type declarations
+synchronized class            // Parse error: synchronized <p-m class>
+^
+Modifiers.java:21: Error: Modifier 'volatile' not allowed on type declarations
+volatile class                // Parse error: volatile <p-m class>
+^
+Modifiers.java:23: Error: Modifier 'transient' not allowed on type declarations
+transient class               // Parse error: transient <p-m class>
+^
+Modifiers.java:25: Error: Modifier 'native' not allowed on type declarations
+native class                  // Parse error: native <p-m class>
+^
+Modifiers.java:38: Error: Modifier 'private' not allowed on package-member type declarations
+private interface                 // Error: not private <p-m interface ...
+^
+Modifiers.java:40: Error: Modifier 'protected' not allowed on package-member type declarations
+protected interface               // Parse error: protected <p-m inter ...
+^
+Modifiers.java:42: Error: Package-member types cannot be declared static
+static interface                  // Parse error: static <p-m interfac ...
+^
+Modifiers.java:44: Error: Modifier 'final' not allowed on interface declarations
+final interface                   // Error: final <p-m interface>
+^
+Modifiers.java:46: Error: Modifier 'synchronized' not allowed on type declarations
+synchronized interface            // Parse error: synchronized <p-m in ...
+^
+Modifiers.java:48: Error: Modifier 'volatile' not allowed on type declarations
+volatile interface                // Parse error: volatile <p-m interf ...
+^
+Modifiers.java:50: Error: Modifier 'transient' not allowed on type declarations
+transient interface               // Parse error: transient <p-m inter ...
+^
+Modifiers.java:52: Error: Modifier 'native' not allowed on type declarations
+native interface                  // Parse error: native <p-m interfac ...
+^
+Modifiers.java:74: Error: Modifier 'synchronized' not allowed on type declarations
+    synchronized class            // Error: inner classes can't be ...
+                 ^
+Modifiers.java:76: Error: Modifier 'volatile' not allowed on type declarations
+    volatile class                // Error: inner classes can't be ...
+             ^
+Modifiers.java:78: Error: Modifier 'transient' not allowed on type declarations
+    transient class               // Error: inner classes can't be ...
+              ^
+Modifiers.java:80: Error: Modifier 'native' not allowed on type declarations
+    native class                  // Error: inner classes can't be ...
+           ^
+Modifiers.java:102: Error: Modifier 'final' not allowed on interface declarations
+    final interface                    // Error: interfaces can't be f ...
+          ^
+Modifiers.java:104: Error: Modifier 'synchronized' not allowed on type declarations
+    synchronized interface             // Error: inner interfacees can ...
+                 ^
+Modifiers.java:106: Error: Modifier 'volatile' not allowed on type declarations
+    volatile interface                // Error: inner interfacees can' ...
+             ^
+Modifiers.java:108: Error: Modifier 'transient' not allowed on type declarations
+    transient interface               // Error: inner interfacees can' ...
+              ^
+Modifiers.java:110: Error: Modifier 'native' not allowed on type declarations
+    native interface                  // Error: inner interfacees can' ...
+           ^
+2 cautions
+24 errors
+Modifiers2.java:16: Error: Nested type Top$Inner$StaticClass cannot be static; static types can be members of only interfaces and top-level classes.
+        static class                  // Error: Static members can onl ...
+               ^
+Modifiers2.java:21: Error: Modifier 'synchronized' not allowed on type declarations
+        synchronized class            // Error: inner classes can't be ...
+                     ^
+Modifiers2.java:23: Error: Modifier 'volatile' not allowed on type declarations
+        volatile class                // Error: inner classes can't be ...
+                 ^
+Modifiers2.java:25: Error: Modifier 'transient' not allowed on type declarations
+        transient class               // Error: inner classes can't be ...
+                  ^
+Modifiers2.java:27: Error: Modifier 'native' not allowed on type declarations
+        native class                  // Error: inner classes can't be ...
+               ^
+Modifiers2.java:43: Error: Static types can be members of only interfaces and top-level classes.  (Interfaces are implicitly static.)
+        interface                    // Error: interfaces can't be mem ...
+        ^
+Modifiers2.java:59: Error: Modifier 'private' not allowed on interface member declarations
+        private class              // interface "fields" can't be priv ...
+                ^
+Modifiers2.java:62: Error: Modifier 'protected' not allowed on interface member declarations
+        protected class            // interface "fields" can't be priv ...
+                  ^
+Modifiers2.java:69: Error: Modifier 'synchronized' not allowed on type declarations
+        synchronized class         // Error: inner classes can't be .. ...
+                     ^
+Modifiers2.java:71: Error: Modifier 'volatile' not allowed on type declarations
+        volatile class             // Error: inner classes can't be .. ...
+                 ^
+Modifiers2.java:73: Error: Modifier 'transient' not allowed on type declarations
+        transient class            // Error: inner classes can't be .. ...
+                  ^
+Modifiers2.java:75: Error: Modifier 'native' not allowed on type declarations
+        native class               // Error: inner classes can't be .. ...
+               ^
+Modifiers2.java:93: Error: Modifier 'private' not allowed on interface member declarations
+        private interface          // interface "fields" can't be priv ...
+                ^
+Modifiers2.java:96: Error: Modifier 'protected' not allowed on interface member declarations
+        protected interface        // interface "fields" can't be priv ...
+                  ^
+Modifiers2.java:101: Error: Modifier 'final' not allowed on interface declarations
+        final interface            // interfaces can't be final
+              ^
+Modifiers2.java:103: Error: Modifier 'synchronized' not allowed on type declarations
+        synchronized interface     // Error: inner interfacees can't b ...
+                     ^
+Modifiers2.java:105: Error: Modifier 'volatile' not allowed on type declarations
+        volatile interface         // Error: inner interfacees can't b ...
+                 ^
+Modifiers2.java:107: Error: Modifier 'transient' not allowed on type declarations
+        transient interface        // Error: inner interfacees can't b ...
+                  ^
+Modifiers2.java:109: Error: Modifier 'native' not allowed on type declarations
+        native interface           // Error: inner interfacees can't b ...
+               ^
+19 errors
+Modifiers3.java:11: Error: Modifier 'public' not allowed on non-member type declarations
+        public class           // error
+        ^
+Modifiers3.java:13: Error: Modifier 'private' not allowed on non-member type declarations
+        private class          // error
+        ^
+Modifiers3.java:15: Error: Modifier 'protected' not allowed on non-member type declarations
+        protected class        // error
+        ^
+Modifiers3.java:17: Error: Modifier 'static' not allowed on non-member type declarations
+        static class           // error
+        ^
+Modifiers3.java:19: Error: Modifier 'volatile' not allowed on non-member type declarations
+        volatile class       // error
+        ^
+Modifiers3.java:21: Error: Modifier 'transient' not allowed on non-member type declarations
+        transient class      // error
+        ^
+Modifiers3.java:23: Error: Modifier 'native' not allowed on non-member type declarations
+        native class            // error   
+        ^
+7 errors
+Modifiers3a.java:3: Fatal error: Unexpected token 'class', expected '('
+        synchronized class    // parse error
+                     ^
+1 error
+Modifiers3b.java:3: Fatal error: Expected a Name, got 'interface'
+        abstract interface         // parse error (ok, I guess...)
+                 ^
+1 error
+Modifiers3c.java:3: Fatal error: Expected a Name, got 'interface'
+        final interface         // parse error (ok, I guess...)
+              ^
+1 error

@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|Min.java: Caution: Using given file as the .java file, even though it is not the java file for Min on the classpath
+    [TIME]
+
+Min ...
+src|test|resources|Min.java:60: Error: No such field in type java.lang.Object
+ ... n Object ooo; c.contains(ooo); ooo.theHashValue)
+                                        ^
+src|test|resources|Min.java:61: Error: No such field in type java.lang.Object
+                                == o.theHashValue );
+                                     ^
+src|test|resources|Min.java:64: Error: No such field in type java.lang.Object
+ ... n Object ooo; c.contains(ooo); ooo.theHashValue)
+                                        ^
+src|test|resources|Min.java:65: Error: No such field in type java.lang.Object
+                                <= o.theHashValue );
+                                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+4 errors

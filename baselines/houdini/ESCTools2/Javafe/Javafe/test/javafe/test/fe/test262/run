@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Ticket #262: Check parsing of binary inner classes 
+
+${TOOL} InnerClassTest.java

@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|InterfaceModelMethod.java: Caution: Using given file as the .java file, even though it is not the java file for InterfaceModelMethod on the classpath
+    [TIME]
+
+InterfaceModelMethod ...
+  Prover started:TIME
+    [TIME]
+
+InterfaceModelMethod: m() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

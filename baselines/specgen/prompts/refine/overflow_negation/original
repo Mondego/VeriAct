@@ -1,0 +1,6 @@
+public class Neg {
+	//@ ensures \result == -num;
+	public int Negation(int num) {
+		return -num;
+	}
+}

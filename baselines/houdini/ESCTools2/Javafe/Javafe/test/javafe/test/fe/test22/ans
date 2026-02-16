@@ -1,0 +1,7 @@
+Incompatible.java:17: Error: Incompatible throws clauses between overridden(hidden) and overriding(hiding) methods
+    void foo(int x) throws java.io.IOException {}
+    ^
+Incompatible.java:17: Error: Incompatible access modifiers between overridden(hidden) [public , "Incompatible.java", line 20, col 4] and overriding(hiding) methods []
+    void foo(int x) throws java.io.IOException {}
+    ^
+2 errors

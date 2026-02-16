@@ -1,0 +1,46 @@
+escjava_java_boolean_ops : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem
+
+    % === ESCJ 8: Section 5.2
+
+    boolAnd (a, b : S): bool = a = bool_true AND b = bool_true
+    boolEq (a, b : S): bool = a = bool_true IFF b = bool_true
+    boolImplies (a, b : S): bool = a = bool_true IMPLIES b = bool_true
+    boolNE (a, b : S): bool = NOT (a = bool_true IFF b = bool_true)
+    boolNot (a : S): bool = NOT (a = bool_true)
+    boolOr (a, b : S): bool = a = bool_true OR b = bool_true
+
+    % Added to make the translation of the pretty-printer easier.
+
+%     S_to_bool(a : S) : bool = 
+% 	if(a = bool_true) 
+% 	  then true 
+% 	  else false
+% 	endif 
+
+    bool_to_S(a : bool) : S = 
+	if(a) 
+	  then bool_true 
+	  else bool_false
+	endif 
+	
+%    CONVERSION+ S_to_bool
+    CONVERSION+ bool_to_S
+
+    % === ESCJ 8: Section 5.3
+
+    % Java's ternary 'conditional' operator (? :)
+
+    termConditional (b, x, y : S): S = IF b = bool_true
+                                         THEN x
+                                         ELSE y
+                                       ENDIF
+
+    termConditional_elimination : LEMMA
+      FORALL (x, y : S): termConditional(bool_true, x, y) = x
+    termConditional_falsehood : LEMMA
+      FORALL (b, x, y : S): b /= bool_true IMPLIES
+                            termConditional(b, x, y) = y
+
+  END escjava_java_boolean_ops

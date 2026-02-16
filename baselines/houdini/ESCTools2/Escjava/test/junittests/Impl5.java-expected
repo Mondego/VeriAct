@@ -1,0 +1,26 @@
+ESC/Java version VERSION
+    [TIME]
+
+Impl5 ...
+  Prover started:TIME
+    [TIME]
+
+Impl5: unique() ...
+    [TIME]  passed
+
+Impl5: clear() ...
+    [TIME]  passed
+
+Impl5: Impl5() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]

@@ -1,0 +1,18 @@
+public class max {
+
+    // >>>INFILL<<<
+    int arraymax(int[] a, int n) {
+        int i = 1;
+        int max = a[0];
+
+        while (i < n) {
+            // Beginning of loop
+            if (max < a[i])
+                max = a[i];
+            i = i + 1;
+            // End of loop: Loop invariant comes here
+        }
+        return max;
+    }  
+}
+

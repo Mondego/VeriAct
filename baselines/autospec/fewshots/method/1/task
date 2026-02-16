@@ -1,0 +1,12 @@
+public class increment_arr {
+    //@ requires n == arr.length;
+    // >>>INFILL<<<
+    void increment_array_by(int[] arr, int n, int c) {
+        //@ maintaining 0 <= i && i <= n;
+        //@ maintaining (\forall int k; 0 <= k && k < i; arr[k] == \old(arr[k]) + c);
+        //@ decreases n - i;
+        for (int i = 0; i < n; i++) {
+            arr[i] = arr[i] + c;
+        }
+    } 
+}

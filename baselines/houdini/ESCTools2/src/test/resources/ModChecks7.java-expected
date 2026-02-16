@@ -1,0 +1,72 @@
+ESC/Java version VERSION
+src|test|resources|ModChecks7.java: Caution: Using given file as the .java file, even though it is not the java file for ModChecks7 on the classpath
+    [TIME]
+
+ModChecks7 ...
+  Prover started:TIME
+    [TIME]
+
+ModChecks7: ModChecks7() ...
+    [TIME]  passed immediately
+
+ModChecks7: mi() ...
+    [TIME]  passed
+
+ModChecks7: mi2() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks7.java:23: Warning: Possible violation of modifies clause (Modifies)
+                o.pi(); // ERROR
+                    ^
+Associated declaration is "src|test|resources|ModChecks7.java", line 31, col 14:
+        //@ modifies i;
+                     ^
+Associated declaration is "src|test|resources|ModChecks7.java", line 21, col 5:
+        //@ modifies i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks7: mi3() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks7.java:28: Warning: Possible violation of modifies clause (Modifies)
+                pi(); // ERROR
+                  ^
+Associated declaration is "src|test|resources|ModChecks7.java", line 31, col 14:
+        //@ modifies i;
+                     ^
+Associated declaration is "src|test|resources|ModChecks7.java", line 26, col 5:
+        //@ modifies o.i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks7: pi() ...
+    [TIME]  passed immediately
+
+ModChecks7: mo1() ...
+    [TIME]  passed
+
+ModChecks7: mo2() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks7.java:44: Warning: Possible violation of modifies clause (Modifies)
+                o = oo;
+                ^
+Associated declaration is "src|test|resources|ModChecks7.java", line 42, col 5:
+        //@ modifies o.i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks7: mo3() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks7.java:50: Warning: Possible violation of modifies clause (Modifies)
+                o = oo;
+                ^
+Associated declaration is "src|test|resources|ModChecks7.java", line 48, col 5:
+        //@ modifies oo.i;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+4 warnings

@@ -1,0 +1,33 @@
+TestObject.java:8: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestObject.java:27: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestObject.java:41: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestObject.java:55: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestObject.java:71: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Executed else branch in "TestObject.java", line 64, col 29.
+    Executed then branch in "TestObject.java", line 65, col 27.
+    Short circuited boolean operation in "TestObject.java", line 70, col 36.
+
+TestObject.java:86: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestObject.java:122: Warning: Postcondition possibly not established (Post)
+    } // ERROR - must either be a Cloneable or throw a CloneNotSupport ...
+    ^
+Associated declaration is "ESCTOOLS_ROOT/specs/java/lang/Object.spec", line 127, col 23:
+      @ also protected exceptional_behavior ...
+                       ^
+Execution trace information:
+    Executed return in "TestObject.java", line 121, col 8.
+
+7 warnings

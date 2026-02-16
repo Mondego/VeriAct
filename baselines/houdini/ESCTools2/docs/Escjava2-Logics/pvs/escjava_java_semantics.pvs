@@ -1,0 +1,12 @@
+escjava_java_semantics : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem,
+              escjava_java_boolean_ops,
+              escjava_java_integral_types,
+              escjava_java_integral_ops,
+              escjava_java_floating_point,
+              escjava_java_field_representation,
+              escjava_java_strings,
+              escjava_java_arrays,
+              escjava_java_lock_semantics
+  END escjava_java_semantics

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+## Test that indirectly-loaded source files have their package
+## names checked for validity.
+
+${TOOL} p/Master.java
+${TOOL} p/Master2.java

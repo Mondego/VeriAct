@@ -1,0 +1,1439 @@
+\documentclass[
+pdf,
+%a4,
+nocolorBG,
+%colorBG,
+slideColor,
+%accumulate,
+%draft,
+erik,
+%frames,
+]{prosper}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{alltt}
+\usepackage{pstricks,pst-node,pst-text,pst-3d}
+\usepackage{textcomp}
+%\usepackage{colordvi}
+\newcommand{\Red}[1]{{\red #1}}
+\usepackage[all]{xy}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newrgbcolor{Yellowish}{0.90 0.85 0.650}
+
+%\newrgbcolor{red}{1 0 0}
+%\newrgbcolor{purple}{0.4 0 0.7}
+%\newrgbcolor{lightpurple}{0.63 0.13 0.94}
+
+%\newrgbcolor{lime}{0.73 1 0}
+\newrgbcolor{green}{0.133 0.56 0} % lichter
+%\newrgbcolor{green}{0.10 0.43 0}
+
+%\newrgbcolor{knalblue}{0 0 1}
+\newrgbcolor{blue}{.2 .36 .77}
+%\newrgbcolor{darkblue}{0.28 0.24 0.55}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\embf}[1]{\textit{\textbf{#1}}}
+\newcommand{\rmbf}[1]{\textrm{\textbf{#1}}}
+\newcommand{\ttbf}[1]{\mbox{\tt \textbf{#1}}}
+\newcommand{\code}[1]{{\rm \texttt{\textbf{\small #1}}}}
+
+\myitem{1}{\mbox{{${\black\bullet}$}}}
+\newcommand{\old}     {\(\backslash\)old}
+\newcommand{\into}     {\(\backslash\)into}
+\newcommand{\result}     {\(\backslash\)result}
+\newcommand{\vooralle}{\(\backslash\)forall}
+\newcommand{\eris}{\(\backslash\)exists}
+\newcommand{\everything}{\(\backslash\)everything}
+\newcommand{\nothing}{\(\backslash\)nothing}
+\newcommand{\nonnull} {non\verb|_|null}
+
+
+
+\newcommand{\bsl}{\char'134}
+\renewcommand{\result}{\bsl result}
+\renewcommand{\old}{\bsl old}
+
+\renewcommand{\familydefault}{phv}
+\renewcommand{\rmdefault}{phv}
+
+\newif\ifignore
+\newrgbcolor{Bluish}{0.9 0.9 1.0}
+\newcommand{\doos}[1]{\psshadowbox[fillstyle=solid,
+                        fillcolor=Bluish,
+                        framearc=0.2,
+                        framesep=2mm]
+                        {#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\embf{\blue 
+       {\huge Advanced JML  \\ {\large and more tips and pitfalls}
+      }}}
+\author{\embf{\Large{\red David Cok, Joe Kiniry, and Erik Poll}}
+       }
+\institution{\embf{Eastman Kodak Company, University College Dublin, \\ and Radboud University Nijmegen}}
+\slideCaption{{\blue David Cok, Joe Kiniry \& Erik Poll - ESC/Java2 \& JML Tutorial }}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle 
+
+\boldmath
+
+\ifignore
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Test \hfill}
+
+{\Large Large}
+{\large large}
+{\normalsize normal}
+niks
+{\small small}
+{\footnotesize footnote}
+{\scriptsize script}
+{\tiny tiny}
+
+{\bf bf}
+{\rm rm}
+{\it it}
+{\sf sf}
+{\sc sc}
+
+\textit{textit}
+\textrm{textrm}
+\textbf{textbf}
+\textsf{textsf}
+\textsc{textsc}
+
+\end{slide}
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Core JML}
+\vspace*{-4ex}
+
+Remember the core JML keywords were
+
+\begin{itemize}
+\item {\green \code{requires}}
+\item {\green \code{ensures}}
+\item {\green \code{signals}}
+\item {\green \code{assignable}}
+\item {\green \code{normal\_behavior}}
+\item {\green \code{invariant}}
+\item {\green \code{non\_null}}
+\item {\green \code{pure}}
+\item {\green \code{\old}, \code{\vooralle}, \code{\eris}, \code{\result}}
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{More advanced JML features}
+\vspace*{-4ex}
+
+\begin{itemize}
+\item Visibility
+\item Specifying (im)possibility of exceptions
+\item Assignable clauses and datagroups
+\item Aliasing
+\item Specification inheritance, ensuring behavioural subtyping
+\item Specification-only fields: \code{ghost} and \code{mode} fields
+\item The semantics of \code{invariant}
+\end{itemize}
+
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{{\Large \red Visibility }}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Visibility}
+\vspace*{-4ex}
+
+JML imposes visibility rules similar to Java, eg.
+
+\begin{alltt}
+\code{\scriptsize   public class Bag\{
+     ...
+     {\green private} int{\green n};
+
+    //@ requires{\green n} > 0;
+     {\blue public} int{\blue extractMin}()\{ ... \}
+}
+\end{alltt}  %}
+
+is not type-correct, because
+{\blue public} method {\blue \code{extractMin}}
+refers to {\green private} field {\green\code{n}}.
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Visibility}
+\vspace*{-4ex}
+
+\begin{alltt}
+\code{\scriptsize {\blue public} int{\blue pub}; {\green private} int{\green priv}; 
+
+ {\black //@} requires i <={\blue pub};
+ {\blue public} void{\blue pub1} (int i) \{ ... \}
+
+ {\black //@} requires i <={\blue pub} && i <={\green priv};
+ {\green private} void{\green priv1} (int i) { ... } 
+
+ {\black //@} requires i <={\blue pub} && i <={\green priv}; // WRONG !!
+ {\blue public} void{\blue pub2}(int i) \{ ... \}
+ }
+\end{alltt}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Visibility: \texttt{spec\_public}}
+\vspace*{-4ex}
+
+Keyword \code{spec\_public} loosens visibility for specs.\\
+Private \code{spec\_public} fields are allowed in public specs, e.g.:
+
+\begin{alltt}
+\code{\scriptsize   public class Bag\{
+     ...
+     {\green private}{\red /*@ spec\_public @*/} int{\green n};
+
+      //@ requires{\green n} > 0;
+     {\blue public} int{\blue extractMin}()\{ ... \}
+}
+\end{alltt} %}
+
+\bigskip
+
+{\scriptsize  Exposing private details can be ugly, of course.  A nicer, but more
+  advanced alternative is to use public \code{model}
+  fields to represent (abstract away from) private implementation
+  details.}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{{\Large \red Exceptions and JML }}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Exceptional specifications}
+\vspace*{-4ex}
+
+A method specification can (dis)allow the throwing of exceptions,
+and specify a exceptional postcondition that should hold in
+the event an exception is thrown.
+
+\medskip
+
+There are some implicit rules for (dis)allowing exceptions.
+
+\medskip
+
+Warning: exceptional specifications are 
+easy to get wrong. 
+
+\medskip
+
+Not allowing any exceptions to be thrown is the simplest approach.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Exceptions allowed by specs} 
+\vspace*{-4ex}
+
+By default, a method is allowed to throw exceptions, but only those listed
+in its throws clause. So
+
+\begin{alltt} \code{\scriptsize{\green //@}{\black requires} 0 <= amount && amount <= balance;
+  public int{\green debit}(int amount)
+                           throws BankException 
+   \{ ... \}
+
+}
+\end{alltt}
+has an implicit clause
+\begin{alltt}
+\code{\scriptsize{\blue signals} (BankException){\green true};}
+\end{alltt}
+and an implicit clause
+\begin{alltt}
+\code{\scriptsize{\blue signals} (Exception e){\green e instanceof BankException};}
+\end{alltt}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Exceptions allowed by specs}
+\vspace*{-4ex}
+
+By default, a method is allowed to throw exceptions, \textit{but only those listed
+in its throws clause.} So
+
+\begin{alltt} \code{\scriptsize{\green //@}{\black requires} 0 <= amount && amount <= balance;
+  public int{\green debit}(int amount) 
+   \{ ... \}
+
+}
+\end{alltt}
+has an implicit clause
+\begin{alltt}
+\code{\scriptsize{\blue signals} (Exception){\green false};}
+\end{alltt}
+
+NB \code{debit} is now not even allowed to throw an unchecked exception,
+even though Java does not require a throws clause for these.
+
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ruling out exceptions}
+\vspace*{-4ex}
+
+To forbid a particular exception \code{SomeException}
+\begin{enumerate}
+\item omit it from throws clause (only possible for unchecked exceptions)
+\item add an explicit
+\begin{alltt} \code{\scriptsize{\blue signals} (SomeException){\green false};}
+\end{alltt}
+
+\item limit the set of allowed exceptions, use a postcondition such as
+\begin{alltt}\code{\scriptsize    signals (Exception e) e instanceof E1 
+                       || ... 
+                       || e instanceof En;}
+\end{alltt}
+or, equivalently, us the shorthand for this
+\begin{alltt}\code{\scriptsize    signals_only E1, ... En;}
+\end{alltt}
+
+\end{enumerate}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ruling out exceptions}
+\vspace*{-4ex}
+
+To forbid \textit{all} exceptions
+\begin{enumerate}
+\item omit all exceptions from throws clause (only possible for unchecked exceptions)
+\item add an explicit
+\begin{alltt} \code{\scriptsize{\blue signals} (Exception){\green false};}
+\end{alltt}
+\item
+use keyword {\blue normal\_behavior} to rule out all exceptions
+\begin{alltt} \code{\scriptsize {\green /*@}{\blue normal\_behavior}
+       {\black requires} ...
+       {\black ensures}  ...
+    {\green @*/}
+}
+\end{alltt}
+\mbox{\code{normal\_behavior} has implicit
+\code{signals(Exception)false}}
+\end{enumerate}
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{may vs must throw an exception}
+\vspace*{-4ex}
+
+Beware of the difference between 
+\begin{quote}
+{\green (1) if P holds, then \code{SomeException} is thrown}
+\end{quote}
+and
+\begin{quote}
+{\blue (2) if \code{SomeException} is thrown, then P holds}
+\end{quote}
+
+\medskip
+
+These are easy to confuse!
+
+\medskip
+
+(2) can be expressed with {\blue \code{signals} }, \\
+(1) can be expressed with {\green \code{exceptional\_behavior}}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{\texttt{exceptional\_behavior}}
+\vspace*{-4ex}
+
+
+\begin{alltt}\code{\scriptsize{\green /*@} exceptional_behavior
+      requires amount > balance
+      signals (BankException e) 
+                e.getReason.equals("Amount too big")
+{\green   @*/}
+  public int{\green debit}(int amount) throws BankException 
+ \{ ...  \}
+
+}
+\end{alltt}
+
+says a \code{BankException} \textit{must} be thrown if \code{amount > balance}
+
+\bigskip
+
+\mbox{\code{{\green normal\_behavior}} has implicit
+`\code{{\green signals(Exception)false}}}'
+
+\smallskip
+\code{\blue exceptional\_behavior} has implicit
+`\code{{\blue ensures false}}'
+
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Example}
+\vspace*{-4ex}
+
+\begin{alltt}\code{\scriptsize{\green /*@} normal_behavior
+        requires amount <= balance;
+        ensures  ...
+    also
+      exceptional_behavior
+        requires amount > balance
+        signals (BankException e) ...
+{\green   @*/}
+  public int{\green debit}(int amount) throws BankException 
+  \{ ...  \}
+}
+\end{alltt}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Example}
+\vspace*{-4ex}
+
+or, equivalently
+
+\begin{alltt}\code{\scriptsize{\green /*@} requires true;
+     ensures{\red \old(amount<=balance)} && ...
+     signals (BankException e)  
+            {\red \old(amount>balance)} && ...
+{\green   @*/}
+  public int{\green debit}(int amount) throws BankException 
+  \{ ...  \}
+}
+\end{alltt}
+
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Exceptional behaviour}
+\vspace*{-4ex}
+
+Moral: to keep things simple, disallow exceptions
+in specs whenever possible
+
+\bigskip
+
+{\footnotesize
+Eg, for
+
+\begin{alltt}\code{\scriptsize public void{\green arraycopy}(int[] src, int destOffset, 
+                       int[] dest, int destOffset, int length)
+        throws NullPointerException,
+               ArrayIndexOutOfBoundsException 
+
+}
+\end{alltt}
+
+write a spec that disallows any throwing of exceptions, and only
+worry about specifying exceptional behaviour if this is really needed
+elsewhere.}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{{\Large \red Assignable clauses and datagroups }}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Problems with assignable clauses}
+\vspace*{-4ex}
+
+Assignable clauses
+\begin{itemize}
+\item tend to expose implementation details
+\begin{alltt}\code{\scriptsize  private /*@ spec_public @*/ int x;
+  ...
+  //@ assignable x, ....;
+  public void m(...) \{....\} }
+\end{alltt}
+\item tend to become very long
+\begin{alltt}\code{\scriptsize  //@ assignable x, y, z[*],  ....;}
+\end{alltt}
+\item tend to accumulate
+\begin{alltt}\code{\scriptsize  //@ assignable x, f.x, g.y, h.z[*], ....;}
+\end{alltt}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Problems with assignable clauses}
+\vspace*{-4ex}
+
+
+\begin{alltt}\code{\scriptsize public class Timer\{
+  /*@ spec_public @*/ int{\green time_hrs, time_mins, time_secs}; 
+  /*@ spec_public @*/ int{\green alarm_hrs, alarm_mins, alarm_secs}; 
+
+  //@ assignable time_hrs, time_mins,  time_secs;
+  public void{\green tick}() \{ ... \}
+
+  //@ assignable alarm_hrs, alarm_mins, alarm_secs ;
+  public void{\green setAlarm}(int hrs, int mins, int secs) \{ ... \} 
+\}}
+\end{alltt}
+
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Solution: datagroups}
+\vspace*{-4ex}
+
+
+\begin{alltt}\code{\scriptsize public class Timer\{
+ {\red //@ public model JMLDatagroup time, alarm;}
+  int {\green time_hrs, time_mins, time_secs};{\red //@ in time;}
+  int {\green alarm_hrs, alarm_mins, alarm_secs};{\red //@ in alarm;}
+
+  //@ assignable{\red time};
+  public void{\green tick}() \{ ... \}
+
+  //@ assignable{\red alarm};
+  public void{\green setAlarm}(int hrs, int mins, int secs) \{ ... \} 
+\}
+
+}
+\end{alltt}
+
+\medskip
+
+
+{\scriptsize \code{time} and \code{alarm} are {\red \code{model} fields}, ie.
+specification-only fields}
+
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Datagroups}
+\vspace*{-4ex}
+
+
+Datagroups provide an abstraction mechanism for assignable clauses.
+
+\medskip
+
+There's a default datagroup {\green \code{objectState}} defined in \code{Object.java}
+
+\medskip
+
+It's good practice to declare that all instance fields are
+in \code{objectState}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Datagroups can be nested}
+\vspace*{-4ex}
+
+\begin{alltt}\code{\scriptsize public class Timer\{
+ //@ public model JMLDatagroup time, alarm;{\red//@ in objectState;}
+ int{\green time_hrs, time_mins, time_secs}; //@ in time;
+ int{\green alarm_hrs, alarm_mins, alarm_secs}; //@ in alarm;
+
+ //@ assignable{\red time};
+ public void{\green tick}() \{ ... \}
+
+ //@ assignable{\red alarm};
+ public void{\green setAlarm}(int hrs, int mins, int secs) \{ ... \}
+\}
+
+}
+\end{alltt}
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Assignable and arrays}
+\vspace*{-4ex}
+
+Another implementation, using an array of 6 digits to represent
+hrs:mns:secs
+
+\begin{alltt}\code{\scriptsize public class ArrayTimer\{
+  /*@ spec_public @*/ char[]{\green currentTime}; 
+
+  //@ invariant currentTime != null;
+  //@ invariant currentTime.length == 6;
+
+  //@ assignable currentTime[*];
+  public void{\green tick}() \{ ... \}
+
+  ...
+\}
+
+}
+\end{alltt}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Datagroups and arrays}
+\vspace*{-4ex}
+
+Another implementation, using an array of 6 digits to represent
+hrs:mns:secs
+
+\begin{alltt}\code{\scriptsize public class ArrayTimer\{
+ {\red //@ public model JMLDatagroup time;}
+  char[]{\green currentTime};{\red //@ in time;}
+ {\red //@ maps currentTime[*] \into time;}
+
+  //@ invariant currentTime != null;
+  //@ invariant currentTime.length == 6;
+
+  //@ assignable{\red time};
+  public void{\green tick}() \{ ... \}
+
+  ...
+\} }
+\end{alltt} %}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Datagroups and interfaces}
+\vspace*{-4ex}
+
+Datagroups are convenient in specs for interfaces.
+
+
+\begin{alltt}\code{\scriptsize public interface TimerInterface\{
+  //@ model{\red instance} public JMLDatagroup time, alarm;
+
+  //@ assignable time;
+  public void{\green tick}();
+  //@ assignable alarm;
+  public void{\green setAlarm}(int hrs, int mins, int secs);
+\}
+
+}
+\end{alltt}
+
+Classes implementing this interface are free to choose which fields
+are in the datagroups.
+
+{\scriptsize\rm Keyword \texttt{\textbf{instance}} is needed, because fields in interfaces
+are by default static fields in Java.
+Interfaces in Java do not have instance fields,
+but in JML they can have \textit{model} instance fields
+}
+
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{The problem with assignable clauses}
+\vspace*{-4ex}
+
+Despite the abstraction possibilities offered by datagroups,
+assignable clauses remain a bottlecneck both in program specification
+and in program verification.
+
+\medskip
+
+{\scriptsize\rm Note that the proof obligation corresponding to an assignable
+clause is a very complicated one, involving a quantification
+over all fields not mentioned in the assignable clause}
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{{\Large \red Aliasing (revisited)}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Aliasing}
+\vspace*{-4ex}
+
+Aliasing is the root of all evil, for anyone trying to verify 
+imperative programs.
+
+\medskip
+
+The \code{ArrayTimer} class just earlier is another nice example
+to illustrate this.
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ArrayTimer example}
+\vspace*{-4ex}
+
+Recall implementation using an array of 6 digits to represent
+hrs:mns:secs
+
+\begin{alltt}\code{\scriptsize public class ArrayTimer\{
+  char[]{\green currentTime};                    
+  char[]{\green alarmTime};
+
+  //@ invariant currentTime != null;
+  //@ invariant currentTime.length == 6;
+  //@ invariant alarmTime != null;
+  //@ invariant alarmTime.length == 6;
+
+  public void{\green tick}() \{ ... \}
+
+  public void{\green setAlarm}(...) \{ ... \}
+\}
+
+}
+\end{alltt}
+
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ArrayTimer example}
+\vspace*{-4ex}
+
+
+Things will go wrong if different instances of \code{ArrayTimer}
+share the same \code{alarmTime} array, ie.
+\begin{alltt}\code{\scriptsize
+  o.alarmTime == o'.alarmTime}
+
+\end{alltt}
+for some \code{o!=o'}
+
+\medskip
+
+ESC/Java2 may notice this, produce a correct, but puzzling, warning.
+
+
+\end{slide}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ArrayTimer example}
+\vspace*{-4ex}
+
+To rule out such aliasing of eg. \code{alarmTime} fields:
+
+\begin{alltt}\code{\scriptsize public class ArrayTimer\{
+  char[]{\green currentTime};
+  //@ invariant currentTime.owner == this;
+  ...
+
+  public{\green ArrayTimer}( ...)\{
+    ...;
+    currentTime = new char[6];
+    //@ set currentTime.owner == this;
+    ...
+  \} 
+}
+\end{alltt} %}
+
+{\scriptsize\rm (\texttt{\textbf{owner}} is a so-called ghost field, more 
+about that later)}
+
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ArrayTimer example}
+\vspace*{-4ex}
+
+Things will go wrong if an instance of \code{ArrayTimer}
+aliases its \code{alarmTime}  to its \code{currentTime}, ie.
+\begin{alltt}\code{\scriptsize
+  o.alarmTime == o.currentTime
+
+}
+\end{alltt}
+
+ESC/Java2 may notice this, produce a correct, but puzzling warning.
+
+\medskip
+
+You should add
+\begin{alltt}\code{\scriptsize
+  //@ invariant alarmTime != currentTime;
+
+}
+\end{alltt}
+to rule out such aliasing.
+
+\end{slide}
+
+
+
+\ifignore 
+% in part 4
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{{\Large \red Specification inheritance and behavioural subtyping }}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Behavioural subtyping}
+\vspace*{-4ex}
+
+Suppose \code{Child extends Parent}.
+
+\begin{itemize}
+\item $\!$ {\green Behavioural subtyping} =
+objects from subclass \code{Child} ``behave like'' 
+objects from superclass \code{Parent}
+\item $\!$ {\green Principle of substitutivity} [Liskov]:\\
+code will behave ``as expected'' if we provide an
+\code{Child} object where a \code{Parent} object was expected. 
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Behavioural subtyping}
+\vspace*{-4ex}
+
+Behavioural subtyping usually enforced by insisting that
+
+\begin{itemize}
+\item 
+invariant in subclass is {\green stronger} than invariant in superclass
+\item
+for every method,
+\begin{itemize}
+\item 
+precondition in subclass is {\blue weaker} (!) than precondition is superclass
+\item 
+postcondition in subclass is {\green stronger} than postcondition is superclass
+\end{itemize}
+\end{itemize}
+
+JML achieves this using {\green specification inheritance}:
+any child class {\green inherits} the specification of its parent.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{$\!\!\!$\small Specification inheritance for invariants}
+\vspace*{-4ex}
+
+Invariants are inherited in subclasses. Eg.
+\begin{alltt}
+\code{\scriptsize class Parent \{
+     ...
+     //@ invariant invParent;
+     ...  \}
+
+  class Child extends Parent \{
+     ...
+     //@ invariant invChild;
+     ...  \}}
+\end{alltt}
+
+the invariant for \code{Child} is \code{invChild \&\& invParent}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{$\!\!\!\!\!$\small Specif\-ication inheritance for methods specs}
+\vspace*{-4ex}
+\begin{alltt}
+\code{{\scriptsize class Parent \{
+     //@ requires i >= 0;
+     //@ ensures  \result >= i;
+     int m(int i)\{ ... \}
+  \}
+
+  class Child extends Parent \{
+     //@{\green also}
+     //@   requires i <= 0
+     //@   ensures  \result <= i;
+     int m(int i)\{ ... \}
+   \}}}
+\end{alltt}
+
+{\scriptsize Keyword {\green \texttt{also}} indicates there are inherited specs.}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{$\!\!\!\!\!$\small Specif\-ication inheritance for methods specs}
+\vspace*{-4ex}
+
+Method \code{m} in \code{Child} also has to meet the spec
+given in \code{Parent} class.
+So the complete spec for \code{Child} is
+
+\begin{alltt}
+\code{\scriptsize class Child extends Parent \{
+
+  /*@   requires i >= 0;
+    @   ensures  \result >= i;
+    @{\green also}
+    @   requires i <= 0
+    @   ensures  \result <= i;
+    @*/
+  int m(int i)\{ ... \}
+ \}}
+\end{alltt}
+
+{\tiny What can result of \code{m(0)} be?}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{$\!\!\!\!\!$\small Specification inheritance for methods specs}
+\vspace*{-4ex}
+
+This is equivalent with
+
+\begin{alltt}
+\code{\scriptsize class Child extends Parent \{
+
+  /*@   requires i <= 0 || i >= 0;
+    @   ensures  \old(i) >= 0 ==> \result >= i;
+    @   ensures  \old(i) <= 0 ==> \result <= i;
+    @*/
+  int m(int i)\{ ... \}
+ \}}
+\end{alltt}
+
+\end{slide}
+
+\fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{{\Large \red Specification-only fields: \\ \texttt{ghost} and \texttt{model} fields}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ghost fields}
+\vspace*{-4ex}
+
+Sometimes it is convenient to introduce an
+extra field, only for the purpose of specification
+(aka auxiliary variable).
+
+\medskip
+
+A {\blue\code{ghost}} field is like a normal field,
+except that it can only be used in specifications.
+
+\medskip
+
+A special {\blue\code{set}} command can be used
+to assign a value to a \code{ghost} field.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ghost fields - example} 
+\vspace*{-4ex}
+
+Suppose the informal spec of 
+\begin{alltt}
+
+   \code{\scriptsize{class SimpleProtocol \{
+
+     public void start() \{ ... \}
+         
+     public void stop() \{ ... \}
+    \}}}
+
+\end{alltt} %}
+says that \code{stop()}
+may only be invoked after \code{start()},
+and vice versa.
+
+\medskip
+
+This can be expressed using a {\blue ghost} field,
+to represent the {\green state} of the protocol.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ghost fields - example}
+\vspace*{-4ex}
+
+\begin{alltt} \code{\scriptsize{class SimpleProtocol \{
+ {\blue //@ public \Red{ghost} boolean started;}
+
+ {\green //@ requires  !started;}
+ {\green //@ assignable started;}
+ {\green //@ ensures    started;}
+  public void start() \{ 
+     ...
+    {\blue //@ set started = true;} \}
+      
+ {\green //@ requires   started;}
+ {\green //@ assignable started;}
+ {\green //@ ensures   !started;}
+  public void stop() \{ 
+     ... 
+    {\blue //@ set started = false;} \}
+ }}
+\end{alltt} %}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ghost fields - example}
+\vspace*{-4ex}
+
+Maybe the object has some internal state that that records
+if protocols is in progress, eg.
+
+\begin{alltt}
+\code{\scriptsize{class SimpleProtocol \{
+ {\green //@ private ProtocolStack st;}
+  ...
+  public void start() \{ 
+     ...
+     st = new ProtocolStack(...);
+     ...  \}
+      
+  public void stop() \{ 
+     ... 
+     st = null;
+     ...  \}
+ }}
+\end{alltt} %}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ghost fields - example}
+\vspace*{-4ex}
+
+There may be a relation between the {\blue ghost field} and some
+{\green other field(s)}, eg.
+
+\begin{alltt}
+\code{\scriptsize{class SimpleProtocol \{
+ {\green private ProtocolStack st;}
+ {\blue //@ public ghost boolean started;}
+  //@ invariant{\blue started} <==>{\green (st !=null)};
+
+  //@ requires  !started;
+  //@ assignable started;
+  //@ ensures    started;
+  public void start() \{ ...  \}
+      
+  //@ requires   started;
+  //@ assignable started;
+  //@ ensures   !started;
+  public void stop() \{ ...  \} }}
+\end{alltt} %}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Ghost fields - example}
+\vspace*{-4ex}
+
+We could now get rid of the ghost field, and write
+
+\begin{alltt} \code{\scriptsize{class SimpleProtocol \{
+ private /*@{\green spec\_public} @*/ ProtocolStack st;
+
+  //@ requires  {\green st==null};
+  //@ assignable st;
+  //@ ensures  {\green  st!=null};
+  public void start() \{ ... \}
+      
+  //@ requires  {\green st!=null};
+  //@ assignable st;
+  //@ ensures   {\green st==null};
+  public void stop() \{ ... \} }}
+\end{alltt} %}
+
+but this is ugly and exposes implementation details.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Model fields - example}
+\vspace*{-4ex}
+
+Solution: use a {\blue model} field
+
+\begin{alltt} \code{\scriptsize class SimpleProtocol \{
+  private ProtocolStack st;  
+
+ {\blue //@ public \Red{model} boolean started;} 
+ {\blue //@ private \Red{represents} started = (st != null);}
+
+  //@ requires !started;
+  //@ assigable started;
+  //@ ensures   started;
+  public void start() \{ ... \}
+      
+  //@ requires  started;
+  //@ assigable started;
+  //@ ensures  !started;
+  public void stop() \{ ... \} }
+\end{alltt} %}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Model fields - example}
+\vspace*{-4ex}
+
+A model field also provided an associated {\blue datagroup}
+
+\begin{alltt} \code{\scriptsize class SimpleProtocol \{
+  private ProtocolStack st;  {\red //@ in started;}
+
+ {\blue //@ public \Red{model} boolean started;} 
+ {\blue //@ private \Red{represents} started = (st != null);}
+
+  //@ requires !started;
+  //@ assigable started;
+  //@ ensures   started;
+  public void start() \{ ... \}
+      
+  //@ requires  started;
+  //@ assigable started;
+  //@ ensures  !started;
+  public void stop() \{ ... \} }
+\end{alltt} %}
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Model vs ghost fields}
+\vspace*{-4ex}
+
+
+Difference between {\green ghost} and {\blue model} may be confusing!
+
+Both exist only in JML specification, and not in the code.
+
+\begin{itemize}
+\item$\!$ {\green Ghost}\\
+$\bullet$ Ghost field is like a normal field. \\
+$\bullet$ You can assign to it, using \code{set}, in JML annotations.
+\item$\!$ {\blue Model}\\
+$\bullet$ Model field is an abstract field.\\
+$\bullet$ Model field is a convenient abbreviation.\\
+$\bullet$ You cannot assign to it.\\
+$\bullet$ Model field changes
+its value whenever the representation changes.
+\end{itemize}
+
+{\scriptsize Model field is like `abstract value' for ADT (algebraic data type),
+represent clause is like `representation function'.}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{{\Large \red Invariants}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Invariants}
+\vspace*{-4ex}
+
+Invariants -- aka class invariants -- are a common \& very useful notion.
+
+\medskip
+
+In larger programs, the (only) interesting thing to specify are the invariants.
+
+\medskip
+
+However, the semantics is trickier than expected!
+
+\medskip
+
+Invariant is implicitly included in pre- and postconditions
+of method, and in postcondition of constructors.
+But there's more ...
+
+\medskip
+
+In fact, invariants are a hot research topic.
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{When should an invariant hold?}
+\vspace*{-4ex}
+
+
+\begin{alltt}\code{\scriptsize public class A \{
+   B b;
+   int i=2; //@ invariant i >= 0
+   
+   //@ ensures \result >=0;
+   public /*@ pure @*/ int get()\{ return i; \}
+    
+   public void m()\{
+     i--;
+     ... ; // invariant possibly broken
+     i++;
+   \}}
+\end{alltt} %}
+
+An invariant can temporarily be broken.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{When should an invariant hold?}
+\vspace*{-4ex}
+
+\begin{alltt}\code{\scriptsize public class A \{
+   B b;
+   int i=2; //@ invariant i >= 0
+
+   //@ ensures \result >=0;
+   public /*@ pure @*/ int get()\{ return i; \}
+    
+   public void m()\{
+     i--;
+    {\red b.m(...)}; // invariant possibly broken
+     i++;
+   \}}
+\end{alltt} %}
+
+This may lead to problems if invocation of \code{b.m}
+involves an invoking on the current object.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{When should an invariant hold?}
+\vspace*{-4ex}
+
+Eg, suppose
+
+\begin{alltt}\code{\scriptsize public class B \{
+ ...
+   public void m(A a)\{ 
+    ... 
+    int j = a.get(); //@ assert i>=0;
+    ...
+   \}}
+\end{alltt} %}
+
+The spec of \code{get()} suggests the assertion will be true.
+
+\medskip
+
+But if \code{get()} is invoked when \code{a}'s invariant is broken, all bets are off.
+
+\medskip
+
+This is known as the {\red call-back} problem.
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{When should an invariant hold?}
+\vspace*{-4ex}
+
+Solution to the call-back problem:
+\begin{quote}
+A method invariant should hold in all so-called {\blue visible states},
+which are all beginning and end states of method invocations
+\end{quote}
+
+
+So there's more to invariants than just adding them to pre- and postconditons.
+
+\medskip
+
+NB \textit{all} invariants of \textit{all} objects should hold in
+visible states;
+this clearly imposes impossible proof obligations.
+
+\medskip
+
+ESC/Java2 looks only at the invariants of some objects;
+this is a source of unsoundness.
+
+\medskip
+
+Modular verification techniques for invariants are a challenge, and still 
+a hot topic of research.
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{When should an invariant hold?}
+\vspace*{-4ex}
+
+Sometimes you do want to invoke a method at a program point
+where the invariant is broken.
+To do this without ESC/Java2 complaining:
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{When should an invariant hold?}
+\vspace*{-4ex}
+
+Sometimes you do want to invoke a method at a program point
+where the invariant is broken.
+To do this without ESC/Java2 complaining:
+
+\begin{itemize}
+\item
+A private method can be declared as \code{helper} method
+\begin{alltt}\code{\scriptsize private{\red /*@ helper @*/} void m() \{ ... \}}
+\end{alltt}
+Invariants do not have to hold when such a helper method is called.
+
+\medskip
+
+Effectively, such methods are in-lined in verifications
+
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{When should an invariant hold?}
+\vspace*{-4ex}
+
+Sometimes you do want to invoke a method at a program point
+where the invariant is broken.
+To do this without ESC/Java2 complaining:
+
+\begin{itemize}
+\item
+A private method can be declared as \code{helper} method
+\begin{alltt}\code{\scriptsize private{\red /*@ helper @*/} void m() \{ ... \}}
+\end{alltt}
+Invariants do not have to hold when such a helper method is called.
+
+\medskip
+
+Effectively, such methods are in-lined in verifications
+
+\item
+add 
+\begin{alltt}\code{\scriptsize{\red //@ nowarn Invariant}}
+\end{alltt}
+in the line where this method call occurs.
+
+\smallskip
+
+NB this is unsafe, and a possible source of unsoundness!
+
+\end{itemize}
+
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{More problems with invariants}
+\vspace*{-4ex}
+
+
+\begin{alltt}\code{\scriptsize public class SortedLinkedList \{
+   private int{\green i};
+   private LinkedList{\green next};
+   //@ invariant i > next.i;
+   public /*@ pure @*/ int{\green getValue}()\{ return i; \}
+   public /*@ pure @*/ int{\green getNext}()\{ return next; \}
+   public /*@ pure @*/ int{\green getValue}()\{ return i; \}
+   public void{\green inc}() \{ i++; \}
+  \}}
+\end{alltt}
+
+\code{inc} won't break this object's invariant, but may break the invariant
+of the object who has this object as it's \code{next}.
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{More problems with invariants}
+\vspace*{-4ex}
+
+The essence of the problem is that the invariant of
+one object \code{o} may depend on the state of another object \code{o'}.
+
+\medskip
+
+When verifying the methods of \code{o'}, we have no way of knowing 
+if these may break invariants given in other classes \ldots
+
+\medskip
+
+This is one of the sources of unsoundness of ESC/Java(2),
+and most approaches to modular verification of OO programs to date.
+
+\medskip
+
+Only recently workable approaches for modular verification of invariants 
+have been proposed, and the last word has not been said on this.
+
+\end{slide}
+
+
+\end{document}
+

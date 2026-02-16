@@ -1,0 +1,82 @@
+ESC/Java version VERSION
+src|test|resources|CONX.java: Caution: Using given file as the .java file, even though it is not the java file for CONX on the classpath
+    [TIME]
+
+CONX ...
+  Prover started:TIME
+    [TIME]
+
+CONX: m() ...
+    [TIME]  passed
+
+CONX: mm() ...
+src|test|resources|CONX.java:18: Error: There is no assignable clause allowing this method call
+                Object o = new CONX(0); // WARNING
+                                   ^
+src|test|resources|CONX.java:40: Associated declaration: 
+        //@ modifies i;
+                     ^
+src|test|resources|CONX.java:16: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+    [TIME]  passed
+
+CONX: mmm() ...
+    [TIME]  passed
+
+CONX: m4() ...
+------------------------------------------------------------------------
+src|test|resources|CONX.java:28: Warning: Possible violation of modifies clause (Modifies)
+                Object oo = new CONX(o); // WARNING
+                                    ^
+Associated declaration is "src|test|resources|CONX.java", line 48, col 14:
+        //@ modifies CONX.*;
+                     ^
+Associated declaration is "src|test|resources|CONX.java", line 26, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+CONX: m5() ...
+    [TIME]  passed
+
+CONX: CONX() ...
+    [TIME]  passed immediately
+
+CONX: CONX(int) ...
+    [TIME]  passed immediately
+
+CONX: CONX(double) ...
+    [TIME]  passed immediately
+
+CONX: CONX(java.lang.Object) ...
+    [TIME]  passed immediately
+
+CONX: m10() ...
+    [TIME]  passed
+
+CONX: m11() ...
+    [TIME]  passed
+
+CONX: CONX(int, int) ...
+    [TIME]  passed immediately
+
+CONX: m20() ...
+    [TIME]  passed
+
+CONX: m21() ...
+    [TIME]  passed
+
+CONX: CONX(int, double) ...
+    [TIME]  passed immediately
+
+CONX: CONX(int, int, int) ...
+    [TIME]  passed
+
+CONX: CONX(int, int, double) ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning
+1 error

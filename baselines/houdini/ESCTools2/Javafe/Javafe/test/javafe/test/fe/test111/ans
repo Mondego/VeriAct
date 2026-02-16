@@ -1,0 +1,62 @@
+New.java:32: Error: An enclosing instance may be provided only when the named instance type is an inner class
+            return x.new TopLevel(); // error! TopLevel isn't an inner ...
+                   ^
+1 error
+New1.java:21: Error: The enclosing instance supplied in a new expression must be of a class type.
+            return q.new TopLevel(); // error! not a reference type!
+                   ^
+New1.java:21: Fatal error: No such type: java.lang.Object$TopLevel
+            return q.new TopLevel(); // error! not a reference type!
+                         ^
+2 errors
+New2.java:20: Error: The enclosing instance supplied in a new expression must be of a class type.
+            return q.new TopLevel(); // error! not a reference type II ...
+                   ^
+New2.java:20: Fatal error: No such type: java.lang.Object$TopLevel
+            return q.new TopLevel(); // error! not a reference type II ...
+                         ^
+2 errors
+New3.java:20: Fatal error: No such type: java.lang.Object$TopLevel
+            return x.new TopLevel(); // error! x has no TopLevel type  ...
+                         ^
+1 error
+New4.java:20: Fatal error: Must have simple type name in a qualified new expression.
+
+            return x.new Top.TopLevel(); // error: not a simple name.. ...
+                         ^
+1 error
+NewII.java:36: Error: No enclosing instance of class LevelOne is in scope; an explicit one must be provided when creating instances of inner class LevelOne$Inner.
+            return new Inner();                 // error
+                   ^
+NewII.java:40: Error: Undefined variable: LevelOne.this
+            return LevelOne.this.new Inner();   // error
+                   ^
+NewII.java:40: Error: The enclosing instance supplied in a new expression must be of a class type.
+            return LevelOne.this.new Inner();   // error
+                   ^
+NewII.java:40: Fatal error: No such type: java.lang.Object$Inner
+            return LevelOne.this.new Inner();   // error
+                                     ^
+4 errors
+Anon.java:31: Error: Cannot convert boolean to int
+            int y = false;                      // error
+                    ^
+Anon.java:38: Error: No constructor matching given argument types
+        Top t3 = new Top(7) { int y = x+1; };   // error: wrong constr ...
+                 ^
+Anon.java:42: Error: No such constructor in type java.lang.Object
+        ITop t5 = new ITop(7) {};               // error: wrong constr ...
+                  ^
+3 errors
+Anon2.java:17: Fatal error: Anonymous classes may not have constructors
+        Top t7 = new Top() { Top(); };             // parse error
+                                ^
+1 error
+Access.java:10: Caution: type a.T must be declared in a file named T.java if it is to be declared public.
+public class T {
+             ^
+Access2.java:2: Error: No such constructor in type a.T
+    Object x = new a.T();       // error
+               ^
+1 caution
+1 error

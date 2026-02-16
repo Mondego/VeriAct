@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|ParseImports.java:3: Caution: An import statement in an annotation should begin with 'model import'
+//@ import java.util.Vector;
+    ^
+src|test|resources|ParseImports.java:7: Caution: An import statement in an annotation should begin with 'model import'
+//@ import java.util.Set;
+    ^
+src|test|resources|ParseImports.java:8: Caution: An import statement in an annotation should begin with 'model import'
+//@ import java.util.Collection;
+    ^
+src|test|resources|ParseImports.java: Caution: Using given file as the .java file, even though it is not the java file for ParseImports on the classpath
+    [TIME]
+
+ParseImports ...
+  Prover started:TIME
+    [TIME]
+
+ParseImports: ParseImports() ...
+    [TIME]  passed
+  [TIME total]
+4 cautions

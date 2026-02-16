@@ -1,0 +1,64 @@
+TestList.java:85: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestList.java:143: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestList.java:164: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestList.java:178: Warning: Possible assignment of null to variable declared non_null (NonNull)
+            b = c.retainAll(null); // illegal argument - Throws except ...
+                           ^
+Associated declaration is "ESCTOOLS_ROOT/specs/java/util/Collection.spec", line 303, col 25:
+    boolean retainAll(/*@non_null*/ Collection c) throws NullPointerEx ...
+                         ^
+TestList.java:197: Warning: Possible assignment of null to variable declared non_null (NonNull)
+            b = c.removeAll(null); // illegal argument - Throws except ...
+                           ^
+Associated declaration is "ESCTOOLS_ROOT/specs/java/util/Collection.spec", line 281, col 25:
+    boolean removeAll(/*@non_null*/ Collection c) throws NullPointerEx ...
+                         ^
+TestList.java:258: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestList.java", line 253, col 11.
+
+TestList.java:274: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestList.java:338: Warning: Possible assertion failure (Assert)
+           //@ assert c.elementType == /type(Object);  // FIXME - this ...
+               ^
+Execution trace information:
+    Routine call returned exceptionally in "TestList.java", line 284, col 13.
+    Routine call returned exceptionally in "TestList.java", line 290, col 13.
+    Routine call returned exceptionally in "TestList.java", line 296, col 13.
+    Routine call returned exceptionally in "TestList.java", line 302, col 13.
+    Routine call returned exceptionally in "TestList.java", line 308, col 13.
+    Routine call returned exceptionally in "TestList.java", line 314, col 13.
+    Routine call returned exceptionally in "TestList.java", line 320, col 13.
+    Routine call returned exceptionally in "TestList.java", line 326, col 13.
+    Routine call returned exceptionally in "TestList.java", line 333, col 10.
+
+TestList.java:348: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestList.java", line 284, col 13.
+    Routine call returned exceptionally in "TestList.java", line 290, col 13.
+    Routine call returned exceptionally in "TestList.java", line 296, col 13.
+    Routine call returned exceptionally in "TestList.java", line 302, col 13.
+    Routine call returned exceptionally in "TestList.java", line 308, col 13.
+    Routine call returned exceptionally in "TestList.java", line 314, col 13.
+    Routine call returned exceptionally in "TestList.java", line 320, col 13.
+    Routine call returned exceptionally in "TestList.java", line 326, col 13.
+
+TestList.java:370: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestList.java:400: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+11 warnings

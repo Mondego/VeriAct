@@ -1,0 +1,34 @@
+ESC/Java version VERSION
+    [TIME]
+
+Represents ...
+  Prover started:TIME
+    [TIME]
+
+Represents: Represents() ...
+    [TIME]  passed
+
+Represents: m() ...
+    [TIME]  passed
+
+Represents: n() ...
+------------------------------------------------------------------------
+Represents.java:35: Warning: Postcondition possibly not established (Post)
+        } // ERROR - postcondition not established
+        ^
+Associated declaration is "Represents.java", line 31, col 5:
+        //@ ensures size > 2;
+            ^
+Execution trace information:
+    Executed return in "Represents.java", line 34, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Represents: nn() ...
+    [TIME]  passed
+
+Represents: p() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

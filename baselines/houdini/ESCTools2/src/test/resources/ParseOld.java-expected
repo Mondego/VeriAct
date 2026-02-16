@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+src|test|resources|ParseOld.java: Caution: Using given file as the .java file, even though it is not the java file for ParseOld on the classpath
+    [TIME]
+
+ParseOld ...
+  Prover started:TIME
+    [TIME]
+
+ParseOld: m() ...
+------------------------------------------------------------------------
+src|test|resources|ParseOld.java:11: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|ParseOld.java", line 7, col 5:
+        //@ ensures j == \old(i);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|ParseOld.java", line 11, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParseOld: ParseOld() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

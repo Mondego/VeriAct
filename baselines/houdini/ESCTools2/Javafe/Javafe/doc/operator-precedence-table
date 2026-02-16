@@ -1,0 +1,116 @@
+
+Token successors in same productions
+------------------------------------
+Id ParenExpr
+Id ParenName
+Id ParenArgList
+Id .
+.  Id
+[  ]
+?  :
+
+Prefixes of non-terminals
+-------------------------
+Let A denote                    NewExpr Literal ParenExpr ParenName Id 
+Let C denote                    ParemPrimCast ParenName ParenNameCast
+Let B denote                    A C ++ -- Un+ Un- ~ !
+
+Primary                         
+LeftHandSide                    A
+MethodInvocation                A
+FieldAccess                     A
+ArrayAcess                      A
+CastExpression                  C
+PostfixExpression               A
+PostIncrementExpression         A
+PostDecrementExpression         A
+UnaryExpression                 B
+PreIncrementExpression:         ++ 
+PreDecrementExpression:         --
+UnaryExpressionNotPlusMinus:    A C ~ ! 
+MultiplicativeExpression:       B 
+AdditiveExpression:             B 
+ShiftExpression:                B 
+RelationalExpression:           B 
+EqualityExpression:             B 
+AndExpression:                  B 
+ExclusiveOrExpression:          B 
+InclusiveOrExpression:          B 
+ConditionalAndExpression:       B 
+ConditionalOrExpression:        B 
+ConditionalExpression:          B 
+AssignmentExpression:           B 
+Assignment:                     A
+Expression:                     B
+ReferenceType:                  Id
+
+Token successors is a nested production
+---------------------------------------
+We create this table by finding a token followed by a non-terminal in the rhs of a production.
+
+Literal        
+ParenExpr       
+ParenName       
+NewExpr         
+Id                             
+.                           
+ParenArgList
+[               B
+]
+ParenPrimCast   B
+ParenName       A C ~ !
+parenNameCast   A C ~ !
+++ --           B
+U+ U-           B
+~ !             B
+* / %           B
+Bin+ Bin-       B
+<< >> >>>       B
+< > <= >=       B
+instanceof      Id
+== !=           B
+&               B
+^               B
+|               B
+&&              B
+||              B
+?               B
+:               B
+= etc           B
+
+
+Precedence Table
+----------------
+
+
+                L  PE PN NE Id .  PA [  ]  PP PN PC ++ U+ ~  *  << in == &  ^  |  && || ?  :  =  $
+
+Literal         
+ParenExpr       
+ParenName       
+NewExpr         
+Id                 =  =        =  =
+.                           =
+ParenArgList
+[                                       =
+]
+ParenPrimCast
+ParenName
+parenNameCast
+++ --
+U+ U-
+~ !
+* / %
+<< >> >>>
+< > <= >= 
+instanceof
+== !=
+&
+^
+|
+&&
+||
+?                                                                                         = 
+:
+= etc
+$

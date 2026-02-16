@@ -1,0 +1,29 @@
+#!/bin/csh -f
+
+#
+# Handle defaults:
+#
+if ($?ESCJ_SIMPLIFY_ARGS) then
+else
+	setenv	ESCJ_SIMPLIFY_ARGS	"-noprune -noplunge"
+endif
+
+if ($?ESCJ_SIMPLIFY) then
+else
+# Edit the following line to point to the version of Simplify appropriate
+# for your computer.
+	setenv  ESCJ_SIMPLIFY   ${ESCJAVA_ROOT}/release/master/bin/Simplify-1.5.2.linux
+endif
+
+if ($?PROVER_KILL_TIME) then
+else
+	setenv	PROVER_KILL_TIME	"300"
+endif
+
+if ($?PROVER_CC_LIMIT) then
+else
+	setenv	PROVER_CC_LIMIT		"10"
+endif
+
+
+${ESCJ_SIMPLIFY} ${ESCJ_SIMPLIFY_ARGS}

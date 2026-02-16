@@ -1,0 +1,6 @@
+#!/bin/sh
+## This tests that running with no inputs generates an error and a non-zero status
+# usage: run FLAGS
+
+${ESCJ} $* 
+echo exit status $?

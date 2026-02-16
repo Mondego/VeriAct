@@ -1,0 +1,36 @@
+ESC/Java version VERSION
+    [TIME]
+
+AnonClass ...
+  Prover started:TIME
+    [TIME]
+
+AnonClass: p() ...
+AnonClass.java:4: Caution: Not checking body of anonymous class (subclass of AnonClassS)
+        AnonClassS a = new AnonClassS() {
+                                        ^
+------------------------------------------------------------------------
+AnonClass.java:11: Warning: Precondition possibly not established (Pre)
+        a.m(-1);
+           ^
+Associated declaration is "AnonClass.java", line 18, col 8:
+    //@ requires i > 0;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AnonClass: AnonClass() ...
+    [TIME]  passed
+  [TIME total]
+
+AnonClassS ...
+    [TIME]
+
+AnonClassS: m(int) ...
+    [TIME]  passed
+
+AnonClassS: AnonClassS() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

@@ -1,0 +1,11 @@
+public class BagOfInt {
+
+  /** Initialize to contain input's elements. */
+  public BagOfInt(int[] input);
+
+  /** Return the multiplicity of i. */
+  public int occurrences(int i);
+
+  /** Return and delete the minimum element. */
+  public int extractMin();
+}

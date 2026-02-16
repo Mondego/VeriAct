@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+MultipleAtError2 ...
+  Prover started:TIME
+    [TIME]
+
+MultipleAtError2: n() ...
+    [TIME]  passed
+
+MultipleAtError2: MultipleAtError2() ...
+    [TIME]  passed
+  [TIME total]

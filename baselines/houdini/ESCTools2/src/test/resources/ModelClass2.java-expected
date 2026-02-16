@@ -1,0 +1,45 @@
+ESC/Java version VERSION
+src|test|resources|ModelClass2.java: Caution: Using given file as the .java file, even though it is not the java file for ModelClass2 on the classpath
+    [TIME]
+
+ModelClass2 ...
+  Prover started:TIME
+    [TIME]
+
+ModelClass2: mjava() ...
+    [TIME]  passed
+
+ModelClass2: ModelClass2() ...
+    [TIME]  passed
+
+ModelClass2: z(int) ...
+------------------------------------------------------------------------
+src|test|resources|ModelClass2.java:50: Warning: Possible assertion failure (Assert)
+                assert k == 1;
+                ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+ModelClass2$M ...
+    [TIME]
+
+ModelClass2$M: m() ...
+    [TIME]  passed immediately
+
+ModelClass2$M: n() ...
+    [TIME]  passed immediately
+
+ModelClass2$M: p(int) ...
+------------------------------------------------------------------------
+src|test|resources|ModelClass2.java:33: Warning: Possible assertion failure (Assert)
+                assert k == 1;
+                ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelClass2$M: M() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

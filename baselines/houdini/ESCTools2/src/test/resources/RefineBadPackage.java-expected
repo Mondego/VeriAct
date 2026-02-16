@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|RefineBadPackage.java: Caution: Using given file as the .java file, even though it is not the java file for RefineBadPackage on the classpath
+src|test|resources|RefineBadPackage.java:2: Error: Could not find file referenced in refine annotation: RefineBadPackage.spec
+//@ refine "RefineBadPackage.spec";
+    ^
+    [TIME]
+
+RefineBadPackage ...
+  Prover started:TIME
+    [TIME]
+
+RefineBadPackage: RefineBadPackage() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 error

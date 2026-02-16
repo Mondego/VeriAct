@@ -1,0 +1,25 @@
+ESC/Java version VERSION
+    [TIME]
+
+RefineRef ...
+  Prover started:TIME
+    [TIME]
+
+RefineRef: m(RefineRefHelper) ...
+    [TIME]  passed
+
+RefineRef: mm(RefineRefHelper) ...
+    [TIME]  passed
+
+RefineRef: mmm(RefineRefHelper) ...
+------------------------------------------------------------------------
+RefineRef.java:13: Warning: Possible null dereference (Null)
+                r.ooo.get();
+                     ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+RefineRef: RefineRef() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

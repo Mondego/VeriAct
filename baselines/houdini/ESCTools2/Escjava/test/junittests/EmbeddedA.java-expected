@@ -1,0 +1,64 @@
+ESC/Java version VERSION
+EmbeddedA.java:6: Error: Pragma in javadoc comment is not correctly terminated (missing </jml>)
+        <jml>
+        ^
+EmbeddedA.java:13: Error: Pragma in javadoc comment is not correctly terminated (missing </JML>)
+        <JML>
+        ^
+EmbeddedA.java:19: Error: Pragma in javadoc comment is not correctly terminated (missing </JML>)
+        <JML>
+        ^
+EmbeddedA.java:26: Error: Pragma in javadoc comment is not correctly terminated (missing </JML>)
+        <JML>
+        ^
+    [TIME]
+
+EmbeddedA ...
+  Prover started:TIME
+    [TIME]
+
+EmbeddedA: m() ...
+    [TIME]  passed immediately
+
+EmbeddedA: n() ...
+    [TIME]  passed immediately
+
+EmbeddedA: n1() ...
+    [TIME]  passed immediately
+
+EmbeddedA: n2() ...
+    [TIME]  passed immediately
+
+EmbeddedA: p() ...
+------------------------------------------------------------------------
+EmbeddedA.java:38: Warning: Postcondition possibly not established (Post)
+        public void p() {}
+                         ^
+Associated declaration is "EmbeddedA.java", line 35, col 2:
+                ensures false; // Should read this one
+                ^
+Execution trace information:
+    Executed implicit return in "EmbeddedA.java", line 38, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EmbeddedA: p2() ...
+------------------------------------------------------------------------
+EmbeddedA.java:47: Warning: Postcondition possibly not established (Post)
+        public void p2() {}
+                          ^
+Associated declaration is "EmbeddedA.java", line 43, col 2:
+                ensures false; // Should read this one
+                ^
+Execution trace information:
+    Executed implicit return in "EmbeddedA.java", line 47, col 19.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EmbeddedA: EmbeddedA() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings
+4 errors

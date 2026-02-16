@@ -1,0 +1,8 @@
+* Does not report overflow on integral constants. 
+
+* Does not handle a MININT or MINLONG decimal constants right.
+
+* Parses ''' same as '\''. 
+  This duplicate a known javac bug and thus we can parse JDK files
+
+* More generous in detecting constant expressions

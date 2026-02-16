@@ -1,0 +1,8 @@
+.|p|Referenced.java:1: Error: file declared to be in package foobar.bax rather than in the correct package p
+package foobar.bax;             // The wrong package name!
+        ^
+.|p|Referenced.java: Fatal error: file does not contain the type p.Referenced as expected
+2 errors
+.|p|Referenced2.java: Error: file declared to be in package <the unnamed package> rather than in the correct package p
+.|p|Referenced2.java: Fatal error: file does not contain the type p.Referenced2 as expected
+2 errors

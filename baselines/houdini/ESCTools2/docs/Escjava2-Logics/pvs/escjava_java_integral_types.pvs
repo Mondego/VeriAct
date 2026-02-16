@@ -1,0 +1,31 @@
+escjava_java_integral_types : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem
+    
+    % === ESCJ 8: Section 2.2.1
+
+    % Axioms to express the size of the basic types.
+    S_to_real : [ S -> real ]
+    CONVERSION+ S_to_real
+	
+    % Additional axiom for the translation
+    real_to_S : [ real -> S ]
+    CONVERSION+ real_to_S
+
+    intFirst, intLast, longFirst, longLast : real
+
+    range_of_char : AXIOM
+      FORALL (x : S): is(x, T_char) IFF 0 <= x AND x <= 65535
+    range_of_byte : AXIOM
+      FORALL (x : S): is(x, T_byte) IFF -128 <= x AND x <= 127
+    range_of_short : AXIOM
+      FORALL (x : S): is(x, T_short) IFF -32768 <= x AND x <= 32767
+    range_of_int : AXIOM
+      FORALL (x : S): is(x, T_int) IFF intFirst <= x AND x <= intLast
+    range_of_long : AXIOM
+      FORALL (x : S): is(x, T_long) IFF longFirst <= x AND x <= longLast
+
+    intFirst_definition : AXIOM
+      longFirst < intFirst AND intFirst < -1000000 AND 1000000 < intLast AND intLast < longLast
+
+  END escjava_java_integral_types

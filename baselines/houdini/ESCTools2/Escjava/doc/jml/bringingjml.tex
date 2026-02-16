@@ -1,0 +1,333 @@
+%
+% $Id$
+%
+
+\documentclass{acm_proc_article-sp}[10pt]
+
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+   \pdffalse     % no PDFLaTeX
+\else
+   \pdfoutput=1  % PDFLaTeX
+   \pdftrue
+\fi
+
+\usepackage{times}
+%\usepackage{a4wide}
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+
+%\usepackage{html}
+%\usepackage{url}
+\usepackage{alltt}
+\usepackage{xspace}
+%\usepackage{doublespace}
+
+\ifpdf
+\usepackage[pdftex,bookmarks=false,
+            plainpages=false,naturalnames=true,
+            colorlinks=true,pdfstartview=FitV,
+            linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\else
+\usepackage[dvips]{hyperref}
+\fi
+
+\newcommand{\examplesize}{\footnotesize}
+\newcommand{\daysince}{\texttt{days\_\-since\_\-jan1\_\-1970}}
+
+\newtheorem{Definition}{Definition}
+\newtheorem{Theorem}{Theorem}
+
+%---------------------------------------------------------------------
+% New commands, macros, etc.
+%---------------------------------------------------------------------
+
+% Global
+
+%\newcommand{\myhref}[2]{\ifpdf\href{#1}{#2}\else\htmladdnormallinkfoot{#2}{#1}\fi}
+
+\newcommand{\todo}{\textbf{TODO:}}
+
+%=====================================================================
+
+\begin{document}
+
+% --- Author Metadata here ---
+%\conferenceinfo{GCSE/SAIG '02}{2002 Pittsburgh, PA, USA}
+%\setpagenumber{50}
+\CopyrightYear{2003}
+% Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
+%\crdata{0-12345-67-8/90/01}
+% --- End of Author Metadata ---
+
+\title{Bringing JML to ESC/Java}
+\numberofauthors{2}
+\author{
+\alignauthor Joseph R.~Kiniry\\
+       \affaddr{Computing Science Department, University of Nijmegen}\\
+       \affaddr{Toernooiveld 1, 6525 ED Nijmegen}\\
+       \affaddr{The Netherlands}\\
+       \email{kiniry@acm.org}
+\alignauthor David Cok\\
+       \affaddr{Eastman Kodak Company}\\
+       \affaddr{R\&D Laboratories}\\
+       \affaddr{1700 Dewey Avenue, Building 65}\\
+       \affaddr{Rochester, New York, USA}\\
+       \email{cok@frontiernet.net}
+}
+
+\maketitle
+
+%======================================================================
+\begin{abstract}
+  
+  Abstract.
+
+% 1 words
+  
+\end{abstract}
+
+%=====================================================================
+% A category with only the three required fields
+%% \category{D.1.0}{Software}
+%%                 {Programming Techniques}
+%%                 [General]
+%% \category{D.2}{Software}
+%%               {Software Engineering}
+%% \category{D.3.1}{Software}
+%%                 {Programming Languages}
+%%                 [Formal Definitions and Theory]
+%% \category{D.3.4}{Software}
+%%                 {Programming Languages}
+%%                 [Processors]
+%%                 [preprocessors]
+%% \category{F.3.1}{Theory of Computation}
+%%                 {Logics and Meanings of Programs}
+%%                 [Specifying and Verifying and Reasoning about Programs]
+%% \category{F.4.1}{Theory of Computation}
+%%                 {Mathematical Logic and Formal Languages}
+%%                 [Mathematical Logic]
+%% \category{F.4.3}{Theory of Computation}
+%%                 {Mathematical Logic and Formal Languages}
+%%                 [Formal Languages]
+                
+%%                 \terms{specification languages, formal methods, kind
+%%                   theory, reuse, glue-code generation, automatic
+%%                   programming, domain-specific languages}
+
+% (+ 1) ~= 1
+
+%=====================================================================
+% Introduction stating precisely the problem addressed in the paper. 
+%=====================================================================
+\section{Introduction} % 0 words
+
+All existing bits in this outline so far are lifted directly from the
+ESC/Java User's Manual for reference.  We need to cross-check them
+with the semantics of the current JML tools and update as appropriate.
+Also, of course, all of these bits will need to be rewritten as
+appropriate for this paper.
+
+%=====================================================================
+\section{Basic Issues}
+
+%=====================================================================
+\section{Pure Method Invocations in Assertions}
+
+%=====================================================================
+\section{Model Methods and Variables}
+
+%=====================================================================
+\section{Refinement}
+
+%=====================================================================
+\section{Routine Specification}
+
+Except for formal parameters, identifiers used in postconditions of a
+routine (and not within \\old) denote their values in the post-state.
+While Java allows a routine body to include assignment to the
+routine's formal parameters (thus using the parameters as local
+variables), such assignments have no effect as seen by the caller,
+since parameters are passed by value.  Therefore ESC/Java interprets
+occurrences of formal parameters in postconditions as denoting the
+original (pre-state) actual parameter values.
+
+\subsection{Referring to a Variable's Pre-State}
+
+A postcondition E may contain expressions of the form \\old(X).
+Roughly speaking, \\old(X) means the value of X in the pre-state.  The
+static type of \\old(X) is the same as the static type of X.  An
+expression X used as an argument of \\old may not itself contain
+applications of \\old or \\fresh.  More precise details are given below.
+
+\subsection{Other Useful Expressions}
+
+Within E, an expression of the form \\fresh(R) where R is a
+specification expression of a reference type is true if the object
+denoted by R in the post-state is allocated in the post-state
+(implying that R != null in the post-state) and was not allocated in
+the pre-state.  The static type of \\fresh(R) is boolean.
+
+\subsection{Framing Pragmas}
+
+The state components named in modifies pragmas of a routine are called
+modification targets of the routine.  When checking code that calls a
+routine, ESC/Java assumes that the call modifies only the routine's
+modification targets (with the usual substitutions) and possibly also
+any freshly allocated state, regardless of whether the call terminates
+normally or abruptly. However, the current ESC/Java does not enforce
+modifies pragmas when checking a routine's implementation.
+
+If no modification targets are specified for a routine, then ESC/Java
+will assume that calls to the routine modify only freshly allocated
+state, if any.
+
+The current ESC/Java does not check that the body of a routine
+actually obeys the constraint expressed by the routine's modifies
+pragmas.  This lack of checking is one of several potential sources of
+missed warnings (unsoundness).  The potential for missed warnings is
+mitigated somewhat by a fact that may have seemed surprising when we
+mentioned it in the previous section (2.3.2): If a particular field
+(either a static field or an instance variable) is not specified as a
+target field (section 2.3.1.0) of a routine, then occurrences of that
+field within arguments to \\old in the routine's postconditions are
+taken to refer to post-state values.
+
+Consider, for example a class with an integer field f and a method
+incf declared as follows, with no modifies pragma:
+\begin{alltt}
+    //@ ensures f == \\old(f) + 1;
+    void incf() {
+      this.f++;
+    }
+\end{alltt}
+    
+Since f is not specified as a modification target of incf, ESC/Java
+will interpret both occurrences of f in the ensures pragma as
+referring to the post-state value of this.f.  Consequently ESC/Java
+will be unable to show that the method establishes the specified
+postcondition, and will issue a warning to that effect.
+
+While this warning may seem surprising, the result of interpreting the
+second occurrence of f as the pre-state value of this.f would be even
+worse.  Under the latter interpretation ESC/Java would issue no
+warnings about the body of incf, but would assume after a call
+x.incf() both (1) that x.f had been incremented in accordance the
+postcondition), and (2) that x.f was left unchanged in accordance with
+the (unchecked) empty set of modification targets.  Since these
+assumptions are mutually contradictory, the result would be equivalent
+to assuming false, and ESC/Java would silently omit all checking after
+the call.
+
+As an additional guard against omission of modifies pragmas, ESC/Java
+issues a caution message for any occurrence of \\old(X) in a
+postcondition of a method m unless (1) the expression X mentions some
+target field of m, or (2) the expression X includes an array access
+and m has some modification target of the form A[I] or A[*].
+
+Of course, the interactions of modifies and \\old described above do
+not entirely make up for the fact that the current ESC/Java does no
+checking of modifies pragmas.  A method declaration like
+\begin{alltt}
+    //@ modifies someOtherObject.f; //instead of this.f
+    //@ ensures f == \\old(f) + 1;
+    void incf() {
+      this.f++;
+    }
+\end{alltt}
+can still effectively disable checking of code following calls to incf.
+
+\subsection{Specification Scope Modifiers}
+
+It is a source of potential unsoundness for a postcondition to mention
+a variable that might not be spec-accessible (section 3.3) to an
+override of that method, and ESC/Java may forbid such postconditions.
+In particular ESC/Java forbids postconditions of a method that mention
+private variables except when the routine is static, is final, is
+private, or is declared in a final class, or when the private
+variables mentioned are declared spec\_public (section 2.5.0).  The
+current ESC/Java doesn't forbid, for example, postconditions of public
+methods from mentioning package variables, but future versions of
+ESC/Java may not be so lenient.
+
+\subsection{Specification Inheritance}
+
+The semantics of specification inheritance in the original ESC/Java
+and the JML tools differed considerably~\cite[Section
+2.3]{ESCJavaUsersManual}.
+
+In ESC/Java, when a method of a class or interface $S$ inherits or
+overrides~\cite[8.4.6]{JLS2} a method $m$ from a class or interface
+$T$, the method $S.m$ inherits all the preconditions, modification
+targets, and postconditions of $T.m$, with the formal parameter names
+of $S.m$ being substituted for those of $T.m$. This treatment of
+inheritance sometimes leads to unsound checking in the presence of
+multiple inheritance~\cite[Section C.0.5]{ESCJavaUsersManual}.
+
+A method declaration that overrides another method declaration cannot
+be modified with a \texttt{requires} pragma, but inherits the
+overridden method's preconditions as described above.
+
+A method declaration that overrides another method declaration cannot
+be annotated with a modifies pragma, but inherits the modification
+targets of the overridden method.  Note that this forbids the
+overriding method from modifying additional state, but see the
+description of also\_modifies below (section 2.3.8).
+
+The also\_require pragma is a potential source of unsoundness.  Suppose
+method C.m of class C overrides method I.m of interface I.  When
+checking a call of the form E.m(...), where E is an expression of type
+I, ESC/Java only enforces the preconditions of I.m and not any
+preconditions given by also\_requires pragmas modifying the declaration
+of C.m.  However, the expression E might evaluate to a value of type
+C, causing the call to invoke C.m, and the correctness of C.m's
+implementation may depend on preconditions given in such also\_requires
+pragmas.  The reason that ESC/Java includes an also\_requires pragma,
+despite its unsoundness, is that it is often essential for
+preconditions of a method C.m to mention instance variables of class
+C, and Java does not allow instance variables to be declared in
+interfaces.  [Note, however, that ESC/Java does allow declarations of
+ghost variables (section 2.6.0) in interfaces.]
+
+%=====================================================================
+\section{Remaining Incompatibilities}
+
+%=====================================================================
+% Conclusion assessing the results of the work described and its
+% limitations.
+%=====================================================================
+\section{Conclusion} % 0 words
+
+Conclusion.
+
+%=====================================================================
+%\section{Acknowledgments}
+
+%======================================================================
+
+\bibliographystyle{plain}
+%\bibliography{abbrev,ads,category,complexity,conferences,hypertext,icsr,journals,knowledge,languages,linguistics,meta,metrics,misc,modeling,modeltheory,reuse,rewriting,softeng,specification,ssr,technology,theory,upcoming,upcoming_conferences,web,workshops}
+
+%======================================================================
+
+%\newpage
+%\appendix
+
+%======================================================================
+
+%======================================================================
+%\section{Section Name}
+
+%======================================================================
+% Fin
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

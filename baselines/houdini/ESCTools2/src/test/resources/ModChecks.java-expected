@@ -1,0 +1,179 @@
+ESC/Java version VERSION
+src|test|resources|ModChecks.java: Caution: Using given file as the .java file, even though it is not the java file for ModChecks on the classpath
+    [TIME]
+
+ModChecks ...
+  Prover started:TIME
+    [TIME]
+
+ModChecks: ModChecks() ...
+    [TIME]  passed immediately
+
+ModChecks: m() ...
+    [TIME]  passed
+
+ModChecks: mm() ...
+    [TIME]  passed
+
+ModChecks: mme() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:43: Warning: Possible violation of modifies clause (Modifies)
+                this.i = 9;  // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 39, col 5:
+        //@ modifies o.i,k;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: mme1() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:48: Warning: Possible violation of modifies clause (Modifies)
+                o.k = 9;     // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 46, col 5:
+        //@ modifies o.i,k;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: me() ...
+    [TIME]  passed
+
+ModChecks: mee() ...
+    [TIME]  passed
+
+ModChecks: meei() ...
+    [TIME]  passed
+
+ModChecks: meei2() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:83: Warning: Possible violation of modifies clause (Modifies)
+                if (i != 0) j = 1; // WARNING
+                            ^
+Associated declaration is "src|test|resources|ModChecks.java", line 81, col 5:
+        //@ modifies k;
+            ^
+Execution trace information:
+    Executed then branch in "src|test|resources|ModChecks.java", line 83, col 14.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: ma() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:90: Warning: Possible violation of modifies clause (Modifies)
+                a[1] = 9; // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 87, col 5:
+        //@ modifies a[0];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: mb() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:95: Warning: Possible violation of modifies clause (Modifies)
+                b[0] = 0; // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 93, col 5:
+        //@ modifies a[0];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: mbb() ...
+    [TIME]  passed
+
+ModChecks: maaWild() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:108: Warning: Possible violation of modifies clause (Modifies)
+                b[0] = 0; // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 104, col 5:
+        //@ modifies a[*];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: maaRange1() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:112: Warning: Possible violation of modifies clause (Modifies)
+                a[1] = 9; // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 110, col 5:
+        //@ modifies a[2 .. 4];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: maaRangeOK() ...
+    [TIME]  passed
+
+ModChecks: maaRange3() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:124: Warning: Possible violation of modifies clause (Modifies)
+                a[5] = 9; // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 122, col 5:
+        //@ modifies a[2 .. 4];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: mstatic() ...
+    [TIME]  passed
+
+ModChecks: mstatic2() ...
+    [TIME]  passed
+
+ModChecks: mstar() ...
+    [TIME]  passed
+
+ModChecks: mstar2() ...
+    [TIME]  passed
+
+ModChecks: mstar3() ...
+    [TIME]  passed
+
+ModChecks: mstar3b() ...
+    [TIME]  passed
+
+ModChecks: mstar4() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecks.java:172: Warning: Possible violation of modifies clause (Modifies)
+                o.i = 0;  // WARNING
+                ^
+Associated declaration is "src|test|resources|ModChecks.java", line 170, col 5:
+        //@ modifies this.*;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecks: mpre() ...
+    [TIME]  passed
+
+ModChecks: msuper() ...
+    [TIME]  passed
+
+ModChecks: mnowarn() ...
+    [TIME]  passed
+
+ModChecks: mma() ...
+    [TIME]  passed
+
+ModChecks: mma2() ...
+    [TIME]  passed
+
+ModChecks: mg() ...
+    [TIME]  passed
+  [TIME total]
+
+S ...
+    [TIME]
+
+S: S() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+9 warnings

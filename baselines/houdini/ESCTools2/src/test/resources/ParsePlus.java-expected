@@ -1,0 +1,30 @@
+ESC/Java version VERSION
+src|test|resources|ParsePlus.java: Caution: Using given file as the .java file, even though it is not the java file for ParsePlus on the classpath
+    [TIME]
+
+ParsePlus ...
+  Prover started:TIME
+    [TIME]
+
+ParsePlus: m() ...
+    [TIME]  passed
+
+ParsePlus: n() ...
+    [TIME]  passed
+
+ParsePlus: p() ...
+    [TIME]  passed
+
+ParsePlus: q() ...
+    [TIME]  passed
+
+ParsePlus: r() ...
+    [TIME]  passed
+
+ParsePlus: s() ...
+    [TIME]  passed
+
+ParsePlus: ParsePlus() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

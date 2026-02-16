@@ -1,0 +1,97 @@
+package java.text;
+
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.TimeZone;
+import java.util.Calendar;
+import java.util.Date;
+
+public abstract class DateFormat extends Format {
+    protected Calendar calendar;
+    protected NumberFormat numberFormat;
+    public static final int ERA_FIELD;
+    public static final int YEAR_FIELD;
+    public static final int MONTH_FIELD;
+    public static final int DATE_FIELD;
+    public static final int HOUR_OF_DAY1_FIELD;
+    public static final int HOUR_OF_DAY0_FIELD;
+    public static final int MINUTE_FIELD;
+    public static final int SECOND_FIELD;
+    public static final int MILLISECOND_FIELD;
+    public static final int DAY_OF_WEEK_FIELD;
+    public static final int DAY_OF_YEAR_FIELD;
+    public static final int DAY_OF_WEEK_IN_MONTH_FIELD;
+    public static final int WEEK_OF_YEAR_FIELD;
+    public static final int WEEK_OF_MONTH_FIELD;
+    public static final int AM_PM_FIELD;
+    public static final int HOUR1_FIELD;
+    public static final int HOUR0_FIELD;
+    public static final int TIMEZONE_FIELD;
+    
+    
+    public final StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition fieldPosition) ;
+    
+    public abstract StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition);
+    
+    public final String format(Date date);
+    
+    public Date parse(String source) throws ParseException ;
+    
+    public abstract Date parse(String source, ParsePosition pos);
+    
+    public Object parseObject(String source, ParsePosition pos) ;
+    public static final int FULL;
+    public static final int LONG;
+    public static final int MEDIUM;
+    public static final int SHORT;
+    public static final int DEFAULT;
+    
+    public static final DateFormat getTimeInstance();
+    
+    public static final DateFormat getTimeInstance(int style);
+    
+    public static final DateFormat getTimeInstance(int style, Locale aLocale);
+    
+    public static final DateFormat getDateInstance();
+    
+    public static final DateFormat getDateInstance(int style);
+    
+    public static final DateFormat getDateInstance(int style, Locale aLocale);
+    
+    public static final DateFormat getDateTimeInstance();
+    
+    public static final DateFormat getDateTimeInstance(int dateStyle, int timeStyle);
+    
+    public static final DateFormat getDateTimeInstance(int dateStyle, int timeStyle, Locale aLocale);
+    
+    public  static final DateFormat getInstance();
+    
+    public /*@ pure @*/ static Locale[] getAvailableLocales();
+    
+    public void setCalendar(Calendar newCalendar);
+    
+    public /*@ pure @*/ Calendar getCalendar();
+    
+    public void setNumberFormat(NumberFormat newNumberFormat);
+    
+    public /*@ pure @*/ NumberFormat getNumberFormat();
+    
+    public void setTimeZone(TimeZone zone);
+    
+    
+    public /*@ pure @*/ TimeZone getTimeZone() ;
+    
+    public void setLenient(boolean lenient);
+    
+    public boolean isLenient();
+    
+    public int hashCode();
+    
+    public /*@ pure @*/boolean equals(Object obj);
+    
+    public /*@ non_null @*/ Object clone();
+    
+    private static DateFormat get(int timeStyle, int dateStyle, int flags, Locale loc);
+    
+    protected /*@ pure @*/DateFormat();
+}

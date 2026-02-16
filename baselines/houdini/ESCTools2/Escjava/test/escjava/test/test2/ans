@@ -1,0 +1,256 @@
+/udir/flanagan/Escjava/escjava -classpath .:/udir/stata/src/jdk-alpha/src/share/java/:/udir/stata/src/jdk-alpha/src/share/sun/:/udir/stata/src/jdk-alpha/src/solaris/sun/ -v -ptb -pgc -pvc -pjt StmtPragmas1.java
+[parsing StmtPragmas1.java]
+[calling Simplify on command ;----------------------------------------------------------------------
+; "Universal", or class-independant part, of the background predicate
+
+; === ESCJ 8: Section 0.4
+    
+(BG_PUSH (FORALL (m i x) (EQ (select (store m i x) i) x)))
+
+(BG_PUSH (FORALL (m i j x) 
+		 (IMPLIES (NEQ i j)
+			  (EQ (select (store m i x) j)
+			      (select m j)))))
+
+; === ESCJ 8: Section 1.1
+
+(DEFPRED (<: t0 t1))
+
+(BG_PUSH (FORALL (t) (<: t t)))
+	
+(BG_PUSH (FORALL (t0 t1 t2)
+		 (IMPLIES (AND (<: t0 t1) (<: t1 t2))
+			  (<: t0 t2))))
+
+(BG_PUSH (FORALL (t0 t1)
+		 (IMPLIES (AND (<: t0 t1) (<: t1 t0))
+			  (EQ t0 t1))))
+
+; === ESCJ 8: Section 1.3
+    
+(BG_PUSH (FORALL (t) (<: (array t) |java.lang.Cloneable|)))
+    
+(BG_PUSH (FORALL (t) (EQ (elemType (array t)) t)))
+
+(BG_PUSH (FORALL (t0 t1) 
+		 (EQ (<: t0 (array t1))
+		     (<: (elemType t0) t1))))
+
+; === ESCJ 8: Section 2.1
+
+(DEFPRED (is x t))
+
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (is (cast x t) t)))
+     
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (IMPLIES (is x t) (EQ (cast x t) x))))
+     
+; === ESCJ 8: Section 2.2
+
+(BG_PUSH (DISTINCT |@false| |@true|))
+
+; === ESCJ 8: Section 2.2.1
+
+(BG_PUSH (FORALL (x) (IFF (is x char) (AND (<= 0 x) (<= x 65535)))))
+(BG_PUSH (FORALL (x) (IFF (is x char) (AND (<= -128 x) (<= x 127)))))
+(BG_PUSH (FORALL (x) (IFF (is x char) (AND (<= -32768 x) (<= x 32767)))))
+
+; === ESCJ 8: Section 2.3
+      
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (is x t))
+	 (IMPLIES (<: t |java.lang.Object|)
+		  (IFF (is x t)
+		       (OR (EQ x null) (<: (typeof x) t))))))
+
+; === ESCJ 8: Section 2.4
+
+(BG_PUSH
+ (FORALL (f t x) (PATS (select (asField f t) x))
+	 (is (select (asField f t) x) t)))
+
+; === ESCJ 8: Section 2.5
+
+(BG_PUSH
+ (FORALL (e a i) (PATS (select (select (asElems e) a) i))
+	 (is (select (asElems e) a)
+	     (elemType (typeof a)))))
+
+; === ESCJ 8: Section 3.0
+
+(DEFPRED (isAllocated x aa) (< (vAllocTime x) aa))
+
+; === ESCJ 8: Section 3.1
+
+(BG_PUSH
+ (FORALL (x f aa) (PATS (isAllocated (select f x) aa))
+	 (IMPLIES (AND (< (fClosedTime f) aa)
+		       (isAllocated x aa))
+		  (isAllocated (select f x) aa))))
+
+; === ESCJ 8: Section 3.2
+
+(BG_PUSH
+ (FORALL (a e i aa) (PATS (isAllocated (select (select e a) i) aa))
+	 (IMPLIES (AND (< (eClosedTime e) aa)
+		       (isAllocated a aa))
+		  (isAllocated (select (select e a) i) aa))))
+ 
+; === ESCJ 8: Section 4 
+; Not implemented 
+; Spec not up-to-date with intent
+
+; === ESCJ 8: Section 5.0
+
+(BG_PUSH
+ (FORALL (a) 
+	 (PATS (arrayLength a))
+	 (AND (<= 0 (arrayLength a))
+	      (is (arrayLength a) int))))
+
+; === ESCJ 8: Section 5.1
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (EQ (+ (* (integralDiv i j) j) (integralMod i j))
+	     i)))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< 0 j)
+		  (AND (<= 0 (integralMod i j))
+		       (< (integralMod i j) j)))))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< j 0)
+		  (AND (< j (integralMod i j))
+		       (<= (integralMod i j) 0)))))
+
+(BG_PUSH
+ (FORALL (i j) 
+	 (PATS (integralMod (+ i j) j))
+	 (EQ (integralMod (+ i j) j) 
+	     (integralMod i j))))
+
+(BG_PUSH
+ (FORALL (i j)
+	 (PATS (integralMod (+ j i) j))
+	 (EQ (integralMod (+ j i) j) 
+	     (integralMod i j))))
+
+; === ESCJ 8: Section 5.3
+
+(BG_PUSH
+ (FORALL (x y)
+	 (PATS (termConditional |@true| x y))
+	 (EQ (termConditional |@true| x y) x)))
+
+(BG_PUSH
+ (FORALL (b x y)
+	 (PATS (termConditional b x y))
+	 (IMPLIES (NEQ b |@true|)
+		  (EQ (termConditional |@true| x y) x))))
+
+;----------------------------------------------------------------------
+; End of Universal background predicate
+;----------------------------------------------------------------------
+]
+[Simplify: command done]
+Processing StmtPragmas1
+[Superlink resolving StmtPragmas1]
+[checkCompilationUnit: checking for StmtPragmas1.java]
+[Superlink resolving java.lang.Object]
+[parsing /udir/stata/src/jdk-alpha/src/share/java//java/lang/Object.java]
+[checkCompilationUnit: checking for /udir/stata/src/jdk-alpha/src/share/java//java/lang/Object.java]
+[prepping StmtPragmas1]
+[prepping java.lang.Object]
+[typechecking StmtPragmas1]
+[parsing /udir/stata/src/jdk-alpha/src/share/java//java/lang/RuntimeException.java]
+[Superlink resolving java.lang.RuntimeException]
+[checkCompilationUnit: checking for /udir/stata/src/jdk-alpha/src/share/java//java/lang/RuntimeException.java]
+[Superlink resolving java.lang.Exception]
+[parsing /udir/stata/src/jdk-alpha/src/share/java//java/lang/Exception.java]
+[checkCompilationUnit: checking for /udir/stata/src/jdk-alpha/src/share/java//java/lang/Exception.java]
+[Superlink resolving java.lang.Throwable]
+[parsing /udir/stata/src/jdk-alpha/src/share/java//java/lang/Throwable.java]
+[checkCompilationUnit: checking for /udir/stata/src/jdk-alpha/src/share/java//java/lang/Throwable.java]
+[parsing /udir/stata/src/jdk-alpha/src/share/java//java/io/Serializable.java]
+[Superlink resolving java.io.Serializable]
+[checkCompilationUnit: checking for /udir/stata/src/jdk-alpha/src/share/java//java/io/Serializable.java]
+[prepping java.lang.RuntimeException]
+[prepping java.lang.Exception]
+[prepping java.lang.Throwable]
+[prepping java.io.Serializable]
+=== Source code with types ===
+public abstract 
+class StmtPragmas1
+{
+   static int count;
+
+   static {
+      /*@ assume (/*boolean*/ (/*int*/ 0) <= (/*int*/ count))  */
+      if ((/*boolean*/ (/*int*/ count) < (/*int*/ 0))) {
+         /*@ unreachable */
+         throw (/*java.lang.RuntimeException*/ new RuntimeException());
+      }
+      (/*int*/ (/*int*/ count)++);
+      /*@ assert (/*boolean*/ (/*int*/ 0) <= (/*int*/ count))  */
+   }
+
+   public static int find(int[] a, int el)
+    /*@ requires (/*boolean*/ (/*int[]*/ a) != (/*[PrimitiveType tag = 99 loc = 0]*/ null))  */
+    /*@ requires (/*boolean*/ (exists int i; (/*boolean*/ (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ i)) && (/*boolean*/ (/*int*/ i) < (/*int*/ (/*int[]*/ a).length))))) & (/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ i)]) == (/*int*/ el)))))  */
+    /*@ requires (/*boolean*/ (forall int i; (/*boolean*/ ((/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ (/*int*/ i) - (/*int*/ 1))) && (/*boolean*/ (/*int*/ (/*int*/ i) - (/*int*/ 1)) < (/*int*/ (/*int[]*/ a).length))))) ==> (/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ (/*int*/ i) - (/*int*/ 1))]) < (/*int*/ (/*int[]*/ a)[(/*int*/ i)]))))))  */
+    /*@ ensures (/*boolean*/ (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ RES)) && (/*boolean*/ (/*int*/ RES) < (/*int*/ (/*int[]*/ a).length))))) & (/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ RES)]) == (/*int*/ el)))  */ 
+   {
+      int lo = (/*int*/ 0);
+      int hi = (/*int*/ (/*int*/ (/*int[]*/ a).length) - (/*int*/ 1));
+      if ((/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ lo)]) == (/*int*/ el))) return (/*int*/ lo);
+      if ((/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ hi)]) == (/*int*/ el))) return (/*int*/ hi);
+      for(int i; (/*boolean*/ (/*int*/ i) <= (/*int*/ hi)); (/*int*/ (/*int*/ i)++)) {
+         /*@ loop_invariant (/*boolean*/ (/*int*/ lo) < (/*int*/ hi))  */
+         /*@ loop_invariant (/*boolean*/ (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ lo)) && (/*boolean*/ (/*int*/ lo) < (/*int*/ (/*int[]*/ a).length))))) & (/*boolean*/ ((/*boolean*/ (/*boolean*/ (/*int*/ 0) <= (/*int*/ hi)) && (/*boolean*/ (/*int*/ hi) < (/*int*/ (/*int[]*/ a).length))))))  */
+         /*@ loop_invariant (/*boolean*/ (/*boolean*/ (/*int*/ (/*int[]*/ a)[(/*int*/ lo)]) < (/*int*/ el)) & (/*boolean*/ (/*int*/ el) < (/*int*/ (/*int[]*/ a)[(/*int*/ hi)])))  */
+         int mid = (/*int*/ (/*int*/ lo) + (/*int*/ (/*int*/ ((/*int*/ (/*int*/ hi) - (/*int*/ lo)))) / (/*int*/ 2)));
+         if ((/*boolean*/ (/*int*/ el) == (/*int*/ (/*int[]*/ a)[(/*int*/ mid)]))) return (/*int*/ mid);
+         else if ((/*boolean*/ (/*int*/ el) < (/*int*/ (/*int[]*/ a)[(/*int*/ mid)]))) (/*int*/ (/*int*/ hi) = (/*int*/ mid));
+         else (/*int*/ (/*int*/ lo) = (/*int*/ mid));
+      }
+      /*@ unreachable */
+      return (/*int*/ - (/*int*/ 1));
+   }
+
+   public StmtPragmas1()
+   {
+      super();
+   }
+}
+Contributors for StmtPragmas1
+    java.lang.Object
+    java.lang.RuntimeException
+    StmtPragmas1
+=== Type-Specfic Background Predicate ===
+(AND 
+(<: |java.lang.RuntimeException| |java.lang.Exception|)
+(<: |StmtPragmas1| |java.lang.Object|))
+===
+[calling Simplify on command (BG_PUSH (AND 
+(<: |java.lang.RuntimeException| |java.lang.Exception|)
+(<: |StmtPragmas1| |java.lang.Object|)))]
+[Simplify: command done]
+  Verification condition is: (EQ A B)
+[calling Simplify on (EQ A B)]
+[Simplify: formula may be invalid; counterexample context is:
+(UNKNOWN)]
+Error: StmtPragmas1 failed to verify because:
+(UNKNOWN)
+[calling Simplify on command (BG_POP)]
+[Simplify: command done]
+1 error

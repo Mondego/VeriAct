@@ -1,0 +1,32 @@
+TestProperties.java:36: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+TestProperties.java:38: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestProperties.java", line 24, col 18.
+
+TestProperties.java:85: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestProperties.java", line 50, col 8.
+    Routine call returned exceptionally in "TestProperties.java", line 56, col 8.
+    Routine call returned exceptionally in "TestProperties.java", line 68, col 8.
+    Routine call returned exceptionally in "TestProperties.java", line 74, col 8.
+    Routine call returned exceptionally in "TestProperties.java", line 80, col 8.
+
+TestProperties.java:101: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestProperties.java:110: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestProperties.java:137: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestProperties.java:153: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+7 warnings

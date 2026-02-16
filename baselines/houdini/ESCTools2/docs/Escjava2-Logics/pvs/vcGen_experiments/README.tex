@@ -1,0 +1,35 @@
+\documentclass[english,a4paper,10pt]{article}
+\usepackage{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{vmargin}
+\usepackage{color}
+\usepackage{verbatim}
+
+\newcommand{\BalleSousLeLit}[2]{
+\bigskip
+\begin{Large}\textbf{\begin{LARGE}#1\end{LARGE}#2}\end{Large}
+}
+
+\begin{document}
+
+\thispagestyle{empty} % no page number
+
+\begin{flushright}
+Clément, \today
+\end{flushright}
+
+\BalleSousLeLit{S}{ome explanations about this folder :\\}
+
+It contains all experiments that have been done with the old logic rewritten for pvs. See \textit{Playing with pvs and the old unsorted logic.pdf} for more explanations. This page explains only what the files contains.
+
+\begin{itemize}
+\item \textcolor{red}{current\_unsorted\_logic.pvs} is the logic designed by Joe, which is slighty equivalent to Simplify's one. Some definitions have been added to make the translation easier.
+\item \textcolor{red}{current\_unsorted\_logic\_cleaned.pvs} is the logic which relies on pvs types \textit{boolean} and \textit{real}. This logic is much more concise, yet incomplete, and can only be applied on program that do not use array. Moreover the translation has to be corrected by hand (especially typing some variable). Yet this logic is much more usable with pvs.
+\item \textcolor{green}{VcToStringPvs.java} is the class used to generate vcs for Joe's pvs logic.
+\item \textcolor{green}{VcToStringPvsCleaned.java} is the class used to generate vcs for the second logic (this file is not included in the Escjava/java/escjava/ folder).
+\item The \textcolor{green}{.java} files are the program against which the logic has been tested. If there is a \textit{*2.java}, the second program is an almost equivalent version of the first, yet one pass escjava2 while the 2.java version does not (it was used to compare proofs).
+\item The \textcolor{magenta}{.java.parseOk.proofOk} files contains the proof of the corresponding .java file after corrections to get it parsed.
+\item The \textcolor{magenta}{.java.Result} files contains the last sequent obtained in pvs when running the proof by hand. 
+\end{itemize}
+
+\end{document}

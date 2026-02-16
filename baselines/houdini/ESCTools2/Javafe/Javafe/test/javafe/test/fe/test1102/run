@@ -1,0 +1,9 @@
+#!/bin/sh
+
+## Test binary class file reader with all sources in front end.
+
+cd ${JAVAFE_SOURCE_DIR}/javafe
+
+for i in *.java */*.java; do
+  ${TOOL} -classpath "${JAVAFE_CLASSPATH_CAN}" $i
+done

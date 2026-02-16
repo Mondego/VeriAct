@@ -1,0 +1,70 @@
+ESC/Java version VERSION
+    [TIME]
+
+LoopInvariant ...
+  Prover started:TIME
+    [TIME]
+
+LoopInvariant: m() ...
+------------------------------------------------------------------------
+LoopInvariant.java:10: Warning: Negative loop variant function may not lead to loop exit (DecreasesBound)
+                for (int i=0; i<10; ++i) sum++;
+                            ^
+Associated declaration is "LoopInvariant.java", line 9, col 6:
+                //@ decreases -i;
+                    ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "LoopInvariant.java", line 10, col 2.
+    Reached top of loop after 1 iteration in "LoopInvariant.java", line 10, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LoopInvariant: m2() ...
+------------------------------------------------------------------------
+LoopInvariant.java:17: Warning: Loop variant function possible not decreased (Decreases)
+                for (int i=0; i<10; ++i) sum++;
+                            ^
+Associated declaration is "LoopInvariant.java", line 16, col 6:
+                //@ decreases i;
+                    ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "LoopInvariant.java", line 17, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LoopInvariant: mm() ...
+------------------------------------------------------------------------
+LoopInvariant.java:24: Warning: Loop invariant possibly does not hold (LoopInv)
+                while (i<5) {
+                      ^
+Associated declaration is "LoopInvariant.java", line 23, col 6:
+                //@ loop_invariant sum == i;
+                    ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "LoopInvariant.java", line 24, col 2.
+    Reached top of loop after 1 iteration in "LoopInvariant.java", line 24, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LoopInvariant: mmm() ...
+------------------------------------------------------------------------
+LoopInvariant.java:33: Warning: Loop invariant possibly does not hold (LoopInv)
+                for (int i=0; i<10; ++i) sum++;
+                            ^
+Associated declaration is "LoopInvariant.java", line 31, col 6:
+                //@ loop_invariant sum == 0;
+                    ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "LoopInvariant.java", line 33, col 2.
+    Reached top of loop after 1 iteration in "LoopInvariant.java", line 33, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LoopInvariant: LoopInvariant() ...
+    [TIME]  passed
+  [TIME total]
+4 warnings

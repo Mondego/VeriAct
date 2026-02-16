@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+Ticket59 ...
+  Prover started:TIME
+    [TIME]
+
+Ticket59: main(java.lang.String[]) ...
+    [TIME]  passed
+
+Ticket59: Ticket59() ...
+    [TIME]  passed
+  [TIME total]

@@ -1,0 +1,295 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 7: ESC/Java Annotation Reference Manual</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>
+ESCJ 7: ESC/Java Annotation Reference Manual</H1>
+Last modified by rustan on 2 Sep 1997.
+
+<P>This is the ESC/Java annotations reference manual, an evolving document.
+The keywords shown are not necessarily the final ones. Some things are
+still to be written (TBW).
+
+<P>A <I>specification expression</I> is a side-effect free Java expression,
+possibly containing quantifications.
+<H2>
+New adjectives for instance variables</H2>
+
+<H3>
+writable-deferred</H3>
+An instance variable <I>x</I> in a class <I>C</I> can be declared with
+the adjective <TT>writable-deferred</TT>. This makes <I>x</I> <I>writable-deferred</I>
+in <I>C</I>. For every update of a designator <I>o.f</I>, where <I>o</I>
+is of static type <I>C</I>, ESC/Java checks that <I>f</I> is not writable-deferred
+in <I>C</I>. This check is done by a syntactic scan of the code being checked.
+<H3>
+defined-if</H3>
+A field <I>x</I> can be declared with the adjective <TT>defined-if</TT>
+<I>E</I>, where <I>E</I> denotes some boolean specification expression
+in which all free variables are (at least) as accessible to every client
+as <I>x</I> is. For example, if <I>x</I> is declared as <TT>protected</TT>
+in a class <I>C</I>, then every free variable in <I>E</I> must either be
+<TT>protected</TT> or <TT>package</TT> and declared in a superclass of
+<I>C</I>, or be <TT>public</TT>. ESC/Java checks that condition <I>E</I>
+holds whenever <I>x</I> is read.
+<H3>
+monitored-by</H3>
+In a similar fashion, a field <I>x</I> can be declared with the adjective
+<TT>monitored-by</TT> <I>m</I>, where <I>m</I> denotes a nonempty list
+of specification expressions denoting objects. Each free variable in <I>m</I>
+must be as accessible as <I>x</I>. If <I>x</I> is an instance variable,
+<I>this</I> is allowed to occur in <I>m</I>.
+
+<P>A field <I>x</I> is allowed at most one <TT>monitored-by</TT> adjective.
+If there is one, ESC/Java will do a check for each read or write of <I>x</I>.
+For each read of <I>x</I>, ESC/Java checks that at least one of the the
+non-<TT>null</TT> locks in <I>m</I> is in the locking set of the current
+thread. For each write of <I>x</I>, ESC/Java checks that every lock in
+<I>m</I> is either <TT>null</TT> or is in the locking set of the current
+thread, and checks that at least one of the locks in <I>m</I> is non-<TT>null</TT>.
+<H3>
+monitored</H3>
+As a convenient shorthand, if <I>f</I> is an instance variable, the adjective
+<TT>monitored</TT> is short for <TT>monitored-by</TT> <I>this</I>.
+<H2>
+New class members</H2>
+
+<H3>
+writable-deferred</H3>
+A class <I>C</I> that extends a class <I>B</I> can declare <TT>writable-deferred</TT>
+<I>x</I><TT>;</TT> if <I>x</I> is a variable declared in a proper supertype
+of <I>C</I> in such a way that <I>C</I> can read it (in other words, <I>x</I>
+is not declared <TT>private</TT>), provided that <I>x</I> is writable-deferred
+in <I>B</I>. The declaration makes <I>x</I> writable-deferred in <I>C</I>.
+<H3>
+invariant</H3>
+A class <I>C</I> that extends a class <I>B</I> can declare <TT>invariant</TT>
+<I>J</I><TT>;</TT>, where <I>J</I> is a boolean specification expression.
+The annotation declares <I>J</I> as an object invariant of class <I>C</I>.
+The free variables in <I>J</I> must either be fields declared in <I>C</I>,
+or be fields that are declared in a proper supertype of <I>C</I> and that
+are writable-deferred in <I>B</I>. Fields of fields are not allowed to
+be mentioned. Also, all free variables in <I>J</I> must have the same protection
+level. ((Footnote: This restriction can be dropped if we change our methodological
+view of Java scoping/protection rules.))For example, they can all be <TT>private</TT>
+or all be <TT>protected</TT>. The protection level of the invariant is
+the same as that of the variables it mentions. For example, an object invariant
+that mentions <TT>protected</TT> fields is said to be <TT>protected</TT>.
+A class can have any number of object invariant declarations.
+
+<P>Let <I>S</I> denote a method body given in a class <I>K</I> and let
+<I>J</I> denote an object invariant of a class <I>C</I> accessible to class
+<I>K</I>. Then, ESC/Java will check that <I>J</I> holds for every <I>C</I>
+object at every method invocation within <I>S</I>, at every call to a constructor
+within <I>S</I>, and upon exit from <I>S</I>. ESC/Java will also assume
+that <I>J</I> holds for every <I>C</I> object upon entry to <I>S</I>, upon
+return from any method invocation within <I>S</I>, and upon return from
+any constructor call within <I>S</I>.
+
+<P>There is an exception to the rule described in the previous paragraph.
+If <I>C</I> is a subclass of <I>K</I>, <I>S</I> is the body of a constructor,
+and the dynamic type of <I>this</I> is a subtype of <I>C</I>, then "every
+<I>C</I> object" in the paragraph above should be replaced by "every <I>C</I>
+object other than <I>this</I>". However, if <I>K</I> is <I>C</I>, then
+ESC/Java will check that <I>J</I> holds for <I>this</I> upon exit from
+<I>S</I>.
+<H2>
+New adjectives for methods</H2>
+
+<H3>
+Method specifications</H3>
+A method <I>m</I> declared in a class <I>C</I> can have the following adjectives,
+which together are referred to as the <I>specification</I> of <I>m</I>:
+<DL>
+<DT>
+<TT>requires</TT> <I>P</I></DT>
+
+<DD>
+where <I>P</I> is a boolean specification expression that may mention as
+free variables any parameter to <I>m</I> and any variable that is accessible
+to all clients of <I>m</I> (here and throughout, <I>parameter</I> includes
+<I>this</I> unless <I>m</I> is <TT>static</TT>)</DD>
+
+<DT>
+<TT>modifies</TT> <I>w</I></DT>
+
+<DD>
+where <I>w</I> is a list of <I>designator expressions</I> accessible within
+class <I>C</I>. A designator can be a static field, an expression <I>o.f</I>
+where <I>o</I> is a <I>modifies select expression</I>, <I>a[i]</I> where
+<I>a</I> is a modifies select expression denoting an array reference and
+<I>i</I> is a modifies select expression denoting an integer, and <I>a[]</I>
+where <I>a</I> is a modifies select expression denoting an array.</DD>
+
+
+<P>A <I>modifies select expression</I> has one of the following forms:
+<I>o</I>, <I>g</I>, <I>g'</I>, <I>e.f</I>, <I>e.f'</I>, <I>a[i]</I>, or
+<I>a[i]'</I>, where <I>o</I> is a parameter to <I>m</I> or the special
+keyword <TT>result</TT>, <I>g</I> is a static field, and <I>e</I>, <I>a</I>,
+and <I>i</I> are modifies select expression denoting an object with an
+<I>f</I> field, an array, and an integer, respectively.
+
+<P>The keyword <TT>result</TT> denotes the result value of <I>m</I>, if
+there is one. Primes indicate final values of fields and static values.
+<DT>
+<TT>ensures</TT> <I>Q</I></DT>
+
+<DD>
+where <I>Q</I> is a boolean specification expression that may mention as
+free variables any parameter to <I>m</I>, the special variable <TT>result</TT>,
+and fields accessible to all clients of <I>m</I>. In addition, <I>Q</I>
+may mention <I>g'</I>, <I>e.f'</I>, and <I>a[i]'</I> like in the <TT>modifies</TT>
+clause.</DD>
+
+<DT>
+<TT>raises</TT> <I>(T t) Q</I></DT>
+
+<DD>
+where <I>T</I> denotes a subclass of <I>Throwable</I>, <I>t</I> is a dummy
+variable that can be used in <I>Q</I> to denote the exception being raised
+by the method, and <I>Q</I> is as described in the previous paragraph,
+except that it may contain <I>t</I> instead of <TT>result</TT>. The order
+of <TT>raises</TT> annotations makes a difference in the same way that
+<TT>catch</TT> phrases do in the Java <TT>try</TT> statement.</DD>
+</DL>
+The <I>precondition</I> of <I>m</I> is the conjunction of all such <I>P</I>s
+and the <I>postcondition</I> of <I>m</I> is the conjunction of all such
+<I>Q</I>s.
+
+<P>In any subclass <I>D</I> of <I>C</I>, a new implementation of <I>m</I>
+is allowed to extend the specification of <I>m</I> with further <TT>modifies</TT>
+<I>o.f</I> clauses, where <I>o</I> is <I>this</I> and <I>f</I> is a field
+introduced in <I>D</I>.
+
+<P>The <I>modifies list</I> of <I>m</I> for a class <I>T</I> is the union
+of all <I>w</I>s occurring in <TT>modifies</TT> <I>w</I> clauses for <I>m</I>
+in any superclass of <I>T</I>, unioned with the expression <I>e.f</I> for
+any term <I>e.f'</I> occurring in the postcondition of <I>m</I>, unioned
+with the expression <I>g</I> for any term <I>g'</I> occurring in the postcondition
+of <I>m</I>, and unioned with <I>a[i]</I> for any expression <I>a[i]'</I>
+occurring in the postcondition. For example, if <I>o.f'[i].h.k'</I> occurs
+in the postcondition, the modifies list will contain <I>o.f</I> and <I>o.f'[i].h.k</I>.
+
+<P>TBW: quantified variables occurring in the postcondition must get some
+interpretation in the modifies list.
+
+<P>For an invocation of <I>m</I> on an object <I>t</I> of static type <I>T</I>,
+ESC/Java will first check that the precondition of <I>m</I> holds. Then,
+it will assign new values to any designator expression <I>e</I> occurring
+in the modifies list of <I>m</I> for class <I>T</I> where <I>e</I> is accessible
+to the caller, and will expand the set of allocated objects and arbitrarily
+assign an outcome of the method. Finally, it assumes the postcondition
+of <I>m</I>, which relates the new values of the modified variables with
+those the values of variables before the invocation. If the outcome of
+the method is exceptional, the exception is re-raised.
+
+<P>For an implementation <I>S</I> of <I>m</I> given in a class <I>T</I>,
+ESC/Java will first assume that the precondition of <I>m</I> holds. Then
+it will check that the postcondition holds upon exit from <I>S</I>. No
+modifies list checking is performed unless the user specifies the <TT>-modifiesChecking</TT>
+switch on the ESC/Java command line. In that case, ESC/Java checks that
+for any field <I>o.f</I> that <I>S</I> changes, either <I>o.f</I> is in
+the modifies list of <I>m</I> for class <I>T</I>, or <I>o</I> is not a
+parameter to <I>m</I>, or <I>o</I> was not allocated upon entry to <I>S</I>.
+<H2>
+Locking order</H2>
+TBW.
+<H2>
+New adjectives for local variables</H2>
+
+<H3>
+defined-if</H3>
+A local variable <I>x</I> can be declared with the adjective <TT>defined-if</TT>
+<I>E</I>, where <I>E</I> denotes some boolean specification expression.
+ESC/Java checks that condition <I>E</I> holds whenever <I>x</I> is read.
+<H3>
+uninitialized</H3>
+A local variable <I>x</I> can be declared with the adjective <TT>uninitialized</TT>.
+This is useful if the Java compiler requires the programmer to give <I>x</I>
+an explicitly initial value and the programmer doesn't want to. ESC/Java
+will check that any read of <I>x</I> takes place after <I>x</I> has been
+assigned to after its initialization.
+<H2>
+Specifying methods of an interface</H2>
+TBW.
+<H2>
+Automatic checks</H2>
+This section describes checks that ESC/Java performs that don't require
+special annotations.
+<H3>
+Run-time checks</H3>
+For every field dereference <I>o.f</I> in the body of a method being checked,
+ESC/Java will check that <I>o</I> is non-<TT>null</TT>, unless:
+<UL>
+<LI>
+the dereference occurs statically in a context where a surrounding <TT>try</TT>
+statement will catch <TT>null</TT>-dereference errors,</LI>
+
+<LI>
+the method specification shows a <TT>raises</TT> clause for <TT>null</TT>-dereference
+errors, or</LI>
+
+<LI>
+the user has turned off <TT>null</TT>-dereference checking, for example
+by using an appropriate command line switch.</LI>
+</UL>
+Similar for all other run-time errors.
+<H3>
+Use of this in constructors</H3>
+ESC/Java also imposes a syntactic restriction on all constructor bodies:
+The only uses of <I>this</I> allowed within the constructor body are those
+of the form <I>this.f</I> for some field <I>f</I>. That is, the reference
+<I>this</I> is not allowed to be passed to any method or assigned to any
+field.
+<H2>
+Candidate additions</H2>
+The keywords <TT>writable-private</TT>, <TT>writable-package</TT>, <TT>writable-protected</TT>,
+and <TT>writable-public</TT>. To be placed at the declaration of a field.
+
+<P>Allowing extensions to method specifications to allow <TT>ensures</TT>
+clauses.
+<BR><!--SRC FOOTER start-->
+<HR>
+
+<table width="100%"> <tr>
+
+<td align=left valign=top>
+<font size="-1">
+<ADDRESS>
+<A HREF="http://www.research.digital.com/SRC/">
+        HP SRC Classic Lab<BR></A>
+        Mail Stop 1250<BR>
+        1501 Page Mill Road, Palo Alto, CA 94304<BR>
+        Tel: (650) 857-2361 Fax: (650) 852-8186
+</ADDRESS>
+</font>
+</td>
+
+<td align=center valign=center>
+<img src=/SRC/pics/logo-small.gif>
+</td>
+
+<td align=right valign=top>
+<font size="-1">
+<BR>
+Send <A HREF="/SRC/cgi-bin/generic-comments.tcl?dir=/SRC/esc/design-notes/escj07.html"><b>comments</b></A> to the owner of this page.<br>
+<I>Last modified: Monday, 27-Jan-2003 16:29:40 PST</I>
+</font>
+</td>
+
+</tr> </table>
+<!--SRC FOOTER end-->
+
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

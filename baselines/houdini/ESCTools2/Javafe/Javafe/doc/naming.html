@@ -1,0 +1,630 @@
+<html>
+
+<head>
+<title> Resolving names in Java</title>
+</head>
+
+<body>
+
+<!-- Need to augment this document for resolution in spec files, jml
+files, etc. -->
+
+
+<h1> Resolving names in Java </h1>
+<h6> Last modified on 27 January 2003 by Joe Kiniry</h6>
+
+<hr />
+
+<h2> Names and declared entities </h2>
+
+<p> Classes, interfaces, members (that is, fields and methods), and
+local variables are <i>declared entities</i> referred to using names.
+Name resolution is the process of determining to which declaration a
+name refers. </p>
+
+<p> Not all names refer to declared entities.  For example, the names
+given in <b>break</b> statements refer to statements, which are not a
+declared entity as defined in this document.  Also, names can also
+refer to packages, which are also not considered to be declared
+entities in this document.  (This is a deviation from the Java spec,
+which talks about packages as if they were declared entities and talks
+about the <b>package</b> statements that can occur at the top of class
+files as "package declarations."  We discuss this deviation at the end
+of this document.)  <!-- @todo Give a complete enumeration of such
+names. --> </p>
+
+<p> Methods are a special case of declared entities in that the same
+method can have more than one declaration.  Name resolution was
+defined in terms of finding <em>declarations</em> with this issue in
+mind.  We resolve method names to textual declarations of methods.
+For example, consider the following code: </p>
+
+<pre>
+class C {
+int m() { return 1; }
+static void test1() { m(); }
+};
+
+class D extends C {
+int m() { return 2; }
+static void test2() { m(); }
+};
+</pre>
+
+<p> In <tt>test1</tt>, <tt>m</tt> refers to the declaration of
+<tt>m()</tt> that appears in class <tt>C</tt>, while, in
+<tt>test2</tt>, <tt>m</tt> refers to the declaration of <tt>m()</tt>
+that appears in class <tt>D</tt>.  In the ESC project, we're used to
+thinking of names as referring to methods rather than to declarations
+of methods.  In Java, thinking of names as referring to declarations
+is important when it comes to understanding method overloading. </p>
+
+
+<h2> Categories of names </h2>
+
+<p> Names in Java are classified along two dimensions. </p>
+
+<p> The first dimension pertains to the internal form of names.  In
+this dimension, names are categorized into <i>simple names</i> and
+<i>qualified names</i>.  Simple names are atomic identifiers, such as
+<tt>x</tt>.  Qualified names are sequences of simple names separated
+by dots ('.'), such as <tt>java.lang.String</tt>. </p>
+
+<p> The second dimension pertains to how names are resolved.  In this
+dimension, there are five categories: PackageName, TypeName,
+ExpressionName, MethodName, and AmbiguousName.  The Java Language
+Specification[1] explains how the parser should classify names in this
+dimension: </p>
+
+<ul>
+
+  <li> PackageName is used for names in <b>package</b> statements and
+      in on-demand <b>import</b> declarations (both of which appear at
+      the top of files). </li>
+
+  <li> TypeName is used for names in single-type <b>import</b>
+      declarations, in <b>extends</b> and <b>implements</b> clauses,
+      in the types of method signatures and local variables, and in
+      <b>new</b>, <b>instanceof</b>, and cast expressions. </li>
+
+  <li> MethodName is used for method names in method invocations. </li>
+
+  <li> ExpressionName is used for all names appearing in expressions
+      except for type names in <b>new</b>, <b>instanceof</b>, and cast
+      expressions and for method names in method invocations. </li>
+
+  <li> AmbiguousName is is used for <em>parts</em> of names,
+      specifically, for names that appear to the left of a '.' in a
+      qualified ExpressionName, MethodName, or another AmbiguousName.
+      Thus, for example, if <tt>x.y.z</tt> is classified as a
+      MethodName, then the <tt>x.y</tt> part of that name is an
+      AmbiguousName. </li>
+
+</ul>
+
+<p> Resolving the meaning of a name is the process of determining the
+declaration to which the name refers.  TypeNames, ExpressionNames, and
+MethodNames are each resolved using different rules.  AmbiguousNames
+are resolved by first reclassify them as one of the other kinds of
+names and then applying the rules applicable to the resulting kind of
+name. </p>
+
+<p> PackageNames (and AmbiguousNames that are reclassified to
+PackageNames) do not refer to declarations and are not "resolved" in
+the same sense that the other kinds of names are.  Instead,
+PackageNames are used in <i>package queries</i>.  A package query
+returns the declaration of a class or interface with a given, simple
+name within a package of a given name.  Package queries are in the
+rules for resolving Type-, Expression-, and MethodNames and also in
+the rules that reclassify AmbiguousNames.  The exact semantics of
+package queries are left "host-system dependent" [2]. </p>
+
+<p> The next three sections give the rules for resolving TypeNames,
+ExpressionNames, and MethodNames.  The following section gives the
+rules for reclassify AmbiguousNames.  The final section gives a
+semantics for package queries defined in terms of the file system and
+a "class path"; this semantics is meant to be similar to the rules
+used by Sun's command-line tools. </p>
+
+
+<h2> Resolving TypeNames </h2>
+
+<p> Given a TypeName <i>N</i> in compilation unit <i>C</i> declared to
+be part of package <i>P</i>, the following rules determine what
+<i>N</i> denotes (taken from p. 93 of JLS1): </p>
+
+<ul>
+
+  <li> For a TypeName of the form <i>I</i>, a simple name:
+
+      <ul>
+
+        <li> if a class or interface named <i>I</i> is declared in
+            <i>C</i> or is imported by <i>C</i> via a single-type
+            <b>import</b> statement, then <i>I</i> denotes that class
+            or interface; </li>
+
+        <li> otherwise, if package <i>P</i> declares a class or
+            interface <i>I</i>, then <i>I</i> denotes this type (this
+            is a "package query"); </li>
+
+        <li> otherwise, if there exists exactly one on-demand
+            <b>import</b> statement "<b>import</b>
+            <i>P2</i><tt>.*</tt>" in <i>C</i> such that package
+            <i>P2</i> declares a class or interface <i>I</i>, then
+            <i>I</i> denotes that type (this is another "package
+            query"); </li>
+
+        <li> otherwise, if there exists more than one on-demand
+            <b>import</b> statement "<b>import</b>
+            <i>P2</i><tt>.*</tt>" in <i>C</i> such that package
+            <i>P2</i> declares a type <i>I</i> (yet another "package
+            query"), then <i>I</i> is ambiguous (a compile-time
+            error); </li>
+
+        <li> otherwise <i>I</i> is undefined (a compile-time
+            error). </li>
+
+      </ul>
+
+      (Package queries are highlighted above but are not in the rest
+      of this document.  Also, we highlight errors as compile-time
+      errors the first time they appear, as in ambiguous and undefined
+      names above, but not subsequently.)
+  </li>
+
+
+  <li> For a TypeName of the form <i>Q</i>.<i>I</i>, a qualified
+      name:
+
+      <ul>
+
+        <li> if package <i>Q</i> declares a type <i>I</i>, then
+            <i>Q</i>.<i>I</i> denotes this type; </li>
+
+        <li> otherwise <i>Q</i>.<i>I</i> is undefined. </li>
+
+      </ul>
+  </li>
+
+</ul>
+
+
+
+<h2> Resolving ExpressionNames </h2>
+
+<p> We describe the rules for resolving ExpressionNames in the larger
+context of rules for resolving <i>variable access expressions</i>.
+Variable access expressions have one of two forms: ExpressionNames or
+Primary<tt>.</tt>ExpressionName.  Primaries are other forms of
+expression such as "<tt>a[10]</tt>" and "<tt>a.b(10)</tt>"; the exact
+grammar of Primaries is unimportant for this document. </p>
+
+<p> The following description of rules for resolving variable access
+expressions are different from the approach taken from the Java spec
+(see Sections 6.5.5 (p. 95 JLS1) and 15.10 (p. 319 JLS1) for that approach).
+The approach taken here is borrowed from the approach taken by the
+Java spec for methods. </p>
+
+<p> If the name to resolve is a simple name <i>I</i> that appears
+within the scope of a local variable declaration (including an
+argument declaration), then <i>I</i> denotes that declaration.  Local
+variables cannot be shadowed, so there can be at most one local
+variable named <i>I</i> in scope. </p>
+
+<p> Otherwise, the name is resolved to a declaration of a field in a
+type according to the following, multi-step process: </p>
+
+<ol>
+
+  <li> Determine the field's simple name and a type to search.
+
+      <ul>
+
+        <li> For a simple name <i>I</i>, the class or interface to
+            search is the one containing the invocation and the simple
+            name of the field is <i>I</i>. </li>
+
+        <li> For a compound variable access expression of the form
+            <i>Q</i><tt>.</tt><i>I</i>, the simple name of the field is <i>I</i>,
+            and the type to search is determined as follows:
+
+            <ul>
+
+              <li> if <i>Q</i> is a PackageName, then the variable
+                  access expression <i>Q</i><tt>.</tt><i>I</i> is an
+                  ill-formed (a compile-time error); </li>
+
+              <li> if <i>Q</i> is a TypeName, then the type to search
+                  is the type to which <i>Q</i> resolves (in this
+                  case, the field selected must be <b>static</b>); </li>
+
+              <li> otherwise, <i>Q</i> is a Primary, and the type to
+                  search is the static type of <i>Q</i>. </li>
+
+            </ul>
+        </li>
+
+      </ul>
+  </li>
+
+
+  <li> Select from the type to search all method declarations that
+      are accessible. <br /> <br />
+
+      Given the field's simple name is <i>I</i> and the type to search
+      is <i>T</i>, the next step is to determine the candidate declarations
+      for this variable access expression, which are all field declarations
+      for <i>I</i> in <i>T</i> that are accessible to the expression.  These
+      candidates can include declarations found locally in <i>T</i> and also
+      declarations in supertypes of <i>T</i>.  If the candidate set is
+      empty, then the expression is undefined. <br /> <br />
+
+      The accessibility of a field declaration to a variable access
+      expression has to with the access modifiers <b>public</b>,
+      <b>protected</b>, none, or <b>private</b>.  Whether a declaration is
+      accessible to an expression depends, in the usual way, on the location
+      of the variable access expression and on the access modifier of the
+      declaration.
+  </li>
+
+  <li> Select the accessible declaration from the least common
+      type. <br /> <br />
+
+      The final step is to select out of the candidate declarations the
+      one from a type that is a subtype of all the other candidate
+      declarations.  If no such declaration exists, then the access is
+      ambiguous.
+  </li>
+
+</ol>
+
+<p> The expression "<b>super</b><tt>.</tt><i>I</i>" is treated as
+sugar for "<tt>((C)</tt><b>this</b><tt>).</tt><i>I</i>", where
+<tt>C</tt> is the direct superclass of the class containing the
+expression. </p>
+
+
+<h2> Resolving MethodNames </h2>
+
+<p> As with ExpressionNames, we describe the rules for resolving
+MethodNames in the larger context of rules for resolving the method
+designation part of a method invocation.  Like variable access
+expressions, method designations have two forms, MethodName or
+Primary<tt>.</tt>MethodName, but they appear in invocations, that is,
+to the left of a list of argument surrounded by parenthesis. </p>
+
+<p> More than one method can have the same name, and the particular
+method denoted in an invocation expression depends on the type of
+arguments passed to the expression.  Resolution for MethodNames must
+deal with this issue. </p>
+
+<p> The rules given below are taken from Sections 6.5.6 (p. 98 JLS1) and
+15.11 (p. 324 JLS1) of the Java spec. </p>
+
+<p> Resolution of method designators is best understood as having
+multiple steps: </p>
+
+<ol>
+
+  <li> Determine the method's simple name and a type to search.
+
+      <ul>
+
+        <li> For a simple name <i>I</i>, the class or interface to
+            search is the one containing the invocation and the simple
+            name of the method is <i>I</i>. </li>
+
+        <li> For a compound method designator of the form
+            <i>Q</i><tt>.</tt><i>I</i>, the simple name of the method
+            is <i>I</i>, and the type to search is determined as
+            follows:
+
+            <ul>
+
+              <li> if <i>Q</i> is a PackageName, then
+                  <i>Q</i><tt>.</tt><i>I</i> is an ill-formed method
+                  designator; </li>
+
+              <li> if <i>Q</i> is a TypeName, then the type to search
+                  is the type denoted by <i>Q</i> (in this case, the
+                  method selected must be <b>static</b>); </li>
+
+              <li> otherwise, <i>Q</i> is a Primary, and the type to
+                  search is the static type of <i>Q</i>. </li>
+
+            </ul>
+
+            The expression "<b>super</b>.<i>I</i>" is a special case.
+            When it comes to searching for a method declaration,
+            "<b>super</b>.<i>I</i>" can be viewed as sugar for
+            "<tt>((C)</tt><b>this</b><tt>).</tt><i>I</i>", where
+            <tt>C</tt> is the direct superclass of the class
+            containing the expression.  However, unlike for
+            field-access expressions, the dynamic semantics of
+            "<b>super</b>.<i>I</i>" as a method designator is
+            different from the dynamic semantics of
+            "<tt>((C)</tt><b>this</b><tt>).</tt><i>I</i>" (see Section
+            15.11.4.10 of the Java spec).
+        </li>
+
+      </ul>
+  </li>
+
+  <li> Select from the type to search all method declarations that
+      are accessible and applicable. <br /> <br />
+
+      Given the method's simple name is <i>I</i> and the type to
+      search is <i>T</i>, the next step is to determine the candidate
+      declarations for this invocation, which are all method
+      declarations for <i>I</i> in <i>T</i> that are both accessible
+      and applicable to the invocation.  These candidates can include
+      declarations found locally <i>T</i> and also in supertypes of
+      <i>T</i>.  (Multiple declarations for the same method -- some
+      overriding the others -- may end up in this candidate set.)  If
+      the candidate set is empty, then the method designation is
+      undefined. <br /> <br />
+
+      The accessibility of a method declaration to a method invocation
+      has to with the access modifiers such as <b>public</b> and
+      <b>protected</b>.  Whether a method declaration is accessible to
+      a method invocation depends, in the usual way, on the location
+      of the invocation and on the access modifier of the
+      declaration. <br /> <br />
+      
+      The applicability of a method declaration to a method invocation
+      has to do with the numbers and types of arguments.  Specifically, a
+      method declaration is applicable to an invocation if (a) the number of
+      formals and actuals are equal and (b) if the type of each actual is
+      "method-invocation compatible" with the type of the corresponding
+      formal. <br /> <br />
+
+      Method-invocation compatibility of types is defined as follows:
+
+      <ul>
+
+        <li> Reference type <i>S</i> is method-invocation compatible
+            with reference type <i>T</i> if <i>S</i> is a subtype of
+            <i>T</i>. </li>
+
+        <li> Primitive type <i>P</i> is method-invocation compatible
+            with primitive type <i>Q</i> if all value of <i>P</i> is a
+            subset of all values of <i>Q</i>.  Primitive types include
+            numerical types <b>int</b>, <b>double</b>, etc., plus
+            other built-ins such as <b>boolean</b>.  Method-invocation
+            compatibility on primitive types is reflexive.  Beyond
+            these reflexive relationships, it only applies to the
+            numerical types, thus, the phrase "is a subset of" should
+            be taken to be a subset relationship on reals. </li>
+
+      </ul>
+
+      (For details, see Chapter 5 of Java spec.)
+  </li>
+
+  <li> Select the most specific of the accessible, applicable
+      methods. <br /> <br />
+
+      The final step is to select the unique, maximally specific
+      declaration out of the candidates determined in the previous
+      step.  If there is no single declaration in the candidate set
+      that is more specific than all the others, then the invocation
+      is ambiguous. <br /> <br />
+
+      "More specific" in this context is a binary relation on method
+      declarations that takes into account the names of methods, their
+      argument signatures, and their position in the type hierarchy.
+      More specifically, method declaration <i>M</i> is more specific
+      than method declaration <i>N</i> if and only if:
+
+      <ol>
+
+        <li> their names are the same; </li>
+
+        <li> they both have the same number of formals; </li>
+
+        <li> <i>M</i> is found in a subtype of <i>N</i> ("subtype" here is
+            reflexive); </li>
+
+        <li> the type of each formal of <i>M</i> is method-invocation
+            compatible with the type of the corresponding formal of <i>N</i>. </li>
+
+      </ol>
+
+      An implication of the third rule is that if a subclass overloads an
+      inherited method in a contravariant manner (that is, it declares a
+      method with the same name as an inherited method but with a more
+      general signature than the inherited method), then casting will be
+      necessary to call either version of the method from the subclass.
+  </li>
+
+</ol>
+
+<p> Notes: </p>
+
+<ul>
+
+  <li> The return type is irrelevant to the resolution of overloaded
+      signatures (see example in Section 15.11.2.4 of JLS1). </li>
+
+  <li> In determining method applicability and specificity, no
+      "narrowing conversions" are applied to numerical constants that appear
+      in actual arguments.  Thus, for example, to pass the constant "12"
+      where the formal type is <b>byte</b>, an explicit cast is needed. </li>
+
+  <li> It's mentioned above that multiple declarations for the same
+      type can appear in the candidate set.  Often, one declaration
+      overrides the others; in this situation, the third rule for method
+      specificity implies that the overriding declaration will be chosen.
+      However, this is not always the case, for example, when an interface
+      extends two other interfaces, both of which declare a method <i>m</i>
+      with the same number and type of arguments.  In this case, searching
+      type <i>T</i> for this <i>m</i> will be ambiguous. </li>
+
+</ul>
+
+
+
+
+<h2> Reclassifying AmbiguousNames </h2>
+
+<p> Assume that <i>N</i> is an AmbiguousName that appears in the
+declaration of class or interface <i>T</i> of compilation-unit
+<i>C</i> of package <i>P</i>.  The following rules are used to
+reclassify AmbiguousNames (see p. 91 of the JLS1): </p>
+
+<ul>
+
+  <li> When <i>N</i> is a simple identifier :
+
+      <ul>
+
+        <li> if <i>N</i> appears within the scope of a local variable
+            named <i>N</i>, then <i>N</i> is an ExpressionName; </li>
+
+        <li> otherwise, if <i>T</i> has one or more fields named <i>N</i>,
+            then <i>N</i> is an ExpressionName; </li>
+
+        <li> otherwise, if <i>C</i> declares a class or interface named
+            <i>N</i> or imports a type named <i>N</i> via a single-type
+            <b>import</b> declaration, then <i>N</i> is a TypeName; </li>
+
+        <li> otherwise, if package <i>P</i> declares a class or interface
+            named <i>N</i>, then <i>N</i> is a TypeName; </li>
+
+        <li> otherwise, if a type named <i>N</i> is declared by one or
+            more on-demand <b>import</b> declarations of <i>C</i>, then if
+            <i>N</i> is declared by exactly on of them then <i>N</i> is a
+            TypeName, otherwise <i>N</i> is ambiguous; </li>
+
+        <li> otherwise, <i>N</i> is a PackageName. </li>
+
+      </ul>
+  </li>
+
+  <li> For <i>N</i> equal to <i>A</i><tt>.</tt><i>I</i>, an ambiguous
+      name followed by an identifier, recursively reclassify <i>A</i>,
+      then:
+
+      <ul>
+
+        <li> if <i>A</i> is classified as a TypeName or ExpressionName, then
+            <i>A</i><tt>.</tt><i>I</i> is an ExpressionName; </li>
+
+        <li> if <i>A</i> is classified as a PackageName and package <i>A</i>
+            declares a class or interface named <i>I</i>, then
+            <i>A</i><tt>.</tt><i>I</i> is a TypeName; </li>
+
+        <li> otherwise, <i>A</i><tt>.</tt><i>I</i> is a PackageName. </li>
+
+      </ul>
+  </li>
+
+</ul>
+
+
+
+
+<h2> Package queries </h2>
+
+<p> The Java spec says that "[e]ach Java host determines how packages
+... are created and stored" (p. 115 JLS1; Section 7.2, p. 120 in JLS2)
+By "Java host," they mean a set of Java tools (I think), so ESC/Java
+would be a "host system."  Thus, we have to define (and publish) how
+packages work in ESC/Java. </p>
+
+<p> Before doing this, it's important to note that neither the dynamic
+nor static semantics of Java depend on whether or not a particular
+package "exists" in the sense of being declared.  Rather, the Java
+semantics depends only on a definition of whether or not a package
+with a given name contains a declaration of a type with a given name.
+Thus, we are concerned only with this latter question. </p>
+
+<p> More specifically, this section gives a definition of <em>package
+queries</em>.  A package query takes a PackageName <i>P</i> and a
+simple name <i>I</i> and returns either the class or interface named
+<i>I</i> in package <i>P</i> or an indication that no such class or
+interface exists. </p>
+
+<p> Our rules assume that packages are represented as directories in a
+hierarchical file system and a "class path" variable that says where
+in the file system these directories are found.
+
+<p> The class path variable is a sequence of absolute paths in the
+file system.  These paths name either directories in the file system
+of "zip" files, which, for the purpose of this document, can be viewed
+as equivalent to directories. </p>
+
+<p> We assume the function <i>R(P)</i> maps PackageName <i>P</i> to a
+relative directory path in the obvious manner (the simple-name
+components of <i>P</i> are mapped, in order, to directory-path
+segments in <i>R(P)</i>).  We assume the operator "+" takes an
+absolute path and a relative one and combines them into a new absolute
+path. </p>
+
+<p> Assume the class path consists of the paths <i>C1</i>, <i>C2</i>,
+..., <i>Cn</i>.  The package query "find the type named <i>I</i> in
+package <i>P</i>" is answered as follows.  Find the lowest <i>i</i> in
+1..n such that <i>Ci</i> + <i>R(P)</i> contains a file named either
+<i>I</i><tt>.ji</tt>, <i>I</i><tt>.java</tt>, or
+<i>I</i><tt>.class</tt>.  If no such <i>i</i> exists, then indicate
+that there is no declaration of <i>I</i> in package <i>P</i>.
+Otherwise, pick <i>I</i><tt>.ji</tt>, <i>I</i><tt>.java</tt>, or
+<i>I</i><tt>.class</tt> --- the first that exists --- and parse it for
+a declaration of <i>I</i>.  If such a declaration exists, return it;
+otherwise, indicate that there is no declaration of <i>I</i> in
+<i>P</i>. </p>
+
+<p> Comparison to Sun's rules: </p>
+
+<ul>
+
+  <li> Sun does not look at I.ji files.  ESC/Java has them as a way
+      of supporting annotations apart from source code. </li>
+
+  <li> Sun's rules use file modification dates and also the source
+      file attribute of class files to select a class to parse to find a
+      declaration of <i>I</i>.  We use a much simpler scheme. </li>
+
+  <li> Otherwise, our rules and Sun's should behave the same on
+      "well structured" file hierarchies.  "Well structured" means things
+      like the class file for a class named <i>I</i> is found in a file
+      named <i>I</i><tt>.class</tt> (rather than <i>K</i><tt>.class</tt>).
+      We are writing a checker which checks a file hierarchy to ensure that
+      it's well structured.  For hierarchies that fail to meet our
+      definition of well structured, the behavior of Sun's tools differs
+      from ours (and is also hard to understand). </li>
+
+</ul>
+
+<p> One more, nit-picky note.  If P1.P2 is a PackageName, I don't
+think it's particularly useful to think of P2 as a "subpackage" of
+"P1".  There are no special relationships between entities in P1 and
+P1.P2, for example, P1.P2 doesn't have access to "hidden" entities of
+P1.  P1 names a package that's not relevant to package P1.P2.  Thus,
+this document has not made mention of any concept of "packages"
+"containing" packages, while the Java spec does. </p>
+
+<p> (There is one way in which the Java spec treats P1.P2 as related
+to P1: it explicitly disallows P1 from containing a class or interface
+whose simple name is P2.  This is a restriction that our tool for
+checking class paths enforces.  I don't think this is rule is
+sufficient reason to confuse matters by introducing the concept of
+packages "containing" packages.  Also, unlike other entities, the
+definition of a package is distributed over a file system, database,
+or network in a way that's explicitly left undefined by the language.
+Thus, I think name resolution is easier to explain when packages are
+treated differently from classes, interfaces, members, and local
+variables, which is why packages are not considered "declared
+entities" in this document.) </p>
+
+<hr />
+
+<p> [1] Pages 90 and 91 of the Java Language Specification, first
+edition (JLS1).  Pages 93 onward in the second edition (JLS2). </p>
+
+<p> [2] See Section 7, p.113 of the JLS first edition; p. 119 onward
+in the JLS second edition. </p>
+
+</body>
+</html>

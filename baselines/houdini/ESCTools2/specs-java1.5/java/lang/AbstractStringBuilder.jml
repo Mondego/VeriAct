@@ -1,0 +1,124 @@
+package java.lang;
+
+import sun.misc.FloatingDecimal;
+
+abstract class AbstractStringBuilder implements Appendable, CharSequence {
+    char[] value;
+    int count;
+    
+    AbstractStringBuilder();
+    
+    AbstractStringBuilder(int capacity);
+        
+    
+    public int length();
+    
+    public int capacity();
+    
+    public void ensureCapacity(int minimumCapacity);
+    
+    void expandCapacity(int minimumCapacity);
+    
+    public void trimToSize();
+    
+    public void setLength(int newLength);
+    
+    public char charAt(int index);
+    
+    public int codePointAt(int index);
+    
+    public int codePointBefore(int index);
+    
+    public int codePointCount(int beginIndex, int endIndex);
+    
+    public int offsetByCodePoints(int index, int codePointOffset);
+    
+    public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin);
+    
+    public void setCharAt(int index, char ch) ;
+    
+    public AbstractStringBuilder append(Object obj);
+    
+    public AbstractStringBuilder append(String str) ;
+    
+    public AbstractStringBuilder append(StringBuffer sb) ;
+    
+    public AbstractStringBuilder append(CharSequence s);
+    
+    public AbstractStringBuilder append(CharSequence s, int start, int end);
+    
+    public AbstractStringBuilder append(char[] str);
+    
+    public AbstractStringBuilder append(char[] str, int offset, int len) ;
+    
+    public AbstractStringBuilder append(boolean b) ;
+    
+    public AbstractStringBuilder append(char c) ;
+    
+    public AbstractStringBuilder append(int i) ;
+
+
+    static final int[] sizeTable;
+    
+    static int stringSizeOfInt(int x);
+    
+    public AbstractStringBuilder append(long l) ;
+    
+    static int stringSizeOfLong(long x) ;
+    
+    public AbstractStringBuilder append(float f) ;
+    
+    public AbstractStringBuilder append(double d) ;
+    
+    public AbstractStringBuilder delete(int start, int end) ;
+    
+    public AbstractStringBuilder appendCodePoint(int codePoint) ;
+    
+    public AbstractStringBuilder deleteCharAt(int index);
+    
+    public AbstractStringBuilder replace(int start, int end, String str) ;
+    
+    public String substring(int start) ;
+    
+    public CharSequence subSequence(int start, int end) ;
+    
+    public String substring(int start, int end);
+    
+    public AbstractStringBuilder insert(int index, char[] str, int offset, int len) ;
+    
+    public AbstractStringBuilder insert(int offset, Object obj) ;
+    
+    public AbstractStringBuilder insert(int offset, String str) ;
+    
+    public AbstractStringBuilder insert(int offset, char[] str) ;    
+    public AbstractStringBuilder insert(int dstOffset, CharSequence s);
+    
+    public AbstractStringBuilder insert(int dstOffset, CharSequence s, int start, int end);
+    
+    public AbstractStringBuilder insert(int offset, boolean b);
+    
+    public AbstractStringBuilder insert(int offset, char c);
+    
+    public AbstractStringBuilder insert(int offset, int i);
+    
+    public AbstractStringBuilder insert(int offset, long l);
+    
+    public AbstractStringBuilder insert(int offset, float f);
+    
+    public AbstractStringBuilder insert(int offset, double d);
+    
+    public int indexOf(/*@non_null*/String str);
+    
+    public int indexOf(/*@non_null*/String str, int fromIndex);
+    
+    public int lastIndexOf(/*@non_null*/ String str);
+    
+    public int lastIndexOf(/*@non_null*/ String str, int fromIndex);
+    
+    public AbstractStringBuilder reverse();
+    
+    public abstract /*@ non_null@*/ String toString();
+    
+    final char[] getValue();
+    
+}

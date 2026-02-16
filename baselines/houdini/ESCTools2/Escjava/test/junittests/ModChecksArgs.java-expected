@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModChecksArgs ...
+  Prover started:TIME
+    [TIME]
+
+ModChecksArgs: ModChecksArgs() ...
+    [TIME]  passed immediately
+
+ModChecksArgs: m() ...
+------------------------------------------------------------------------
+ModChecksArgs.java:13: Warning: Possible violation of modifies clause (Modifies)
+            ma(1,a);
+              ^
+Associated declaration is "ModChecksArgs.java", line 18, col 14:
+        //@ modifies aa[i];
+                     ^
+Associated declaration is "ModChecksArgs.java", line 10, col 5:
+        //@ modifies a[0];
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksArgs: ma(int, int[]) ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

@@ -1,0 +1,47 @@
+ESC/Java version VERSION
+MapsIn.java:29: Error: Expected an identifier here
+        //@ in
+             ^
+MapsIn.java:30: Error: Expected an identifier here
+        //@ in ;
+               ^
+MapsIn.java:31: Error: Expected a comma or semicolon here
+        //@ in i j
+                 ^
+MapsIn.java:32: Error: Expected an identifier here
+        //@ in i,,
+                 ^
+MapsIn.java:32: Caution: JML requires annotations to be terminated with a semicolon
+        //@ in i,,
+                 ^
+MapsIn.java:33: Error: Expected an identifier here
+        //@ in ,i;
+               ^
+MapsIn.java:35: Error: Expected either a . or a [ in the maps field reference here
+        //@ maps i;
+                  ^
+MapsIn.java:36: Error: Expected either a . or a [ in the maps field reference here
+        //@ maps i j 
+                   ^
+    [TIME]
+
+MapsIn ...
+MapsIn.java:7: Error: No such field in type MapsInS
+        //@ in super.i, super.j;
+                              ^
+MapsIn.java:16: Error: No such field in type MapsInS
+        //@ maps b.f \into super.i, super.j;
+                                          ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+MapsInS ...
+  [TIME total]
+
+JMLDataGroup ...
+  [TIME total]
+
+MapsT ...
+  [TIME total]
+2 cautions
+9 errors

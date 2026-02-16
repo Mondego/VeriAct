@@ -1,0 +1,3 @@
+calvin -routine acquire -routine release -restrictScope -noCautions ProducerConsumer.java
+calvin -reduce -routine put -routine get -noCautions -restrictScope ProducerConsumer.java
+calvin -restrictScope -routine main -noCautions ProducerConsumer.java

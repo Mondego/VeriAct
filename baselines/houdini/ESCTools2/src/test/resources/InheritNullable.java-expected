@@ -1,0 +1,100 @@
+ESC/Java version VERSION
+src|test|resources|InheritNullable.java: Caution: Using given file as the .java file, even though it is not the java file for InheritNullable on the classpath
+    [TIME]
+
+InheritNullable ...
+  Prover started:TIME
+    [TIME]
+
+InheritNullable: m1(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNullable: m2(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNullable: m3(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNullable: m4(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNullable: m5(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNullable: m6(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+InheritNullable: InheritNullable() ...
+    [TIME]  passed immediately
+
+InheritNullable: mm1a() ...
+    [TIME]  passed
+
+InheritNullable: mm1b() ...
+    [TIME]  passed
+
+InheritNullable: mm2a() ...
+    [TIME]  passed
+
+InheritNullable: mm2b() ...
+    [TIME]  passed
+
+InheritNullable: mm3a() ...
+    [TIME]  passed
+
+InheritNullable: mm3b() ...
+    [TIME]  passed
+
+InheritNullable: mm4a() ...
+    [TIME]  passed
+
+InheritNullable: mm4b() ...
+    [TIME]  passed
+
+InheritNullable: mm5a() ...
+    [TIME]  passed
+
+InheritNullable: mm5b() ...
+    [TIME]  passed
+
+InheritNullable: mm6a() ...
+------------------------------------------------------------------------
+src|test|resources|InheritNullable.java:60: Warning: Precondition possibly not established (Pre)
+                m6(-1,oo); // FAILS
+                  ^
+Associated declaration is "src|test|resources|InheritNullable.java", line 82, col 5:
+        //@ requires i>0;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InheritNullable: mm6b() ...
+    [TIME]  passed
+  [TIME total]
+
+SuperNullable ...
+    [TIME]
+
+SuperNullable: m1(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNullable: m2(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNullable: m3(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNullable: m4(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNullable: m5(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNullable: m6(int, java.lang.Object) ...
+    [TIME]  passed immediately
+
+SuperNullable: SuperNullable() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+1 warning

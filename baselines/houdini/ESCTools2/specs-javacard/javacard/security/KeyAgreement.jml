@@ -1,0 +1,76 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: KeyAgreement.jml,v 1.5 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public abstract class KeyAgreement {
+
+  public static final byte ALG_EC_SVDP_DH;
+  public static final byte ALG_EC_SVDP_DHC;
+
+  //@ public static invariant ALG_EC_SVDP_DH == 1;
+  //@ public static invariant ALG_EC_SVDP_DHC == 2;
+
+  //@ public ghost boolean _initialized;
+
+  //@ public ghost byte _algorithm;
+  /*@ public invariant _algorithm == ALG_EC_SVDP_DH ||
+                _algorithm == ALG_EC_SVDP_DHC; @*/
+  
+  /*@
+     public normal_behavior 
+       requires algorithm == ALG_EC_SVDP_DH ||
+                algorithm == ALG_EC_SVDP_DHC ;
+       ensures \result != null && \result._algorithm == algorithm ;
+       ensures !\result._initialized;
+       assignable \nothing;
+  @*/
+  public static final KeyAgreement getInstance(
+    byte algorithm, boolean externalAccess)
+      throws CryptoException;
+ 
+  /*@
+     public normal_behavior 
+       requires privKey != null ;
+       ensures _initialized;
+       assignable \nothing;
+  @*/
+  public abstract void init(PrivateKey privKey)
+    throws CryptoException;
+		   
+  /*@
+     public normal_behavior 
+       requires true ;
+       ensures \result == _algorithm ;
+       assignable \nothing ;
+  @*/
+  public abstract /*@pure@*/ byte getAlgorithm();
+
+  /*@
+     public normal_behavior
+       requires _initialized; 
+       requires publicData != null;
+       requires publicOffset >= 0 && publicOffset + publicLength <= publicData.length &&
+		publicLength >= 0;
+       requires secret != null;
+       requires secretOffset >= 0 && secretOffset <= secret.length;
+       ensures \result >= 0;
+       assignable secret[secretOffset..secret.length-1];
+  @*/
+  public abstract short generateSecret(
+    byte[] publicData, short publicOffset, short publicLength,
+    byte[] secret, short secretOffset)
+     throws CryptoException;
+}

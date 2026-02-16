@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>mobius</groupId>
+  <artifactId>Javafe</artifactId>
+  <packaging>jar</packaging>
+  <version>2.0.6</version>
+  <name>Javafe</name>
+  <url>http://mobius.ucd.ie</url>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache</groupId>
+      <artifactId>bcel</artifactId>
+      <version>5.2</version>
+    </dependency>
+     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+    </dependency>
+  </dependencies>
+   <issueManagement>
+    <system>trac</system>
+    <url>http://mobius.ucd.ie</url>
+  </issueManagement>
+  <developers>
+    <developer>
+      <id>dcochran</id>
+      <name>Dermot Cochran</name>
+      <email>Dermot.Cochran@ucd.ie</email>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>kiniry</id>
+      <name>Joe Kiniry</name>
+      <email>kiniry@acm.org</email>
+      <roles>
+        <role>developer</role>
+        <role>architect</role>
+      </roles>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:https://mobius.ucd.ie/repos/src/Javafe/trunk</connection>
+    <developerConnection>scm:svn:https://mobius.ucd.ie/repos/src/Javafe/trunk</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://mobius.ucd.ie/browser/src/Javafe/trunk</url>
+  </scm>
+  <ciManagement>
+    <system>Hudson</system>
+    <url>http://voting.ucd.ie:8080/</url>
+    <notifiers>
+      <notifier>
+        <type>mail</type>
+        <sendOnError>true</sendOnError>
+        <sendOnFailure>true</sendOnFailure>
+        <sendOnSuccess>false</sendOnSuccess>
+        <sendOnWarning>false</sendOnWarning>
+        <configuration><address>maven@kind.ucd.ie</address></configuration>
+      </notifier>
+    </notifiers>
+  </ciManagement>
+</project>

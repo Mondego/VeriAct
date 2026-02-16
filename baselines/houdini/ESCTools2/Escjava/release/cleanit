@@ -1,0 +1,14 @@
+#!/usr/bin/csh -f
+
+set DERIVED_DIRS = (tru64 linux solaris win lib-unix lib-win)
+
+rm -rf ${DERIVED_DIRS}
+rm -f master/doc/escjava.html
+rm -f master/doc/man1/escjava.1
+rm -rf master/lib/specs master/lib/specs-unix master/lib/specs-win
+rm -f master/lib/escjava.zip
+rm -rf master/examplesDerived-unix master/examplesDerived-win
+rm -f master/README.txt.unix master/README.txt.win
+rm -rf release
+find . -name '*~' -exec rm {} \;
+rm -f escjava

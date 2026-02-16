@@ -1,0 +1,14 @@
+package java.lang;
+
+import java.lang.ref.*;
+
+public class InheritableThreadLocal extends ThreadLocal {
+    
+    public /*@ pure @*/ InheritableThreadLocal();
+    
+    protected  /*@ pure @*/ Object childValue(Object parentValue);
+    
+    /*@ pure @*/ ThreadLocal.ThreadLocalMap getMap(Thread t);
+    
+    void createMap(Thread t, Object firstValue);
+}

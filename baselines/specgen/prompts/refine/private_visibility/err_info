@@ -1,0 +1,4 @@
+MyArray.java:4: error: An identifier with private visibility may not be used in a ensures clause with package visibility
+	//@ ensures (\forall int i; 0 <= i && i < 10; arr[i] == 0);
+	                                              ^
+1 error

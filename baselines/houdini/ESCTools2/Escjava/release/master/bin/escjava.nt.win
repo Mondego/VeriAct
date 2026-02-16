@@ -1,0 +1,24 @@
+@echo off
+setlocal
+
+rem To install ESC/Java on a new machine, change the following three
+rem lines appropriately:
+set ESCJAVA_ROOT=C:\Program Files\escjava
+set JAVA=C:\Program Files\JavaSoft\JRE\1.2\bin\Java.exe
+set JAVA_STDLIB=C:\Program Files\JavaSoft\JRE\1.2\lib\rt.jar
+
+rem Some arguments to Simplify, passed via environment variables
+if "%ESCJ_SIMPLIFY%"=="" set ESCJ_SIMPLIFY=%ESCJAVA_ROOT%\bin\Simplify.exe
+if "%ESCJ_SIMPLIFY_ARGS%"=="" set ESCJ_SIMPLIFY_ARGS=-noprune -noplunge
+if "%PROVER_KILL_TIME%"=="" set PROVER_KILL_TIME=300
+if "%PROVER_CC_LIMIT%"=="" set PROVER_CC_LIMIT=10
+
+if "%ESCJ_STDARGS%"=="" set ESCJ_STDARGS=-nowarn Deadlock
+
+rem USERPATH is a variable local to this batch file
+if "%CLASSPATH%"=="" set USERPATH=.
+if not "%CLASSPATH%"=="" set USERPATH=%CLASSPATH%
+
+"%JAVA%" -Dsimplify="%ESCJ_SIMPLIFY% %ESCJ_SIMPLIFY_ARGS%" -classpath "%ESCJAVA_ROOT%\lib\escjava.zip;%JAVA_STDLIB%" escjava.Main -bootclasspath "%ESCJAVA_ROOT%\lib\specs;%JAVA_STDLIB%" -classpath %USERPATH% %ESCJ_STDARGS% %*
+
+endlocal

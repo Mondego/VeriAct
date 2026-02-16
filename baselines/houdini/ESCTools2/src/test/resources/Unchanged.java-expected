@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|Unchanged.java: Caution: Using given file as the .java file, even though it is not the java file for Unchanged on the classpath
+    [TIME]
+
+Unchanged ...
+src|test|resources|Unchanged.java:69: Fatal error: Can't find type named "JMLDataGroup"
+        //@ public model JMLDataGroup contents;
+                         ^
+1 caution
+1 error

@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|Duplicate.java: Caution: Using given file as the .java file, even though it is not the java file for Duplicate on the classpath
+    [TIME]
+
+Duplicate ...
+  Prover started:TIME
+    [TIME]
+
+Duplicate: Duplicate() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

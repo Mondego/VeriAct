@@ -1,0 +1,100 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: Applet.jml,v 1.5 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+abstract public class Applet  { 
+
+   
+   /*@ normal_behavior 
+         requires true;
+	 ensures true;
+	 assignable \nothing;
+   @*/
+   protected Applet() { 
+   }
+ 
+   /*@ public exceptional_behavior 
+         requires true;
+	 signals (ISOException ie) ie.getReason() == ISO7816.SW_FUNC_NOT_SUPPORTED;
+	 assignable \nothing;
+   @*/
+   public static void install(byte[] bArray, short bOffset, byte bLength ) 
+          throws ISOException;
+
+   /*@ public behavior 
+         requires apdu != null;
+         requires apdu.getCurrentState() == APDU.STATE_INITIAL;
+	 ensures true;
+	 signals (ISOException ie);
+	 assignable \everything;
+   @*/
+   public abstract void process(APDU apdu) throws ISOException;
+
+   /*@ 
+       public normal_behavior
+         requires true;
+	 ensures \result;
+	 assignable \nothing;
+     @*/
+   public boolean select();
+
+   /*@ 
+       public normal_behavior
+         requires true;
+	 ensures true;
+	 assignable \nothing;
+     @*/
+   public void deselect();
+ 
+   /*@ 
+       public normal_behavior
+         requires true;
+	 ensures \result == null;
+	 assignable \nothing;
+     @*/
+   public Shareable getShareableInterfaceObject(AID clientAID, byte parameter);
+
+   /*@
+       behavior
+	  requires true;
+	  ensures true;
+	  signals (SystemException se) se.getReason() == SystemException.ILLEGAL_AID;
+	  assignable \nothing;
+     @*/
+   protected final void register() 
+       throws SystemException; 
+
+   /*@
+        behavior
+	  requires bArray != null;
+	  requires bOffset >= 0 && bOffset + bLength <= bArray.length;
+	  requires bLength >= 5;
+	  requires bLength <= 16;
+	  ensures true;
+	  signals (SystemException se) se.getReason() == SystemException.ILLEGAL_AID;
+	  assignable \nothing;
+     @*/
+   protected final void register(byte[] bArray, short bOffset, byte bLength )
+       throws SystemException;
+
+   /*@ 
+       normal_behavior
+         requires true;
+	 ensures true;
+	 assignable \nothing;
+     @*/
+   protected final /*@pure@*/ boolean selectingApplet();
+} 

@@ -1,0 +1,86 @@
+escjava_java_arrays : THEORY
+  BEGIN
+    IMPORTING escjava_java_typesystem,
+              escjava_java_field_representation,
+              escjava_java_integral_types
+
+    % === ESCJ 8: Section 5.0
+
+    arrayLength : [ S -> S ]
+    arrayLength_definition : AXIOM
+      FORALL (a : S): 0 <= arrayLength(a) AND 
+                      is(arrayLength(a), T_int)
+
+    % elems will be eliminated in the new logic, at a cost of
+    % complexity in the translator of course, and instead separate
+    % maps will be introduced for each array.  This will make the
+    % logic cleaner and possibly help the prover be more efficient.
+    elems : S
+    arrayFresh : [ S, S, S, S, S, S, S -> bool ]
+    arrayMake : [ S, S, S, S, S -> S ]
+    arrayShapeOne : [ S -> S ]
+    arrayShapeMore : [ S, S -> S ]
+    arrayParent : [ S -> S ]
+    arrayPosition : [ S -> S ]
+
+    array_axiom1 : AXIOM
+      FORALL (a, a0, b0, e, n, s, T, v : S):
+        arrayFresh(a, a0, b0, e, arrayShapeMore(n, s), T, v) IFF
+        (a0 <= vAllocTime(a) AND
+         isAllocated(a, b0) AND
+         a /= java_null AND
+         typeof(a) = T AND
+         arrayLength(a) = n AND
+         FORALL (i : S):
+           arrayFresh(select(select(e, a), i), a0, b0, e, s, elemtype(T), v) AND
+           arrayParent(select(select(e, a), i)) = a AND
+           arrayPosition(select(select(e, a), i)) = i)
+
+    array_axiom2 : AXIOM
+      FORALL (a, a0, b0, e, n, T, v : S):
+        arrayFresh(a, a0, b0, e, arrayShapeOne(n), T, v) IFF
+        (a0 <= vAllocTime(a) AND
+         isAllocated(a, b0) AND
+         a /= java_null AND
+         typeof(a) = T AND
+         arrayLength(a) = n AND
+         FORALL (i : S):
+           select(select(e, a), i) = v)
+
+    array_axiom3 : AXIOM
+      FORALL (a0, b0, e, s, T, v : S):
+        arrayFresh(arrayMake(a0, b0, s, T, v), a0, b0, elems, s, T, v)
+
+    array_axiom4: AXIOM
+      FORALL (a0, b0, a1, b1, s1, s2, T1, T2, v : S):
+        (arrayMake(a0, b0, s1, T1, v) = arrayMake(a1, b1, s2, T2, v)) IMPLIES
+        (b0 = b1 AND T1 = T2 AND s1 = s2)
+
+    % === code to ensure that (isNewArray x) ==> x has no invariants
+
+    % arrayType represents the type from which all Java arrays inherit.
+    arrayType : S
+
+    % arrayType is distinct from all types with invariants (due to the
+    % generated type-distinctness axiom)
+    arrayType_distinct : AXIOM
+      arrayType = asChild(arrayType, T_java_lang_Object)
+
+    isNewArray : [ S -> S ]
+
+    arrayType_definition : AXIOM
+      FORALL (t : S): array_constructor(t) <= arrayType
+    arrayType_is_top : AXIOM
+      FORALL (s : S):
+        (bool_true = isNewArray(s)) IMPLIES
+        typeof(s) <= arrayType
+
+    % === Implementation of nonnullelements; not in ESCJ 8 (yet?):
+
+    nonnullelements (x, e : S): bool =
+      x /= java_null AND
+      FORALL (i : S):
+        (0 <= i AND i < arrayLength(x)) IMPLIES
+        select(select(e, x), i) /= java_null
+
+  END escjava_java_arrays

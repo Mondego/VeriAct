@@ -1,0 +1,7 @@
+// Tests the sourcepath option
+//@ refine "SourcePath.java";
+public class SourcePath {
+	//@ also
+	//@ ensures false;
+	public void m(); 
+}

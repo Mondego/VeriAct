@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|EX.java: Caution: Using given file as the .java file, even though it is not the java file for EX on the classpath
+    [TIME]
+
+EX ...
+  Prover started:TIME
+    [TIME]
+
+EX: mmm(int) ...
+src|test|resources|EX.java:12: Caution: Not checking body of anonymous class (subclass of Object)
+                Object o = new Object() {
+                                        ^
+    [TIME]  passed
+
+EX: EX() ...
+    [TIME]  passed
+  [TIME total]
+2 cautions

@@ -1,0 +1,26 @@
+ESC/Java version VERSION
+    [TIME]
+
+Client3 ...
+  Prover started:TIME
+    [TIME]
+
+Client3: unique(IntList) ...
+    [TIME]  passed
+
+Client3: clear(IntList) ...
+    [TIME]  passed
+
+Client3: Client3() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]

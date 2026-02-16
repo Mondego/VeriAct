@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Check that equality on arrays works
+
+${TOOL} ArrayEquality.java

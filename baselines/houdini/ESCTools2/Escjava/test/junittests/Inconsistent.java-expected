@@ -1,0 +1,25 @@
+ESC/Java version VERSION
+    [TIME]
+
+Inconsistent ...
+  Prover started:TIME
+    [TIME]
+
+Inconsistent: Inconsistent() ...
+    [TIME]  passed immediately
+
+Inconsistent: m() ...
+    [TIME]  passed
+
+Inconsistent: mm() ...
+------------------------------------------------------------------------
+Inconsistent.java:16: Warning: Possible assertion failure (Assert)
+                //@ assert a == d; // Should fail
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Inconsistent: mmm() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

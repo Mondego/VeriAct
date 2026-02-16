@@ -1,0 +1,135 @@
+#!/bin/tcsh
+# ESC/Java annotation wizard
+# Copyright (c) 1999, Compaq Computer Corporation
+# Change history:
+#    2 Apr 1999  rustan     Created
+#   16 Apr 1999  rustan     Released
+#   28 May 1999  rustan & flanagan  Eliminate duplicate annotations
+#   28 Jun 1999  mdl  	    srcjava --> ${JAVA}
+
+echo ESC/Java Wizard version 1.0.1, 28 May 1999
+
+if ("${ESCJ}" == "" || "${ESCJAVA_ROOT}" == "") then
+  echo Error: Must first source setup in Escjava directory
+  exit 1
+endif
+
+set CL_PATH_ARG = ()
+if (2 <= $#argv) then
+  if ("$argv[1]" == "-classpath") then
+    set CL_PATH_ARG = (-classpath $argv[2])
+    shift
+    shift
+  endif
+endif
+
+set sourcefiles = ($*)
+set NOWARN_FLAGS = \
+  ( \
+#    -nowarn Null \
+#    -nowarn NonNull \
+#    -nowarn NonNullInit \
+    -nowarn ZeroDiv \
+    -nowarn ArrayStore \
+    -nowarn Assert \
+    -nowarn Cast \
+    -nowarn Reachable \
+    -nowarn CLeak \
+    -nowarn Undef \
+#    -nowarn IndexNegative \
+    -nowarn IndexTooBig \
+    -nowarn LoopInvInit \
+    -nowarn LoopObjInvInit \
+    -nowarn Uninit \
+    -nowarn ILeak \
+    -nowarn LoopInvIter \
+    -nowarn LoopObjInvIter \
+    -nowarn Deadlock \
+    -nowarn ModExt \
+    -nowarn Modifies \
+#    -nowarn NegSize \
+    -nowarn Invariant \
+    -nowarn Post \
+    -nowarn Pre \
+    -nowarn Race \
+    -nowarn Unenforcable \
+    -nowarn Exception \
+    -nowarn Write \
+  )
+
+foreach f ($sourcefiles)
+  if (! -e $f) then
+    echo Cannot find file $f
+    echo Usage: escwizard [-classpath p] sourcefiles...
+    exit 1
+  endif
+end
+
+set AI_CLASSPATH = (${ESCJAVA_ROOT}/classes)
+set ANNOTATION_INSERTER = (${JAVA} escwizard.AnnotationInserter)
+
+# Test run the AnnotationInserter (to make sure the classpath is set up
+# correctly, before wasting CPU cycles)
+(setenv CLASSPATH ${AI_CLASSPATH} ; \
+ ${ANNOTATION_INSERTER} -ping)
+if ($status != 0) then
+  echo escwizard.AnnotationInserter not available
+  exit 1
+endif
+
+set timestamp = (`date`)
+set logfileprefix = (wizard-`echo $timestamp | sed -e 's/[ :]/-/g'`)
+
+# back up source files
+foreach f ($sourcefiles)
+  cp -f ${f} ${f}-${logfileprefix}
+end
+
+set iter = 0
+while (1)
+  if ($iter != 0) then
+    set timestamp = (`date`)
+  endif
+  echo $timestamp, Iteration ${iter}
+
+  # run escjava on each of the source files
+  date > ${logfileprefix}-${iter}.log
+  foreach f ($sourcefiles)
+    ${ESCJ} ${CL_PATH_ARG} -suggest ${NOWARN_FLAGS} $f \
+      >> ${logfileprefix}-${iter}.log
+    date >> ${logfileprefix}-${iter}.log
+  end
+
+  cat ${logfileprefix}-${iter}.log | ${ESCJAVA_ROOT}/java/escwizard/wizfilter.perl \
+    >! ${logfileprefix}.tmp
+  if ($status != 0) then
+    echo Wizard failed to parse ESC/Java output
+    rm -f ${logfileprefix}.tmp
+    exit 1
+  endif
+
+  @ iter++
+  if (-z ${logfileprefix}.tmp) break
+
+  # insert suggestions into source files
+  foreach f ($sourcefiles)
+    rm -f ${f}.wizardUpdate.tmp
+  end
+  (setenv CLASSPATH ${AI_CLASSPATH} ; \
+   ${ANNOTATION_INSERTER} ${logfileprefix}.tmp $sourcefiles)
+  if ($status != 0) then
+    echo Wizard failed to insert suggested annotations \(${logfileprefix}.tmp\)
+    exit 1
+  endif
+  foreach f ($sourcefiles)
+    if (-e ${f}.wizardUpdate.tmp) then
+      mv -f ${f}.wizardUpdate.tmp ${f}
+    endif
+  end
+end
+
+set timestamp = (`date`)
+echo $timestamp, Done
+
+# clean up
+rm -f ${logfileprefix}.tmp

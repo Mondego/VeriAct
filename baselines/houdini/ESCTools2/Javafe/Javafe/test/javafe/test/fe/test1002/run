@@ -1,0 +1,9 @@
+#!/bin/sh
+
+## Checks casts, conversions and constant expressions
+
+for f in *.java; do
+   echo $f
+   ${TOOL} $f
+done
+

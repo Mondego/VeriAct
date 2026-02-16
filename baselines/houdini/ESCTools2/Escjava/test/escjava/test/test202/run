@@ -1,0 +1,21 @@
+#!/bin/sh
+## This tests that if a class (not a java file) is found on the classpath but
+## not on the java path, that escjava does not try to parse the class file as
+## if it were a java file.
+# usage: run FLAGS
+
+echo $*
+export CP=".${PSEP}t"
+${JAVAC} -classpath "$CP" A.java t/C.java
+##### These should execute without error
+echo ZEROTH
+CLASSPATH="$CP" ${ESCJ} $* A
+echo FIRST
+CLASSPATH="$CP" ${ESCJ} $* -sourcepath "$CP" A
+echo SECOND
+CLASSPATH="$CP" ${ESCJ} $* -sourcepath . A
+###### These two will find A.class instead of A.java
+echo THIRD
+CLASSPATH="$CP" ${ESCJ} $* -sourcepath t A | sed -e sx\.\\Ax/Ax
+echo FOURTH
+CLASSPATH="$CP" ${ESCJ} $* -sourcepath / A | sed -e sx\.\\Ax/Ax

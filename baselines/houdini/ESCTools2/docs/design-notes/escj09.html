@@ -1,0 +1,523 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 9: Java to Guarded Commands Translation</TITLE>
+</HEAD>
+<BODY>
+
+<H1>
+ESCJ 9: Java to Guarded Commands Translation</H1>
+By Rustan and Raymie, 11 April 1997.
+
+<P>This note describes a translation of Java statements into a guarded
+command-like language.&nbsp; This note is not about resolution of names
+in Java, so we assume where convenient that names have been <I>mangled</I>
+to make them distinct.&nbsp; In particular, we assume the names of types,
+fields, and methods have been so mangled.&nbsp; In the case of methods,
+mangling takes care of overloading by taking into account the types of
+formals.
+<H2>
+Java-like AST</H2>
+In our grammar, <I>V</I> is the set of names that can be used for parameters
+and local variables; <I>F</I> is the set of names used for methods and
+fields (both static and non-static); and <I>T</I> is the set of names used
+for the types created by Java class and interface declarations.
+
+<P>&nbsp; K: // All types, including built-ins, arrays, classes and interfaces
+<BR>&nbsp;&nbsp;&nbsp; int | bool | ... // built-ins
+<BR>&nbsp;&nbsp;&nbsp; T&nbsp;&nbsp; // Classes and interfaces
+<BR>&nbsp;&nbsp;&nbsp; K[] // arrays
+
+<P>&nbsp; S:
+<BR>&nbsp;&nbsp;&nbsp; (block N (V T)* S*)&nbsp; // N ::= name, V ::= variable
+<BR>&nbsp;&nbsp;&nbsp; (if E S S)
+<BR>&nbsp;&nbsp;&nbsp; (while-do N E S)
+<BR>&nbsp;&nbsp;&nbsp; (do-while N S E)
+<BR>&nbsp;&nbsp;&nbsp; (for N (V T)* (E*) E (E*) S)
+<BR>&nbsp;&nbsp;&nbsp; (continue N)
+<BR>&nbsp;&nbsp;&nbsp; (break N)
+<BR>&nbsp;&nbsp;&nbsp; (skip)
+<BR>&nbsp;&nbsp;&nbsp; (eval E)
+<BR>&nbsp;&nbsp;&nbsp; (S catch ((V T) S)*)
+<BR>&nbsp;&nbsp;&nbsp; (S finally S)
+<BR>&nbsp;&nbsp;&nbsp; (return E)
+<BR>&nbsp;&nbsp;&nbsp; (throw E)
+<BR>&nbsp;&nbsp;&nbsp; (switch N E ((case C)* S)* (default S)) // C ::=
+constant
+<BR>&nbsp;&nbsp;&nbsp; (synchronized E S)
+<BR>&nbsp;&nbsp;&nbsp; (supercons F E_1 E_2 .. E_n) // Only appears @ start
+of constructor
+
+<P>&nbsp; L: // Location, i.e., left-hand sides of exprs
+<BR>&nbsp;&nbsp;&nbsp; V
+<BR>&nbsp;&nbsp;&nbsp; E[E]
+<BR>&nbsp;&nbsp;&nbsp; E.F&nbsp; // F ::= field-name
+
+<P>&nbsp; E:
+<BR>&nbsp;&nbsp;&nbsp; this
+<BR>&nbsp;&nbsp;&nbsp; L
+<BR>&nbsp;&nbsp;&nbsp; C // Literal
+<BR>&nbsp;&nbsp;&nbsp; (&lt;un-op> E)
+<BR>&nbsp;&nbsp;&nbsp; (&lt;bin-op> E E)
+<BR>&nbsp;&nbsp;&nbsp; (if E E E)
+<BR>&nbsp;&nbsp;&nbsp; (:= L E)
+<BR>&nbsp;&nbsp;&nbsp; (new:= L &lt;bin-op> E) // Assign E to L, return
+new value of L
+<BR>&nbsp;&nbsp;&nbsp; (old:= L &lt;bin-op> E) // Assign E to L, return
+old value of L
+<BR>&nbsp;&nbsp;&nbsp; (new T E*)
+<BR>&nbsp;&nbsp;&nbsp; (callstatic F E*)
+<BR>&nbsp;&nbsp;&nbsp; (callvirtual T F E*) // Dynamically-dispatched method
+invocation (invoked
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// on something whose static type is T)
+<BR>&nbsp;&nbsp;&nbsp; (callspecial T F E*) // Covers super.m() &amp; invocation
+of private methods
+<BR>&nbsp;&nbsp;&nbsp; (newarray K E*) // K is element type
+<BR>&nbsp;&nbsp;&nbsp; (instanceof E K) // For K must be either T or K[]
+<BR>&nbsp;&nbsp;&nbsp; (cast K E) // For K must be either T or K[]
+<H2>
+Guarded-command-like syntax</H2>
+Our translation targets a guarded command language whose syntax is given
+below.&nbsp; Note that the syntax of this language overlaps the syntax
+of the above language in that it uses the sets <I>N</I>, <I>V</I>, and
+<I>C</I>.
+
+<P>B:
+<BR>&nbsp; H := X
+<BR>&nbsp; skip
+<BR>&nbsp; raise
+<BR>&nbsp; wrong
+<BR>&nbsp; var V* B rav
+<BR>&nbsp; while X do B od
+<BR>&nbsp; B ; B
+<BR>&nbsp; B ! B
+<BR>&nbsp; B [] B
+<BR>&nbsp; X --> B
+
+<P>&nbsp; if X then B_c else B_a fi ==&nbsp; X --> B_c [] ~X --> B_a
+<BR>&nbsp; try N B yrt ==&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+B ! (ec = N --> skip [] ec ~= N --> raise fi)
+<BR>&nbsp; assert X ==&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+X --> skip [] ~X --> wrong
+<BR>&nbsp; break N ==&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ec = N; raise
+
+<P>H:
+<BR>&nbsp; V
+<BR>&nbsp; X.F
+<BR>&nbsp; X[X]
+
+<P>X:
+<BR>&nbsp; H
+<BR>&nbsp; C
+<BR>&nbsp; X &lt;bin-op> X
+<BR>&nbsp; &lt;un-op> X
+
+<P>In our translations below, we assume the existence of a number of global
+variables:
+<UL>
+<LI>
+<I>ec</I>&nbsp; When a guarded command exception is raised (using the <I>raise</I>
+command), the variable <I>ec</I> (exception code) is used to indicate whatthe
+nature of the exception.</LI>
+
+<LI>
+<I>result</I>&nbsp; The variable "result" is used to communicate results
+from a method back to its caller.</LI>
+
+<LI>
+<I>tc</I>&nbsp; The variable tc is used to communicate to constructors
+the typecode of the result they are supposed to return.</LI>
+
+<LI>
+<I>LL</I>&nbsp; This is the set of locks held by the current thread.</LI>
+</UL>
+Note that these special variables are members of <I>V</I>, but they cannot
+appear in Java program text; all but the last can appear in Java specs.
+
+<P>In addition, we assume the existence of a function named typecode.&nbsp;
+If "." is an object, then <I>typecode</I>(.) returns the typecode corresponding
+to the runtime type of the object.&nbsp; If "." is a type, <I>typecode</I>(.)
+returns the typecode corresponding to the type.
+<H2>
+Translating E</H2>
+Idea: <I>D</I>[[ <I>V</I>, <I>E</I> ]] generates a guarded-command statement
+that assigns the result of <I>E</I> to <I>V</I> after computing the side-effects
+of <I>E</I>.&nbsp; If an exception is raised while these side-effects are
+being computed, then no asignment is made to <I>V</I> (<I>i.e.</I>, <I>V</I>
+remains unchanged).&nbsp; <I>V</I> should <I>not</I> be a variable that's
+mentioned either in <I>E</I> or in the translation of <I>E</I>.&nbsp; An
+implication of this restriction is that <I>V</I> cannot be any of the special,
+global variables such as <I>result</I>.
+
+<P>The translations below introduce intermediate variables.&nbsp; We assume
+these variables are <I>fresh</I> in that they are not <I>V</I> and they
+are contained in <I>E</I>.
+
+<P>D[[ V, C ]] =
+<BR>&nbsp; V := C
+
+<P>D[[ V, this ]] =
+<BR>&nbsp; V := this
+
+<P>D[[ V_1, V_2 ]] =
+<BR>&nbsp; V_1 := V_2
+
+<P>D[[ V, E_1[E_2] ]] =
+<BR>&nbsp; var x y
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E_1 ]];
+<BR>&nbsp;&nbsp;&nbsp; D[[ y, E_2 ]];
+<BR>&nbsp;&nbsp;&nbsp; V := x[y]
+<BR>&nbsp; rav
+
+<P>D[[ V, E.F ]] =
+<BR>&nbsp; var x
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E ]];
+<BR>&nbsp;&nbsp;&nbsp; V := x.F
+<BR>&nbsp; rav
+
+<P>D[[ V, (&lt;un-op> E) ]] =
+<BR>&nbsp; var x
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E ]];
+<BR>&nbsp;&nbsp;&nbsp; V := &lt;un-op> x
+<BR>&nbsp; rav
+
+<P>D[[ V, (E_1 &lt;bin-op> E_2) ]] =
+<BR>&nbsp; var x y
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E_1 ]];
+<BR>&nbsp;&nbsp;&nbsp; D[[ y, E_2 ]];
+<BR>&nbsp;&nbsp;&nbsp; V := x &lt;bin-op> y
+<BR>&nbsp; rav
+
+<P>D[[ V, (if E_t E_c E_a) ]] =
+<BR>&nbsp; var b
+<BR>&nbsp;&nbsp;&nbsp; D[[ b, E_t ]];
+<BR>&nbsp;&nbsp;&nbsp; if b then D[[ V, E_c ]] else D[[ V, E_a ]] fi
+<BR>&nbsp; rav
+<UL>
+<H3>
+Intermission: dealing with <I>L</I> when on left-hand side</H3>
+To handle pre- and post update expressions, we need to translate <I>L</I>
+forms when they appear on the left-hand side of these assignments.&nbsp;
+This is done with <I>X</I>[[ <I>C</I>, <I>L</I> ]], where <I>L</I> is the
+Java <I>L</I> that needs to be translated and <I>C</I> is a guarded-command
+context that uses the translation.
+
+<P>X[[ C, V ]] = C(V)
+
+<P>X[[ C, E.F ]]] =
+<BR>&nbsp; var y D[[ y, E ]]; C(y.F) rav
+
+<P>X[[ C, E_1[E_2] ]] =
+<BR>&nbsp; var y z D[[ y, E_1 ]]; D[[ z, E_2 ]]; C( y[z] ) rav
+
+<P>(End of intermission.)</UL>
+D[[ V, (:= L E) ]] =
+<BR>&nbsp; X[[ \lambda l . var x . D[[x, E]]; l := x; V := l, L ]]
+
+<P>D[[ V, (new:= L &lt;bin-op> E) ]] =
+<BR>&nbsp; X[[ \lambda l . var x y . y := l; D[[x, E]]; l := y &lt;bin-op>
+x; V := l, L ]]
+
+<P>D[[ V, (old:= L &lt;bin-op> E) ]] =
+<BR>&nbsp; X[[ \lambda l . var x y . y := l; D[[x, E]]; l := y &lt;bin-op>
+x; V := y, L ]]
+<UL>
+<H3>
+Intermission: specifications</H3>
+We assume that spec's of procedures/methods/constructors have been translated
+into the form:
+
+<P>&nbsp; req R mod w ens Q except-ensures E
+
+<P>where <I>w</I> is a set of program variables, <I>R</I> is a one-state
+predicate, and <I>Q</I> and <I>E</I> are two-state predicates.&nbsp; A
+two-state pred is allowed to mention primed versions of variables in <I>w</I>
+and also <I>result'</I> (not <I>result</I>).
+
+<P>(End of intermission.)</UL>
+D[[ V, (callproc T F E_1 E_2 .. E_n) ]] = // The following four are basically
+<BR>D[[ V, (callproc P E_1 E_2 .. E_n) ]] =
+<BR>D[[ V, (invoke T F E_1 E_2 .. E_n) ]] =&nbsp;&nbsp; // the same...
+<BR>&nbsp; var f_1, f_2, .., f_n&nbsp; // f_i are the names of the formals
+<BR>&nbsp;&nbsp;&nbsp; D[[f_1, E_1]]; D[[f_2, E_2]]; ...; D[[f_n, E_n]];
+<BR>&nbsp;&nbsp;&nbsp; assert R;
+<BR>&nbsp;&nbsp;&nbsp; var w', ec', result'
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ec' = $return$ /\
+Q --> w := w'; V := result'
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [] ec' = $throw$ /\ E --> w := w'; result
+:= result'; ec := ec'; raise
+<BR>&nbsp;&nbsp;&nbsp; rav
+<BR>&nbsp; rav
+
+<P>D[[ V, (new T&nbsp; E_1 E_2 .. E_n) ]] =
+<BR>&nbsp; var $tc$, f_1, f_2, .., f_n&nbsp; // f_i are the names of the
+formals
+<BR>&nbsp;&nbsp;&nbsp; D[[f_1, E_1]]; D[[f_2, E_2]]; ...; D[[f_n, E_n]];
+<BR>&nbsp;&nbsp;&nbsp; $tc$ := typecode[[T]];
+<BR>&nbsp;&nbsp;&nbsp; assert R;
+<BR>&nbsp;&nbsp;&nbsp; var w', ec', result'
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ec' = $return$ /\
+Q --> w := w'; V := result'
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [] ec' = $throw$ /\ E --> w := w'; result
+:= result'; ec := ec'; raise
+<BR>&nbsp;&nbsp;&nbsp; rav
+<BR>&nbsp; rav
+<BR>&nbsp;
+<BR>D[[ V, (newarray K E_1 E_2 .. E_n) ]] =
+<BR>&nbsp; var a, alloc', l_1, .., l_n
+<BR>&nbsp;&nbsp;&nbsp; D[[ l_1, E_1 ]]; D[[ l_2, E_2 ]]; ..; D[[ l_n, E_n
+]];
+<BR>&nbsp;&nbsp;&nbsp; Jumbo[[n]] --> V := a; alloc = alloc'
+<BR>&nbsp; rav
+<BR>&nbsp; where Jumbo[[ n ]] =
+<BR>&nbsp;&nbsp;&nbsp; succeeds(alloc,alloc')
+<BR>&nbsp;&nbsp;&nbsp; ~alloc[a] &amp; alloc'[a] &amp; a.length = l_1
+<BR>&nbsp;&nbsp;&nbsp; typecode[a] = K[][]..(n of these)..[]
+<BR>&nbsp;&nbsp;&nbsp; \forall i_1 :
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~alloc[a[i_1]] &amp; alloc'[a[i_1]]
+&amp; a[i_1].length = l_2
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; typecode[a[i_1]] = K[][]..(n-1 of these)..[]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \forall j_1 : a[i_1] = a[j_1] ==> i_1
+= j_1
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \forall i_2 :
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~alloc[a[i_1][i_2]] &amp;
+alloc'[a[i_1][i_2]] &amp; a[i_1][i_2].length = l_3
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; typecode[a[i_1][i_2]] =
+K[][]..(n-2 of these)..[]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \forall j_1,j_2 : a[i_1][i_2]
+= a[j_1][j_2] ==> i_1 = j_1 &amp; i_2 = j_2
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \forall i_{n-1}
+:
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+~alloc[a[i_1][i_2]...[i_{n-1}]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+alloc'[a[i_1][i_2]..[i_{n-1}]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a[i_1][i_2]..[i_{n-1}].length = l_n
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+typecode[a[i_1][i_2]..[i_{n-1}]] = K[]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\forall j_1,j_2,..,j_n :
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a[i_1][i_2]..[j_n] = a[j_1][j_2]..[j_n]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+==> i_1 = j_1 &amp; i_2 = j_2 &amp; .. &amp; i_n = j_n
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+\forall i_{n-1} :
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+a[i_1][i_2]..[i_{n-1}][i_n] = "zero-equiv for K"
+
+<P>D[[ V, (instanceof E K) ]] =
+<BR>&nbsp; var x
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E ]];
+<BR>&nbsp;&nbsp;&nbsp; V := typecode(x) = typecode(K)
+<BR>&nbsp; rav
+
+<P>D[[ V, (cast K E) ]] =
+<BR>&nbsp; var x
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E ]];
+<BR>&nbsp;&nbsp;&nbsp; if (typecode(x) ~= typecode(K)) then
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ec = $throw$;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result = ...instance of runtime exception...;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; raise
+<BR>&nbsp;&nbsp;&nbsp; fi;
+<BR>&nbsp;&nbsp;&nbsp; V := x
+<BR>&nbsp; rav
+<H2>
+Translating <I>S</I></H2>
+<I>D</I>[[ <I>S</I> ]] translates a Java statement into a guarded-command
+statement.&nbsp; We assume again that variables introduced in transltion
+are fresh.
+
+<P>D[[ (skip) ]] =
+<BR>&nbsp; skip
+
+<P>D[[ (eval E) ]] =
+<BR>&nbsp; var tmp D[[ tmp, E ]] rav
+
+<P>D[[ (block N (V_1 T_1) (V_2 T_2) .. (V_m T_m)&nbsp; S_1 S_2 .. S_n)
+]] =
+<BR>&nbsp; try N
+<BR>&nbsp;&nbsp;&nbsp; var V_1 V_2 .. V_m
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D[[ S_1 ]]; D[[ S_2 ]]; ...; D[[ S_n
+]]
+<BR>&nbsp;&nbsp;&nbsp; rav
+<BR>&nbsp; yrt
+
+<P>D[[ (if E S_c S_a) ]] =
+<BR>&nbsp; var b
+<BR>&nbsp;&nbsp;&nbsp; D[[ b, E ]];
+<BR>&nbsp;&nbsp;&nbsp; if b then D[[ S_c ]] else D[[ S_a ]] fi
+<BR>&nbsp; rav
+
+<P>D[[ (while-do N E S) ]]
+<BR>&nbsp; try N
+<BR>&nbsp;&nbsp;&nbsp; var b
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D[[ b, E ]];
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while b do try N$continue D[[ S ]] yrt;
+D[[ b, E ]] od
+<BR>&nbsp;&nbsp;&nbsp; rav
+<BR>&nbsp; yrt
+<BR>&nbsp; // Note: N$continue is the concatenation of N with "$continue"
+
+<P>D[[ (do-while N S E) ]]
+<BR>&nbsp; try N
+<BR>&nbsp;&nbsp;&nbsp; var b
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b := true;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while b do try N$continue D[[ S ]] yrt;
+D[[ b, E ]] od
+<BR>&nbsp;&nbsp;&nbsp; rav
+<BR>&nbsp; yrt
+
+<P>D[[ (for N (V_1 T_1) .. (V_n T_n)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (E_i1
+E_i2 .. E_im)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E_t
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (E_u1
+E_u2 .. E_uk)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; S) ]] =
+<BR>&nbsp; try N
+<BR>&nbsp;&nbsp;&nbsp; var V_1 .. V_n, tmp, b
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D[[ tmp, E_i1 ]]; D[[ tmp, E_i2 ]];
+...; D[[ tmp, E_im ]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E[[ b, E_t ]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (b) do
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try N$continue D[[ S ]]
+yrt;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D[[ tmp, E_u1 ]]; D[[ tmp,
+E_u2 ]]; ...; D[[ tmp, E_uk ]];
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; E[[ b, E_t ]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; od
+<BR>&nbsp;&nbsp;&nbsp; rav
+<BR>&nbsp; yrt
+
+<P>D[[ (break N) ]] =
+<BR>&nbsp; break N
+
+<P>D[[ (continue N) ]] =
+<BR>&nbsp; break N$continue
+
+<P>D[[ (return E) ]] =
+<BR>&nbsp; var x
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E ]];
+<BR>&nbsp;&nbsp;&nbsp; result := x;
+<BR>&nbsp;&nbsp;&nbsp; ec = $return$;
+<BR>&nbsp;&nbsp;&nbsp; raise
+<BR>&nbsp; rav
+
+<P>D[[ (throw E) ]] =
+<BR>&nbsp; var x
+<BR>&nbsp;&nbsp;&nbsp; D[[ x, E ]];
+<BR>&nbsp;&nbsp;&nbsp; result := x;
+<BR>&nbsp;&nbsp;&nbsp; ec = $throw;
+<BR>&nbsp;&nbsp;&nbsp; raise
+<BR>&nbsp; rav
+
+<P>D[[ (S_1 finally S_2) ]] =
+<BR>&nbsp; (D[[S_1]] ! var ec0, result0
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ec0 = ec; result0 = result;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+D[[S_2]];
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ec = ec0; result = result0;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+raise
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+rav); D[[S_2]]
+
+<P>D[[ (S catch ((V_1 T_1) S_1) ((V_2 T_2) S_2) .. ((V_n T_n) S_n)) ]]
+=
+<BR>&nbsp; D[[ S ]] !
+<BR>&nbsp; var tcr
+<BR>&nbsp;&nbsp;&nbsp; tcr := typecode(result);
+<BR>&nbsp;&nbsp;&nbsp; if (ec == $throw$) then
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (tcr = typecode(T_1)) then V_1 :=
+result; D[[ S_1 ]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if (tcr = typecode(T_2))
+then V_2 := result; D[[ S_2 ]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if (tcr = typecode(T_n))
+then V_n := result; D[[ S_n ]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else raise
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fi ... fi fi
+<BR>&nbsp;&nbsp;&nbsp;&nbsp; else raise
+<BR>&nbsp;&nbsp;&nbsp; fi
+<BR>&nbsp; rav
+
+<P>D[[ (switch N E ((case C_11) (case C_12) .. (case C_1n_1) S_1)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+((case C_21) (case C_22) .. (case C_2n_2) S_2)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+...
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+((case C_m1) (case C_m2) .. (case C_mn_m) S_m)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+(default S_d)) ]] =
+<BR>&nbsp; var e
+<BR>&nbsp;&nbsp;&nbsp; D[[ e, E ]];
+<BR>&nbsp;&nbsp;&nbsp; try N
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (CL1) then D[[ S_1 ]] else skip fi;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (CL1 \/ CL2) then D[[ S_2 ]] else
+skip fi;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (CL1 \/ CL2 \/ ... \/ CLm) then D[[
+S_m ]] else skip fi;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; D[[ S_d ]]
+<BR>&nbsp;&nbsp;&nbsp; yrt
+<BR>&nbsp; rav
+<BR>&nbsp;&nbsp;&nbsp; where CLi = (e = C_i1 \/ e = C_i2 \/ ... \/ e =
+C_in_i)
+<BR>&nbsp;Alternative:
+<BR>&nbsp; var e
+<BR>&nbsp;&nbsp;&nbsp; D[[ e, E ]];
+<BR>&nbsp;&nbsp;&nbsp; try N
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (CL1 /\ ~CL2 /\ ... /\ ~CLm) --> D[[(block
+S_1 S_2 ... S_m S_d)]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [] (~CL1 /\ CL2 /\ ~CL3 /\ ... /\ ~CLm)
+--> D[[(block S_2 ... S_m S_d)]]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [] (~CL1 /\ ~CL2 /\ ~CL3 /\ ... /\ ~CLm)
+--> D[[S_d]]
+<BR>&nbsp;&nbsp;&nbsp; yrt
+<BR>&nbsp; rav
+<UL>Note: Alternative looks better because (a) the number of paths through
+the try seems to be O(m) rather than O(2^m) (assuming D[[S_i]] translates
+into a single path) and (b) in most cases S_i ends in a (break) statement,
+allowing us to easily optimize the bodies of each path (specifically, each
+path is more likely to look like "D[[S_i]]" then it is to look like "D[[(block
+S_i S_i+1 ... S_m S_d)]]").</UL>
+D[[ (synchronized E S) ]] =
+<BR>&nbsp; var e, LLold
+<BR>&nbsp;&nbsp;&nbsp; D[[ e, E ]];
+<BR>&nbsp;&nbsp;&nbsp; assert e != null /\ (e \in LL \/ sup(LL) &lt; e);
+<BR>&nbsp;&nbsp;&nbsp; LLold := LL;
+<BR>&nbsp;&nbsp;&nbsp; LL := LL \cup { e };
+<BR>&nbsp;&nbsp;&nbsp; ((D[[ S ]]; LL := LLold) ! (LL := LLold; raise))
+<BR>&nbsp; rav
+
+<P>D[[ (supercons F E_1 E_2 .. E_n) ]] =
+<BR>&nbsp; var f_1, f_2, .., f_n&nbsp; // f_i are the names of the formals
+<BR>&nbsp;&nbsp;&nbsp; D[[f_1, E_1]]; D[[f_2, E_2]]; ...; D[[f_n, E_n]];
+<BR>&nbsp;&nbsp;&nbsp; assert R;
+<BR>&nbsp;&nbsp;&nbsp; var w', ec', result'
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ec' = $return$ /\
+Q --> w := w'; this := result'
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [] ec' = $throw$ /\ E --> w := w'; result
+:= result'; ec := ec'; raise
+<BR>&nbsp;&nbsp;&nbsp; rav
+<BR>&nbsp; rav
+<BR>&nbsp;
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

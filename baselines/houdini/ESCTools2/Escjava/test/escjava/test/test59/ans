@@ -1,0 +1,52 @@
+InstInit.java:44: Warning: Possible assertion failure (Assert)
+    //@ assert x == 50;   // fails
+        ^
+InstInit.java:47: Warning: Possible assertion failure (Assert)
+    //@ assert z0 == 2;   // fails
+        ^
+T.java:18: Warning: Possible violation of object invariant (Invariant)
+    U() {}       // Error
+         ^
+Associated declaration is "T.java", line 8, col 8:
+    //@ invariant k>0
+        ^
+Typecheck.java:7: Error: The non_null pragma can be applied only to variables, fields, parameters, and methods
+  //@ non_null
+      ^
+Typecheck.java:11: Error: Undefined variable 'z'
+  //@ ensures x + y + z;  // this doesn't even type check, but that's  ...
+                      ^
+Typecheck.java:11: Error: Cannot convert int to boolean
+  //@ ensures x + y + z;  // this doesn't even type check, but that's  ...
+              ^
+Typecheck.java:18: Error: An instance method may be invoked only via an object and/or from a non-static context or an inner class enclosed by a type possessing that method.
+    m();  // can't do this in static initializer block
+    ^
+Typecheck.java:19: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+    y++;  // can't do this in static initializer block
+    ^
+Typecheck.java:15: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+  //@ ensures x + y + z;  // this doesn't even type check, but that's  ...
+                  ^
+Typecheck.java:15: Error: Undefined variable 'z'
+  //@ ensures x + y + z;  // this doesn't even type check, but that's  ...
+                      ^
+Typecheck.java:15: Error: Cannot convert int to boolean
+  //@ ensures x + y + z;  // this doesn't even type check, but that's  ...
+              ^
+Typecheck.java:25: Error: The monitored annotation can occur only on field declarations
+  //@ monitored
+      ^
+Typecheck.java:28: Error: The readable_if annotation can occur only on field declarations and local variable declarations
+  //@ readable_if false;
+      ^
+Typecheck.java:29: Error: The monitored annotation can occur only on field declarations
+  //@ monitored
+      ^
+Typecheck.java:30: Error: The monitored_by annotation can occur only on field declarations
+  //@ monitored_by x << true;
+      ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+3 warnings
+12 errors

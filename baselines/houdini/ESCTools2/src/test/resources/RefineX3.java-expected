@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|RefineX3.java:1: Error: Expected a string literal after 'refine'
+//@ refine 2+3; // invalid expression
+           ^
+src|test|resources|RefineX3.java: Caution: Using given file as the .java file, even though it is not the java file for RefineX3 on the classpath
+    [TIME]
+
+RefineX3 ...
+  Prover started:TIME
+    [TIME]
+
+RefineX3: RefineX3() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 error

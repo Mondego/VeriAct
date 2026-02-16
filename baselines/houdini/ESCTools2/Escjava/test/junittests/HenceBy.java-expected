@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+HenceBy ...
+  Prover started:TIME
+    [TIME]
+
+HenceBy: m() ...
+    [TIME]  passed
+
+HenceBy: HenceBy() ...
+    [TIME]  passed
+  [TIME total]

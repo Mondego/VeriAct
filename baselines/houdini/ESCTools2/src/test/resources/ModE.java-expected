@@ -1,0 +1,97 @@
+ESC/Java version VERSION
+src|test|resources|ModE.java: Caution: Using given file as the .java file, even though it is not the java file for ModE on the classpath
+    [TIME]
+
+ModE ...
+  Prover started:TIME
+    [TIME]
+
+ModE: ModE() ...
+    [TIME]  passed immediately
+
+ModE: ModE(int) ...
+    [TIME]  passed immediately
+
+ModE: ModE(double) ...
+    [TIME]  passed immediately
+
+ModE: ModE(int, int) ...
+    [TIME]  passed immediately
+
+ModE: ModE(int, int, int) ...
+    [TIME]  passed immediately
+
+ModE: me() ...
+    [TIME]  passed immediately
+
+ModE: mn() ...
+    [TIME]  passed immediately
+
+ModE: mns() ...
+    [TIME]  passed immediately
+
+ModE: md() ...
+    [TIME]  passed immediately
+
+ModE: mi() ...
+    [TIME]  passed immediately
+
+ModE: mm() ...
+------------------------------------------------------------------------
+src|test|resources|ModE.java:37: Warning: Possible violation of modifies clause (Modifies)
+                ModE e = new ModE();  // WARNING
+                                 ^
+Associated declaration is "src|test|resources|ModE.java", line 7, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "src|test|resources|ModE.java", line 35, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModE: mm1() ...
+------------------------------------------------------------------------
+src|test|resources|ModE.java:47: Warning: Possible violation of modifies clause (Modifies)
+                e = new ModE(5);  // WARNING
+                            ^
+Associated declaration is "src|test|resources|ModE.java", line 10, col 14:
+        //@ modifies \not_specified;
+                     ^
+Associated declaration is "src|test|resources|ModE.java", line 44, col 5:
+        //@ modifies \nothing;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModE: mm3() ...
+    [TIME]  passed
+  [TIME total]
+
+ModES ...
+    [TIME]
+
+ModES: ms() ...
+    [TIME]  passed immediately
+
+ModES: mss() ...
+    [TIME]  passed immediately
+
+ModES: ModES() ...
+    [TIME]  passed
+  [TIME total]
+
+ModESS ...
+    [TIME]
+
+ModESS: ms() ...
+    [TIME]  passed immediately
+
+ModESS: mss() ...
+    [TIME]  passed immediately
+
+ModESS: ModESS() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

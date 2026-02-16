@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParseRepresents ...
+  Prover started:TIME
+    [TIME]
+
+ParseRepresents: m() ...
+    [TIME]  passed
+
+ParseRepresents: p() ...
+------------------------------------------------------------------------
+ParseRepresents.java:20: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "ParseRepresents.java", line 17, col 5:
+        //@ ensures size > 1;
+            ^
+Execution trace information:
+    Executed implicit return in "ParseRepresents.java", line 20, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParseRepresents: ParseRepresents() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

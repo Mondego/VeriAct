@@ -1,0 +1,20 @@
+ESC/Java version VERSION
+    [TIME]
+
+Instance2 ...
+  Prover started:TIME
+    [TIME]
+
+Instance2: m() ...
+    [TIME]  passed
+
+Instance2: mm() ...
+    [TIME]  passed
+
+Instance2: Instance2() ...
+    [TIME]  passed
+  [TIME total]
+
+INSTI ...
+    [TIME]
+  [TIME total]

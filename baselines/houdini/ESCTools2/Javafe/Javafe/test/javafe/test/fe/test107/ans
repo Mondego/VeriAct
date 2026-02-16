@@ -1,0 +1,73 @@
+Refs.java:20: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        return Fields.s + Fields.i;   // JLS error: Fields.i (javac go ...
+                                 ^
+Refs.java:25: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        return i + this.i + Fields.i;        // error: i, this.i, & Fi ...
+               ^
+Refs.java:25: Error: Unqualified this cannot be used in static contexts
+        return i + this.i + Fields.i;        // error: i, this.i, & Fi ...
+                   ^
+Refs.java:25: Error: An instance field may be accessed only via an object and/or from a non-static context or an inner class enclosed by a type possessing that field.
+        return i + this.i + Fields.i;        // error: i, this.i, & Fi ...
+                                   ^
+Refs.java:36: Error: Only methods of top-level classes may be static
+        static int static_method() {}    // error!
+                   ^
+Refs.java:57: Error: Undefined variable: Fields.this
+            s = Fields.this.i;    // error
+                ^
+Refs.java:58: Error: The instance fields of type Fields may not be accessed from type Fields$Static
+            return s + Fields.s + i;            // error: i
+                                  ^
+Refs.java:63: Error: Undefined variable: Fields.this
+            s = Fields.this.i;    // error
+                ^
+Refs.java:64: Error: The instance fields of type Fields may not be accessed from type Fields$Static
+            return i + this.i + Fields.i;      // error: i, i.this, &  ...
+                   ^
+Refs.java:64: Error: Unqualified this cannot be used in static contexts
+            return i + this.i + Fields.i;      // error: i, i.this, &  ...
+                       ^
+Refs.java:64: Error: No such field in type Fields$Static
+            return i + this.i + Fields.i;      // error: i, i.this, &  ...
+                            ^
+Refs.java:64: Error: The instance fields of type Fields may not be accessed from type Fields$Static
+            return i + this.i + Fields.i;      // error: i, i.this, &  ...
+                                       ^
+Refs.java:79: Error: An instance method may be invoked only via an object and/or from a non-static context or an inner class enclosed by a type possessing that method.
+        return Methods.s() + Methods.i(); // JLS error: Methods.i (jav ...
+                                     ^
+Refs.java:84: Error: An instance method may be invoked only via an object and/or from a non-static context or an inner class enclosed by a type possessing that method.
+        return i() + this.i() + Methods.i();  // error: i, this.i, & M ...
+               ^
+Refs.java:84: Error: Unqualified this cannot be used in static contexts
+        return i() + this.i() + Methods.i();  // error: i, this.i, & M ...
+                     ^
+Refs.java:84: Error: An instance method may be invoked only via an object and/or from a non-static context or an inner class enclosed by a type possessing that method.
+        return i() + this.i() + Methods.i();  // error: i, this.i, & M ...
+                                        ^
+Refs.java:94: Error: Only methods of top-level classes may be static
+        static int static_method() {}    // error!
+                   ^
+Refs.java:111: Error: Undefined variable: Methods.this
+            Methods.this.i();    // error
+            ^
+Refs.java:112: Error: The instance methods of type Methods may not be invoked from type Methods$Static
+            return s() + Methods.s() + i();            // error: i
+                                       ^
+Refs.java:117: Error: Undefined variable: Methods.this
+            Methods.this.i();    // error
+            ^
+Refs.java:118: Error: The instance methods of type Methods may not be invoked from type Methods$Static
+            return i()+this.i()+Methods.i();// error: i, i.this, & Met ...
+                   ^
+Refs.java:118: Error: Unqualified this cannot be used in static contexts
+            return i()+this.i()+Methods.i();// error: i, i.this, & Met ...
+                       ^
+Refs.java:118: Error: No such method i() in type Methods$Static
+            return i()+this.i()+Methods.i();// error: i, i.this, & Met ...
+                            ^
+Refs.java:118: Error: The instance methods of type Methods may not be invoked from type Methods$Static
+            return i()+this.i()+Methods.i();// error: i, i.this, & Met ...
+                                        ^
+24 errors

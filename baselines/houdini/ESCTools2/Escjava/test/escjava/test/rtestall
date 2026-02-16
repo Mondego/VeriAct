@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# use: rtestall FLAGS
+
+echo Executing rtestall in `pwd` using
+if [ -n "$ESCTOOLS_ROOT" ]; then
+    echo "    ESCTOOLS_ROOT: " $ESCTOOLS_ROOT
+fi
+if [ -n "$ESCTOOLS_RELEASE" ]; then
+    echo "    ESCTOOLS_RELEASE: " $ESCTOOLS_RELEASE
+fi
+echo "    ESCJ: $ESCJ"
+echo "    ESC_CLASSPATH: $ESC_CLASSPATH"
+if [ -n "$CLASSPATH" ]; then
+    echo "    CLASSPATH: $CLASSPATH"
+fi
+echo "    ESCJ_SIMPLIFY: $ESCJ_SIMPLIFY"
+echo "    ESC_SPECS: $ESC_SPECS"
+
+for f in `echo test*`; do \
+    grep -q $f alltests || echo WARNING: $f NOT LISTED IN `pwd`/alltests ;\
+done
+
+echo TESTS OMITTED: `grep Omit alltests | awk '{print $1; }'`
+echo TESTS DROPPED: `grep Drop alltests | awk '{print $1; }'`
+echo TESTS TO BE FIXED: `grep FIX alltests | awk '{print $1; }'`
+errs=0
+for f in `grep Good alltests | awk '{print $1;}'`; do
+    if ! ./rtest $f $*; then
+	errs=1
+    fi
+done
+echo " "
+echo Completed tests in `pwd` with errs = $errs
+exit $errs

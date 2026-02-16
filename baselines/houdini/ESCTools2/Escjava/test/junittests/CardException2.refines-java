@@ -1,0 +1,70 @@
+/*
+ * JML specs for the JavaCard API 2.1.1
+ * by Engelbert Hubbers and Erik Poll
+ * Copyright 2004 University of Nijmegen, the Netherlands 
+ *
+ * The JavaCard API 2.1.1 itself is copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * $Id$
+ */
+
+// Modified by David R. Cok
+
+//@ refine "CardException2.java";
+
+public class CardException2 extends Exception { 
+
+    private /*@ spec_public @*/ static 
+            CardException2 systemInstance; // in objectState;
+
+	// Note: The following is not true as a static invariant,
+	// since it is established in instance constructors
+    //@ public invariant CardException2.systemInstance != null;
+  
+    private /*@ spec_public */ short reason; //@ in _reason;
+
+    //@ public model short _reason; 
+    //@        represents _reason <- reason;
+
+    //*********************************************************************************
+
+    /*@ also public normal_behavior
+     @ requires true;
+     @ assignable _reason, systemInstance, this.*;
+     @ ensures _reason == reason; // that is, _reason equals the argument
+     @*/
+
+    public CardException2(short reason) ;
+
+    //*********************************************************************************
+
+    /*@ also public normal_behavior
+     @ requires true;
+     @ assignable \nothing;
+     @ ensures \result == _reason;
+     @*/
+
+    public /*@ pure @*/ short getReason() ;
+
+    //*********************************************************************************
+
+    /*@ also public normal_behavior
+     @ requires true;
+     @ assignable _reason;
+     @ ensures _reason == reason;
+     @*/
+
+    public void setReason(short reason) ;
+
+    //*********************************************************************************
+
+    /*@ also public exceptional_behavior
+     @ requires true;
+     @ assignable systemInstance._reason; // HEAVY_EX_NOT
+     @ signals (CardException2 e) e._reason == reason;
+     @ signals (CardException2 e) e == systemInstance; // HEAVY_EX
+     @*/
+
+    public static void throwIt(short reason) throws CardException2 ;
+
+} 

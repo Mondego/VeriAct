@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|NonNullElementsErrors.java: Caution: Using given file as the .java file, even though it is not the java file for NonNullElementsErrors on the classpath
+    [TIME]
+
+NonNullElementsErrors ...
+src|test|resources|NonNullElementsErrors.java:8: Error: Cannot convert int to java.lang.Object[]
+        //@ ensures \nonnullelements(i);  // ERROR
+                                     ^
+src|test|resources|NonNullElementsErrors.java:10: Error: Cannot convert int[] to java.lang.Object[]
+        //@ ensures \nonnullelements(new int[10]); // ERROR
+                                     ^
+src|test|resources|NonNullElementsErrors.java:12: Error: Cannot convert int to java.lang.Object[]
+        //@ ensures \nonnullelements(2*i); // ERROR
+                                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+3 errors

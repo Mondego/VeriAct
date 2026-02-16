@@ -1,0 +1,30 @@
+ESC/Java version VERSION
+src|test|resources|JmlAssert.java: Caution: Using given file as the .java file, even though it is not the java file for JmlAssert on the classpath
+    [TIME]
+
+JmlAssert ...
+  Prover started:TIME
+    [TIME]
+
+JmlAssert: trivial() ...
+    [TIME]  passed
+
+JmlAssert: constant_boolean_expression() ...
+    [TIME]  passed
+
+JmlAssert: assert_matches_precondition(int) ...
+    [TIME]  passed
+
+JmlAssert: assert_weaker_than_precondition(int) ...
+    [TIME]  passed
+
+JmlAssert: constant_arithmetic(int, int) ...
+    [TIME]  passed
+
+JmlAssert: non_trivial_arithmetic(int, int) ...
+    [TIME]  passed
+
+JmlAssert: JmlAssert() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

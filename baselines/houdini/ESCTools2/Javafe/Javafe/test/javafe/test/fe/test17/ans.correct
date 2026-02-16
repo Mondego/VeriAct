@@ -1,0 +1,8 @@
+Public.java:1: Error: Supertype is not accessible.
+class Public extends p.Private {}       // error: Private not accessib ...
+                     ^
+1 error
+<Error in import statement in Public3.java>		// replace
+1 error
+<Error in reference to class B in C.java>		// replace
+1 error

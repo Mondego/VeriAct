@@ -1,0 +1,7 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* T.java
+${ESCJ} $* -inlineFromConstructors T.java
+${ESCJ} $* U.java
+${ESCJ} $* -inlineFromConstructors U.java

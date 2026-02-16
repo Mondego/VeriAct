@@ -1,0 +1,78 @@
+% @(#)$Id: jml-listings.tex 2720 2007-06-25 22:41:12Z leavens $
+%
+% Copyright (C) 2006 Iowa State University
+%
+% This file is part of JML
+%
+% JML is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2, or (at your option)
+% any later version.
+%
+% JML is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with JML; see the file COPYING.  If not, write to
+% the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+%
+% A JML listings environment.
+%
+% AUTHOR: Gary T. Leavens
+%
+% requires listings i.e., do \usepackage{listings} first
+%
+% This file is set up to be used via \input{jml-listings}.
+% If you want, you could make a version that is a style file,
+% but then change \lstdefinelanguage to \lst@definelanguage below.
+%
+\lstdefinelanguage[JML]{Java}[]{Java}%
+       {% C++ style comments have to start with a blank!
+        comment=[l]{//\ },
+        % And C-style comments must also start with a blank or star!
+        morecomment=[s]{/*\ }{*/},        
+        morecomment=[s]{/**}{*/},
+        % sensitive=true, % inherited
+        % Add JML keywords as level 1 keywords, so can typeset differently
+        classoffset=1,
+        % And here are all the wonderful JML keywords
+        morekeywords={abrupt_behavior,abrupt_behaviour,
+         accessible,accessible_redundantly,also,assert,assert_redundantly,
+         assignable,assignable_redundantly,assume,assume_redundantly,
+         axiom,behavior,behaviour,breaks,breaks_redundantly,
+         callable,callable_redundantly,captures,captures_redundantly,
+         choose,choose_if,code,code_bigint_math,code_java_math,
+         code_safe_math,constraint,constraint_redundantly,constructor,
+         continues,continues_redundantly,decreases,decreases_redundantly,
+         decreasing,decreasing_redundantly,diverges,diverges_redundantly,
+         duration,duration_redundantly,ensures,ensures_redundantly,
+         example,exceptional_behavior,exceptional_behaviour,
+         exceptional_example,exsures,exsures_redundantly,extract,field,
+         forall,for_example,ghost,helper,hence_by,hence_by_redundantly,
+         implies_that,in,in_redundantly,initializer,initially,instance,
+         invariant,invariant_redundantly,loop_invariant,
+         loop_invariant_redundantly,maintaining,maintaining_redundantly,
+         maps,maps_redundantly,measured_by,measured_by_redundantly,method,
+         model,model_program,modifiable,modifiable_redundantly,modifies,
+         modifies_redundantly,monitored,monitors_for,non_null,
+         normal_behavior,normal_behaviour,normal_example,nowarn,
+         nullable,nullable_by_default,old,or,post,post_redundantly,
+         pre,pre_redundantly,pure,readable,refine,refines,refining,represents,
+         represents_redundantly,requires,requires_redundantly,
+         returns,returns_redundantly,set,signals,signals_only,
+         signals_only_redundantly,signals_redundantly,spec_bigint_math,
+         spec_java_math,spec_protected,spec_public,spec_safe_math,
+         static_initializer,uninitialized,unreachable,weakly,
+         when,when_redundantly,working_space,working_space_redundantly,
+         writable
+        },
+        % keywords from the universe type system
+        morekeywords={rep,peer,readonly},
+        % typeset everything that starts with a backslash as a keyword
+        % BUG: this doesn't allow typesetting these keywords differently
+        keywordsprefix=\\,
+        otherkeywords={<:,<-,->,..,<==,==>,<==>,<=!=>},
+        classoffset=0 % restore default class for keywords
+}

@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+SpecFileRef2 ...
+  Prover started:TIME
+    [TIME]
+
+SpecFileRef2: n() ...
+------------------------------------------------------------------------
+SpecFileRef2.java:6: Warning: Precondition possibly not established (Pre)
+                s.m();
+                   ^
+Associated declaration is ".|SpecFileHelper.jml", line 4, col 5:
+        //@ requires false;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+SpecFileRef2: SpecFileRef2() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

@@ -1,0 +1,8 @@
+Neg.java:4: Fatal error: .class must follow a type
+        out(this.class);                        // parse error
+                 ^
+1 error
+TypeCheck.java:4: Fatal error: Can't find type named "java.lang.nonexistent"
+        Class c = java.lang.nonexistent[].class;   // error: no such c ...
+                  ^
+1 error

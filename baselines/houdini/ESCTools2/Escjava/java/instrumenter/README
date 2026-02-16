@@ -1,0 +1,8 @@
+From top-level README.txt:
+
+  By the way, the Escjava/java/instrumenter directory contains some
+  files that once were used in a source-to-source convertion of
+  many ESC/Java annotations into run-time checks.  The code is probably
+  out of date with respect to the other source and ESC/Java's current
+  annotation language, but the sources may be a good starting point
+  for an effort to do this.

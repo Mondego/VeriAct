@@ -1,0 +1,50 @@
+ESC/Java version VERSION
+    [TIME]
+
+Final ...
+  Prover started:TIME
+    [TIME]
+
+Final: m() ...
+    [TIME]  passed
+
+Final: mm() ...
+------------------------------------------------------------------------
+Final.java:8: Warning: Possible assertion failure (Assert)
+        //@ assert \typeof(this) == \type(Final);  // ERROR
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Final: n() ...
+------------------------------------------------------------------------
+Final.java:12: Warning: Possible assertion failure (Assert)
+        //@ assert !(\typeof(this) <: \type(I)); // ERROR
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Final: nn() ...
+    [TIME]  passed
+
+Final: Final() ...
+    [TIME]  passed
+  [TIME total]
+
+F2 ...
+    [TIME]
+
+F2: p() ...
+    [TIME]  passed
+
+F2: q() ...
+    [TIME]  passed
+
+F2: F2() ...
+    [TIME]  passed
+  [TIME total]
+
+I ...
+    [TIME]
+  [TIME total]
+2 warnings

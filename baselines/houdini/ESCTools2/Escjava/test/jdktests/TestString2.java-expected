@@ -1,0 +1,13 @@
+TestString2.java:9: Warning: Postcondition possibly not established (Post)
+  } 
+  ^
+Associated declaration is "TestString2.java", line 4, col 6:
+  //@ ensures /result == "ble ble";
+      ^
+Execution trace information:
+    Executed return in "TestString2.java", line 8, col 6.
+
+TestString2.java:14: Warning: Possible assertion failure (Assert)
+        //@ assert false;
+            ^
+2 warnings

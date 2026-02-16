@@ -1,0 +1,1084 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+
+@setfilename jml_homework.info
+@settitle JML and ESC/Java2 Homework Exercises $Revision$
+@c Other commands that globally affect the document formatting: 
+@c synindex, footnotestyle
+@afourwide
+@paragraphindent 0
+@c firstparagraphindent 0
+@c %**end of header
+@c =============================================================================
+
+@c =============================================================================
+@c %**summary and copyright
+
+This document contains a set of homework exercises for those that wish
+to learn JML and ESC/Java2.  It was begun by Joseph R. Kiniry
+<kiniry@@acm.org> in May 2004 for the tutorial ``Design by Contract
+and Automatic Verification for Java with JML and ESC/Java2'' presented
+at ECOOP 2004 in Oslo, Norway in June 2004.  It was updated again in
+March 2008 for the ETAPS tutorial ``Verification-centric Development in
+Java with JML and ESC/Java2'' in Budapest, Hungary in April 2008.
+
+Edition:
+@include .svnversion
+
+This document is still very much a work in progress.  Suggestions and input 
+are welcome.
+
+@copying
+The JML and ESC/Java2 Homework Exercises are licensed under the Creative
+Commons Attribution-NonCommercial-ShareAlike 2.0 license.  See
+@uref{http://creativecommons.org/licenses/by-nc-sa/2.0/}
+
+Copyright @copyright{} 2004,2008 Joseph R. Kiniry
+
+@quotation
+You are free:
+@itemize
+@item
+to copy, distribute, display, and perform the work
+@item
+to make derivative works
+@end itemize
+
+Under the following conditions:
+@itemize
+@item
+Attribution. You must give the original author credit.
+@item
+Noncommercial. You may not use this work for commercial purposes.
+@item
+Share Alike. If you alter, transform, or build upon this work, you may
+distribute the resulting work only under a license identical to this
+one.
+@end itemize
+
+For any reuse or distribution, you must make clear to others the license
+terms of this work.
+
+Any of these conditions can be waived if you get permission from the
+author.
+
+Your fair use and other rights are in no way affected by the above.
+
+This is a human-readable summary of the Legal Code.
+
+See @uref{http://creativecommons.org/licenses/by-nc-sa/2.0/legalcode}
+@end quotation
+
+@end copying
+
+@c %**end of summary and copyright
+@c =============================================================================
+
+@c =============================================================================
+@c %**title, contents, and copyright
+
+@titlepage
+@title JML and ESC/Java2 Homework Exercises
+@subtitle Learning JML and ESC/Java2 Through Example
+@subtitle March 2008
+@subtitle These exercises use at least JML version 5.5 and ESC/Java2 version 2.0b4.
+@author Joseph R. Kiniry <kiniry@@acm.org>
+
+@c The following two commands start the copyright page.
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+@c Will be published by the Nijmegen Institute for Computing and Information
+@c Science at the University of Nijmegen as technical report NIII-R04XX.
+@c See http://www.cs.kun.nl/research/reports/
+@end titlepage
+
+@c metadata used in HTML
+@documentdescription
+Homework Exercises, Java Modeling Language, JML, ESC/Java, ESC/Java2,
+Extended Static Checking, Extended Static Checker, Design by Contract,
+Java, Verification, jUnit, Unit Testing, Model Checking, BISL,
+Behavioral Interface Specification Language, Kiniry
+@end documentdescription
+
+@c Output the table of contents at the beginning.
+@contents
+
+@c %**end of title, contents, and copyright
+@c =============================================================================
+
+@c =============================================================================
+@c %**top node and master menu
+
+@c We recommend including the copying permissions here as well as the
+@c segments above.
+@ifnottex
+@node Top, Introduction, (dir), (dir)
+@top JML and ESC/Java Homework Exercises
+
+@insertcopying
+@end ifnottex
+
+This set of homework problems focus on the use of JML in runtime
+assertion checking (with @t{jmlc} and @t{jmlrac}) and static
+verification with ESC/Java2.
+
+@menu
+* Introduction::                An introduction to these homework exercises.
+* Core::                        Understanding the core concepts of JML.
+* Using::                       Ways to use JML and ESC/Java2.
+* Copying::                     Your rights and freedoms.
+* Index::                       Complete index.
+
+@end menu
+
+@c %**end top node and master menu
+@c =============================================================================
+
+@c =============================================================================
+@c %**body
+
+@node Introduction, Core, Top, Top
+@unnumbered Introduction
+
+@cindex Introduction
+
+The Java Modeling Language (JML) is a behavioral interface specification
+language that can be used to specify the behavior of Java modules. It
+combines the ``Design by Contract'' approach of Eiffel and the
+model-based specification approach of the Larch family of interface
+specification languages with some elements of the refinement calculus.
+
+The JML tool suite comes with a typechecker (@t{jml}), a compiler
+(@t{jmlc}), a runtime assertion checker (@t{jmlrac}), a Javadoc-based
+documentation generator (@t{jmldoc}), a set of unit test tools
+(@t{jml-junit}, @t{jmlunit}, @t{jtest}), and a specification skeleton
+generator and specification comparison tool (@t{jmlspec}).
+
+The JML tool suite is primarily the development of the JML project at
+Iowa State University, led by Gary Leavens.  http://www.jmlspecs.org/
+
+Several other tools understand (often subsets of) JML:
+@itemize
+@item
+The Extended Static Checker for Java (ESC/Java version 1).
+@uref{http://research.compaq.com/SRC/esc/}
+@item
+The Open Source Extended Static Checker for Java (ESC/Java version 2, or
+ESC/Java2 for short) from the KindSoftware Group at the University
+College Dublin.
+@uref{http://kindsoftware.com/products/opensource/ESCJava2/}
+@item
+The LOOP compiler from the SoS Group at the University of Nijmegen.
+@uref{http://www.cs.kun.nl/sos/}
+@item
+The Daikon invariant detector from the Program Analysis Group at MIT.
+@uref{http://pag.lcs.mit.edu/daikon/}
+@item
+The ChAsE frame axiom checker from Lemme project at INRIA Sophia-Antipolis.
+@uref{http://www-sop.inria.fr/lemme/verificard/modifSpec/index.html}
+@item
+The JACK tool from Gemplus.
+@uref{http://www.gemplus.com/smart/r_d/trends/jack.html}
+@item
+The Bogor tool from the SpEx project at Kansas State University.
+@uref{http://spex.projects.cis.ksu.edu/}
+@item
+The Mobius Program Verification Environment (PVE) from the Mobius
+Consortium, which integrates several of these tools with Eclipse.
+@uref{http://mobius.inria.fr/} and @uref{http://mobius.ucd.ie/}
+@end itemize
+
+This set of homework problems focus on the use of JML in runtime
+assertion checking (with @t{jmlc} and @t{jmlrac}) and static
+verification with ESC/Java2.
+
+@c =============================================================================
+@node Core, Using, Introduction, Top
+@unnumbered Core JML Constructs
+
+@cindex Core JML Constructs
+
+The following sections discuss all of the core constructs of JML with
+examples and exercises.  It is suggested that each exercise be completed
+in sequence, as the exercises build upon each other in the order
+presented.  @i{I.e.}, @ref{Problem-2,,Problem two} builds on the
+knowledge that you gained in @ref{Problem-1,,Problem one}.
+
+It is assumed that the reader has a basic understanding of the
+following notions: @emph{assertion}, @emph{invariant},
+@emph{specification}, @emph{signature}, @emph{class}, and @emph{type}.
+
+It is also assumed that the reader has a good understanding of Java.
+If you want write a specification of a method written in Java,
+@emph{you have to understand what the method does @strong{and} what it
+is @strong{meant to do}}.  You cannot expect to write specifications
+for programs written in a language you do not understand.
+
+When working on these problems, do not attempt to obtain full
+verification completeness at the cost of poor specifications.
+Understanding the limitations of ESC/Java2 and other JML-based tools
+is part of the challenge of writing specifications and performing
+verfications today.
+
+In particular, several classes or methods are reused through several
+problems.  As new constructs are introduced, and as your
+specifications become more rich (and thus, complete), more of your
+code will verify.  You should not expect all of your answers to fully
+verify until you have covered all of the concepts discussed in this
+document.
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@menu
+* Assertions::                  Understanding basic assertions.
+* Assumptions::                 Making basic assumptions explicit.
+* Ghost Variables::             
+* PrePost::                     Core concepts of method specifications.
+* Modifies::                    Reasoning about and with frame axioms.
+* Data Groups::                 
+* Heavyweight::                 Expressive and easy to understand specifications.
+* Invariants::                  Core concepts of class specifications.
+* Loops::                       Reasoning about loops.
+* Aliasing::                    Reasoning in the face of aliasing adversity.
+* Models::                      Specifying and reasoning with models.
+@end menu
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Assertions, Logging, Core, Core
+@unnumberedsec Assertions
+
+@cindex Assertions
+
+An assertion is a predicate that @emph{must always} be true.  Assertions
+are typically used for debugging and (localized) documentation purposes.
+
+In JML, an assertion statement has the form
+@display
+@var{assert-statement} ::= @code{assert} @var{expression} [ @code{:} @var{expression} ] @code{;}
+@end display
+@i{(Note that all specifications of JML grammar in this document are
+highly simplified from the actual JML grammar.  Only the basic forms
+of each statement or clause are shown and are sufficient for the
+purpose of this homework.)}
+
+The first expression is the predicate that must be true.  The second
+(optional) expression must be of type @code{String}.  The value of this
+expression is printed by some tools when the assertion fails.  (add
+xrefs)
+
+Beginning in Java 1.4, an @code{assert} keyword was introduced.  The
+syntax of the Java assert statement is the same as that of JML.  (add
+xref)
+
+Java's semantics does not restrict either subexpression in its assert
+statement, so you can write assert statements that have side-effects
+such as
+@example
+        int x;
+        x++;
+        assert (x++ == 2) : new String("This is a bad idea.");
+@end example
+
+This is a very bad idea, as it means that the behavior of your program
+changes whether you are testing your assertions or not.
+
+JML's assert statement does not permit side effects in either
+subexpression.
+
+Using runtime checking (with @t{jmlc} and @t{jmlrac}), JML and Java
+assert statements are tested at runtime.  Using ESC/Java, JML assert
+statements are proven at compile-time.  
+
+In ESC/Java2, Java assert statements are treated one of two ways.  They
+are either
+@itemize
+@item
+Treated as Java assert statements using the @code{-eajava} or
+@code{-javaAssertions} (synonymous) switches, or
+@item
+Treated as JML assert statements using the @code{-eajml} or
+@code{-jmlAssertions} (synonymous) switches.
+@end itemize
+In the former case, a failed assertion has the semantics of 
+@example
+        throw new AssertionError(second expression);
+@end example
+
+Thus, you are @strong{not} reasoning about another potential runtime
+exception, as all subtypes of @code{Error} are ignored by ESC/Java. (add
+xref)
+
+@strong{Problem 1.} @anchor{Problem-1} Annotate the following code
+with Java assertions as indicated.  The expression @code{P(a0,a1,...)}
+means ``replace this expression with a predicate that is true of the
+variables @code{a0} and @code{a1} and ...''.  Write the strongest
+predicate possible, given the context of the assertion.  Execute the
+class to check your answers.
+
+The provided @t{Makefile} in the @t{problems} directory can be used to
+compile, run, and verify all problems.
+
+@example
+@include problems/JavaAssertions.java.texinfo
+@end example
+
+@strong{Problem 2.} @anchor{Problem-2} Annotate the following code
+with JML assertions as indicated.  Write the strongest predicate
+possible, given the context of the assertion.  After you have written
+the assertions, first execute the class using @code{jmlrac} to check
+your answers, then attempt to verify your answers using
+@code{escjava2}.
+
+@example
+@include problems/JmlAssertions.java.texinfo
+@end example
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Logging, Assumptions, Assertions, Core
+@comment  node-name,  next,  previous,  up
+@unnumberedsec An Aside: Logging Messages
+
+@cindex Logging
+
+Most programmers never use assertions.  Instead, they insert
+@emph{logging statements}, usually using a function like
+@code{System.out.println()}.  A very important skill for software
+developers is understanding when to use an assertion verses when to use
+a logging statement.  The following section discusses logging messages
+in the context of assertions and verification-centric software
+development.  A small set of exercises follows to help make these
+concepts concrete.
+
+Deciding to log a message is not inherently a bad thing.  There are many
+legitimate reasons to log information about a program run.  When an
+assertion fails, for example, typically a log message is emitted and the
+program (or thread of control) is halted.
+
+The main problematic use of logging messages is when they are used to
+indicate something is seriously wrong with the system @emph{and yet the
+programmer does not try to correct the problem and the system continues
+running}.
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Assumptions, Ghost Variables, Logging, Core
+@unnumberedsec Assumptions
+
+@cindex Assumptions
+
+You will notice that nearly all of the assertions that you wrote for
+Problems @ref{Problem-1,,one} and @ref{Problem-2,,two} cannot be
+checked with ESC/Java2 as the @code{JavaAnnotations} and
+@code{JmlAnnotations} classes are currently written.  While @emph{you}
+might know that each assertion is true, given the context of the
+program and the body of the @code{main()} method, there is no
+information that ESC/Java2 can use to reach this same conclusion.
+
+Because ESC/Java2 performs verification in a @emph{modular} fashion,
+the @emph{assumptions} you based your assertions upon in each method,
+which in turn were based upon what you read in the @code{main()}
+method's body, are unknown to ESC/Java2.
+
+More precisely, to reason about the correctness of the method
+@code{n(int, Object, String)}, ESC/Java2 only uses the signature and
+body of @code{n()} and everything they depends upon.  This set of
+dependencies is large.  It including all the types mentioned in
+@code{n()}, the signature and specification of any methods @code{n()}
+might be overriding, and all invariants of the class
+@code{JmlAssertions} that relate to fields mentioned in @code{n()}.
+(More details about method specifications and class invariants will be
+covered shortly.)
+
+Notice that, to reason about @code{n()}, @emph{nothing} needs to be
+known about the body of the @code{main()} method of
+@code{JmlAssertions}.  Thus, all of the assumptions you made by
+reading the body of @code{main()} are unknown to ESC/Java2.
+
+The next two problems will focus on making assumptions explicit.  The
+JML keyword @code{assume} is used to specify assumptions precisely.
+@code{assume} is used very much like @code{assert}, except instead of
+stating what @emph{must} be true at a certain point in a program (as
+one does with an @code{assert}), an @code{assume} statement says what
+@emph{is} true at a certain point in a program.
+
+In JML, an assume statement has the form
+@display
+@var{assume-statement} ::= @var{assume-keyword} @var{predicate} [ @code{:} @var{expression} ] @code{;}
+@end display
+The assume statement thus has the exact same structure of the assert
+statement, but means exactly the opposite.
+
+@strong{Problem 3.} @anchor{Problem-3} Annotate your code from
+@ref{Problem-2,,Problem two} with JML assumptions.  Try to write down
+the @emph{minimal} set of assumptions that ensure all of your
+assertions verify correctly with ESC/Java2.
+
+For the following discussion we will refer to the answer key found in
+the class @code{JmlAssertionsAndAssumptionsKey}, duplicated here for
+reference.
+
+@example
+@include problems/JmlAssertionsAndAssumptionsKey.java.texinfo
+@end example
+
+Note that the assumptions in this class are not the only ones that are
+correct.
+
+Stronger assumptions (that is, logically stronger predicates) that
+imply these weaker assumptions are correct also, though are not as
+weak as possible.
+
+For example, if one were to write
+@example
+  //@@ assume p != null && t != null;
+@end example
+to provide an assumption to fulfill the assertion
+@example
+  //@@ assert p != null;
+@end example
+the assertion would verify.  But the assumption is stronger than
+necessary, since the information about the variable @code{t} is
+superfluous.  The assumption can be made @emph{weaker} by simply
+removing the term @code{t != null} because @t{A && B ==> A}.  I.e.,
+@example
+  //@@ assert p != null && t != null ==> p != null;
+@end example
+is always a true assertion, regardless of the values of @code{p} and
+@code{t}.
+
+The locations of the assumptions can also vary to some degree.  Many
+cannot, in particular, those having to do with assertions located at
+the very beginning of method bodies cannot be moved any ``earlier''
+because there is no earlier statement.  Moving the assumption
+@emph{outside} of the method body, for example into the @code{main()}
+method, has no effect due to the nature of modular verification, as
+discussed earlier.  (add xref)
+
+On the other hand, assumptions in the middle of a method can often be
+moved around with some latitude.  For example,  the statement
+@example
+  //@@ assume i == 257;
+@end example
+in the method @code{o(int, Object, String)} could be moved earlier in
+the method.  In fact, because the variable @code{i} is not referenced
+anywhere earlier in the method, the assumption could (in theory) be
+moved all of the way to the beginning of the method.
+
+One problem with ESC/Java2 highlighted by this exercise is its
+incomplete support for arithmetic, and bitwise operations in
+particular.  You will find that nearly all assertions having to do
+with the results of bitwise operations cannot be verified.
+
+Consider the following method:
+@example
+  static void nn(Object p, Object t) @{
+    int i = 1, j = 1;
+    i = i | 0x100;
+    //@@ assert i == 257;
+    //@@ assert 0 <= i && i <= 1000;
+    //@@ assert i == (1 | 0x100);
+  @}
+@end example
+While all three assertions are true, only the third one (the most
+complicated one, in some respects!) can be verified by ESC/Java2.
+This weakness is due to the fact that the theorem prover used by
+ESC/Java2 (called ``Simplify'') does not deal with bitwise operations
+(see Bug #965748 at SourceForge for more information).  Thus, one
+cannot reason about any variables involved in bitwise operations at
+this time.
+
+Assume statements are not to be used lightly.  In fact, as a general
+rule, one should use assumes only as an absolute last resort.  It is
+entirely too easy to introduce subtle inconsistencies to
+specifications with assume statements.  If such an inconsistency
+exists, then the related methods will verify immediately because they
+have a false premise.
+
+E.g., this method verifies:
+@example
+  void m() @{
+    //@@ assume i == 0 && i == 1;
+    //@@ assert true == false;
+  @}
+@end example
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Ghost Variables, PrePost, Assumptions, Core
+@unnumberedsec Ghost Variables
+
+@cindex Ghost Variables
+
+@c TODO
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node PrePost, Modifies, Ghost Variables, Core
+@unnumberedsec Lightweight Contracts
+
+@cindex Lightweight Contracts
+
+A @emph{specification} of the class and its methods describes the
+manner in which the class is correctly used.  To write such a
+specification, one uses two primary concepts: @emph{method contracts}
+and @emph{class invariants}.  The problems of this section will focus
+on the former; invariants will be dealt with later. (add xref).
+
+A @emph{method contract} consists of two basic assertions: a
+@emph{precondition} which states under which circumstances the method
+is guaranteed to behave correctly, and a @emph{postcondition} which
+states what is true when the method completes executing.
+
+@unnumberedsubsec Preconditions
+@cindex Preconditions
+
+The assume statements written for the preceding problems that were
+``pushed'' to the beginning of the method are preconditions; they
+state some of the conditions necessary for their method to terminate
+properly.
+
+Preconditions are specified in JML using the @code{requires} clause
+which has the following form:
+@display
+@var{requires-clause} ::= @code{requires} @var{pred-or-not} @code{;}
+@var{pred-or-not} ::= @var{predicate} | @code{\not_specified}
+@end display
+
+The value @code{\not_specified} says that you have a precondition in
+mind but you simply are not specifying it.  Different tools can view
+such an unspecified precondition in different ways.  For example,
+ESC/Java2 assumes a default precondition of @code{true}.
+
+The process of writing preconditions is a tricky business.
+Preconditions must be ensured by the @emph{caller} of the method,
+therefore everything stated in the precondition must be checkable by
+the caller, prior to making the call.  Thus, one can only
+(legitimately) express assertions in precoditions that are ``at least
+as visible'' as the method they are guarding.
+
+@strong{Problem 4.} @anchor{Problem-4} Annotate the following code
+with @emph{preconditions} only.  Consider what are the
+@emph{necessary} conditions for the method bodies to (a) not fail
+abnormally (e.g., throw @code{NullPointerExceptions},
+@code{IndexOutOfBoundsExceptions}, etc.), (b) pass all assertions
+in the code, and (c) perform their job correctly (e.g., not compute an
+incorrect value, given your intuition of the purpose of the method).
+Check the use of all of your method calls with ESC/Java2.
+
+@example
+@include problems/PrePostConditions.java.texinfo
+@end example
+
+Notice that many preconditions focus on variables other than the
+formal parameters of their method (as in the method @code{o(int)}).
+Some depend upon class attributes (as in the methods @code{m()} and
+@code{n()}), while others focus on ``global'' values like static
+fields of the enclosing class (as in the method @code{p(String)}) or
+static field of other classes (as in the method @code{q()}).
+
+It is frequently argued that the more a method's precondition depends
+upon variables other than @code{this} and its fields, @code{this}'s
+class and its ancestors and their fields, and the method itself's
+parameters, the more poorly designed the method is due to the
+complexity of its interdependencies and its consequent fragility in
+the face of ``external'' changes.
+
+In this example in particular, the method @code{q()} is poorly
+designed due to its dependence on the (static) fields of the seeminly
+unrelated class @code{StaticPreconditions}.
+
+Additionally, the more complex a precondition is, the harder it
+sometimes is to ensure it is fulfilled.  This means that potentially
+more state has to be exposed as part of the design of related classes,
+as the client is responsible for ensuring the precondition of a method
+is fulfilled before calling the method.  Consequently, complex
+preconditions place more burdon on the client programmer than simple
+preconditions do.
+
+This balancing act, between the complexity of preconditions and
+robustness of API methods in the face of bogus input, is supremely
+evident in the design of core reusable APIs in the Java platform.
+This topic will be discussed in more detail later in this document.
+@c add xref
+
+@unnumberedsubsec Postconditions
+@cindex Postconditions
+
+@emph{Postconditions} are used to describe how a method should/must
+behave.  If a method's preconditions are fulfilled, then the (normal)
+postconditions @emph{must} be true if the method terminates
+normally---that is, does not throw an exception or never terminates,
+perhaps by going into an infinite loop.
+
+Normal postconditions are specified in JML using the @code{ensures}
+clause:
+@display
+@var{ensures-clause} ::= @code{ensures} @var{pred-or-not} @code{;}
+@end display
+
+Once again, an unspecified postcondition means ``I have something in
+mind but I'm not writing it down.''  The default postcondition for
+ESC/Java2 is @code{true}.
+
+In a postcondition predicate one can reference any visible fields, the
+parameters of the method, the special keyword @code{\result} if the
+method has a non-@code{void} return type, and may contain expressions
+of the form @code{\old(@var{E})}.  @code{\result} is used to reference
+the value of the result of the method.  The @code{\old()} expression
+is used to references values in the pre-state of the method; that is,
+you can refer to the state of any values just @emph{before} the method
+began executing.
+
+@strong{Problem 5.} @anchor{Problem-5} Annotate the code of the
+previous problem with @emph{postconditions} that match your
+preconditions.  Consider what is known to be true when each method
+terminates @emph{normally}.  Check your postconditions with ESC/Java2.
+
+@unnumberedsubsec Exceptional (Abnormal) Postconditions
+@cindex Exceptional Postconditions
+@cindex Abnormal Postconditions
+
+Frequently Java APIs use exceptions and errors (all descendents of the
+class @code{Throwable}) to indicate errors or perform flow-control.
+Erroneous termination of a method is due to unexpected circumstances;
+changes in program flow are non-erroneous termination of a method due
+to expected, but not ``normal'' behavior in response to some
+particular expected circumstances.  This ``design confusion'' of
+exceptions in Java is a primary criticism of the language.
+
+Both situations are deemed @emph{exceptional termination} in the JML
+vernacular because both use Java exceptions to signal termination of a
+method.  To state what is known about the system when an exception is
+thrown, an @emph{exceptional postcondition} is used.
+
+Exceptional postconditions are written in JML using the @code{signals}
+clause:
+@display
+@var{signals-clause} ::= @code{signals} @code{(} @var{reference-type} [ @var{ident} ] @code{)} [ @var{pred-or-not} ] @code{;}
+@end display
+
+In many circumstances the value(s) of the exception object simply do
+not matter.  In those circumstances the simpler form of the
+exceptional postcondition can be used:
+@example
+  //@@ signals (java.io.IOException) aPredicate();
+@end example
+
+If one wants to refer to the exception object being thrown in the
+exceptional postcondition, a bound identifier can be included in the
+signals clause.  E.g.,
+@example
+  //@@ signals (java.io.IOException ioe) ioe.getMessage().equals("I/O Error!");
+@end example
+which is equivalent to the signals clause
+@example
+  //@@ signals (java.lang.Exception e) (e instanceof IOException) ==>
+  //@@                                 ioe.getMessage().equals("I/O Error!");
+@end example
+
+The default exceptional postcondition for ESC/Java2 is currently
+@example
+  //@@ signals (java.lang.Exception) true;
+@end example
+
+Note that a @code{signals} clause specifies when a certain exception
+@emph{may} be thrown, not when a certain exception @emph{must} be
+thrown.  To say that an exception must be thrown in some situation,
+one has to exclude that situation from other signals clauses and from
+all ensures clauses.
+
+Also note that Java @emph{errors} are @emph{very} rarely specified and
+are not reasoned about at all using ESC/Java2.  Also, Java ``runtime
+exceptions'' (descendents of the class
+@code{java.lang.RuntimeException}) are also rarely specified using
+exceptional postconditions.
+
+@strong{Problem 6.} @anchor{Problem-6} Annotate the code of the
+previous problem with @emph{exceptional postconditions}.  Consider
+what is known to be true when each method terminates
+@emph{abnormally}.  If a method @emph{cannot} terminate abnormally,
+annotate such using an exceptional postcondition with a @code{false}
+predicate.  Check your exceptional postconditions with ESC/Java2.
+
+@c comments on Key, particularly the method calls of main
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node  Modifies, Data Groups, PrePost, Core
+@unnumberedsec Frame Axioms
+
+@cindex Frame Axioms
+
+Frame axioms are used to denote which fields @emph{may} (@emph{not
+must}) be modified by a method.  Frame axioms are specified in JML
+using the @emph{assignable} clause:
+@display
+@var{assignable-clause} ::= @code{assignable} @var{store-ref} [ @code{,} @var{store-ref} ] @dots{} @code{;}
+@end display
+
+Special keywords @code{\everything} and @code{\nothing} are used to
+state that a method may modify @emph{any} visible field (in the former
+case), or may modify @emph{no} visible field (in the case of the
+latter).  To specify that all visible field of an object @var{o} may
+be modified a globbing-like syntax is used, e.g., @code{assignable
+o.*}.
+
+The default assignable clause for ESC/Java2 is
+@example
+  //@@ assignable \everything;
+@end example
+
+Specifying the frame axioms of your methods is @emph{vital} to correct
+reasoning with ESC/Java2.  If your frame axioms are incorrect,
+verification is unsound.  Consider the following example.
+
+@example
+@include problems/BogusFrameConditions.java.texinfo
+@end example
+
+ESC/Java2 produces the following output:
+@example
+BogusFrameConditions: l() ...
+    [TIME]  passed
+
+BogusFrameConditions: m() ...
+    [TIME]  passed
+
+BogusFrameConditions: n() ...
+------------------------------------------------------------------------
+BogusFrameConditions.java:20: Warning: Possible assertion failure (Assert)
+    //@ assert true == false;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+BogusFrameConditions: o() ...
+------------------------------------------------------------------------
+BogusFrameConditions.java:26: Warning: Possible assertion failure (Assert)
+    //@ assert true == false;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+@end example
+
+Notice that the methods @code{l()} and @code{m()} @emph{pass}, proving
+the bogus assertion @code{true == false}.  The reason these methods
+pass is because the verification of methods whose frame axiom is
+@code{assignable \everything;} is incomplete.
+
+The old SRC ESC/Java version 1 did not check frame conditions.  This
+led to very specification bugs that exhibited themselves in the subtle
+behavior of ESC/Java verifying a (sometimes very complex) method very
+quickly.
+
+ESC/Java2 now checks frame conditions, but its checking algorithm is
+not complete.  Thus, as a general rule, one should avoid the use of
+@code{\everything} in frame axioms as much as possible at this point
+in time.
+
+@c checking frame axioms
+@c
+
+@strong{Problem 7.} @anchor{Problem-7} Annotate the code of the
+previous problem with @emph{frame axioms}.  Make your assignable
+clauses as precise as possible, given the body of the methods.  Make
+sure to write a frame axiom for your @code{s()} method, but do not
+bother with the @code{main(String[])} method.  Check your frame axioms
+with ESC/Java2.
+
+Note that now that frame axioms are specified for all of your methods
+more specifications are verified by ESC/Java2.
+
+@c comments on Key, particularly the method calls of main
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Data Groups, Heavyweight, Modifies, Core
+@unnumberedsec Data Groups
+
+@cindex Data Groups
+
+The concept of a @emph{data group} is a useful one, particularly with
+respect to specifying the frame axioms of a method and structuring
+one's specification, from both from a design and a verification point
+of view.
+
+A data group can be thought of as as collection of fields that all
+relate to each other in some way: perhaps they are the key data values
+of a class, or set of classes; or perhaps they are all interdependent
+due to the design of your architecture.
+
+One uses the @code{in} keyword to specify that a particular field is
+@emph{in} (a part of) a specific data group.  A field can be in many
+data groups, but data groups cannot be nested.  Thus, all of the data
+groups of a system define a collection of (possibly overlapping)
+subsets of all fields.
+
+Data groups are defined explicitly and implicitly, using the
+@code{JMLDataGroup} class in the former case, and using @emph{implicit
+data groups} in the latter.  @code{JMLDataGroup} is the JML class used
+to define a new data group, in lieu of a @code{datagroup} keyword at
+this point in time.
+
+Every field implicitely defines a data group of the same name.  For
+example, the Java field declarations
+@example
+class C @{
+  byte b;
+  int i;
+  Object o;
+  ...
+@}
+@end example
+is equivalent to the following
+@example
+class C @{
+  //@ JMLDataGroup b;
+  byte b; //@ in b;
+  //@ JMLDataGroup i;
+  int i; //@ in i;
+  //@ JMLDataGroup o;
+  Object o; //@ in o;
+  ...
+@}
+@end example
+
+The data group most frequently used in JML specifications is an
+explicitely predefined data group found in the specification for the
+base class @code{java.lang.Object}.  It is called the
+@code{objectState} data group.  The @code{objectState} data group
+@cindex objectState
+is used as a general data group that represents all non-private,
+transient state of an object.  The @code{objectState} data group is
+only an convenience construct; it has no special significance to and
+of the JML tools.
+
+A data group can be used within a frame axiom.  For a data group
+@code{d}, writing @code{assignable d} means that all fields which
+are part of the data group @code{d} might be modified.
+
+@strong{Problem 8.} @anchor{Problem-8} Annotate the code of the
+previous problem with @emph{data groups}.  Make your assignable
+clauses as broad as possible considering possible future extensions of
+the class you are specifying.  Check your frame axioms with ESC/Java2.
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Heavyweight, Invariants, Data Groups, Core
+@unnumberedsec Heavyweight Specifications
+
+@cindex Heavyweight Specifications
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Invariants, Loops, Heavyweight, Core
+@unnumberedsec Invariants
+
+@cindex Invariants
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Loops, Aliasing, Invariants, Core
+@unnumberedsec Reasoning about Loops
+
+@cindex Reasoning about Loops
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Aliasing, Models, Loops, Core
+@unnumberedsec Aliasing
+
+@cindex Aliasing
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Models,  , Aliasing, Core
+@unnumberedsec Models
+
+@cindex Models
+
+@c =============================================================================
+@node Using, Copying, Core, Top
+@unnumbered Using JML and ESC/Java2
+
+@cindex Using JML and ESC/Java2
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@menu
+* Abstract Classes and Interfaces::  Specifying abstract classes and interfaces.  
+* Annotating Code::             Annotating preexisting code.
+* Annotating APIs::             Annotating APIs.
+* Designing by Contract::       Design by Contract with JML for Java.
+@end menu
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Abstract Classes and Interfaces, Annotating Code, Using, Using
+@unnumberedsec Specifying Abstract Classes and Interfaces
+
+@cindex Specifying Abstract Classes and Interfaces
+@cindex Abstract Classes, Specifying
+@cindex Interfaces, Specifying
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Annotating Code, Annotating APIs, Abstract Classes and Interfaces, Using
+@unnumberedsec Annotating Preexisting Java Code
+
+@cindex Annotating Existing Java Code
+@cindex Code Annotation
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Taxpayer Example,  , Annotating Code, Annotating Code
+@unnumberedsubsec The Taxpayer Example
+
+@cindex Taxpayer Example
+
+@c From Erik Poll on 27 March 2008.
+
+@c The assignment, part 1
+
+@c For the assignment, download the file Taxpayer.java. This class is used in an information system at the tax office to record information about persons. The tax office want to ensure that the following properties hold:
+
+@c    1. Persons are either male or female.
+@c    2. Persons can marry to people of the opposite sex. (A bit outdated maybe, but makes for interesting properties to specify).
+@c    3. A very obvious constraint, but easy to overlook: if person x is married to person y, then person should of course also be married, and to person x. 
+
+@c Your assignment is to
+
+@c    1. add invariants to the code below to express the constraints mentioned above, in JML syntax, plus any other sensible constraints you can think of;
+@c    2. use ESC/Java2 to detect possible violations, which are reported as warnings
+@c    3. for the Java methods that ESC/Java2 complains about fix this, by
+@c          1. correcting the code, or
+@c          2. adding a (sensible) precondition for the method, using a JML requires clause, or
+@c          3. sometimes, adding an invariant to record another constraint can help in verification. 
+
+@c Hints
+
+@c     * Only look at the first warning that ESC/Java2 produces, and ignore the others, until you've managed to get rid of this first one.
+@c     * The code of the methods marry and divorce in the class Taxpayer is not correct. ESC/Java2 should detect this and complain about these methods once you've added your invariants, and you will have to add a few lines of code to fix these methods, and possibly also add a precondition by means of a requires clause.
+@c     * It is easiest to introduce one constraint at a time, then fix the errors this brings to light, and only then move on to the next constraint.
+@c     * If the tool produces some warnings, ie. if the tool thinks that some formal constraint is not satisfied by the code, this can have several causes:
+@c           o There is an error in the code, which results in a violation in the Java code. For example, an assignment to some field may be missing.
+@c           o There is an error in the JML specification. For example, maybe you have written "and" in a specifcation where you meant "or", maybe you have written age > 18 when you meant age >= 18 in some constraint
+@c           o There may be some contraints missing, which are needed by the tool for the verification. Note that the tool does not know any of the things that may be obvious to you -- for example, that if some person x is married to y then y is also married to x -- and such properties may be needed for verification.
+@c           o In general, a warning might be caused by the fact that some property is too difficult for the theorem prover to proof: an automated theorem prover can only ever prove properties of a certain, limited complexity. However, for the exercises here you should not run into this problem. 
+@c       To stop the tool from complaining, you can
+@c           o correct the Java program; for the exercise here this should only involve adding some simple assignments to the offending method;
+@c           o correct the JML specification;
+@c           o add some additional constraints, either as a JML invariant or as JML precondition aka requires clause. 
+
+@c In the end, ESC/Java2 should run without any complaints on the annotated code, meaning that it has succeeded in verifying that the code meets the formal specification.
+@c JML syntax
+@c Below the syntax for Java and JML logical connectives, in order of decreasing precedence:
+
+@c logical connective    	Java/JML syntax
+@c not 	!
+@c equality 	==
+@c inquality 	!=
+@c conjunction (and) 	&&
+@c disjunction (or) 	||
+@c implication 	==> , <==
+@c (in)equivalence 	<==> , <=!=>
+@c In addition to this, you can use standard Java syntax, so you can say things such as
+
+@c   this.spouse != null ==>
+@c     (this.spouse.spouse.isFemale ==> this.isFemale)
+
+@c Of course, you can write spouse instead of this.spouse, leaving this implicit. Note that in Java, as in most programming languages, references such as the spouse field, can be null. Often fields should not be null under certain circumstances, which can be expressed by an invariant of the form
+
+@c  //@ invariant  .... ==> spouse !=null;
+
+@c Often arguments of method should not be null, which can be expressed by a precondition of the form
+
+@c  //@ requires new_spouse != null;
+@c  void marry (Taxpayer new_spouse) {
+
+@c The assignment, part 2
+@c The tax system uses a income tax allowance (belastingvrije voet):
+
+@c    1. Every person has an income tax allowance, over which means they do not have to pay tax over the first part of their income. There is a default tax allowance of 5000.
+@c    2. Married persons can pool their tax allowance, as long as the sum of their tax allowances remains the same. For example, the wife could have a tax allowance of 10000, and the husband a tax allowance of 0. 
+
+@c Add invariants that express these constraints, and if necessary fix/improve the code to ensure that they are not violated.
+@c The assignment, part 3
+@c The new government introduces a measure that people aged 65 and over have a higher tax allowance, of 7000. The rules for pooling tax allowances remain the same.
+
+@c Add invariants that express these constraints, and if necessary fix/improve the code to ensure that they are not violated.
+@c The assignment, part 4
+@c WARNING: things may get a bit hairy here, so don't be too depressed if you don't manage to finish this.
+
+@c The minister for Jeugd en Gezin, André Rouvoet, introduces a new tax measure giving anyone with underage children an additional tax allowance of 1000 euro.
+
+@c The taxpayer class is extended with an additional field to keep track of the youngest child
+
+@c    Taxpayer youngestChild;    // youngest child of this person
+
+@c and the two following lines are added to the constructor
+
+@c    Taxpayer(boolean jongetje, Taxpayer ma, Taxpayer pa) {
+@c       ...
+@c       youngestChild = null;           // NEW
+@c       ma.youngestChild = this;    // NEW
+@c       pa.youngestChild = this;    // NEW
+@c    }
+
+@c Add the three lines above to your code, add invariant(s) to express the new government policy above, and re-run ESC/Java2 and fix the code to ensure that it is not violated.
+@c General hints
+@c Some hints to keep you out of trouble with the tool:
+
+@c     * Don't use method invocations inside methods;
+@c     * Don't use the Java shorthand x+=10 for x = x+10.
+@c     * Whenever possible, split invariants than contain conjunctions into several smaller invariants. This improves feedback of the tool. So instead of
+
+@c          //@ invariant   A && B;
+
+@c       write
+
+@c          //@ invariant   A;
+@c          //@ invariant   B;
+
+@c       The same goes for preconditions (aka requires clauses).
+@c     * If the tool complains of invariant violations, it produces a lot of feedback that is hard to interpret. The crucial information to look at are the line number saying which invariant is violated and the line number saying where this invariant is violated. NB beware that calling a method may break on some object may break the invariant of another object; e.g. calling a method on a TaxPayer may break the invariant of his or her spouse. 
+
+@c Reflection
+@c Some questions to consider
+
+@c    1. In the end, do you think that you found all problems? Are you certain now that the code is correct?
+@c    2. Can you think of ways in which the tool or the specification language could be improved?
+@c    3. Can you think of other situations where a similar kind of tool support could be useful?
+@c    4. Instead of the tool we used, can you think of other ways (formal or informal, tool-supported or not) to find the problems that the tool found? If so, would these alternatives
+@c           * find fewer of the problems, the same, or more?
+@c           * find problems sooner or later than the current approach?
+@c           * require more work or less work?
+@c           * provide you with more confidence or less confidence that the code is correct? 
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Annotating APIs, Designing by Contract, Annotating Code, Using
+@unnumberedsec Annotating Preexisting APIs
+
+@cindex Annotating Existing APIs
+@cindex API Annotation
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Designing by Contract,  , Annotating APIs, Using
+@unnumberedsec Designing by Contract
+
+@cindex Designing by Contract
+@cindex Design by Contract
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Citizen Example,  , Designing by Contract, Designing by Contract
+@unnumberedsubsec The Citizen Example
+
+@cindex Citizen Example
+
+@c =============================================================================
+@node Copying, Index, Using, Top
+@unnumbered Copying
+
+@cindex Copying
+
+@insertcopying
+
+@c %**end of body
+@c =============================================================================
+
+@c =============================================================================
+@c %**end of document
+
+@node Index,  , Copying, Top
+@unnumbered Index
+
+@printindex cp
+
+@bye

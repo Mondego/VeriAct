@@ -1,0 +1,32 @@
+ESC/Java version VERSION
+src|test|resources|OLD.java: Caution: Using given file as the .java file, even though it is not the java file for OLD on the classpath
+    [TIME]
+
+OLD ...
+  Prover started:TIME
+    [TIME]
+
+OLD: m() ...
+------------------------------------------------------------------------
+src|test|resources|OLD.java:16: Warning: Possible assertion failure (Assert)
+                //@ assert mm == mmm; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+OLD: mm() ...
+    [TIME]  passed
+
+OLD: mmm() ...
+------------------------------------------------------------------------
+src|test|resources|OLD.java:27: Warning: Possible assertion failure (Assert)
+                //@ assert !\fresh(p); // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+OLD: OLD() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

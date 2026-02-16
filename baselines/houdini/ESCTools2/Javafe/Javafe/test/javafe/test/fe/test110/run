@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## Test the use of super constructors under 1.1
+
+${TOOL} Super.java
+${TOOL} SuperInJLO.java

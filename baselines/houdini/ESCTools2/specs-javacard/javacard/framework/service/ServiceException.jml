@@ -1,0 +1,44 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id$
+ *
+ */
+
+package javacard.framework.service;
+
+public class ServiceException extends javacard.framework.CardRuntimeException  {
+
+   public static final short CANNOT_ACCESS_IN_COMMAND;
+   public static final short CANNOT_ACCESS_OUT_COMMAND;
+   public static final short COMMAND_DATA_TOO_LONG;
+   public static final short COMMAND_IS_FINISHED;
+   public static final short DISPATCH_TABLE_FULL;
+   public static final short ILLEGAL_PARAM;
+   public static final short REMOTE_OBJECT_NOT_EXPORTED;
+
+   //@ public static invariant CANNOT_ACCESS_IN_COMMAND == 4;
+   //@ public static invariant CANNOT_ACCESS_OUT_COMMAND == 5;
+   //@ public static invariant COMMAND_DATA_TOO_LONG == 3;
+   //@ public static invariant COMMAND_IS_FINISHED == 6;
+   //@ public static invariant DISPATCH_TABLE_FULL == 2;
+   //@ public static invariant ILLEGAL_PARAM == 1;
+   //@ public static invariant REMOTE_OBJECT_NOT_EXPORTED == 7;
+
+   /*@ public exceptional_behavior
+        requires true;
+	signals (ServiceException se) se.getReason() == reason ;
+	signals_only ServiceException;
+	assignable \nothing ;
+   @*/
+   public static void throwIt(short reason) throws ServiceException;
+
+} 

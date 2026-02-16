@@ -1,0 +1,5 @@
+t.java
+t.java:15: Error: Unquoted ' in character literal.
+    char asdf = ''';
+                ^
+1 error

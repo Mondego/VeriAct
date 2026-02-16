@@ -1,0 +1,4 @@
+#!/bin/sh
+
+rm -r houdini-outdir
+./jhoudini -outdir houdini-outdir `find java/houdini -name "*.java"`

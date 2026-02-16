@@ -1,0 +1,33 @@
+We have intentionally omitted some type checks in the front end.  These
+include:
+
+  - detecting loops among constants (static final fields)
+
+  - type references that are inaccessible  (e.g., A.B where B is not
+    public or A's B field is private.)
+
+  - definite static assignment checks, including proper initialization
+    of final fields/variables in 1.1 (removed from test1001)
+
+  - routines end with return if their return type is not void
+    (test removed from test1003)
+
+  - in general, I think we don't do any flow senstitive checks
+
+  - forcing the user to qualify explicitly names when an inherited field
+    blocks another field or local (see ExprScoping in fe/test10?)
+
+  - checking that package names in imports are accessible
+    (otherwise, we get errors when packages exist only in files passed
+     on the command line)
+
+  - verifying that a concrete subclass of an abstract class implements
+    all of the required abstract methods
+
+
+Regression tests known to fail: 17
+
+
+Type checks unintentionally omitted:
+
+  - inheriting incompatible methods from two different interfaces

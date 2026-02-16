@@ -1,0 +1,27 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: NullPointerException.jml,v 1.3 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package java.lang;
+
+public class NullPointerException extends RuntimeException {
+
+    /*@ public normal_behavior
+	      requires true;
+	      ensures true;
+	      assignable \nothing;
+	  @*/
+	public NullPointerException();
+
+}

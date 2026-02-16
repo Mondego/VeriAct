@@ -1,0 +1,20 @@
+#!/bin/sh
+
+if [ -n "$ESCJ" ]; then
+else
+    echo "Error: setup must be sourced first"
+    exit 2
+fi
+
+if [ -n "$CLASSPATH" ];  then
+    USERPATH=${CLASSPATH}
+else
+    USERPATH="."
+fi
+
+#
+# Where to get binaries for escjava:
+#
+CLASSPATH=${CLASSES}
+
+${JAVA} houdini.CopyLoaded -bootclasspath ${BOOTCLASSPATH} -classpath ${USERPATH} $*

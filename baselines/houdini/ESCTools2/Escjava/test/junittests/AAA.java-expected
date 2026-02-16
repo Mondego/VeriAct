@@ -1,0 +1,17 @@
+ESC/Java version VERSION
+    [TIME]
+
+AAA ...
+  Prover started:TIME
+    [TIME]
+
+AAA: AAA() ...
+    [TIME]  passed
+  [TIME total]
+
+AA ...
+    [TIME]
+
+AA: AA() ...
+    [TIME]  passed
+  [TIME total]

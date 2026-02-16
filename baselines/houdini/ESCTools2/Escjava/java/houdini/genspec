@@ -1,0 +1,94 @@
+#!/bin/sh -f
+# genspec -- a utility to generate .spec files from .class files
+# Copyright (c) 2000, Compaq Computer Corporation
+# Change history:
+#   22 May 1999  rustan & flanagan  Created
+#
+# Usage:
+#   cd into the root of the directory hierarchy containing .class files
+#   and then run genspec
+
+CLASSPATH=.
+export CLASSPATH
+
+CLASSFILES="`find $1 -name '*.class' | grep -v '\\$'`"
+for CLASSFILE in ${CLASSFILES}; do
+  SPECFILE="`echo ${CLASSFILE} | sed -e 's/\.class/.spec/'`"
+  CLASSNAME="`echo ${CLASSFILE} | sed -e 's/^\.\///' -e 's/\.class//' -e 's/\//./g'`"
+  CLASSNAME_TAIL="`echo ${CLASSNAME} | sed -e 's/^.*\.//'`"
+
+  echo "${CLASSFILE} --> ${SPECFILE}"
+
+  javap "${CLASSNAME}" | sed \
+    -e 's/Compiled from .*$/\/\/ Generated automatically by genspec/' \
+    -e 's/ synchronized / /' \
+    -e 's/ interface interface / interface /' \
+    -e 's/ static static / static /' \
+    -e 's/\(^.*class \)\([a-zA-Z0-9_.]*\)\.\([a-zA-Z0-9_]*\) \(.*$\)/package \2;\
+\1\3 \4/' \
+    -e 's/\(^.*interface \)\([a-zA-Z0-9_.]*\)\.\([a-zA-Z0-9_]*\) \(.*$\)/package \2;\
+\1\3 \4/' \
+    -e 's/\( interface .* extends \)java\.lang\.Object implements /\1/' \
+    -e 's/\( interface .*\) extends java\.lang\.Object {/\1 {/' \
+    -e "s/ ${CLASSNAME}(\(.*\);/ ${CLASSNAME_TAIL}(\1 {}/" \
+    -e 's/,\([^ ]\)/, \1/g' \
+    -e 's/\( throws .*\),/\1@/g' \
+    -e 's/\([^(]\))/\1, )/' \
+    -e 's/, / p0@ /' \
+    -e 's/, / p1@ /' \
+    -e 's/, / p2@ /' \
+    -e 's/, / p3@ /' \
+    -e 's/, / p4@ /' \
+    -e 's/, / p5@ /' \
+    -e 's/, / p6@ /' \
+    -e 's/, / p7@ /' \
+    -e 's/, / p8@ /' \
+    -e 's/, / p9@ /' \
+    -e 's/, / p10@ /' \
+    -e 's/, / p11@ /' \
+    -e 's/, / p12@ /' \
+    -e 's/, / p13@ /' \
+    -e 's/, / p14@ /' \
+    -e 's/, / p15@ /' \
+    -e 's/, / p16@ /' \
+    -e 's/, / p17@ /' \
+    -e 's/, / p18@ /' \
+    -e 's/, / p19@ /' \
+    -e 's/, / p20@ /' \
+    -e 's/, / p21@ /' \
+    -e 's/, / p22@ /' \
+    -e 's/, / p23@ /' \
+    -e 's/, / p24@ /' \
+    -e 's/, / p25@ /' \
+    -e 's/, / p26@ /' \
+    -e 's/, / p27@ /' \
+    -e 's/, / p28@ /' \
+    -e 's/, / p29@ /' \
+    -e 's/, / p30@ /' \
+    -e 's/, / p31@ /' \
+    -e 's/, / p32@ /' \
+    -e 's/, / p33@ /' \
+    -e 's/, / p34@ /' \
+    -e 's/, / p35@ /' \
+    -e 's/, / p36@ /' \
+    -e 's/, / p37@ /' \
+    -e 's/, / p38@ /' \
+    -e 's/, / p39@ /' \
+    -e 's/, / p40@ /' \
+    -e 's/, / p41@ /' \
+    -e 's/, / p42@ /' \
+    -e 's/, / p43@ /' \
+    -e 's/, / p44@ /' \
+    -e 's/, / p45@ /' \
+    -e 's/, / p46@ /' \
+    -e 's/, / p47@ /' \
+    -e 's/, / p48@ /' \
+    -e 's/, / p49@ /' \
+    -e 's/, /THERE ARE MORE PARAMETERS THAN genspec CAN HANDLE, CHANGE THE SCRIPT /' \
+    -e 's/@ )/)/' \
+    -e 's/@/,/g' \
+    -e 's/\((.*\);/\1 {}/' \
+    -e 's/\(abstract.*(.*\) {}/\1;/' \
+    -e 's/\(native.*(.*\) {}/\1;/' \
+    > ${SPECFILE}
+done

@@ -1,0 +1,9 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* C.java
+${ESCJ} $* WontTypecheck.java
+${ESCJ} $* WontEvenParse0.java
+${ESCJ} $* WontEvenParse1.java
+${ESCJ} $* WontEvenParse2.java
+${ESCJ} $* WontEvenParse3.java

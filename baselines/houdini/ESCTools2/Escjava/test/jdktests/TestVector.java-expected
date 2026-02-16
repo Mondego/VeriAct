@@ -1,0 +1,10 @@
+TestVector.java:7: Warning: Possible assertion failure (Assert)
+        //@ assert false; // TEST FOR CONSISTENCY 1
+            ^
+TestVector.java:12: Warning: Possible assertion failure (Assert)
+        //@ assert false; // TEST FOR CONSISTENCY 2
+            ^
+TestVector.java:19: Warning: Possible assertion failure (Assert)
+        //@ assert v.elementCount == 10; // SHOULD FAIL
+            ^
+3 warnings

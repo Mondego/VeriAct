@@ -1,0 +1,42 @@
+## $Id$
+# When was the last time you wanted to set System.out to null? TestSystem1 essentially exercises the 
+# capability of setting the in, out and err fields to null.  As has been written in the spec file
+# for System, we gain more benefit by declaring these fields non-null.
+TestSystem1.java
+## Tests with Simplify problems
+TestThrowable.java
+TestStringBuffer.java
+TestString.java
+TestProperties.java
+TestLong.java
+TestInteger.java
+TestBitSet.java
+TestFile.java
+## These are failing and we don't know why (JK & PC) ... but we suspect that
+## it might be due to experiments David is conducting.  TBC.  In the meantime
+## our objective is to get a clean test run.
+TestSet.java
+TestSet2.java
+TestCollection.java
+## This works but takes a long time and tends to run out of resources
+TestBoolean.java
+TestException.java
+## Turn this test back on once we have new/good specs for ByteArrayInputStream.
+TestByteArrayInputStream.java
+## This test has consistency problems either from a bug or in the specs
+TestSystem3.java
+TestSystem4.java
+##
+## JDK 1.5 specific failures with generic inner classes
+##
+TestArrayList2.java
+TestArrays.java
+TestCharacter.java
+TestCharacter2.java
+TestClass.java
+TestList.java
+TestMap.java
+TestObject.java
+TestVector.java
+##
+## End of file - DO NOT LEAVE BLANK LINES BEYOND THIS POINT

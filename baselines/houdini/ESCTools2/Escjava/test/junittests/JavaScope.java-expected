@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+  Prover started:TIME
+    [TIME]
+
+JavaScope ...
+JavaScope.java:20: Error: Variable 'b' is already defined here.
+                                int b = 0; // ERROR
+                                    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+JSA ...
+  [TIME total]
+1 caution
+1 error

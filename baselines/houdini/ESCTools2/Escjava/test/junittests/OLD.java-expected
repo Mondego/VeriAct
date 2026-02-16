@@ -1,0 +1,7 @@
+OLD.java:16: Warning: Possible assertion failure (Assert)
+                //@ assert mm == mmm; // ERROR
+                    ^
+OLD.java:27: Warning: Possible assertion failure (Assert)
+                //@ assert !\fresh(p); // ERROR
+                    ^
+2 warnings

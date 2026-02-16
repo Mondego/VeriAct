@@ -1,0 +1,36 @@
+ESC/Java version VERSION
+src|test|resources|ParseModifies.java: Caution: Using given file as the .java file, even though it is not the java file for ParseModifies on the classpath
+    [TIME]
+
+ParseModifies ...
+  Prover started:TIME
+    [TIME]
+
+ParseModifies: m() ...
+    [TIME]  passed immediately
+
+ParseModifies: mm() ...
+    [TIME]  passed immediately
+
+ParseModifies: q() ...
+    [TIME]  passed immediately
+
+ParseModifies: z() ...
+------------------------------------------------------------------------
+src|test|resources|ParseModifies.java:27: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|ParseModifies.java", line 24, col 5:
+        //@ ensures j == i;
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|ParseModifies.java", line 27, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ParseModifies: ParseModifies() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

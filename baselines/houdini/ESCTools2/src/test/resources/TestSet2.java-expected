@@ -1,0 +1,25 @@
+ESC/Java version VERSION
+src|test|resources|TestSet2.java: Caution: Using given file as the .java file, even though it is not the java file for TestSet2 on the classpath
+    [TIME]
+
+TestSet2 ...
+src|test|resources|TestSet2.java:9: Error: No such field in type java.util.Set
+  //@ ensures \result.containsNull;
+                      ^
+src|test|resources|TestSet2.java:10: Error: No such field in type java.util.Set
+  //@ ensures \result.elementType == \type(E);
+                      ^
+src|test|resources|TestSet2.java:13: Error: No such field in type java.util.Set
+    //@ set s.containsNull = true;
+              ^
+src|test|resources|TestSet2.java:14: Error: No such field in type java.util.Set
+    //@ set s.elementType = \type(E);
+              ^
+src|test|resources|TestSet2.java:23: Error: No such field in type java.util.Set
+    //@ assert \typeof(e) <: s.elementType;
+                               ^
+src|test|resources|TestSet2.java:24: Fatal error: No method named assertTrue is in scope here.
+    assertTrue( !s.contains(null));
+    ^
+1 caution
+6 errors

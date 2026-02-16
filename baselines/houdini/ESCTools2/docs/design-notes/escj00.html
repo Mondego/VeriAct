@@ -1,0 +1,427 @@
+
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (Win95; U) [Netscape]">
+   <META NAME="Author" CONTENT="DEC SRC">
+   <TITLE>ESCJ 0: ESC Lite</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>
+ESCJ 0:&nbsp; ESC Lite.</H1>
+<B>Rustan Leino.</B>
+
+<P>[From posting to src.sparta dated 24 Oct 96.]
+
+<P>Here's a half-baked research proposal.
+
+<P>There are different static program-analysis tools for finding errors
+<BR>in programs.&nbsp; For example, there's lint and LCLint.&nbsp; A course
+way to
+<BR>categorize the techniques used by these tools is that their flow analysis
+<BR>does not take IF and DO guards into consideration.
+
+<P>Way at the other side of the spectrum are program verification tools.
+<BR>These attempt to prove the full functional correctness of programs
+<BR>at the price of requiring programmers to submit lengthy specifications.
+<BR>Tools like this are powered by mechanical theorem provers.
+
+<P>Somewhere in between lies ESC, which checks for certain kinds of errors
+<BR>only.&nbsp; The technique used by ESC is, however, similar to that
+of
+<BR>program verifiers:&nbsp; the semantics of the program is taken into
+account,
+<BR>and the tool is powered by a mechanical theorem prover.&nbsp; We believe
+<BR>that, as a more useful static analysis tool (that is, a tool that
+<BR>is more effective in finding common errors quickly), ESC is in the
+right
+<BR>direction from program verifiers.&nbsp; We also believe that ESC can
+provide
+<BR>useful checking that lint-like tools cannot.
+
+<P>To be more useful than a program verifier, ESC has given up on
+<BR>soundness in various areas.&nbsp; That is, a program can contain errors
+<BR>that ESC does not catch.&nbsp; We have been rather concerned, however,
+<BR>with soundness in what regards data abstraction and modifies lists.
+<BR>Unfortunately, those features are rather expensive, both in the time
+<BR>it takes programmers to write them and in the time it takes the prover
+<BR>to churn through them.&nbsp; For example, we don't know how to write
+meaningful
+<BR>specifications about the parent/child data structures used in VBT's,
+<BR>and our theorem prover goes off the deep end for many cyclic dependencies.
+<BR>One way to try to make ESC more useful is to throw away soundness more
+<BR>often.&nbsp; And what more a lucrative place to do so than the time-consuming,
+<BR>hard-to-specify data abstraction that we provide.
+
+<P>ESC Lite is a proposal that falls on the lint side of ESC in the
+<BR>spectrum of tools described above.&nbsp; The hope is to produce something
+<BR>that is more useful than ESC, in that a programmer can spend less
+<BR>effort than he would with ESC, both in writing specifications and
+<BR>in waiting for the tool to find errors, and the tool would still find
+<BR>common errors in programs.&nbsp; The essential idea is:
+
+<P>&nbsp;&nbsp;&nbsp; Use program verification techniques like ESC does,
+but throw out
+<BR>&nbsp;&nbsp;&nbsp; data abstraction, and with it, parts of soundness.
+
+<P>[ Caution:&nbsp; The mail gets more advanced from this point on. ]
+<BR>To get to ESC Lite from ESC, follow these steps, outlined for a Java-like
+<BR>language:
+
+<P>&nbsp;0. Throw out abstract variables, REP declarations, and dependencies.
+
+<P>&nbsp;1. Use object invariants and write modifiers a la KRML 74.&nbsp;
+Object
+<BR>&nbsp;&nbsp;&nbsp; invariants must satisfy the Relaxed Visibility Requirement
+for
+<BR>&nbsp;&nbsp;&nbsp; Object Invariants (see KRML 74) (but we may later
+want to find
+<BR>&nbsp;&nbsp;&nbsp; some exceptions to this rule, see the end of this
+mail).
+
+<P>&nbsp;2. Methods are specified like they are in today's ESC, that is,
+<BR>&nbsp;&nbsp;&nbsp; with REQUIRES, MODIFIES, and ENSURES clauses (but
+without data
+<BR>&nbsp;&nbsp;&nbsp; abstraction).&nbsp; A difference is that the precondition
+for a method
+<BR>&nbsp;&nbsp;&nbsp; is allowed to mention only those fields that a caller
+can access
+<BR>&nbsp;&nbsp;&nbsp; (thanks, Raymie!).&nbsp; For example, the precondition
+of a "public"
+<BR>&nbsp;&nbsp;&nbsp; method can mention only "public" fields, and a "private"
+method can
+<BR>&nbsp;&nbsp;&nbsp; mention any fields that the class declares.
+
+<P>&nbsp;&nbsp;&nbsp; The checking of a method implementation with respect
+to its specification
+<BR>&nbsp;&nbsp;&nbsp; is done like it is today (but I will explain the
+semantics of method
+<BR>&nbsp;&nbsp;&nbsp; calls below).
+
+<P>&nbsp;3. Method overrides are allowed to extend the original method
+specification,
+<BR>&nbsp;&nbsp;&nbsp; by providing extra MODIFIES and ENSURES clauses.&nbsp;
+Suppose classes
+<BR>&nbsp;&nbsp;&nbsp; "S" and "T" are declared as follows:
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class S {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; method m(self)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+REQUIRES P
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+MODIFIES w
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENSURES Q
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* code goes here */
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; method n(self)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// ignore "n" for now; it will
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+REQUIES P&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// be used in a later example
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+MODIFIES w
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENSURES Q
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+self.m();
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; };
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class T extends S {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; override m(self)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+MODIFIES v
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENSURES R
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* code goes here */
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; };
+
+<P>&nbsp;&nbsp;&nbsp; With these declarations in scope, the implementation
+of the override
+<BR>&nbsp;&nbsp;&nbsp; "T::m" is checked to meet the specification
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REQUIRES P
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MODIFIES w, v
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ENSURES Q /\ R
+
+<P>&nbsp;&nbsp;&nbsp; There is a restriction that "v" can mention only
+fields that
+<BR>&nbsp;&nbsp;&nbsp; are declared in class "T" (in particular, "v" must
+satisfy the
+<BR>&nbsp;&nbsp;&nbsp; Relaxed Visibility Requirement, or whatever rule
+that we impose
+<BR>&nbsp;&nbsp;&nbsp; on object invariants).&nbsp; Although I haven't
+told you yet how method
+<BR>&nbsp;&nbsp;&nbsp; calls are handled, you can imagine that allowing
+MODIFIES clauses
+<BR>&nbsp;&nbsp;&nbsp; to be extended is a source of unsoundness (and your
+imagination
+<BR>&nbsp;&nbsp;&nbsp; would then be correct).&nbsp; The restriction on
+"v" is intended to help
+<BR>&nbsp;&nbsp;&nbsp; soundness a little.
+
+<P>&nbsp;&nbsp;&nbsp; There is no problem with soundness in extending the
+ENSURES clause.
+<BR>&nbsp;&nbsp;&nbsp; Because the overridden method can have a larger
+MODIFIES clause,
+<BR>&nbsp;&nbsp;&nbsp; the ability to extend the ENSURES clause seems to
+be a handy
+<BR>&nbsp;&nbsp;&nbsp; feature (which answers the cynical question ``If
+the feature is
+<BR>&nbsp;&nbsp;&nbsp; sound, why provide it?'').
+
+<P>&nbsp;&nbsp;&nbsp; Notice that I don't allow the override to strengthen
+the REQUIRES
+<BR>&nbsp;&nbsp;&nbsp; clause.&nbsp; That would be unsound, and my feeling
+is that such
+<BR>&nbsp;&nbsp;&nbsp; unsoundness would cause the checker to miss some
+important errors
+<BR>&nbsp;&nbsp;&nbsp; in programs.&nbsp; (The override can, of course,
+assume that the object
+<BR>&nbsp;&nbsp;&nbsp; invariant given in the subtype holds on entry to
+its overridden
+<BR>&nbsp;&nbsp;&nbsp; methods.)
+
+<P>&nbsp;&nbsp;&nbsp; Subclasses of "T" that provide further overrides
+of "m" are allowed
+<BR>&nbsp;&nbsp;&nbsp; to extend the specification of "m" further.&nbsp;
+The specification
+<BR>&nbsp;&nbsp;&nbsp; used to check the new override at a type "Z" is
+the one that results
+<BR>&nbsp;&nbsp;&nbsp; from combining the original method specification
+with all the
+<BR>&nbsp;&nbsp;&nbsp; extensions given between the original class and
+class "Z".
+
+<P>&nbsp; * Method calls are handled differently from the way ESC handles
+<BR>&nbsp;&nbsp;&nbsp; them, in two ways.
+
+<P>&nbsp;&nbsp;&nbsp; The first difference between ESC's and ESC Lite's
+handling of
+<BR>&nbsp;&nbsp;&nbsp; method calls is that ESC Lite uses Java's access
+control modifiers
+<BR>&nbsp;&nbsp;&nbsp; to project MODIFIES and ENSURES clauses to the variables
+that can
+<BR>&nbsp;&nbsp;&nbsp; be accessed by callers.&nbsp; For example, consider
+the following class:
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class U {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private x: int;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public y: int;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public m(self)
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+REQUIRES Q
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+MODIFIES self.x, self.y
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ENSURES R
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; };
+
+<P>&nbsp;&nbsp;&nbsp; where "R" is allowed to mention any variables (that
+the class
+<BR>&nbsp;&nbsp;&nbsp; can access), and also the primed variables "x'"
+and "y'".&nbsp; In ESC,
+<BR>&nbsp;&nbsp;&nbsp; we would translate a call to "m" into the guarded
+command
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ASSERT Q ;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAR x', y' IN R --> x :=
+x'; y := y' END
+
+<P>&nbsp;&nbsp;&nbsp; In ESC Lite, the translation for a ``public'' caller
+(that is,
+<BR>&nbsp;&nbsp;&nbsp; a caller that can access only the "public" declarations
+of "U")
+<BR>&nbsp;&nbsp;&nbsp; would be:
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ASSERT Q ;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAR x', y' IN R --> y :=
+y' END
+
+<P>&nbsp;&nbsp;&nbsp; The difference is that, since "x" is a variable that
+cannot be
+<BR>&nbsp;&nbsp;&nbsp; accessed by the caller, "x" is not updated, and
+so will not appear
+<BR>&nbsp;&nbsp;&nbsp; as a target of the caller.&nbsp; The idea behind
+this approach is that
+<BR>&nbsp;&nbsp;&nbsp; the public caller doesn't stand a chance to itself
+have a MODIFIES
+<BR>&nbsp;&nbsp;&nbsp; clause that permits those modification of private
+fields that the
+<BR>&nbsp;&nbsp;&nbsp; callee will do.&nbsp; Why?&nbsp; Because these things
+require data abstraction.
+
+<P>&nbsp;&nbsp;&nbsp; Similar translations would be done for other access
+control levels,
+<BR>&nbsp;&nbsp;&nbsp; not just for "private" fields and "public" methods
+as I showed in
+<BR>&nbsp;&nbsp;&nbsp; the example.
+
+<P>&nbsp;&nbsp;&nbsp; This approach is not sound, of course.
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Advanced remark:
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it would ever be desirable
+to ignore updates of a field
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; only at "self", this can
+be done by adding to the translation:
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x
+:= store(x', self, x[self])
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (End of Advanced remark.)
+
+<P>&nbsp;&nbsp;&nbsp; The second difference between ESC's and ESC Lite's
+handling of
+<BR>&nbsp;&nbsp;&nbsp; method calls is that, to use the example from above,
+the semantics
+<BR>&nbsp;&nbsp;&nbsp; of a method call "o.m()" depends on the \static/
+type of "o".
+<BR>&nbsp;&nbsp;&nbsp; If the static type of "o" is "S", then the specification
+for
+<BR>&nbsp;&nbsp;&nbsp; "S::m" is used; if the static type of "o" is "T",
+then the
+<BR>&nbsp;&nbsp;&nbsp; specification for "T::m" (that is, the specification
+for "S::m" plus
+<BR>&nbsp;&nbsp;&nbsp; the extension provided in class "T") is used, and
+so on.
+
+<P>&nbsp;&nbsp;&nbsp; Using the static type of "o" to determine which specification
+<BR>&nbsp;&nbsp;&nbsp; to use is not sound:&nbsp; if "o" has static type
+"T", then
+<BR>&nbsp;&nbsp;&nbsp; "NARROW(o, S).m()" (that is, "WIDEN(o, S).m()")
+appears to the
+<BR>&nbsp;&nbsp;&nbsp; checker to modify "v", whereas "o.m()" does not,
+and yet both of
+<BR>&nbsp;&nbsp;&nbsp; these will end up invoking the same implementation
+of "m" at
+<BR>&nbsp;&nbsp;&nbsp; runtime, and that implementation is allowed to modify
+"v".
+<BR>&nbsp;&nbsp;&nbsp; However, (0) allowing MODIFIES clauses to be extended
+is not
+<BR>&nbsp;&nbsp;&nbsp; sound to begin with, (1) I don't think this will
+hide many
+<BR>&nbsp;&nbsp;&nbsp; actual programming errors from the checker, and
+(2) using the
+<BR>&nbsp;&nbsp;&nbsp; static type of "o" instead of its dynamic type (which
+would then
+<BR>&nbsp;&nbsp;&nbsp; translate the MODIFIES clause roughly as ``"v" might
+be modified
+<BR>&nbsp;&nbsp;&nbsp; only if the dynamic type of "o" is a subtype of
+"T"'') has the
+<BR>&nbsp;&nbsp;&nbsp; advantage that it does not complain about the implementation
+of
+<BR>&nbsp;&nbsp;&nbsp; "S::n" (see above):&nbsp; for "S::n", the dynamic
+type of "self" is
+<BR>&nbsp;&nbsp;&nbsp; not known; it could be "T", and if it is, then the
+checker knows
+<BR>&nbsp;&nbsp;&nbsp; that "self.m()" might change "v", which is not allowed
+by "S::n",
+<BR>&nbsp;&nbsp;&nbsp; so the checker would complain.
+
+<P>&nbsp;&nbsp;&nbsp; I think implementations like "S::n" are common.
+
+<P>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Advanced remark:
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is less common, however,
+that class "T" would be in scope at
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the time "S::n" is verified.&nbsp;
+If "T" is not in scope, the
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; verification of "S::n" would
+be unsound even if the dynamic type
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of "self" were used (because
+no information is available
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that suggests to the checker
+that "T::m" modifies more variables
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; than are declared by the
+MODIFIES clause of "S::m".&nbsp; If one is
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; willing to live with that
+unsoundness (in lieu of the unsoundness
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; of using the static type
+of "self", as proposed), then there is
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a possibility of getting
+rid of the gripe about "S::n" in the
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cases where "T" is visible
+by paying attention to whether or not
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "T" overrides "n".&nbsp;
+If "T" does override "n", then "S::n" is
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; allowed to modify those
+things allowed by "T::n"'s extension of
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the MODIFIES list in the
+cases where the dynamic type of "self"
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is a subtype of "T".&nbsp;
+Any error flagged by the checker at this
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point is likely to be a
+real error.&nbsp; That's good, but remember
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; that "T" is usually not
+in scope when "S::n" is verified.
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (End of Advanced remark.)
+
+<P>That's the proposal.&nbsp; In addition to discussing the things I said,
+<BR>there is room to discuss a way to handle \inlined objects/.&nbsp; For
+example,
+<BR>consider the following class:
+
+<P>&nbsp;&nbsp;&nbsp; class V {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int x, y, dx, dy;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int xCenter, yCenter;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INVARIANT x &lt;= xCenter &lt;= x +
+dx
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/\ y &lt;= yCenter &lt;= y + dy
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp; };
+
+<P>This declaration is fine, but suppose the first 4 fields were replaced
+<BR>by an object:
+
+<P>&nbsp;&nbsp;&nbsp; class V' {
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rect r;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int xCenter, yCenter;
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; INVARIANT r # null
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/\ r.x &lt;= xCenter &lt;= r.x + r.dx
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/\ r.y &lt;= yCenter &lt;= r.y + r.dy
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .
+<BR>&nbsp;&nbsp;&nbsp; };
+
+<P>This object invariant is not allowed because it violates the (Relaxed)
+<BR>Visibility Requirement for Object Invariants.&nbsp; One way to get
+around
+<BR>this would be to declare that "r.x", "r.y", "r.dx", and "r.dy" are
+<BR>\inlined fields/ (or simply that "r" is an \inlined object/) that are
+<BR>``part of the state of each "V'" object''.&nbsp; This would (0) allow
+these
+<BR>fields to be mentioned in the object invariant, and (1) would make
+"r"
+<BR>a pivot field (but we may choose not to have the checker do anything
+<BR>about that).
+
+<P>&nbsp; Rustan
+<BR>&nbsp;
+<! Server supplied footer starts here>
+
+<p><font FACE="Verdana, arial, helvetica" SIZE="1"><a HREF="http://www.compaq.com/legal.html">Legal 
+Statement</a> <a HREF="http://www.compaq.com/privacy.html">Privacy Statement</a></font>
+
+</BODY>
+</HTML>

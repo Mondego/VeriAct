@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|RefineCircular.java: Caution: Using given file as the .java file, even though it is not the java file for RefineCircular on the classpath
+src|test|resources|RefineCircular.java:1: Error: Could not find file referenced in refine annotation: RefineCircular.java
+//@ refine "RefineCircular.java";
+    ^
+    [TIME]
+
+RefineCircular ...
+  Prover started:TIME
+    [TIME]
+
+RefineCircular: RefineCircular() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 error

@@ -1,0 +1,8 @@
+ESC/Java version VERSION
+ParseImports4.java:3: Error: Expected a declaration within the annotation following the model keyword
+/*@ model */ import java.util.*;
+    ^
+ParseImports4.java:3: Fatal error: expected 'class' or 'interface' instead of import
+/*@ model */ import java.util.*;
+             ^
+2 errors

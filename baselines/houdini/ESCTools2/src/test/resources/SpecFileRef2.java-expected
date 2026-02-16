@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|SpecFileRef2.java: Caution: Using given file as the .java file, even though it is not the java file for SpecFileRef2 on the classpath
+    [TIME]
+
+SpecFileRef2 ...
+src|test|resources|SpecFileRef2.java:5: Fatal error: Can't find type named "SpecFileHelper"
+                SpecFileHelper s = new SpecFileHelper();
+                ^
+1 caution
+1 error

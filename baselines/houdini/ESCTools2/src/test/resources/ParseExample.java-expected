@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|ParseExample.java: Caution: Using given file as the .java file, even though it is not the java file for ParseExample on the classpath
+    [TIME]
+
+ParseExample ...
+  Prover started:TIME
+    [TIME]
+
+ParseExample: m(int) ...
+    [TIME]  passed immediately
+
+ParseExample: ParseExample() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

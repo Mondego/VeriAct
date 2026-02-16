@@ -1,0 +1,158 @@
+# Copyright Hewlett-Packard, 2002
+# Copyright 2000, 2001, Compaq Computer Corporation
+#
+# This file must be sourced before running gnumake anywhere in this
+# repository.  Moreover, it must be sourced in the top directory of this
+# repository.
+#
+
+############################## roots ##############################
+
+setenv	ESCJAVA_ROOT		`pwd`
+if (-r ${ESCJAVA_ROOT}/setup) then
+else
+    echo "Error: Must source setup from the directory that contains it"
+    exit 1
+endif
+
+if ("$1" == "both") then
+    echo NOTICE: '"both"' parameter is now the default, and so is deprecated
+else if ("$1" == "javafe") then
+    echo Error: '"javafe"' parameter no longer supported
+    exit 1
+else if ("$1" == "jdk") then
+    echo Error: '"jdk"' parameter no longer supported
+    exit 1
+else if ("$1" == "") then
+    # This is the preferred command line
+else if ("$1" == "houdini") then
+    # We allow this as a special case, so as not to generate an error
+    # when Houdini's "runesc" script is invoked.
+else
+    echo -- $* --
+    echo "Illegal parameter!  Usage: source setup"
+    exit 1
+endif
+
+setenv JAVAFE_ROOT ${ESCJAVA_ROOT}/../Javafe
+# If you have a more specification files (for example, if you downloaded
+# more .spec files from the ESC/Java binary release), then add the downloaded
+# spec files to the following directory.
+setenv JDKSPEC_ROOT ${ESCJAVA_ROOT}/release/master/specs
+
+if (-d ${JAVAFE_ROOT}) then
+else
+    echo "Error: Javafe root not found: ${JAVAFE_ROOT}"
+endif
+if (-d ${JDKSPEC_ROOT}) then
+else
+    echo "Error: JDK spec root not found: ${JDKSPEC_ROOT}"
+endif
+
+
+######################### locations #########################
+
+setenv	CLASSDIRECTORY		${ESCJAVA_ROOT}/classes
+setenv	SOURCEDIRECTORY		${ESCJAVA_ROOT}/java
+setenv	JAVADOC_GEN_DIR	${ESCJAVA_ROOT}/doc/javadoc
+
+setenv  SRCDIRECTORY		${JAVAFE_ROOT}/decsrclib
+setenv  SRCCLASSDIRECTORY	${JAVAFE_ROOT}/decsrclib
+
+#
+# Where to find binaries for the JDK libraries:
+# Edit the line to point to the location of rt.jar on your system.
+setenv	JDKBINARIES	/usr/java/jdk1.3.1_02/jre/lib/rt.jar	# JDK 1.2
+
+
+setenv  MOCHA_ROOT      ${ESCJAVA_ROOT}/mochalib
+setenv  MOCHA_CLASSES   ${MOCHA_ROOT}/classes
+
+# To get predicate abstraction to work with ESC/Java, you need to download
+# jMocha from UC Berkeley.  When you build jMocha, you'll get 3 shared
+# objects:  libjbdd.so, libglu.so, libcu.so.  These have to be put in an
+# appropriate directory, and LD_LIBRARY_PATH must be set to the name of
+# that directory.  For example, if you put the shared objects in
+# a directory called ${MOCHA_ROOT}/platform/alpha, then you would include
+# the following line here:
+#     setenv LD_LIBRARY_PATH ${MOCHA_ROOT}/platform/alpha
+
+######################### classpaths #########################
+
+#
+# The classpath for compiling Escjava; no sources outside the repository
+# should be on this list:
+#
+
+# do not change the number of components here without updating escj!!
+setenv	CLASSES		${CLASSDIRECTORY}:${JAVAFE_ROOT}/classes/javafe.zip:${SRCCLASSDIRECTORY}:${MOCHA_CLASSES}
+
+setenv	CLASSPATH	${SOURCEDIRECTORY}:${CLASSES}:.
+setenv  ESC_CLASSPATH	${CLASSDIRECTORY}:${JAVAFE_ROOT}/classes/javafe.zip:/src/java/:${MOCHA_CLASSES}:${SRCCLASSDIRECTORY}
+# javadepend needs a classpath where all the sources are in the current dir:
+setenv	LCLASSPATH	.:${CLASSES}
+
+
+#
+# The appropriate -bootclasspath for escjava:
+#
+# Need to sources here because we can't read binary inner classes; need
+# the binaries because don't have source for sun.* classes...
+#
+setenv	JDKSPEC		${JDKSPEC_ROOT}
+setenv	BOOTCLASSPATH	${JDKSPEC}:${JDKBINARIES}
+
+alias	jls	jls    -bootclasspath ${BOOTCLASSPATH} -E
+alias	jwhich	jwhich -bootclasspath ${BOOTCLASSPATH} -X.spec
+
+#
+# The classpath for checking escjava itself (e.g., escself's classpath),
+# not counting -bootclasspath:
+#
+setenv	ESCSPEC		${SOURCEDIRECTORY}:${JAVAFE_ROOT}/java:${SRCDIRECTORY}:${MOCHA_CLASSES}
+
+
+######################### java* cmds #########################
+
+#
+# which version of java:
+#
+
+# use SRC's faster VM
+setenv	JAVAVERSION	fast1.2.2
+setenv	JAVA		java
+
+
+#
+# Other java* commands:
+#
+
+setenv JAVAC	"javac -g"
+setenv JAVADOC	"javadoc -J-mx200m"
+
+#
+# Aliases to invoke javac with proper arguments for human use:
+#
+alias	javacd	"${JAVAC} -d ${CLASSDIRECTORY}"
+alias	jall	"javacd *.java"
+
+
+######################### esc* cmds #########################
+
+# the location of the escj script:
+setenv	ESCJ		${ESCJAVA_ROOT}/escj
+
+alias	escjava		${ESCJ}
+
+alias 	calvin		${ESCJAVA_ROOT}/calvin_script
+
+# run escjava on itself:
+alias	escself		escjava -classpath ${ESCSPEC}
+
+# OLD:  escjava annotation wizard
+#alias	escwizard	${ESCJAVA_ROOT}/escwiz
+#alias	escwizardself	${ESCJAVA_ROOT}/escwiz -classpath ${ESCSPEC}
+
+######################### misc cmds #########################
+
+alias	copyloaded	${ESCJAVA_ROOT}/java/houdini/copyloaded

@@ -1,0 +1,32 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* Nowarn.java
+
+# each of the following sections produces the same answer
+echo ----- loop 1.5
+${ESCJ} $* C.java
+${ESCJ} $* D.java
+${ESCJ} $* E.java
+echo ----- loop 1.0
+${ESCJ} $* -loop 1 C.java
+${ESCJ} $* -loop 1 D.java
+${ESCJ} $* -loop 1 E.java
+echo ----- loop 5
+${ESCJ} $* -loop 5 C.java
+${ESCJ} $* -loop 5 D.java
+${ESCJ} $* -loop 5 E.java
+echo ----- loop safe
+${ESCJ} $* -loopSafe C.java
+${ESCJ} $* -loopSafe D.java
+${ESCJ} $* -loopSafe E.java
+
+# here there are differences (except between 1.0 and 1.5)
+echo ----- loop 1.5
+${ESCJ} $* F.java
+echo ----- loop 1.0
+${ESCJ} $* -loop 1 F.java
+echo ----- loop 5
+${ESCJ} $* -loop 5 F.java
+echo ----- loop safe
+${ESCJ} $* -loopSafe F.java

@@ -1,0 +1,63 @@
+TestInteger.java:13: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY -1
+    ^
+TestInteger.java:71: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 2
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestInteger.java", line 27, col 10.
+    Routine call returned exceptionally in "TestInteger.java", line 34, col 10.
+    Routine call returned exceptionally in "TestInteger.java", line 41, col 18.
+    Routine call returned exceptionally in "TestInteger.java", line 48, col 18.
+    Routine call returned exceptionally in "TestInteger.java", line 57, col 10.
+    Routine call returned exceptionally in "TestInteger.java", line 64, col 18.
+
+TestInteger.java:81: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 3
+    ^
+TestInteger.java:125: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 4
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestInteger.java", line 105, col 8.
+    Routine call returned exceptionally in "TestInteger.java", line 112, col 8.
+    Routine call returned exceptionally in "TestInteger.java", line 119, col 8.
+
+TestInteger.java:166: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 5
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestInteger.java", line 132, col 16.
+    Routine call returned exceptionally in "TestInteger.java", line 139, col 16.
+    Routine call returned exceptionally in "TestInteger.java", line 146, col 16.
+    Routine call returned exceptionally in "TestInteger.java", line 153, col 16.
+    Routine call returned exceptionally in "TestInteger.java", line 161, col 9.
+
+TestInteger.java:172: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY -6
+    ^
+TestInteger.java:178: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 7
+    ^
+TestInteger.java:196: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 8a
+    ^
+TestInteger.java:214: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 8b
+    ^
+TestInteger.java:228: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 9
+    ^
+TestInteger.java:242: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 9b
+    ^
+TestInteger.java:256: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 9c
+    ^
+TestInteger.java:266: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 10
+    ^
+TestInteger.java:287: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY - 11
+    ^
+14 warnings

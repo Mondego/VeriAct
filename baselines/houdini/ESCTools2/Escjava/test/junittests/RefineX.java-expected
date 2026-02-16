@@ -1,0 +1,14 @@
+ESC/Java version VERSION
+RefineX.java:1: Error: Could not find file referenced in refine annotation: X.x
+//@ refine "X.x"; // Invalid file
+    ^
+    [TIME]
+
+RefineX ...
+  Prover started:TIME
+    [TIME]
+
+RefineX: RefineX() ...
+    [TIME]  passed
+  [TIME total]
+1 error

@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|MultipleAtError1.java: Caution: Using given file as the .java file, even though it is not the java file for MultipleAtError1 on the classpath
+    [TIME]
+
+MultipleAtError1 ...
+  Prover started:TIME
+    [TIME]
+
+MultipleAtError1: p() ...
+    [TIME]  passed
+
+MultipleAtError1: MultipleAtError1() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

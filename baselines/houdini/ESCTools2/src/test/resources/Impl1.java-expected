@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+src|test|resources|Impl1.java: Caution: Using given file as the .java file, even though it is not the java file for Impl1 on the classpath
+    [TIME]
+
+Impl1 ...
+  Prover started:TIME
+    [TIME]
+
+Impl1: shrink() ...
+    [TIME]  passed
+
+Impl1: clear() ...
+    [TIME]  passed
+
+Impl1: Impl1() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: shrink() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution

@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|Ticket59.java: Caution: Using given file as the .java file, even though it is not the java file for Ticket59 on the classpath
+    [TIME]
+
+Ticket59 ...
+  Prover started:TIME
+    [TIME]
+
+Ticket59: main(java.lang.String[]) ...
+------------------------------------------------------------------------
+src|test|resources|Ticket59.java:5: Warning: Possible null dereference (Null)
+        System.out.println("hi");
+                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Ticket59: Ticket59() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

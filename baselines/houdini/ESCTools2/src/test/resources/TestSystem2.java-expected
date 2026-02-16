@@ -1,0 +1,6 @@
+src|test|resources|TestSystem2.java: Caution: Using given file as the .java file, even though it is not the java file for TestSystem2 on the classpath
+src|test|resources|TestSystem2.java:26: Fatal error: No method named assertTrue is in scope here.
+    assertTrue( ll >= l);
+    ^
+1 caution
+1 error

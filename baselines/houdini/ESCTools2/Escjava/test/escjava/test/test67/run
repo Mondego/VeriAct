@@ -1,0 +1,10 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} $* -nocheck C.java
+${ESCJ} $* Error0.java
+${ESCJ} $* Error1.java
+${ESCJ} $* Error2.java
+${ESCJ} $* Error3.java
+${ESCJ} $* Error4.java
+${ESCJ} $* D.java

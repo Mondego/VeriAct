@@ -1,0 +1,49 @@
+#!/bin/tcsh -f
+#  Note:  In order to make escjava's -routine flag work with an argument
+#  that contains Java array brackets, like
+#    -routine "Java2Html.main(java.lang.String[])"
+#  one must (apparently) use tcsh, not csh.  The reason appears to be that
+#  csh insists on trying to glob the occurrence of [], and despite the fact
+#  that escj might be called with double quotes around any argument that
+#  contains Java array brackets (as in the example above), csh globs these
+#  brackets when interpreting the script file. --Rustan and Cormac, 24 Nov 1999
+
+
+###########################################################################
+#                                                                         #
+# Make sure you alter cra.escjava/bin/escjava if you alter this file!     #
+# The man page must also be altered if ESCJ_STDARGS below is changed.     #
+#                                                                         #
+#    THIS MEANS YOU RUSTAN!!!!                                            #
+#                                                                         #
+###########################################################################
+
+if ($?ESCJ) then
+else
+    echo "Error: setup must be sourced first"
+    exit 2
+endif
+
+
+#
+# Set escjava defaults for now:
+#
+if ($?ESCJ_STDARGS) then
+else
+    setenv	ESCJ_STDARGS	"-nowarn Deadlock"   # See above warning...
+endif
+
+
+if ($?CLASSPATH) then
+    setenv      USERPATH        ${CLASSPATH}
+else
+    setenv	USERPATH	"."
+endif
+
+
+#
+# Where to get binaries for escjava:
+#
+setenv	CLASSPATH	${CLASSES}
+
+${JAVA} -Dsimplify=${ESCJAVA_ROOT}/simplify -classpath ${ESC_CLASSPATH} escjava.Main -bootclasspath ${BOOTCLASSPATH} -classpath ${USERPATH} ${ESCJ_STDARGS} $*

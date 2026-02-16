@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+SignalsUnchecked ...
+  Prover started:TIME
+    [TIME]
+
+SignalsUnchecked: redundant_signals_unchecked() ...
+    [TIME]  passed
+
+SignalsUnchecked: SignalsUnchecked() ...
+    [TIME]  passed
+  [TIME total]

@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|ModChecks4.java: Caution: Using given file as the .java file, even though it is not the java file for ModChecks4 on the classpath
+    [TIME]
+
+ModChecks4 ...
+  Prover started:TIME
+    [TIME]
+
+ModChecks4: m() ...
+    [TIME]  passed
+
+ModChecks4: mm() ...
+    [TIME]  passed
+
+ModChecks4: f(int) ...
+    [TIME]  passed
+
+ModChecks4: ModChecks4() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

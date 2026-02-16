@@ -1,0 +1,84 @@
+This package aims at providing a clean(er) interface for
+connecting theorem provers with ESC/Java2.  The problem is that ESC/Java
+was written with a single, unsorted logic in mind, namely the one
+implemented by the Simplify theorem prover, and most of the recent
+provers require sorted logic.
+
+The general idea behind this back-end is the same as with the previous
+aim, which you can find in escjava.vcGeneration.* -- we take the
+(essentially) untyped guarded command language and try to impose types
+(or sorts depending on who you're talking to) on it.
+
+I have however added some additional fields in GC nodes to make the
+inference easier. The whole idea is a giant hack, so beware.
+
+
+Differences WRT escjava.vcGeneration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The main differences are the coverage of the guarded command language
+(this implementation is far more complete) and the size of the interface,
+which is split into two parts:
+  - one is just the first order logic with uninterpreted function
+    symbols and arithmetic (the NodeBuilder class), which is considerably
+    smaller than the escjava.vcGeneration interface
+  - the other is ESC/Java specific, which is a bit larger than the
+    old one, because it is more complete (EscNodeBuilder)
+
+The good news is that folks willing to connect the prover need to
+implement only the smaller part. If you want to do something specific
+about the specific ESC/Java predicate/function symbols, you'll need to
+special case them in your implementation of general predicate/function
+building functions.
+
+
+Implementing new prover
+~~~~~~~~~~~~~~~~~~~~~~~
+In order to implement a binding to a new prover you need to:
+- write a non-abstract instance of the EscNodeBuilder class
+- write a non-abstract instance of the SortedProver class (one of the
+  methods should return an instance of a class implementing EscNodeBuilder
+  interface)
+- for the prover named 'FooBar' place the whole thing in escjava.sortedProver.fooBar
+  and name the SortedProver subclass FooBarProver
+- use -svcg FooBar (or -svcg fooBar) to invoke it
+
+The new interface has a functional nature -- the NodeBuilder class
+is supposed to construct some form of tree, that is (by some means*)
+passed to the prover by the SortedProver methods.
+
+*) One can imagine that you can either call into the prover through
+some kind of JNI and ask it to construct the tree, or build some sort
+of AST in Java that you can later print. It would be best suited for
+interaction with a prover written in Java, but you know.
+
+
+Sortedness guarantees
+~~~~~~~~~~~~~~~~~~~~~
+You can relay on function being called on parameters being subsorts of
+the sorts specified in the static (for NodeBuilder symbols) or
+dynamic (EscNodeBuilder) signature.
+
+For the select/store symbols, you can expect the sort to be a map
+sort of appropriate type, and for AnyEQ/NE you can assume sorts
+to match.
+
+I'm considering making it possible for the type inference not to
+use subsorting and stick conversions everywhere. If you're interested,
+please drop me a line.
+
+For labels, you can use the translation given in the comment in the 
+code. You're guaranteed to see positive (resp. negative) labels only 
+in positive (resp. negative) contexts (labels in wrong contexts are
+dropped).
+
+
+Status
+~~~~~~
+Most of the testsuite in Escjava/test/escjava/test passes with Simplify
+and Fx7, which are two currently implemented provers.
+
+
+Author
+~~~~~~
+Michal Moskal <michal.moskal@gmail.com>
+

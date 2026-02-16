@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|AString.java: Caution: Using given file as the .java file, even though it is not the java file for AString on the classpath
+    [TIME]
+
+AString ...
+  Prover started:TIME
+    [TIME]
+
+AString: f(java.lang.String) ...
+------------------------------------------------------------------------
+src|test|resources|AString.java:4: Warning: Possible null dereference (Null)
+                int i = s.length();
+                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AString: AString() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

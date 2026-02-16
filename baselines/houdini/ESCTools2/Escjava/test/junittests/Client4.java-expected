@@ -1,0 +1,41 @@
+ESC/Java version VERSION
+    [TIME]
+
+Client4 ...
+  Prover started:TIME
+    [TIME]
+
+Client4: unique(IntList) ...
+------------------------------------------------------------------------
+Client4.java:8: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Client4.java", line 5, col 5:
+        //@ ensures \not_modified(list.isEmpty);  // ERROR - insuffici ...
+            ^
+Execution trace information:
+    Executed implicit return in "Client4.java", line 8, col 1.
+
+Associated declaration is "Client4.java", line 5, col 27:
+        //@ ensures \not_modified(list.isEmpty);  // ERROR - insuffici ...
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Client4: clear(IntList) ...
+    [TIME]  passed
+
+Client4: Client4() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

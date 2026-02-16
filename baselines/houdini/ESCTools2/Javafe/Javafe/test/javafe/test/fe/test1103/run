@@ -1,0 +1,8 @@
+#!/bin/sh
+
+## Test source file reader with all sources in the front-end.
+
+cd ${JAVAFE_ROOT}/java
+
+${TOOL} -classpath ${DECSRCLIBRARY}:${JUNIT_LIB}:${ESCTOOLS_ROOT}/Utils \
+    `cat sources`

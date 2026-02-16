@@ -1,0 +1,55 @@
+ESC/Java version VERSION
+    [TIME]
+
+Client5 ...
+  Prover started:TIME
+    [TIME]
+
+Client5: unique(IntList) ...
+------------------------------------------------------------------------
+Client5.java:8: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Client5.java", line 5, col 5:
+        //@ ensures \not_modified(list.isEmpty);  // CURRENT ERROR 
+            ^
+Execution trace information:
+    Executed implicit return in "Client5.java", line 8, col 1.
+
+Associated declaration is "Client5.java", line 5, col 27:
+        //@ ensures \not_modified(list.isEmpty);  // CURRENT ERROR 
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Client5: clear(IntList) ...
+------------------------------------------------------------------------
+Client5.java:15: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Client5.java", line 12, col 5:
+        //@ ensures \not_modified(list.isEmpty);  // ERROR
+            ^
+Execution trace information:
+    Executed implicit return in "Client5.java", line 15, col 1.
+
+Associated declaration is "Client5.java", line 12, col 27:
+        //@ ensures \not_modified(list.isEmpty);  // ERROR
+                                  ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Client5: Client5() ...
+    [TIME]  passed
+  [TIME total]
+
+IntList ...
+    [TIME]
+
+IntList: unique() ...
+    [TIME]  passed immediately
+
+IntList: clear() ...
+    [TIME]  passed immediately
+  [TIME total]
+2 warnings

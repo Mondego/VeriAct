@@ -1,0 +1,1338 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+
+@setfilename Escjava2-Extending.info
+@settitle Extending ESC/Java2 $Revision$
+@c Other commands that globally affect the document formatting: 
+@c synindex, footnotestyle
+@afourwide
+@paragraphindent 0
+@c firstparagraphindent 0
+@c %**end of header
+@c =============================================================================
+
+@c =============================================================================
+@c Definitions of new indices for this document
+
+@c =============================================================================
+@c Functions are indexed using the built-in @findex
+@c Predicates are indexed using @pindex
+@defcodeindex p
+@c Constants are indexed using @kindex
+@defcodeindex k
+
+@c Map predicates (pindex) and constants (kindex) the function index.
+
+@syncodeindex p fn
+@syncodeindex k fn
+
+@c =============================================================================
+
+@c =============================================================================
+@c %**summary and copyright
+
+Original version by Joseph Kiniry.  Initially written in early 2004,
+then lost, then rewritten beginning in November, 2004.
+
+Current author and editor: Joseph Kiniry.
+
+This document describes how to extend ESC/Java2.  It describes the
+high-level architecture of the system and how to extend it through a
+series of case studies.
+
+This is edition $Revision$.
+
+This document is a work in progress.  Suggestions and input are always
+welcome.
+
+@copying
+``Extending ESC/Java2'' is licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 2.0 license.  See
+@uref{http://creativecommons.org/licenses/by-nc-sa/2.0/}
+
+Copyright @copyright{} 2004 Joseph R. Kiniry and University College
+Dublin.
+Copyright @copyright{} 2010 Joseph R. Kiniry and IT University of
+Copenhagen.
+
+@quotation
+You are free:
+@itemize
+@item
+to copy, distribute, display, and perform the work
+@item
+to make derivative works
+@end itemize
+
+Under the following conditions:
+@itemize
+@item
+Attribution. You must give the original author credit.
+@item
+Noncommercial. You may not use this work for commercial purposes.
+@item
+Share Alike. If you alter, transform, or build upon this work, you may
+distribute the resulting work only under a license identical to this
+one.
+@end itemize
+
+For any reuse or distribution, you must make clear to others the license
+terms of this work.
+
+Any of these conditions can be waived if you get permission from the
+author.
+
+Your fair use and other rights are in no way affected by the above.
+
+This is a human-readable summary of the Legal Code.
+
+See @uref{http://creativecommons.org/licenses/by-nc-sa/2.0/legalcode}
+@end quotation
+
+@end copying
+
+@c %**end of summary and copyright
+@c =============================================================================
+
+@c =============================================================================
+@c %**title, contents, and copyright
+
+@titlepage
+@title Extending ESC/Java2
+@subtitle Edition $Revision$, April 2010
+@subtitle This document describes how to extend ESC/Java2 version 2.0a8 and later.
+@author Joseph R. Kiniry <kiniry@@acm.org>
+
+@c The following two commands start the copyright page.
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+@c To be published by the KindSoftware Research Group, Software
+@c Development Group, IT University of Copenhagen as technical report
+@c See @uref{http://kindsoftware.com/}
+@end titlepage
+
+@c metadata used in HTML
+@documentdescription
+ESC/Java, ESC/Java2, Java Modeling Language, JML, Extended Static
+Checking, Extended Static Checker, Design by Contract, Java,
+Verification, BISL, Object-oriented Logic, Behavioral Interface
+Specification Language, Extending, Lexer, Parser, Kiniry
+@end documentdescription
+
+@c Output the table of contents at the beginning.
+@contents
+
+@c %**end of title, contents, and copyright
+@c =============================================================================
+
+@c =============================================================================
+@c %**top node and master menu
+
+@c We recommend including the copying permissions here as well as the
+@c segments above.
+@ifnottex
+@node Top, Introduction, (dir), (dir)
+@top Extending ESC/Java2
+
+@insertcopying
+@end ifnottex
+
+This document describes how to extend ESC/Java2.  It describes the
+high-level architecture of the system and how to extend it through a
+series of case studies.
+
+@menu
+* Introduction::                An introduction to this document.
+* The ESC/Java2 Architecture::  The detailed design of the Extended Static Checker.
+* The Java Front-end Architecture::  The detailed design of the Java front-end.
+* The ESC/Java2 VC Generation Calculi::  
+* The ESC/Java2 Logics::        
+* The Theorem Prover Interface::  Adding a new prover.
+* Testing Extensions::          How to test your extension.
+* Specifications::              BON specifications of ESC/Java2.
+* Copying::                     Your rights and freedoms.
+* Index::                       Complete index.
+@end menu
+
+@c %**end top node and master menu
+@c =============================================================================
+
+@c =============================================================================
+@c %**body
+
+@c =============================================================================
+@node Introduction, The ESC/Java2 Architecture, Top, Top
+@chapter Introduction
+
+@cindex Introduction
+
+This document describes how to extend ESC/Java2.  It describes the
+high-level architecture of the system and how to extend it through a
+series of case studies.
+
+The case studies discussed were chosen because they: (a) focused on each
+independent aspects of the architecture, (b) were relatively small and
+self-contained examples, and (c) they were additions that we made to the
+original SRC ESC/Java system, thus writing them up in this manner was
+straightforward.
+
+We describe the ESC/Java2 architecture using the specification language
+BON.  BON is a specification language developed by Kim Walden and
+Jean-Marc Nerson and is documented in the book ``Seamless Object-Oriented
+Software Construction,'' available from @uref{http://www.bon-method.com/}.
+
+BON is a simple enough specification language that most, if not all, of
+the specifications herein will be understandable to the reader who knows
+nothing at all of BON.
+
+@c =============================================================================
+@node The ESC/Java2 Architecture, The Java Front-end Architecture, Introduction, Top
+@chapter The ESC/Java2 Architecture
+
+@cindex The ESC/Java2 Architecture
+
+ESC/Java2 is an extension of Digital/Compaq/Hewlett-Packard System
+Research Center's (SRC henceforth) ESC/Java.
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:System_Chart
+
+@multitable @columnfractions .15 .70 .15
+@item @b{SYSTEM}
+@tab EXTENDED_STATIC_CHECKER
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+An extended static checker for Java.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{keywords:} extended static checker, ESC, Java
+@end multitable
+@multitable @columnfractions .4 .6
+@item @b{Cluster}
+@tab
+@b{Description}
+@item JAVA_FRONT_END
+@tab A generic Java scanner, parser, and type checker.
+@item EXTENDED_STATIC_CHECKER
+@tab An extended static checker for Java.
+@item UTILITY
+@tab Miscellaneous utility classes.
+@end multitable
+
+@caption{The ESC/Java2 System}
+@end float
+@c -----------------------------------------------------------------------------
+
+ESC/Java2 has two primary subcomponents: a generic Java front-end in the
+Java package @var{javafe} and the extended static checking framework
+found in the package @var{escjava}.
+
+There are a few other classes used for testing found in the
+@var{junitutils} package.  We discuss this part of the architecture in
+@ref{jUnit Tests}.
+
+ESC/Java depended at one time (and perhaps still today) upon a few
+external packages that we do not have the source for.  These relevant
+packages are called @var{mochalib}, @var{decsrc}, @var{jtools}, and
+@var{tohtml}@footnote{There are also a number of deprecated packages
+currently included in the CVS repository for ESC/Java2 including
+@var{escwizard}, @var{houdini}, and @var{instrumenter}.  These packages
+are not used or supported at this time and we plan on removing them from
+the CVS HEAD in the near future.  See Bug #X for more information.}
+
+@c analyse and discuss these packages somewhere and xref here
+
+ESC/Java2 depends upon a number of Open Source Java libraries whose Java
+archive (jar) files are provided with the source release.  The current
+packages on which we depend include Ant, jUnit, and XML-RPC libraries.
+@c add hyperlinks/cites to these libraries
+
+@menu
+* The Generic Java Front-end::  The high-level design of the Java front-end.
+* The Extended Static Checker for Java::  The high-level design of the Extended Static Checker.
+@end menu
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Generic Java Front-end, The Extended Static Checker for Java, The ESC/Java2 Architecture, The ESC/Java2 Architecture
+@section The Generic Java Front-end
+
+@cindex The Generic Java Front-end
+
+ESC/Java2 uses the generic Java front-end developed by SRC, available as
+an independent download from http://todo.  The only modifications that
+have been made to the javafe package are the addition of support for the
+assert statement that was added to the Java languange in the Java 1.4
+release.  We discuss this extension as the first case study, found in
+@ref{The Assert Statement}.
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:Javafe_Cluster_Chart
+
+@multitable @columnfractions .15 .70 .15
+@item @b{CLUSTER}
+@tab JAVA_FRONT_END
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+A generic Java scanner, parser, and type checker.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{keywords:} Java, scanner, parser, type checker
+@end multitable
+@multitable @columnfractions .33 .66
+@item @b{Class/(Cluster)}
+@tab
+@b{Description}
+@item (AST)
+@tab The abstract symbol tree classes for Java.
+@item (FILES)
+@tab TBD
+@item (LEXER)
+@tab TBD
+@item (OPTIONS)
+@tab TBD
+@item (PARSER)
+@tab TBD
+@item (READER)
+@tab TBD
+@item (TYPECHECKER)
+@tab TBD
+@item (UTILITY)
+@tab TBD
+@item (TOOLS)
+@tab TBD
+@item (UTILITY)
+@tab TBD
+@end multitable
+
+@caption{The ESC/Java2 Java Front-end}
+@end float
+@c -----------------------------------------------------------------------------
+
+@c PARSER should have classfile parser and source file parser
+
+The Java front-end is summarised in the informal cluster chart in
+@ref{fig:Escjava_Cluster_Chart}.  The main subcomponents of the Java
+front-end are the core tool classes (in the @sc{TOOLS} cluster), a Java
+lexer, a parser, and type checker (the @sc{LEXER}, @sc{PARSER}, and
+@sc{TYPECHECKER} clusters).  An abstract symbol tree is used to
+represent the parsed Java classes (the @sc{AST} cluster).  Command-line
+option parsing is another major subcomponent that most extensions need
+to modify (the @sc{OPTIONS} cluster).  Finally, there are a number of
+classes used to search for source and class files in the classpath
+(@sc{FILES}), read in source and class files and cache their locations
+and contents (@sc{READER}), and track warning and errors and related
+data that are detected during compilation (@sc{UTILITY}).
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Extended Static Checker for Java,  , The Generic Java Front-end, The ESC/Java2 Architecture
+@section The Extended Static Checker for Java
+@cindex The Extended Static Checker for Java
+
+The extended static checker for Java has several major subcomponents.
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:Escjava_Cluster_Chart
+
+@multitable @columnfractions .15 .70 .15
+@item @b{CLUSTER}
+@tab EXTENDED_STATIC_CHECKER
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+An extended static checker for Java.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{keywords:} extended static checker, Java
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{Class/(Cluster)}
+@tab
+@b{Description}
+@item (ANT)
+@tab TBD
+@item (AST)
+@tab TBD
+@item (BACKGROUND_PREDICATE)
+@tab TBD
+@item (GUI)
+@tab TBD
+@item (OPTIONS)
+@tab TBD
+@item (PREDICATE_ABSTRACTION)
+@tab TBD
+@item (PARSER)
+@tab TBD
+@item (PROVER)
+@tab TBD
+@item (READER)
+@tab TBD
+@item (SOUNDNESS_CHECKER)
+@c This cluster should get refactored to include the new work by Barry.
+@tab TBD
+@item (DYNAMIC_SINGLE_ASSIGNMENT)
+@tab TBD
+@item (TYPECHECKER)
+@tab TBD
+@item (VERIFICATION_CONDITION_GENERATOR)
+@tab TBD
+@item (TOOLS)
+@tab TBD
+@end multitable
+
+@caption{The ESC/Java2 Extended Static Checker}
+@end float
+@c -----------------------------------------------------------------------------
+
+A full JML parser and type checker is the first main component (clusters
+@sc{PARSER} and @sc{TYPECHECKER}).  It is realised as a specialisation
+of the generic pragma parser in the Java front-end (cluster
+@sc{JAVA_FRONT_END.PARSER}).  Conseqently, an AST hierarchy also exists
+for JML constructs (cluster @sc{AST}).
+
+@c ant ast backpred gui pa parser prover reader sp tc translate vcGenertion
+
+@c =============================================================================
+@node The Java Front-end Architecture, The Extended Static Checker Architecture, The ESC/Java2 Architecture, Top
+@chapter The Java Front-end Architecture
+
+@cindex The Java Front-end Architecture
+
+@menu
+* The Java Lexer::              The Java lexer.
+* The Java AST::                The Java abstract symbol tree.
+* The Java Parser::             The Java parser.
+* The Java Type Checker::       The Java type checker.
+* Case Studies in Extending the Java Front-end::  Front-end case studies.
+@end menu
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Java Lexer, The Java AST, The Java Front-end Architecture, The Java Front-end Architecture
+@section The Java Lexer
+
+@cindex The Java Lexer
+
+@c -----------------------------------------------------------------------------
+@float Diagram,fig:Tag_Constants
+
+@verbatim
+static_diagram Tag_Constants
+-- The inheritance relationship between all of the classes that define
+-- lexical tags.
+component
+  -- Classes with a GENERATED_ prefix are generated automatically from
+  -- the a hierarchy.j class using the astgen tool.  See the section of
+  -- this manual on astgen (node "The Java AST") for more information.
+  class JAVAFE.AST.GENERATED_TAGS
+  class JAVAFE.AST.OPERATOR_CONSTANTS
+  class JAVAFE.AST.TAG_CONSTANTS
+
+  class JAVAFE.PARSER.TAG_CONSTANTS
+
+  class JAVAFE.TYPECHECKER.TAG_CONSTANTS
+
+  class ESCJAVA.AST.TAG_CONSTANTS
+  class ESCJAVA.AST.GENERATED_CONSTANTS
+
+  JAVAFE.AST.OPERATOR_CONSTANTS inherit JAVAFE.AST.GENERATED_TAGS
+  JAVAFE.AST.TAG_CONSTANTS inherit JAVAFE.AST.OPERATOR_CONSTANTS
+
+  JAVAFE.PARSER.TAG_CONSTANTS inherit JAVAFE.AST.TAG_CONSTANTS
+  JAVAFE.TYPECHECKER.TAG_CONSTANTS inherit JAVAFE_PARSER.TAG_CONSTANTS
+
+  ESCJAVA.AST.GENERATED_CONSTANTS inherit JAVAFE.TYPECHECKER.TAG_CONSTANTS
+  ESCJAVA.AST.TAG_CONSTANTS inherit ESCJAVA.AST.GENERATED_CONSTANTS
+end
+@end verbatim
+
+@caption{Constants Representing Fundamental Lexing and Parsing Constructs}
+@end float
+@c -----------------------------------------------------------------------------
+
+The Java lexer that is part of ESC/Java2 is, like the Java and pragma
+parsers, hand-written.  This means that it is faster and smaller than a
+generated lexer, but is also a bit trickier to understand and extend.
+
+The Java lexer inherits from a token class that describes the lexical
+tokens of the parser.  The lexer provides arbitrary lookahead using a
+token queue.  The static diagram in @ref{fig:Java_Lexer_Diagram}
+summarises the classes related to the Java lexer.
+
+@c -----------------------------------------------------------------------------
+@float Diagram,fig:Java_Lexer_Diagram
+
+@verbatim
+static_diagram Java_Lexer
+component
+  cluster JAVAFE.PARSER
+  component
+    class TAG_CONSTANTS
+
+    class FILE_FORMAT_EXCEPTION
+
+    class LEXER
+    class TOKEN
+    class TOKEN_QUEUE
+
+    TAG_CONSTANTS inherit JAVAFE.AST.TAG_CONSTANTS
+
+    FILE_FORMAT_EXCEPTION inherit JAVA.IO.IO_EXCEPTION
+
+    LEXER inherit TOKEN
+  end  
+end
+@end verbatim
+
+@caption{The Java Lexer}
+@end float
+@c -----------------------------------------------------------------------------
+
+A complementary hierarchy of tag constant classes define all of the
+lexical constants of the lexer.  The static diagram in
+@ref{fig:Tag_Constants}.
+
+@c must explain LEXICAL_PRAGMA, MODIFIER_PRAGMA, STATEMENT_PRAGMA, AND TYPE_DECLARATOIN_ELEMENT_PRAGMA
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:Java_Token_Chart
+
+@multitable @columnfractions .15 .70 .15
+@item @b{CLASS}
+@tab TOKEN
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+An abstract representation of a Java token.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{cluster:} JAVAFE.PARSER
+
+@b{keywords:} token, lexer, Java
+@end multitable
+@multitable @columnfractions .4 .6
+@item @b{Queries}
+@tab
+``What is the current token?'',
+``What is the location of the first character of the current token?'',
+``What is the location of the last character of the current token?'',
+``What is the identifier related to the current token, if it is an identifer token?'',
+``What auxilliary information is available for the current token?'',
+``What is the string representation of the current token?'',
+``What is the full string representation of the current token, suitable for debugging output?'',
+``Does the current token fulfill its invariants?''
+@item @b{Commands}
+@tab
+``Clear the current token.'',
+``Copy all the fields from a source token into a target token.''
+@item @b{Constraints}
+@tab
+``The start and ending location of a token must be valid.'',
+``If the current token represents a Java integral type literal, then the auxilliary information must only be value or the corresponding integral type.'',
+``If the current token represents a Java character or string type, then the auxilliary information must only be a value or the corresponding Java value type.'',
+``If the current token represents a lexical, modifier, statement, or type declaration element pragma, then the auxilliary information must only be a value of the corresponding pragma type.''
+@end multitable
+
+@caption{The Java TOKEN Class Chart}
+@end float
+@c -----------------------------------------------------------------------------
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:Java_Lexer_Chart
+
+@multitable @columnfractions .15 .70 .15
+@item @b{CLASS}
+@tab LEXER
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+Generates a sequence of Java tokens by converting a sequence of input
+characters and line terminators.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{cluster:} JAVAFE.PARSER
+
+@b{keywords:} lexer, Java
+@end multitable
+@multitable @columnfractions .4 .6
+@item @b{Queries}
+@tab
+
+@item @b{Commands}
+@tab
+
+@item @b{Constraints}
+@tab 
+
+@end multitable
+
+@caption{The Java LEXER Class Chart}
+@end float
+@c -----------------------------------------------------------------------------
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Java AST, The Java Parser, The Java Lexer, The Java Front-end Architecture
+@section The Java AST
+
+@cindex The Java AST
+
+@subsection AST Generation
+
+@cindex AST Generation
+@cindex astgen
+
+A custom tool called @command{astgen} is used to generate the Java and
+JML abstract symbol tree classes.  @command{astgen} reads an input file
+that is a kind of ``Java shorthand'' with annotations and it generates
+JML-annotated Java source code.
+
+The input to @command{astgen} must have the same lexical language as
+Java and must follow the following grammar: 
+@code{astfile ::= PackageDeclaration_opt ImportDeclarations_opt ClassDeclaration*} 
+where the non-terminals on the right are those defined in the Java
+Language Specification.  Before the first @code{ClassDeclaration} there
+must be a line with the following lexical structure
+@code{^[white-space]*"//#"[white-space]*"EndHeader".*\n}
+
+Roughly speaking, @command{astgen} does the following: all text
+(including comments and whitespace) before the @code{EndHeader}
+directive is read into a buffer.  Then, for each
+@code{ClassDeclaration}, the text of the declaration (again including
+comments and whitespace) is appended to an ``expanded'' version of each
+generated class decaration.
+
+AST generation is stateful.  The module responsible for keeping track of
+the state of @command{astgen} is called @code{astactions()} (it
+implements a state machine).  The state transitions of this machine are:
+@verbatim
+     <anystate> -(init)-> INIT
+     INIT -(visitorroot)-> INIT
+     INIT -(tagbase)-> INIT
+     INIT -(endheader)-> ABOVECLASS
+     INIT -(endastfile)-> DONE
+     ABOVECLASS -(abstract)-> ABOVECLASS
+     ABOVECLASS -(endastfile)-> DONE
+     ABOVECLASS -(classname)-> SUPERLESS -(supername)-> SUPERFULL
+     SUPERCLESS,SUPERFULL -(beginclass)-> INCLASS
+     INCLASS -(endclass)-> ABOVECLASS
+@end verbatim
+
+The state machine starts in the special state @code{UNINITIALIZED}.  The
+@code{init()} function is the only routine that may be called when the
+module is in this state.
+@c explain state machine
+
+With two exceptions, every piece of text in the input file (except the
+EOF character) is sent through (exactly) one of the following echo
+routines.  This includes text that is also passed to state transition
+procedures such as ``@code{classname()}'' and ``@code{supername()}''; in
+these cases, the function @code{astecho()} is called first, then the
+state transition routine.
+
+One exception to the rule that every piece of text is sent to an echo
+routine is the line containing the ``@samp{//# EndHeader}'' section,
+which triggers the call to @code{endheader()} function.  The other
+exception is the `@code{@}}' character that ends a (top-level) class
+declaration; this triggers the call to ``@code{endclass()}'' function,
+to which the closing `@code{@}}' plus any characters matching
+``@code{"[white-space]\n@{0,1@}}'' is passed.
+
+The @code{astecho()} function is called in most situations; it may be
+called in any state.  The @code{expand()} function is called only in
+state @code{INCLASS}, and is called only on (and on every) piece of text
+that matches the pattern @code{[whitespace]*"//#".*\n}.
+
+@command{astgen} is written in C.  A scanner/lexer is generated using
+@command{lex}.  The lexer is quite simple, as it only matches the basic
+structure of Java with special annotations prefixed by @code{//#}.  The
+source for @command{astgen} is located in the directory
+@file{ESCTools/Javafe/astgen}.
+
+There are six different kinds of annotations, also known as
+``directives'' in the @command{astgen} source code, organised into three
+different categories.  
+
+The first type of directive are field qualifiers, as they are used to
+annotate Java fields.  These annotations include:
+@itemize
+@item @code{NullOK} indicates that the annotated field, which must be
+a reference type, may have a @code{null} value.  Such fields are
+annotated in the generated source with the @code{nullable} JML
+annotation.  (Prior to the introduction of this annotation, all fields 
+@emph{not} annotated with @code{NullOK} were labeled with the
+@code{non_null} JML annotation.)
+@c Should we just annotate *all* generated fields with nullable and
+@c non_null as appropriate? -kiniry
+@item @code{NoCheck} is used to indicate that a field's invariant
+should @emph{not} be checked when its enclosing class's invariant
+is checked.
+@item @code{NotNullLoc} @c JRK
+@item @code{Syntax}
+@end itemize
+
+The character ``@code{*}'' is also used as a special annotation on types
+to indicate the multiplicity of a field.
+
+@itemize
+@item @code{NoMaker}
+@item @code{ManualTag}
+@item @code{PostMakeCall}
+@item @code{PostCheckCall}
+@item @code{MakerSpec}
+@end itemize
+
+Finally, the annotation @code{EndHeader} is used to indicate the end of
+the AST class declaration.
+
+
+The source file @file{astutil.h} summarises these annotations.
+
+The balance of the Java code, fields that are not annotated with
+@command{astgen} comments, can be annotated with JML specifications and
+ESC/Java2 pragmas and @command{astgen} will ignore them completely.
+
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Java Parser, The Java Type Checker, The Java AST, The Java Front-end Architecture
+@section The Java Parser
+
+@cindex The Java Parser
+
+@c -----------------------------------------------------------------------------
+@float Diagram,fig:Java_Parser
+
+@verbatim
+static_diagram Java_Parser
+component
+  cluster JAVAFE.PARSER
+  component
+    class PARSE
+    class PARSE_EXPRESSION
+    class PARSE_STATEMENT
+    class PARSE_TYPE
+    class PARSE_UTILITY
+
+    deferred class PRAGMA_PARSER
+
+    PARSE inherit PARSE_STATEMENT
+    PARSE_STATEMENT inherit PARSE_EXPRESSION
+    PARSE_EXPRESSION inherit PARSE_TYPE
+    PARSE_TYPE inherit PARSE_UTILITY
+  end  
+end
+@end verbatim
+
+@caption{Java Parser Classes and Inheritance}
+@end float
+@c -----------------------------------------------------------------------------
+
+The Java parser is decomposed into several classes related to each other
+via inheritance, summarised in the static diagram in
+@ref{fig:Java_Parser}.  A pragma parser interface is also defined from
+which one must inherit to parse pragmas from pragma-containing comments.
+It is also used to check to see whether or not a comment contains
+pragmas in the first place.
+
+@c JRK
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Java Type Checker, Case Studies in Extending the Java Front-end, The Java Parser, The Java Front-end Architecture
+@section The Java Type Checker
+
+@cindex The Java Type Checker
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Case Studies in Extending the Java Front-end,  , The Java Type Checker, The Java Front-end Architecture
+@section Case Studies in Extending the Java Front-end
+
+@cindex Case Studies in Extending the Java Front-end
+
+@menu
+* The Assert Statement::        
+* New Java Bytecodes::          
+@end menu
+
+@c -----------------------------------------------------------------------------
+@node The Assert Statement, New Java Bytecodes, Case Studies in Extending the Java Front-end, Case Studies in Extending the Java Front-end
+@subsection The Assert Statement
+
+@cindex assert
+
+@c -----------------------------------------------------------------------------
+@node New Java Bytecodes,  , The Assert Statement, Case Studies in Extending the Java Front-end
+@subsection New Java Bytecodes
+
+@cindex bytecodes
+@cindex types
+
+@c =============================================================================
+@node The Extended Static Checker Architecture, The ESC/Java2 VC Generation Calculi, The Java Front-end Architecture, Top
+@chapter The Extended Static Checker Architecture
+
+@cindex The Extended Static Checker Architecture
+@cindex AST
+@cindex Pragma AST
+@cindex hierarchy.j
+
+Like in the Java front-end, the AST for pragmas is specified with a
+@file{hierarchy.j} file which is transformed with the @command{astgen}
+tool into source Java files.  This file and its related classes are
+locate in the @code{escjava.ast} package that is located in the
+repository at @file{ESCTools/Escjava/java/escjava/ast/}.
+
+There are a few classes in this package that are not specified using
+@file{hierarchy.j}: @file{DerivedMethodDecl.java},
+@file{EscPrettyPrint.java}, @file{TagConstants.java}, and
+@file{Utils.java}.
+
+@c explain these classes
+@c DerivedMethodDecl
+@c escjava.ast.TagConstants <: escjava.ast.GeneratedTags
+@c escjava.ast.EscPrettyPrint <: escjava.ast.DelegatingPrettyPrint
+@c escjava.ast.Utils
+
+The case study that we use to demonstrate how to extend the JML pragma
+lexer and parser is the addition of the @code{nullable} keyword,
+presented by Patrice Chalin at SAVCBS 2005@cite{P. Chalin and F. Rioux,
+``Non-null References by Default in the Java Modeling Language.''
+Workshop on the Specification and Verification of Component-Based
+Systems (SAVCBS'05), Lisbon, Portugal, Sept. 2005}. (Updated version:
+@uref{http://www.cs.concordia.ca/%7Echalin/papers/TR-2005-004-r3.2.pdf}
+{ENCS-CSE TR 2005-004, December 2005}).  We discuss this extension as
+the in @ref{Default Reference Type Values}.
+
+@menu
+* The ESC/Java2 JML Lexer::     The JML lexer.
+* The ESC/Java2 JML Parser::    The JML parser.
+* The ESC/Java2 Type Checker::  The JML type checker.
+* Case Studies in Extending the Extended Static Checker Lexer::  Extended static checker case studies.
+@end menu
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The ESC/Java2 JML Lexer, The ESC/Java2 JML Parser, The Extended Static Checker Architecture, The Extended Static Checker Architecture
+@section The ESC/Java2 JML Lexer
+
+@cindex The ESC/Java2 JML Lexer
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The ESC/Java2 JML Parser, The ESC/Java2 Type Checker, The ESC/Java2 JML Lexer, The Extended Static Checker Architecture
+@section The ESC/Java2 JML Parser
+
+@cindex The ESC/Java2 JML Parser
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The ESC/Java2 Type Checker, Case Studies in Extending the Extended Static Checker Lexer, The ESC/Java2 JML Parser, The Extended Static Checker Architecture
+@section The ESC/Java2 Type Checker
+
+@cindex The ESC/Java2 Type Checker
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Case Studies in Extending the Extended Static Checker Lexer,  , The ESC/Java2 Type Checker, The Extended Static Checker Architecture
+@section Case Studies in Extending the Extended Static Checker Lexer, Parser, and Type Checker
+
+@cindex case study
+@cindex case studies
+@cindex extending the extended static checker lexer
+@cindex extending the extended static checker parser
+@cindex extending the extended static checker type checker
+
+@menu
+* Default Reference Type Values::  
+@end menu
+
+@c -----------------------------------------------------------------------------
+@node Default Reference Type Values,  , Case Studies in Extending the Extended Static Checker Lexer, Case Studies in Extending the Extended Static Checker Lexer
+@subsection Default Reference Type Values
+
+@cindex reference type value
+@cindex non-null
+@cindex nullable
+
+@c =============================================================================
+@node The ESC/Java2 VC Generation Calculi, The ESC/Java2 Logics, The Extended Static Checker Architecture, Top
+@chapter The ESC/Java2 VC Generation Calculi
+
+@cindex calculus
+@cindex calculi
+@cindex weakest-precondition calculus
+@cindex strongest-postcondition calculus
+
+@menu
+* The DSA Intermediate Representation::  
+* The Weakest-Precondition Calculus::  
+* The Strongest-Postcondition Calculus::  
+* Case Studies in Extending the VC Generation Calculi::  
+@end menu
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The DSA Intermediate Representation, The Weakest-Precondition Calculus, The ESC/Java2 VC Generation Calculi, The ESC/Java2 VC Generation Calculi
+@section The DSA Intermediate Representation
+
+@cindex DSA
+@cindex dynamic single assignment
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Weakest-Precondition Calculus, The Strongest-Postcondition Calculus, The DSA Intermediate Representation, The ESC/Java2 VC Generation Calculi
+@section The Weakest-Precondition Calculus
+
+@cindex calculus
+@cindex weakest-precondition calculus
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node The Strongest-Postcondition Calculus, Case Studies in Extending the VC Generation Calculi, The Weakest-Precondition Calculus, The ESC/Java2 VC Generation Calculi
+@section The Strongest-Postcondition Calculus
+
+@cindex calculus
+@cindex strongest-postcondition calculus
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Case Studies in Extending the VC Generation Calculi,  , The Strongest-Postcondition Calculus, The ESC/Java2 VC Generation Calculi
+@section Case Studies in Extending the VC Generation Calculi
+
+@cindex case study
+@cindex case studies
+@cindex extending the vc generation calculi
+
+@menu
+* Reasoning about Loops::       
+* Reasoning about Java Bytecodes::  
+@end menu
+
+@c -----------------------------------------------------------------------------
+@node Reasoning about Loops, Reasoning about Java Bytecodes, Case Studies in Extending the VC Generation Calculi, Case Studies in Extending the VC Generation Calculi
+@subsection Reasoning about Loops
+
+@cindex loops
+
+@c -----------------------------------------------------------------------------
+@node Reasoning about Java Bytecodes,  , Reasoning about Loops, Case Studies in Extending the VC Generation Calculi
+@subsection Reasoning about Java Bytecodes
+
+@cindex bytecode
+
+@c =============================================================================
+@node The ESC/Java2 Logics, The Theorem Prover Interface, The ESC/Java2 VC Generation Calculi, Top
+@chapter The ESC/Java2 Logics
+
+@cindex The ESC/Java2 Logics
+
+@c =============================================================================
+@node The Theorem Prover Interface, Testing Extensions, The ESC/Java2 Logics, Top
+@chapter The Theorem Prover Interface
+
+@cindex The Theorem Prover Interface
+
+@c =============================================================================
+@node Testing Extensions, Specifications, The Theorem Prover Interface, Top
+@chapter Testing Extensions
+
+@cindex Testing Extensions
+
+Whenever a new extension to ESC/Java2 is written new tests must be
+written to both test the new features and to ensure that existing
+features are not broken.  Thus, tests included are used as unit tests
+and for regression testing.
+
+Tests are organised into several different directories based upon their
+purpose.  For the Java front-end there are test suites for the Java
+lexer, parser, and typechecker as well as for the full front-end.  The
+JML parser and typechecker in the ESC/Java2 package also have test
+suites.  The extended static checker has several test suites including a
+core set of reasoning tests, a jUnit test suite that focuses on
+different facets of verification, and a test suite that focuses on
+extended static checking with rich JML specifications of core Java
+Developers Kit classes.  Finally, there are a set of miscellaneous
+tests.
+
+Each of these test sets are discussed in the following sections, but
+first we discuss the design and organisation of the build rules for
+invoking these tests.
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Test Design, Test Execution, Testing Extensions, Testing Extensions
+@section Test Design
+
+@cindex Test Design
+
+ESC/Java2 tests are designed to run entirely automatically.  There are a
+number of custom-built test tools that exercise various subsystems
+including its lexers, parser, etc.
+
+In general, tests run using one of several test harnesses, some of which
+are specifically designed for a given kind of test, and others are
+generic jUnit tests.  
+
+Each test executes a tool or test harness and generates output.  Output
+from most tools is made generic so that multiple runs will not generate
+trivially different output.  Only the ESC/Java2 tool itself has a
+special testing mode (see the @command{-testMode} switch) that ensures
+that it does not generate trivially different output.
+
+Each test's expected output is stored in a file adjacent to the test
+source.  These files are named either @file{ans} in the old SRC ESC/Java
+test harnesses or in a file of the same name as the test input itself
+but with a @file{-expected} suffix in the ESC/Java2 jUnit-based tests.
+
+@c JRK
+
+@c process of adding new tests: find where it goes, follow conventions,
+@c do not break any other tests, put stuff in skips that is not ready or
+@c passing, but make sure a bug/fr is filed on it
+Adding new tests
+@c standard types of tests: idempotent
+
+@c -----------------------------------------------------------------------------
+@subsection The Front-end Test Harnesses
+
+@cindex front-end, test harnesses
+@cindex test harness
+@cindex test harnesses
+
+@c javafe.parser.test.TextLex
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:javafe.parser.test.TestLex,TEST_LEXER
+
+@multitable @columnfractions .15 .70 .15
+@item @b{CLASS}
+@tab TEST_LEXER
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+Tokenizes standard input and prints the resulting stream, one token per
+output line.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{cluster:} JAVAFE.PARSER.TEST
+
+@b{keywords:} lexer, scanner, test, front-end
+@end multitable
+@multitable @columnfractions .4 .6
+@item @b{Inherits from}
+@tab JAVAFE.PARSER.PRAGMA_PARSER
+@item @b{Queries}
+@tab
+none
+@item @b{Commands}
+@tab
+``Fail with a specific error message.'',
+
+``Lex a given input stream and output each token on a new line.'',
+
+``Add the Java keywords to the lexer.'',
+
+``Add a random lookahead to the lexer.'',
+
+``Create a test lexer and add a couple of test pragma operators to the lexer.'',
+@item @b{Constraints}
+@tab
+``The command-line arguments may only be "javakeywords", "lookahead", or "parsepragmas".''
+@end multitable
+
+@caption{The Test Harness for the Java Front-end Lexer}
+@end float
+@c -----------------------------------------------------------------------------
+
+@c explain that these classes are just package-level classes used for testing.
+
+@c -----------------------------------------------------------------------------
+@float Diagram,fig:javafe.parser_test_harness_support_classes
+
+@verbatim
+static_diagram Java_Front-end_Lexer_Test_Harness_Support_Classes
+component
+  cluster JAVAFE.AST
+  component
+    deferred class LEXICAL_PRAGMA
+    deferred class MODIFIER_PRAGMA
+    deferred class STATEMENT_PRAGMA
+    deferred class TYPE_DECLARATION_ELEMENT_PRAGMA
+  end
+  cluster JAVAFE.PARSER
+  component
+    deferred class PRAGMA_PARSER
+  end
+  cluster JAVAFE.PARSER.TEST
+  component
+    effective class TEST_LEXER
+    effective class LEXER_TEST_LEXICAL_PRAGMA
+    effective class LEXER_TEST_MODIFIER_PRAGMA
+    effective class LEXER_TEST_STATEMENT_PRAGMA
+    effective class LEXER_TEST_TYPE_DECLARATION_ELEMENT_PRAGMA
+
+    TEST_LEXER inherit PRAGMA_PARSER
+    LEXER_TEST_LEXICAL_PRAGMA inherit LEXICAL_PRAGMA
+    LEXER_TEST_MODIFIER_PRAGMA inherit MODIFIER_PRAGMA
+    LEXER_TEST_STATEMENT_PRAGMA inherit STATEMENT_PRAGMA
+    LEXER_TEST_TYPE_DECLARATION_ELEMENT_PRAGMA inherit 
+      TYPE_DECLARATION_ELEMENT_PRAGMA
+  end
+end
+@end verbatim
+
+@caption{The Test Harness for the Java Front-end Lexer (Support Classes)}
+@end float
+@c -----------------------------------------------------------------------------
+
+@c javafe.parser.test.TestParse
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:javafe.parser.test.TestParse,TEST_PARSER
+
+@multitable @columnfractions .15 .70 .15
+@item @b{CLASS}
+@tab TEST_PARSER
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+Parse Java compilation units in various ways to test the Java front-end
+parser.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{cluster:} JAVAFE.PARSER.TEST
+
+@b{keywords:} parser, test, front-end
+@end multitable
+@multitable @columnfractions .4 .6
+@item @b{Queries}
+@tab
+``Compare two input streams and prints a message and returns true if they are different, return false otherwise.''
+@item @b{Commands}
+@tab 
+``Pretty-print a given parsed Java compilation unit to a specified output stream.'',
+
+``Pretty-print a given parsed Java compilation unit to the system output stream.'',
+
+``Check the invariant of a parsed Java compilation unit.''
+@item @b{Constraints}
+@tab 
+``If first command-line argument is "diff" then the second and third command-line arguments must be the name of the two file to parse and compare as a test.'',
+
+``The command-line arguments may only be "diff", "assert", "check", "print", "progress", "silent", or "idempotence".'',
+
+``The command-line argument "diff" may only be the first command-line argument.'',
+
+``The input stream is expected to contain only Java compilation units.''
+@end multitable
+
+@caption{The Test Harness for the Java Front-end Parser}
+@end float
+@c -----------------------------------------------------------------------------
+
+@verbatim
+static_diagram Java_Front-end_Parser_Test_Harness_Support_Classes
+component
+  cluster JAVA.IO
+  component
+    deferred class OUTPUT_STREAM
+    deferred class INPUT_STREAM
+  end
+  cluster JAVAFE.PARSER.TEST
+  component
+    class TEST_PARSER
+    -- Helper classes for the parser test framework.
+    effective class MEMORY_PIPE_OUTPUT_STREAM
+    effective class MEMORY_PIPE_INPUT_STREAM
+    MEMORY_PIPE_OUTPUT_STREAM inherit OUTPUT_STREAM
+    MEMORY_PIPE_INPUT_STREAM inherit INPUT_STREAM
+  end
+end
+@end verbatim
+
+@c javafe.parser.test.TextExpr
+
+@c -----------------------------------------------------------------------------
+@float Chart,fig:javafe.parser.test.TestExpr,TEST_EXPRESSIONS
+
+@multitable @columnfractions .15 .70 .15
+@item @b{CLASS}
+@tab TEST_EXPRESSIONS
+@tab @b{Part:} 1/1
+@end multitable
+@multitable @columnfractions .50 .50
+@item @b{PURPOSE}
+
+Test harness for expression parsing.
+@tab
+@b{INDEXING}
+
+@b{author:} Joseph Kiniry
+
+@b{cluster:} JAVAFE.PARSER.TEST
+
+@b{keywords:} parser, expression, test, front-end
+@end multitable
+@multitable @columnfractions .4 .6
+@item @b{Queries}
+@tab
+``Are two Java expressions equivalent, ignoring parentheses?''
+@item @b{Commands}
+@tab
+``Fail with a specific error message.'',
+
+``Parse a given input stream for Java expressions and check the invariant of each parsed expression.'',
+
+``Parse a given input stream for pairs of comma-separated Java expressions and compare the pairs of parsed expression.''
+
+``Parse a given input stream for pairs of comma-separated Java expressions, check the invariant of each parsed expressions, and compare the pairs of parsed expression.''
+@item @b{Constraints}
+@tab 
+``The input input stream is expected to contain only Java expressions.'',
+
+``The input input stream may contain either individual Java expressions, or comma-separated pairs of expressions.'',
+
+``The command-line arguments may only be "compare" or "check".''
+@end multitable
+
+@caption{The Test Harness for the Java Front-end Expression Parser}
+@end float
+@c -----------------------------------------------------------------------------
+
+@c javafe.test.CountFilesLoaded
+@c javafe.test.LocTool
+@c javafe.test.Print
+@c javafe.test.SuperlinksTest
+@c javafe.test.SupertypeTest
+
+@c javafe.test.lex.TestLex
+
+@c -----------------------------------------------------------------------------
+@subsection The ESC/Java2 Test Harnesses
+
+@cindex escjava, test harnesses
+@cindex test harness
+@cindex test harnesses
+
+@c escjava.parser.test.TestEscPragmaParser
+@c escjava.parser.test.TextLex
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Test Execution, Java Lexer Tests, Test Design, Testing Extensions
+@section Test Execution
+@file{ESCTools/Makefile}
+@file{ESCTools/Javafe/Makefile}
+@file{ESCTools/Escjava/Makefile}
+@c how are they tied together?  what are the top-level make rules?
+@c test javafetests escjavatests
+@c alltests javafealltests escjavaalltests
+@c findbugs
+@c self_typecheck self_esc
+@c jmlc_test
+@c specs_test
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Java Lexer Tests, Java Parser Tests, Test Execution, Testing Extensions
+@section Java Lexer Tests
+@file{ESCTools/Javafe/test/javafe/test/lex}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Java Parser Tests, Java Typechecker Tests, Java Lexer Tests, Testing Extensions
+@section Java Parser Tests
+@file{ESCTools/Javafe/test/javafe/parser/test}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Java Typechecker Tests, Java Front-end Tests, Java Parser Tests, Testing Extensions
+@section Java Typechecker Tests
+@file{ESCTools/Javafe/test/javafe/tc/test}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Java Front-end Tests, Pragma Parser Tests, Java Typechecker Tests, Testing Extensions
+@section Java Front-end Tests
+@file{ESCTools/Javafe/test/javafe/test/fe}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Pragma Parser Tests, ESC/Java2 Reasoning Tests, Java Front-end Tests, Testing Extensions
+@section Pragma Parser Tests
+@file{ESCTools/Escjava/test/escjava/parser/test}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node ESC/Java2 Reasoning Tests, jUnit Tests, Pragma Parser Tests, Testing Extensions
+@section ESC/Java2 Reasoning Tests
+@file{ESCTools/Escjava/test/escjava/parser/test}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node jUnit Tests, JDK Tests, ESC/Java2 Reasoning Tests, Testing Extensions
+@section jUnit Tests
+@file{ESCTools/Escjava/test/junittests/}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node JDK Tests, Miscellaneous Tests, jUnit Tests, Testing Extensions
+@section JDK Tests
+@file{ESCTools/Escjava/test/jdktests}
+
+@c ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@node Miscellaneous Tests,  , JDK Tests, Testing Extensions
+@section Miscellaneous Tests
+@file{ESCTools/Escjava/test/hofmann/}
+@file{ESCTools/Escjava/test/matrix/}
+@file{ESCTools/Escjava/test/nijmegen/}
+@file{ESCTools/Escjava/test/reasoningbugs/}
+
+@c =============================================================================
+@node Specifications, Copying, Testing Extensions, Top
+@unnumbered List of Charts
+@listoffloats Chart
+
+@unnumbered List of Diagrams
+@listoffloats Diagram
+
+@unnumbered List of Interface Specifications
+@listoffloats Interface
+
+@c =============================================================================
+@node Copying, Index, Specifications, Top
+@appendix Copying
+
+@cindex Copying
+
+@insertcopying
+
+@c %**end of body
+@c =============================================================================
+
+@c =============================================================================
+@c %**end of document
+
+@node Index,  , Copying, Top
+@unnumbered Index
+
+@printindex cp
+
+@bye

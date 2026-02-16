@@ -1,0 +1,28 @@
+ESC/Java version VERSION
+    [TIME]
+
+RefineB ...
+  Prover started:TIME
+    [TIME]
+
+RefineB: m(int) ...
+    [TIME]  passed
+
+RefineB: n() ...
+------------------------------------------------------------------------
+RefineB.java:13: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "RefineB.java", line 11, col 5:
+        //@ ensures b;
+            ^
+Execution trace information:
+    Executed implicit return in "RefineB.java", line 13, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+RefineB: RefineB() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

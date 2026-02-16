@@ -1,0 +1,5 @@
+#!/bin/sh
+
+## Test local class declarations contained in static members        [1.1]
+
+${TOOL} LocalClassInStaticMember.java

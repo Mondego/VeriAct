@@ -1,0 +1,44 @@
+#!/bin/sh
+# usage: run FLAGS
+
+# B.java - simple test of getting info from loop context, 
+#          preconditions, loop guard, invariants, and nested loops
+# C.java - more complicated tests, including 2d arrays
+# C2.java - clearing a 2d array
+# F.java - clear an array
+# D.java - ensures escjava knows int[] and int are never aliased
+
+${ESCJ} -quiet -loopSafe preciseTargets.java
+
+g=UNSETg
+f=UNSETf
+for p in C2 B F C; do
+    for n in 1 2 3 4; do
+	if [ $n == 1 ]; then
+	    f="-predAbstractFQnew 5"
+	    g="FQnew"
+	elif [ $n == 2 ]; then
+	    f="-predAbstract"
+	    g="FQ"
+	elif [ $n == 3 ]; then
+	    f="-predAbstractDDP"
+	    g="DDP"
+	elif [ $n == 4 ]; then
+	    f="-predAbstractSS 1.2.3.4.5"
+	    g="SS"
+	fi
+
+	echo ============ Benchmark $p Alg $g $f 
+#       echo ${ESCJ} -quiet $f $* -sxLog "log/sx.$p.$g.$q" $p.java 
+#       ${ESCJ} -quiet $f $* -sxLog "log/sx.$p.$g.$q" $p.java | tee "log/allout.$p.$g.$q" | grep "Warning\|Error\|Caution\|reachable" 
+       ${ESCJ} -quiet $f $* $p.java | tee "log/allout.$p.$g" | grep "Warning\|Error\|Caution\|reachable" 
+#       echo --- Output
+#       cat "log/allout.$p.$g.$q"
+#       echo --- Diffing $p Alg $g $f $q
+#       diff "log/out.$p.$g.$q" "ans-per-run.$p"
+    done
+done
+
+
+
+

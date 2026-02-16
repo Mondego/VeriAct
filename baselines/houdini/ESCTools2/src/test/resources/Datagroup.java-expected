@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|Datagroup.java: Caution: Using given file as the .java file, even though it is not the java file for Datagroup on the classpath
+    [TIME]
+
+Datagroup ...
+src|test|resources|Datagroup.java:4: Fatal error: Can't find type named "JMLDataGroup"
+        //@ model JMLDataGroup i; 
+                  ^
+1 caution
+1 error

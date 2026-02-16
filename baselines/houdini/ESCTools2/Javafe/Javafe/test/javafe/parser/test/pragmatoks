@@ -1,0 +1,69 @@
+// No pragma here
+//@ lexical 100
+//@lexical 110
+//@ modifier Hi
+//@modifier there
+//@ lexical 100 ;
+//@lexical 110;
+//@ modifier Hi     ;
+//@modifier there;
+=
+//@ lexical 100
+//@lexical 110
+//@ statement Hi
+//@statement there
+//@ lexical 100 ;
+//@lexical 110;
+//@ statement Hi     ;
+//@statement there;
+=
+//@ lexical 100
+//@lexical 110
+//@ typedeclelem Hi
+//@typedeclelem there
+//@ lexical 100 ;
+//@lexical 110;
+//@ typedeclelem Hi     ;
+//@typedeclelem there;
+;
+/* No pragma here either. */
+/**/
+//
+/*@ lexical   200    */
+/*@lexical 210    */
+/*@ modifier AbCdEfG */
+/*@modifier blah */
+/*@ lexical   200;    */
+/*@lexical 210    ;*/
+/*@ modifier AbCdEfG;*/
+/*@modifier blah ; */
+{ /*@modifier pragma;*/ }
+( //@modifier zip;
+)
+//
+//
+/*@ lexical   200    */
+/*@lexical 210    */
+/*@ statement AbCdEfG */
+/*@statement blah */
+/*@ lexical   200;    */
+/*@lexical 210    ;*/
+/*@ statement AbCdEfG;*/
+/*@statement blah ; */
+{ /*@modifier pragma;*/ }
+( //@modifier zip;
+)
+//
+//
+/*@ lexical   200    */
+/*@lexical 210    */
+/*@ typedeclelem AbCdEfG */
+/*@typedeclelem blah */
+/*@ lexical   200;    */
+/*@lexical 210    ;*/
+/*@ typedeclelem AbCdEfG;*/
+/*@typedeclelem blah ; */
+{ /*@typedeclelem pragma;*/ }
+( //@typedeclelem zip;
+)
+//

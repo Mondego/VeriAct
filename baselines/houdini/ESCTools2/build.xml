@@ -1,0 +1,928 @@
+<?xml version="1.0"?>
+
+<!--
+ ESCTools Ant Build File
+ Copyright (c) 2002,2003 Joseph R. Kiniry and the University of Nijmegen
+ Copyright (c) 2004 Joseph R. Kiniry and University College Dublin
+ Modified 2008 Dermot Cochran and EU Mobius IST-15909 Partners
+ All Rights Reserved
+-->
+
+<!-- ======================================================================= -->
+<!-- SUMMARY:      Ant build file for ESCTools.                              -->
+
+<!-- AUTHOR:       Joseph R. Kiniry                                          -->
+<!-- ORG:          Department of Computer Science, University College Dublin -->
+<!-- E-MAIL:       Joseph R. Kiniry <kiniry@acm.org>                         -->
+
+<!-- FILE ID:      $Id$     -->
+<!-- REVISION:     $Revision$                                          -->
+<!-- DATE:         $Date$                              -->
+<!-- LAST AUTHOR:  $Author$                                         -->
+<!-- ======================================================================= -->
+
+<project name="ESCJava2" default="all">
+
+  <description>
+    This buildfile is used to build ESCTools.
+  </description>
+
+  <property name="project" value="ESCJava2"/>
+  <property name="version" value="2.0b4-January2008"/>
+
+  <property name="libs_dir" value="${basedir}/Utils"/>
+
+  <!-- <property name="clean_build_every_time" value="t"/> -->
+
+  <!-- Source code locations for various packages...I mean "envelopes". -->
+  <property name="escjava_root_dir" value="${basedir}/Escjava"/>
+  <property name="rcc_root_dir" value="${basedir}/Rcc"/>
+  <property name="houdini_root_dir" value="${basedir}/Houdini"/>
+  <property name="calvin_root_dir" value="${basedir}/Calvin"/>
+
+  <property name="escjava_source_dir" value="${escjava_root_dir}/java"/>
+  <property name="escjava_test_dir" value="${escjava_root_dir}/test"/>
+  <property name="mochalib_source_dir" value="${escjava_root_dir}/mochalib/java"/>
+  <property name="rcc_source_dir" value="${rcc_root_dir}/java"/>
+  <property name="houdini_source_dir" value="${houdini_root_dir}/java"/>
+  <property name="calvin_source_dir" value="${calvin_root_dir}/java"/>
+
+  <!-- Note that simplify is written in Modula3, so you need a good
+  install of one of the Modula3 compiler suites to build it. -->
+  <property name="simplify_source_dir" value="Simplify/"/>
+
+  <!-- Target locations for various build results. -->
+
+  <!-- Classfiles are put here in a parallel hierarchy for each envelope. -->
+  <property name="escjava_classes_dir" value="${escjava_root_dir}/classfiles"/>
+  <property name="mochalib_classes_dir" value="${escjava_root_dir}/mochalib/classfiles"/>
+  <property name="rcc_classes_dir" value="${rcc_root_dir}/classfiles"/>
+  <property name="houdini_classes_dir" value="${houdini_root_dir}/classfiles"/>
+  <property name="calvin_classes_dir" value="${calvin_root_dir}/classfiles"/>
+
+  <!-- Top-level documentation location. -->
+  <property name="docs_dir" value="docs"/>  
+
+  <!-- In particular, full Javadoc documentation for all envelopes is
+       generated here. -->
+  <property name="javadoc_dir" value="${docs_dir}/api"/>
+
+  <!-- Locations for per-envelope documentation generation. -->
+  <property name="escjava_docs_dir" value="${escjava_root_dir}/doc/api"/>
+  <property name="rcc_docs_dir" value="${rcc_root_dir}/doc/api"/>
+  <property name="houdini_docs_dir" value="${houdini_root_dir}/doc/api"/>
+  <property name="calvin_docs_dir" value="${calvin_root_dir}/doc/api"/>
+
+  <!-- And Xrefactory docs are generated here. -->
+  <property name="xref_doc_dir" value="${docs_dir}/Xref"/>
+
+  <!-- Classfiles generated via jmlc (the JML compiler) are put here. -->
+  <property name="jmlc_dir" value="jmlc"/>
+
+  <!-- Optimized classfiles are generated here. -->
+  <property name="opt_dir" value="optimized"/>
+
+  <!-- Where to put jars of the resulting unoptimized, optimized, and annotated
+      (jmlc) classes for binary delivery. -->
+  <property name="final_jars_dir" value="jars"/>
+
+  <property name="build.compiler" value="javac1.1"/>
+  <property name="build.compiler.emacs" value="true"/>
+  <property name="build.compiler.fulldepend" value="true"/>
+  <property name="build.compiler.pedantic" value="true"/>
+  
+  <!-- The root of the JML install that you plan to use. -->
+  <property name="jml_dir" value="/usr/local/Java/JML"/>
+
+  <!-- General useful pattern sets. -->
+
+  <patternset id="classfiles" >
+    <include name="**/*.class"/>
+    <exclude name="**/decsrc/util/*.class"/>
+    <exclude name="Escjava/mochalib/classes/mocha/wrappers/jbdd/*.class"/>
+  </patternset>
+
+  <!-- General useful file sets. -->
+
+  <!-- Pre-built jars necessary for compiling, testing, etc. -->
+  <path id="libraries">
+    <fileset dir="${libs_dir}">
+      <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${libs_dir}/Javafe">
+          <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${libs_dir}/BCEL/bcel-5.2">
+         <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- All Java files in the entire source hierarchy. -->
+  <path id="java_files">
+    <fileset dir=".">
+      <include name="**/*.java"/>
+    </fileset>
+  </path>
+
+  <!-- All classfiles in the compile target directory. -->
+  <path id="class_files">
+    <fileset dir="escjava_classes_dir">
+      <include name="**/*.class"/>
+    </fileset>
+    <fileset dir="mochalib_classes_dir">
+      <include name="**/*.class"/>
+    </fileset>
+    <fileset dir="rcc_classes_dir">
+      <include name="**/*.class"/>
+    </fileset>
+    <fileset dir="houdini_classes_dir">
+      <include name="**/*.class"/>
+    </fileset>
+    <fileset dir="calvin_classes_dir">
+      <include name="**/*.class"/>
+    </fileset>
+  </path>
+
+  <!-- All residual junk files that can be cleaned up on occasion. -->
+  <path id="junk_files">
+    <fileset dir=".">
+      <include name="**/*~"/>
+      <include name="**/*.bak"/>
+      <include name="**/#*#"/>
+    </fileset>
+  </path>
+
+  <!-- The jar files on which JML depends (e.g., for run-time checking). -->
+  <path id="jml_jars">
+    <fileset dir="${jml_dir}">
+      <include name="bin/*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- General useful classpaths. -->
+
+  <path id="base_classpath">
+    <pathelement path="${java.class.path}"/>
+    <path refid="libraries"/>
+  </path>
+
+  <path id="default_classpath">
+    <path refid="base_classpath"/>
+  </path>
+
+  <path id="rcc_classpath">
+    <path refid="base_classpath"/>
+    <pathelement path="${rcc_classes_dir}"/>
+  </path>
+
+  <path id="escjava_classpath">
+    <path refid="base_classpath"/>
+    <pathelement path="${escjava_classes_dir}"/>
+    <pathelement path="${mochalib_classes_dir}"/>
+  </path>
+
+  <path id="calvin_classpath">
+    <path refid="base_classpath"/>
+    <pathelement path="${calvin_classes_dir}"/>
+  </path>
+
+  <path id="houdini_classpath">
+    <path refid="base_classpath"/>
+    <pathelement path="${houdini_classes_dir}"/>
+  </path>
+
+<!--
+  <property name="escjava_classes_dir" value="${escjava_root_dir}/classes"/>
+  <property name="rcc_classes_dir" value="${rcc_root_dir}/classes"/>
+  <property name="houdini_classes_dir" value="${houdini_root_dir}/classes"/>
+  <property name="calvin_classes_dir" value="${calvin_root_dir}/classes"/>
+-->
+
+  <path id="test_classpath">
+    <path refid="base_classpath"/>
+    <pathelement path="${jmlc_dir}"/>
+  </path>
+
+  <path id="optimized_classpath">
+    <pathelement path="${opt_dir}"/>
+  </path>
+
+  <path id="jml_classpath">
+    <path refid="base_classpath"/>
+    <path refid="jml_jars"/>
+    <pathelement path="${jmlc_dir}"/>
+  </path>
+
+  <!-- Define the JML tasks. -->
+
+<!--   <taskdef name="jml-check"  -->
+<!--            classname="org.jmlspecs.ant.tasks.CheckTask"/> -->
+
+<!--   <taskdef name="jml-compile"  -->
+<!--            classname="org.jmlspecs.ant.tasks.CompileTask"/> -->
+
+<!--   <taskdef name="jml-doc"  -->
+<!--            classname="org.jmlspecs.ant.tasks.DocTask"/> -->
+
+  <!-- Targets start here. -->
+
+  <!-- Add "docs" dependency when appropriate. -->
+  <target name="all" depends="compile,
+                              binaries,
+                              unit_test,
+                              cleanup">
+    <description>
+      Convert all XHTML documentation to textfiles, process and compile all
+      source code, build all Javadocs and libraries, unit test system, and
+      clean up temporary files.
+    </description>
+  </target>
+
+  <!-- Preparation for building. -->
+
+  <target name="initialize">
+    <description>
+      Prepare directory tree for build.
+    </description>
+    <tstamp/>
+    <mkdir dir="${escjava_classes_dir}"/>
+    <mkdir dir="${mochalib_classes_dir}"/>
+    <mkdir dir="${rcc_classes_dir}"/>
+    <mkdir dir="${houdini_classes_dir}"/>
+    <mkdir dir="${calvin_classes_dir}"/>
+    <mkdir dir="${opt_dir}"/>
+    <mkdir dir="${jmlc_dir}"/>
+    <mkdir dir="${javadoc_dir}"/>
+    <mkdir dir="${escjava_docs_dir}"/>
+    <mkdir dir="${rcc_docs_dir}"/>
+    <mkdir dir="${houdini_docs_dir}"/>
+    <mkdir dir="${calvin_docs_dir}"/>
+    <mkdir dir="${xref_doc_dir}"/>
+  </target>
+
+  <!-- Compile all source to binaries. -->
+
+  <!-- jmlc -->
+
+  <target name="binaries" depends="initialize,
+                                   compile,
+                                   tags,
+                                   create_jars">
+    <description>
+      Compile all source code and build jars.
+    </description>
+  </target>
+
+  <!-- Create all documentation from source and from other formats. -->
+
+  <target name="docs" depends="initialize,
+                               javadoc">
+    <description>
+      Build all documentation.
+    </description>
+  </target>
+
+  <!-- This task is not correct; I don't know how to redirect output in a
+  apply command. -->
+
+  <target name="html2txt">
+    <description>
+      Convert top-level XHTML files into text files for readability without
+      a browser.
+    </description>
+    <exec dir="." executable="lynx" output="FAQ.txt">
+      <arg line="-dump FAQ.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="index.txt">
+      <arg line="-dump index.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="LICENSE.txt">
+      <arg line="-dump LICENSE.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="README.txt">
+      <arg line="-dump README.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="RELEASE_NOTES.txt">
+      <arg line="-dump RELEASE_NOTES.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="TODO.txt">
+      <arg line="-dump TODO.html"/>
+    </exec>
+  </target>
+
+  <target name="html2txt-notworking">
+    <description>
+      Convert top-level XHTML files into text files for readability without
+      a browser.
+    </description>
+    <apply dir="." executable="lynx">
+      <arg value="-dump"/>
+      <srcfile/>
+      <arg value=">"/>
+      <targetfile/>
+      <fileset dir="." includes="*.html"/>
+      <mapper type="glob" from="*.html" to="*.txt"/>
+    </apply>
+  </target>
+
+  <!-- Tags files for various IDEs. -->
+  <!-- We use Exuberant Ctags 5.5 -->
+  <!-- See http://ctags.sourceforge.net for more information. -->
+
+  <target name="tags">
+    <description>
+      Build vi and Emacs tags tables for code base.
+    </description>
+    <exec dir="." 
+          executable="/usr/local/bin/ctags">
+      <arg line="-e -R"/>
+    </exec>
+    <exec dir="." 
+          executable="/usr/local/bin/ctags">
+      <arg line="-R"/>
+    </exec>
+  </target>
+
+  <target name="version">
+    <exec dir="."
+          executable="version.sh"/>
+  </target>
+
+  <!-- JML targets. -->
+
+  <!-- JML typechecking -->
+  <target name="jml" depends="jml_smartcards">
+    <description>
+      Typecheck all Java code.
+    </description>
+  </target>
+
+  <target name="jml_smartcards">
+    <description>
+      Runs the JML specification checker on the SmartCard codebase.
+    </description>
+    <java classname="org.jmlspecs.checker.Main"
+          fork="true"
+          classpathref="jml_classpath">
+      <jvmarg value="-Xmx128m,ms64m"/>
+      <arg value="--recursive"/>
+      <arg value="--keepGoing"/>
+      <arg value="--purity"/>
+      <arg value="--multijava"/>
+      <arg line="--source '1.3'"/>
+      <arg line="--sourcepath '${javafe_source_dir}'"/>
+      <arg line="javafe"/>
+    </java>
+  </target>
+
+  <!-- JML specification compilation. -->
+  <target name="jmlc" depends="jmlc_escjava">
+    <description>
+      Compile all JML specifications to test code.
+    </description>
+  </target>
+
+  <target name="jmlc_escjava" depends="compile_escjava">
+    <description>
+      Compiles JML annotated Escjava files with runtime assertion checks.
+    </description>
+    <java classname="org.jmlspecs.jmlrac.Main"
+          fork="true"
+          classpathref="jml_classpath">
+      <jvmarg value="-Xmx128m"/>
+      <arg line="--destination ${jmlc_dir}"/>
+      <arg value="--recursive"/>
+      <arg value="--quiet"/>
+      <arg value="--purity"/>
+      <arg value="--multijava"/>
+      <arg line="--sourcepath '${escjava_source_dir}'"/>
+      <arg line="escjava.ast escjava.backpred escjava.parser escjava.prover 
+                 escjava.tc escjava.translate"/>
+      <classpath refid="escjava_classpath"/>
+    </java>
+  </target>
+
+  <!-- Unit testing. -->
+
+  <target name="unit_test" depends="compile">
+    <description>
+      @todo Run unit tests on entire package.
+    </description>
+    <!--
+    <junit printsummary="yes">
+      <formatter type="plain"/>
+      <test name="sos.test.AllTests"/>
+      <classpath refid="test_classpath"/>
+    </junit>
+    -->
+  </target>
+
+  <target name="compile" depends="compile_escjava">
+    <description>
+      Compile all source code.
+    </description>
+  </target>
+
+  <!-- Compile targets. -->
+  <target name="compile_rcc" depends="clean_rcc,
+                                      initialize">
+    <description>
+      @todo Compile all Rcc source code.
+      @todo kiniry 2 Jan 2002 - Rcc does not yet build---there are several missing 
+            classes (e.g. javafe.ast.CloneVisitor) that I have written HP about.
+      @review kiniry 2 Jan 2002 - Should rccwizard be built or not?
+    </description>
+    <javac srcdir="${rcc_source_dir}"
+           destdir="${rcc_classes_dir}"
+           excludes="rcc/test/**,rcc/parser/test/**,rccwizard/test/**"
+           debug="on"
+           deprecation="off"
+           optimize="off"
+           failonerror="false"
+           source="1.3"
+           target="1.1"
+           classpathref="rcc_classpath">
+      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
+                   compiler="jikes"/>
+    </javac>
+  </target>
+
+  <target name="compile_escjava" depends="compile_mochalib,
+                                          clean_escjava,
+                                          initialize">
+    <description>
+      Compile all ESC/Java source code.
+    </description>
+    <javac srcdir="${escjava_source_dir}:${escjava_test_dir}"
+           destdir="${escjava_classes_dir}"
+           excludes="instrumenter/**,escwizard/**,houdini/**,
+                     escjava/reader/**,escjava/pa/**,
+                     escjava/test/**,CausedAnError**,junittests/**,
+                     jdktests/**,tohtml/**,nijmegen/**"
+           debug="on"
+           deprecation="off"
+           optimize="off"
+           source="1.4"
+           target="1.1"
+           failonerror="false"
+           classpathref="escjava_classpath">
+      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
+                   compiler="jikes"/>
+    </javac>
+  </target>
+
+  <target name="compile_mochalib" depends="clean_mochalib,
+                                           initialize">
+    <description>
+      Compile all Mocha source code.
+    </description>
+    <javac srcdir="${mochalib_source_dir}"
+           destdir="${mochalib_classes_dir}"
+           excludes=""
+           debug="on"
+           deprecation="off"
+           optimize="off"
+           failonerror="false">
+      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
+                   compiler="jikes"/>
+    </javac>
+  </target>
+
+  <target name="compile_calvin" depends="compile_escjava,
+                                         clean_calvin,
+                                         initialize">
+    <description>
+      @todo Compile all Calvin source code.
+      @todo kiniry 2 Jan 2002 - Calvin does not yet build correct on every
+            compilation attempt.
+    </description>
+    <javac srcdir="${calvin_source_dir}"
+           destdir="${calvin_classes_dir}"
+           excludes="escjava/pa/**,escjava/reader/**,escjava/sp/**,escjava/test/**"
+           debug="on"
+           deprecation="off"
+           optimize="off"
+           failonerror="false"
+           source="1.3"
+           target="1.1"
+           classpathref="calvin_classpath">
+      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
+                   compiler="jikes"/>
+    </javac>
+  </target>
+
+  <target name="compile_houdini" depends="compile_escjava,
+                                          clean_houdini,
+                                          initialize">
+    <description>
+      Compile all Houdini source code.
+    </description>
+    <javac srcdir="${houdini_source_dir}"
+           destdir="${houdini_classes_dir}"
+           excludes=""
+           debug="on"
+           deprecation="off"
+           optimize="off"
+           failonerror="false"
+           source="1.3"
+           target="1.1"
+           classpathref="houdini_classpath">
+      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
+                   compiler="jikes"/>
+    </javac>
+  </target>
+
+  <target name="compile_simplify" depends="clean_simplify,
+                                           initialize">
+    <description>
+      Compile all Simplify source code which is written in Modula-3.
+    </description>
+    <exec dir="${simplify_source_dir}/cgi-utils"
+          executable="m3build"/>
+    <exec dir="${simplify_source_dir}/cgi-utils"
+          executable="m3ship"/>
+    <exec dir="${simplify_source_dir}/digraph"
+          executable="m3build"/>
+    <exec dir="${simplify_source_dir}/digraph"
+          executable="m3ship"/>
+    <exec dir="${simplify_source_dir}/prover"
+          executable="m3build"/>
+    <exec dir="${simplify_source_dir}/prover"
+          executable="m3ship"/>
+    <exec dir="${simplify_source_dir}/simplify"
+          executable="m3build"/>
+    <exec dir="${simplify_source_dir}/simplify"
+          executable="m3ship"/>
+  </target>
+
+  <target name="compile_optimize" depends="clean_opt,
+                                           initialize">
+    <description>
+      @todo Compile _all_ source code with full optimization.
+    </description>
+    <javac srcdir="${source_dir}"
+           destdir="${opt_dir}"
+           debug="on"
+           nowarn="true"
+           deprecation="off"
+           optimize="on"
+           depend="true"
+           failonerror="false"
+           source="1.3"
+           target="1.1"
+           classpathref="default_classpath">
+      <compilerarg line="+P"
+                   compiler="jikes"/>
+    </javac>
+  </target>
+
+  <!-- Xrefactory-generated source documentation. -->
+
+  <target name="xref" depends="initialize">
+    <description>
+      @todo Generate an HTML cross-referenced view of the code base.
+    </description>
+    <exec dir="." 
+          executable="xref">
+      <arg line="-java2html -html -nostdop -nocxfile -javafilesonly -mf20 -htmlgxlist -htmldirectx -refalphahash -htmllinenums -htmlcutsuffix -htmlcutpath=${basedir}/${source_dir} -htmlgenjavadoclinks -javadocpath=file:/usr/java/jdk2/docs/api -htmltab=4 -htmllinenumlabel=line. -htmlnounderline -sourcepath /usr/java/jdk2/src:${source_dir} -htmlroot=${xref_doc_dir} ${source_dir}"/>
+    </exec>
+  </target>
+
+  <!-- Jarfile generation. -->
+
+  <!-- create_rcc_jar create_calvin_jar -->
+
+  <target name="create_jars" depends="create_escjava_jar,
+                                      create_mochalib_jar">
+    <description>
+      Generate jar files of various builds.
+    </description>
+  </target>
+
+   
+
+  <target name="create_decsrc_jar">
+    <description>
+      Generate jar file of the decsrc library.
+    </description>
+    <jar destfile="${final_jars_dir}/decsrc.jar"
+         basedir="${javafe_root_dir}/decsrclib"
+         includes="decsrc/util/*.class,decsrc/util/*.spec"/>
+  </target>
+
+  <target name="create_rcc_jar" depends="compile_rcc">
+    <description>
+      Generate jar file of Rcc build results.
+    </description>
+    <jar destfile="${final_jars_dir}/rcc.jar"
+         basedir="${rcc_classes_dir}"
+         includes="rcc/**"/>
+  </target>
+
+  <target name="create_escjava_jar" depends="compile_escjava">
+    <description>
+      Generate jar file of Escjava build results.
+    </description>
+    <jar destfile="${final_jars_dir}/escjava.jar"
+         basedir="${escjava_classes_dir}"
+         includes="escjava/**"/>
+  </target>
+
+  <target name="create_mochalib_jar" depends="compile_mochalib">
+    <description>
+      Generate jar file of Mocha library interface.
+    </description>
+    <jar destfile="${final_jars_dir}/mochalib.jar"
+         basedir="${mochalib_classes_dir}"
+         includes="mocha/**/*.class"/>
+  </target>
+
+  <target name="create_calvin_jar" depends="compile_calvin">
+    <description>
+      Generate jar file of Calvin build results.
+    </description>
+    <jar destfile="${final_jars_dir}/calvin.jar"
+         update="yes"
+         basedir="${calvin_classes_dir}"
+         includes="escjava/**"/>
+  </target>
+
+  <target name="create_houdini_jar" depends="compile_houdini">
+    <description>
+      Generate jar file of Houdini build results.
+    </description>
+    <jar destfile="${final_jars_dir}/houdini.jar"
+         update="yes"
+         basedir="${houdini_classes_dir}"
+         includes="houdini/**"/>
+  </target>
+
+  <target name="create_annotated_jar" depends="jmlc">
+    <description>
+      Generate jar files of annotated (jmlc) build results.
+    </description>
+    <jar destfile="${final_jars_dir}/Escjava-annotated.jar"
+         update="yes"
+         basedir="${jmlc_dir}"/>
+  </target>
+
+  <!-- Documentation generation. -->
+
+  <target name="javadoc" depends="javadoc_escjava">
+    <description>
+      Create Javadoc documentation.
+    </description>
+  </target>
+
+  <target name="javadoc_rcc" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Rcc envelope.
+    </description>
+    <javadoc packagenames="rcc.*"
+             excludepackagenames="rcc.test.*,rcc.parser.test.*"
+             sourcepath="${rcc_source_dir}"
+             destdir="${rcc_docs_dir}"
+             maxmemory="256m"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Rcc Envelope">
+      <classpath refid="rcc_classpath"/>
+    </javadoc>
+  </target>
+
+  <target name="javadoc_escjava" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Escjava envelope.
+    </description>
+    <javadoc packagenames="escjava.*,mocha.*"
+             excludepackagenames="instrumenter.*,escwizard.*,houdini.*,
+                                  escjava.reader.*,escjava.pa.*,escjava.test.*,
+                                  escjava.parser.test.*"
+             destdir="${escjava_docs_dir}"
+             maxmemory="256m"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Escjava Envelope">
+       <sourcepath>
+         <pathelement path="${escjava_source_dir}"/>
+         <pathelement path="${mochalib_source_dir}"/>
+       </sourcepath>
+      <classpath refid="escjava_classpath"/>
+    </javadoc>
+  </target>
+
+  <target name="javadoc_calvin" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Calvin envelope.
+    </description>
+    <javadoc packagenames="escjava.*"
+             excludepackagenames="instrumenter.*,escwizard.*,houdini.*,
+                                  escjava.reader.*,escjava.pa.*,escjava.test.*"
+             sourcepath="${calvin_source_dir}"
+             destdir="${calvin_docs_dir}"
+             maxmemory="256m"
+             source="1.3"
+             target="1.1"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Calvin Envelope">
+      <classpath refid="calvin_classpath"/>
+    </javadoc>
+  </target>
+
+  <target name="javadoc_houdini" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Houdini envelope.
+    </description>
+    <javadoc packagenames="houdini.*"
+             excludepackagenames=""
+             sourcepath="${houdini_source_dir}"
+             destdir="${houdini_docs_dir}"
+             maxmemory="256m"
+             source="1.3"
+             target="1.1"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Houdini Envelope">
+      <classpath refid="houdini_classpath"/>
+    </javadoc>
+  </target>
+
+  <!-- Library generation. -->
+
+  <target name="buildlibs" depends="initialize,
+                                    compile">
+    <description>
+      Create library (jar) files for all ESCTools.  Note that this does not include
+      the Calvin envelope since its package names clash with that of Escjava.
+    </description>
+    <jar jarfile="${libs_dir}/${project}.jar"
+         update="yes"
+         basedir="${rcc_classes_dir}"
+         includes="rcc/**"/>
+    <jar jarfile="${libs_dir}/${project}.jar" 
+         update="yes"
+         basedir="${escjava_classes_dir}"
+         includes="escjava/**"/>
+    <jar jarfile="${libs_dir}/${project}.jar" 
+         update="yes"
+         basedir="${mochalib_classes_dir}"
+         includes="mocha/**"/>
+    <jar jarfile="${libs_dir}/${project}.jar" 
+         update="yes"
+         basedir="${houdini_classes_dir}"
+         includes="houdini/**"/>
+  </target>
+
+  <!-- Build distribution for publication. -->
+
+  <target name="distribution" depends="initialize,
+                                       compile,
+                                       html2txt,
+                                       javadoc,
+                                       buildlibs">
+    <description>
+      Create distribution files.
+    </description>
+    <tar tarfile="../${project}-${version}.tar"
+         basedir=".."
+         excludes="OOBR,TAGS,source/esctools.proj"
+         includes="Java/**"/>
+    <gzip zipfile="../${project}-${version}.tgz"
+          src="../${project}-${version}.tar"/>
+    <delete file="../${project}-${version}.tar"/>
+    <zip zipfile="../${project}-${version}.zip"
+         basedir=".."
+         includes="Java/**"/>
+  </target>
+
+  <!-- Various cleanup targets. -->
+
+  <target name="clean" depends="cleanup">
+    <delete dir="${classes_dir}"/>
+    <delete dir="${javadoc_dir}"/>
+    <delete dir="${xref_doc_dir}"/>
+    <delete dir="${jmlc_dir}"/>
+    <delete dir="${opt_dir}"/>
+    <delete>
+      <fileset dir="."
+               includes="TEST-*.txt"/>
+    </delete>            
+    <delete>
+      <fileset dir="${libs_dir}"
+               includes="${project}*.jar"/>
+    </delete>            
+    <delete>
+      <fileset dir="${libs_dir}"
+               includes="escjava.jar,houdini.jar,javafe.jar"/>
+    </delete>            
+    <delete>
+      <fileset dir="." includes="*.txt" excludes="README.txt"/>
+    </delete>
+    <delete>
+      <fileset dir=".">
+        <patternset refid="classfiles"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="clean_rcc" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Rcc envelope.
+    </description>
+    <delete dir="${rcc_classes_dir}"/>
+  </target>
+
+  <target name="clean_escjava" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Escjava envelope.
+    </description>
+    <delete dir="${escjava_classes_dir}"/>
+    <exec dir="${escjava_source_dir}/escjava/ast" 
+          executable="make">
+      <arg value="clean"/>
+    </exec>
+    <exec dir="${escjava_source_dir}/escjava/ast" 
+          executable="make">
+      <arg value="clean"/>
+    </exec>
+  </target>
+
+  <target name="clean_mochalib" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Mocha library (a part of the Escjava envelope).
+    </description>
+    <delete dir="${mochalib_classes_dir}"/>
+  </target>
+
+  <target name="clean_calvin" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Calvin envelope.
+    </description>
+    <delete dir="${calvin_classes_dir}"/>
+  </target>
+
+  <target name="clean_houdini" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Houdini envelope.
+    </description>
+    <delete dir="${houdini_classes_dir}"/>
+  </target>
+
+  <target name="clean_simplify" if="clean_build_every_time">
+    <description>
+      Deletes all build results from the Simplify envelope.
+    </description>
+    <delete dir="${simplify_source_dir}/cgi-utils/LINUXLIBC6"/>
+    <delete dir="${simplify_source_dir}/digraph/LINUXLIBC6"/>
+    <delete dir="${simplify_source_dir}/prover/LINUXLIBC6"/>
+    <delete dir="${simplify_source_dir}/simplify/LINUXLIBC6"/>
+  </target>
+
+  <target name="clean_opt" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the optimized build target tree.
+    </description>
+    <delete dir="${opt_dir}"/>
+  </target>
+
+  <target name="clean_jmlc" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the jmlc build target tree.
+    </description>
+    <delete dir="${jmlc_dir}"/>
+  </target>
+
+  <target name="distclean" depends="clean">
+    <delete file="files"/>
+    <delete file="OOBR"/>
+    <delete file="TAGS"/>
+    <delete file="tags"/>
+  </target>
+
+  <target name="cleanup">
+    <delete>
+      <fileset defaultexcludes="false" dir="." includes="**/tmp.*"/>
+      <fileset defaultexcludes="false" dir="." includes="**/*.bak"/>
+      <fileset defaultexcludes="false" dir="." includes="**/#*#"/>
+      <fileset defaultexcludes="false" dir="." includes="**/files-*"/>
+    </delete>
+  </target>
+
+</project>

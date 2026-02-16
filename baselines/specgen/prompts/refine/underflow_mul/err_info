@@ -1,0 +1,4 @@
+Mul.java:5: verify: The prover cannot establish an assertion (ArithmeticOperationRange) in method Mul: int multiply underflow
+		return x * y;
+		         ^
+1 verification failure

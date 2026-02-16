@@ -1,0 +1,8 @@
+#!/bin/sh
+
+## Check that loading the same source file twice does not cause an
+## error
+
+${TOOL} p/TheFile.java p/TheFile.java p/../p/TheFile.java
+${TOOL} p/TheFile.java p/Master.java
+

@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParseRange ...
+  Prover started:TIME
+    [TIME]
+
+ParseRange: m() ...
+    [TIME]  passed immediately
+
+ParseRange: ParseRange() ...
+    [TIME]  passed
+  [TIME total]

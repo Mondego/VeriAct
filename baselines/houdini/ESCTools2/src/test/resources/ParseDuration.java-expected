@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|ParseDuration.java: Caution: Using given file as the .java file, even though it is not the java file for ParseDuration on the classpath
+    [TIME]
+
+ParseDuration ...
+src|test|resources|ParseDuration.java:18: Error: The function \duration takes one argument
+        //@ invariant \duration() < 10;
+                      ^
+src|test|resources|ParseDuration.java:19: Error: The function \duration takes one argument
+        //@ invariant \duration(m,n) < 10;
+                      ^
+src|test|resources|ParseDuration.java:20: Error: The function \working_space takes one argument
+        //@ invariant \working_space() < 10;
+                      ^
+src|test|resources|ParseDuration.java:21: Error: The function \working_space takes one argument
+        //@ invariant \working_space(m,n) < 10;
+                      ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+4 errors

@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+src|test|resources|AAA.java: Caution: Using given file as the .java file, even though it is not the java file for AAA on the classpath
+    [TIME]
+
+AAA ...
+  Prover started:TIME
+    [TIME]
+
+AAA: AAA() ...
+    [TIME]  passed
+  [TIME total]
+
+AA ...
+    [TIME]
+
+AA: AA() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

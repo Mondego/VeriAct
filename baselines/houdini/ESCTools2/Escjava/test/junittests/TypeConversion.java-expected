@@ -1,0 +1,37 @@
+ESC/Java version VERSION
+    [TIME]
+
+TypeConversion ...
+  Prover started:TIME
+    [TIME]
+
+TypeConversion: m() ...
+    [TIME]  passed
+
+TypeConversion: n() ...
+    [TIME]  passed
+
+TypeConversion: p() ...
+    [TIME]  passed
+
+TypeConversion: getC() ...
+    [TIME]  passed
+
+TypeConversion: tt(TYPE) ...
+    [TIME]  passed
+
+TypeConversion: ccc(java.lang.Class) ...
+    [TIME]  passed
+
+TypeConversion: ccc(java.lang.String) ...
+    [TIME]  passed
+
+TypeConversion: s() ...
+    [TIME]  passed
+
+TypeConversion: t() ...
+    [TIME]  passed
+
+TypeConversion: TypeConversion() ...
+    [TIME]  passed
+  [TIME total]

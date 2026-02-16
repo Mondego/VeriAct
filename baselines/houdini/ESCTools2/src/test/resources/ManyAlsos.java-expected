@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|ManyAlsos.java: Caution: Using given file as the .java file, even though it is not the java file for ManyAlsos on the classpath
+    [TIME]
+
+ManyAlsos ...
+src|test|resources|ManyAlsos.java:4: Error: Undefined variable 'objectState'
+  boolean _b; //@ in objectState;
+                     ^
+src|test|resources|ManyAlsos.java:5: Error: Undefined variable 'objectState'
+  int _i; //@ in objectState;
+                 ^
+src|test|resources|ManyAlsos.java:6: Error: Undefined variable 'objectState'
+  Object _o; //@ in objectState;
+                    ^
+src|test|resources|ManyAlsos.java:20: Error: Undefined variable 'objectState'
+    @   modifies objectState;
+                 ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+4 errors

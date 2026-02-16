@@ -1,0 +1,119 @@
+     This document describes my intuitive model of how javac (in JDK
+1.1.3) computes the type information for a reference type.  I have not
+verified that javac actually uses this model, but the model is
+consistent with all my experience with javac to date.  I discuss how
+ESCJava might compute this information at the end.
+
+
+
+Let the current Java classpath be R1:R2:...:Rn.  For simplicity,
+assume that any .jar or .zip files in the classpath have been replaced
+by the filesystem they denote.  Thus, if R2 was ~mdl/classes.zip then
+R2/A/B.java would be considered for the purposes of this discussion to
+denote the A/B.java entry in ~mdl/classes.zip.
+
+Define the first file in the list R1/P/A, R2/P/A, ..., Rn/P/A, where in
+P, '.'s have been changed to '/'s, that exists to be the canonical file
+for A in P.  If no such file exists, then there is said to be no
+canonical file for A in P.  Unless otherwise noted, all canonical files
+are relative to the package P.
+
+
+
+Algorithm to lookup the type information for the reference type
+P.T$A..$K where P is a fully qualified package name, T is an outer
+reference type name, and T$A..$K constitutes an inner type name:
+
+Preconditions: This algorithm is only called after javac has verified
+via package/type queries that this reference type exists.  T.A...K
+must be a legal Java identifier.  (In particular, A through K cannot be
+integers so T$A$...$K cannot be an anonymous class name.)
+
+
+    (1) The results of this algorithm are memorized.  If we have
+	previously looked up the type P.T$A..$K, then return the same
+	answer.
+
+    (2) If we have (partially) scanned the source code for P.T$A$..$K,
+	producing its type information, then return that information.
+
+	[Because of the need to support recursion between reference
+	 types, checking source code must precede in passes.  First, we
+	 must scan the source code to build up the backbone (method and
+	 field names and signatures) type information, which this
+	 algorithm deals in.  This information may contain unresolved
+	 type identifiers.  This pass cannot do any reference-type
+	 lookups.  Next, we type check the code using reference-type
+	 lookups as needed.  In the process, we resolve all type
+	 identifiers.]
+
+    (3) If there is no canonical file T.java and no canonical file
+	T$A$..$K.class then complain (fatal error).
+
+    (4) If there is a canonical file T$A$..$K  and either
+	  (i)  no canonical file T.java exists, or
+	  (ii) the canonical file T.java exists, but has an earlier
+		last-modified time than the canonical file T$A$..$K, and
+		the -depend option has not been given
+	then read in then return the type information from the canonical
+	file T$A$..$K.class.
+
+     (5) Recursively compile the canonical file T.java; if this does not
+	 result in scanning the source code for T$A$..$K, complain
+	 (fatal error).  Otherwise, return the type information that
+	 results from the scanning of T$A$..$K.
+
+	[Note: There is no guarantee a priori that the T$A$..$K.class
+	 file the compiler writes out will be the (new) canonical
+	 T$A$..$K.class file.  (The canonical source file may be in a
+	 later directory than the canonical binary file or a -d option
+	 may result in the binary being put later in the class path than
+	 the current canonical binary.)  This means that if the compiler
+	 is run again, it may well give a *different* answer in these
+	 case.]
+
+
+
+What should ESCJava do?
+
+     One question that needs to be answered is whether or not ESCJava
+needs more information about a class than is present in its .class file
+(e.g., method specifications).  If so, we might want to introduce .spec
+files, which are "binaries" produced by escjava from .java files
+analogously to javac's .class files.  The lookup process then becomes
+more complicated because we have 3 kinds of files to deal with.
+
+     Because we want escjava to be handle to handle code available only
+in (non-escjava checked) binary form, .spec files must be optional.
+The simplest thing to do seems to be to use the above rules modified as
+follows:
+
+     - type information can include optional .spec file information
+
+     - Step 4 also reads in and returns the information from
+	the canonical T$A$..$K.spec file if it exists along with the
+	information from T$A$..$K.class.
+
+     - In order for case (ii) of step 4 to hold, the timestamp of the
+	canonical T$A$..$K.spec file, if any, must also be later than
+	that of the canonical T.java file.
+
+     - Step 5 does not do recursive compilation (e.g., no object code is
+	produced) but does invoke escjava recursively, generating .spec
+	files and placing them using the same rules as javac (i.e., same
+	directory as the .java file unless -dR directs it to be put in
+	R/P/T$A$..$K.spec.).
+
+
+If we do not need .spec files, we can simplify things as follows:
+
+     - Make step (6) instead abort with an error message that
+	"T$A$..$K's .class file is not up to date; please compile it
+	then run escjava again".  This avoids the need for
+	recursive checking.
+
+     - Omit step (2).  This results in our using javac's type
+	information for the current file's classes instead of computing
+	it ourselves.  Hopefully, that should mean that we no longer
+	have to worry as much about handling recursive class
+	declarations.

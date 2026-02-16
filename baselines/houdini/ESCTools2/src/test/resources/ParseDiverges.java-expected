@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|ParseDiverges.java: Caution: Using given file as the .java file, even though it is not the java file for ParseDiverges on the classpath
+    [TIME]
+
+ParseDiverges ...
+  Prover started:TIME
+    [TIME]
+
+ParseDiverges: m() ...
+    [TIME]  passed
+
+ParseDiverges: ParseDiverges() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

@@ -1,0 +1,24 @@
+ESC/Java version VERSION
+EverythingParse.java:6: Caution: Conditional assignable clauses are no longer supported and are ignored
+        //@ modifies \everything if true;  // deprecated
+                                 ^
+EverythingParse.java:15: Fatal error: Unexpected token '\everything' in Primary expression
+        //@ requires \everything;
+                     ^
+EverythingParse.java:16: Fatal error: Unexpected token '\everything' in Primary expression
+        //@ ensures \everything;
+                    ^
+EverythingParse.java:17: Fatal error: Unexpected token '\everything' in Primary expression
+        //@ diverges \everything;
+                     ^
+EverythingParse.java:18: Fatal error: Unexpected token '\everything' in Primary expression
+        //@ signals (Exception e) \everything;
+                                  ^
+EverythingParse.java:19: Fatal error: Unexpected token '\everything' in Primary expression
+        //@ when \everything;
+                 ^
+EverythingParse.java:21: Fatal error: Unexpected token '\everything' in Primary expression
+        //@     measured_by \everything;
+                            ^
+1 caution
+6 errors

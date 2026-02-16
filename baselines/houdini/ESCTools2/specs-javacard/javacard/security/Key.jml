@@ -1,0 +1,57 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: Key.jml,v 1.7 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public interface Key {
+
+  /*@ public ghost instance byte _type; @*/
+  /*@ public invariant _type >= KeyBuilder.TYPE_DES_TRANSIENT_RESET &&
+                _type <= KeyBuilder.TYPE_AES; @*/
+
+  /*@ public invariant _size >= 0; @*/
+  /*@ public ghost instance short _size; @*/
+
+  //@ public ghost instance boolean _initialized;
+
+  /*@ public normal_behavior 
+        requires true;
+	ensures \result == _initialized;
+	assignable \nothing;
+  @*/
+  public /*@pure@*/ boolean isInitialized();
+
+  /*@ public normal_behavior 
+        requires true;
+	ensures !isInitialized();
+	assignable _initialized;
+  @*/
+  public void clearKey();
+
+  /*@ public normal_behavior 
+        requires isInitialized();
+	ensures \result == _type;
+	assignable \nothing;
+  @*/
+  public /*@pure@*/ byte getType();
+
+  /*@ public normal_behavior 
+        requires isInitialized();
+	ensures \result == _size ;
+	assignable \nothing;
+  @*/
+  public /*@pure@*/ short getSize();
+
+}

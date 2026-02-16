@@ -1,0 +1,3 @@
+## Makefile.local
+## echo $PWD >> Makefile.local
+export ESCTOOLS_ROOT ?= 

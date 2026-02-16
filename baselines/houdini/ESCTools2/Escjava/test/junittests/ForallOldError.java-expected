@@ -1,0 +1,23 @@
+ESC/Java version VERSION
+ForallOldError.java:6: Error: forall annotations may not have initializers
+        //@ forall Object o = null ; // ERROR
+                            ^
+ForallOldError.java:7: Error: old annotations must be initialized
+        //@ old Object x;   // ERROR
+                       ^
+ForallOldError.java:10: Error: forall annotations may not have initializers
+        //@ forall int x,y=4,z; // ERROR
+                          ^
+ForallOldError.java:11: Error: old annotations must be initialized
+        //@ old int a=1,b,c=3;  // ERROR
+                        ^
+    [TIME]
+
+ForallOldError ...
+ForallOldError.java:13: Error: Undefined variable 'b'
+        //@ requires b==y;  // ERROR
+                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+5 errors

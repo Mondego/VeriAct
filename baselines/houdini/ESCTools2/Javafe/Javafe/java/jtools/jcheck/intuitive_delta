@@ -1,0 +1,56 @@
+Algorithm to lookup the type information for the reference type
+P.T$A..$K where P is a fully qualified package name, T is an outer
+reference type name, and T$A..$K constitutes an inner type name:
+
+Preconditions: This algorithm is only called after javac has verified
+via package/type queries that this reference type exists.  T.A...K
+must be a legal Java identifier.  (In particular, A through K cannot be
+integers so T$A$...$K cannot be an anonymous class name.)
+
+
+    (1) The results of this algorithm are memorized.  If we have
+	previously looked up the type P.T$A..$K, then return the same
+	answer.
+
+    (2) If we have (partially) scanned the source code for P.T$A$..$K,
+	producing its type information, then return that information.
+
+	[Because of the need to support recursion between reference
+	 types, checking source code must precede in passes.  First, we
+	 must scan the source code to build up the backbone (method and
+	 field names and signatures) type information, which this
+	 algorithm deals in.  This information may contain unresolved
+	 type identifiers.  This pass cannot do any reference-type
+	 lookups.  Next, we type check the code using reference-type
+	 lookups as needed.  In the process, we resolve all type
+	 identifiers.]
+
+    (3) If there is no canonical file T.java and no canonical file
+	T$A$..$K.class then complain (fatal error).
+
+*   (3a) Let Q=T; if a canonical file T$A$..$K.class exists but no
+*	canonical file T.java exists, then read the canonical file
+*	T$A$..$K.class in and set Q so that Q.java is the source file
+*	pointed to by the just read in class file.
+
+    (4) If there is a canonical file T$A$..$K  and either
+*	  (i)  no canonical file Q.java exists, or
+*	  (ii) the canonical file Q.java exists, but has an earlier
+		last-modified time than the canonical file T$A$..$K, and
+		the -depend option has not been given
+	then read in then return the type information from the canonical
+	file T$A$..$K.class.
+
+*     (5) Recursively compile the canonical file Q.java; if this does not
+	 result in scanning the source code for T$A$..$K, complain
+	 (fatal error).  Otherwise, return the type information that
+	 results from the scanning of T$A$..$K.
+
+	[Note: There is no guarantee a priori that the T$A$..$K.class
+	 file the compiler writes out will be the (new) canonical
+	 T$A$..$K.class file.  (The canonical source file may be in a
+	 later directory than the canonical binary file or a -d option
+	 may result in the binary being put later in the class path than
+	 the current canonical binary.)  This means that if the compiler
+	 is run again, it may well give a *different* answer in these
+	 case.]

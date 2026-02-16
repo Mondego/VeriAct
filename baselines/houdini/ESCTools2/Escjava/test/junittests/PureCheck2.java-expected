@@ -1,0 +1,59 @@
+ESC/Java version VERSION
+    [TIME]
+
+PureCheck2 ...
+PureCheck2.java:5: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+        public int ipm() { return 0; }
+                   ^
+PureCheck2.java:17: Associated declaration: 
+        public int ipm();
+               ^
+  Prover started:TIME
+    [TIME]
+
+PureCheck2: ipm() ...
+------------------------------------------------------------------------
+PureCheck2.java:5: Warning: Postcondition possibly not established (Post)
+        public int ipm() { return 0; }
+                                     ^
+Associated declaration is "PureCheck2.java", line 16, col 5:
+        //@ ensures \result == -2;
+            ^
+Execution trace information:
+    Executed return in "PureCheck2.java", line 5, col 20.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+PureCheck2: PureCheck2() ...
+    [TIME]  passed
+  [TIME total]
+
+SuperPure ...
+    [TIME]
+
+SuperPure: spm() ...
+    [TIME]  passed
+
+SuperPure: SuperPure() ...
+    [TIME]  passed
+  [TIME total]
+
+IPure ...
+    [TIME]
+
+IPure: ipm() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+NonPure ...
+    [TIME]
+
+NonPure: npm() ...
+    [TIME]  passed
+
+NonPure: NonPure() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

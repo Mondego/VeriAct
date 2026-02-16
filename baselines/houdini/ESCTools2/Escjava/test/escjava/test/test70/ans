@@ -1,0 +1,32 @@
+C.java:5: Warning: Possible assertion failure (Assert)
+    //@ assert ! (* this should generate a warning *);
+        ^
+1 warning
+WontTypecheck.java:2: Error: Cannot convert boolean to a numeric type 
+  //@ requires x < (* this should be an integer but isn't *);
+                   ^
+WontTypecheck.java:3: Error: Incompatible arguments to the ?: operator
+  //@ requires (* this is fine *) ? (* but this is a boolean *) : x;
+                                  ^
+WontTypecheck.java:4: Error: Incompatible arguments to the ?: operator
+  //@ requires (* similarly *) ? x : (* now the boolean is here *);
+                               ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+3 errors
+WontEvenParse0.java:2: Fatal error: Unterminated informal predicate
+  //@ invariant (* this informal predicate has no end
+                ^
+1 error
+WontEvenParse1.java:2: Fatal error: Unterminated informal predicate
+  /*@ invariant (* this informal predicate has no end
+                ^
+1 error
+WontEvenParse2.java:2: Fatal error: Unterminated informal predicate
+  /** <esc> (* it is not possible to put
+            ^
+1 error
+WontEvenParse3.java:2: Fatal error: Unterminated informal predicate
+  //@ axiom (*);   // not a proper informal predicate
+            ^
+1 error

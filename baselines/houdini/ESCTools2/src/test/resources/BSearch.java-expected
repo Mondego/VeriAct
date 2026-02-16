@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|BSearch.java: Caution: Using given file as the .java file, even though it is not the java file for BSearch on the classpath
+    [TIME]
+
+BSearch ...
+  Prover started:TIME
+    [TIME]
+
+BSearch: binarySearch(int[], int) ...
+    [TIME]  passed
+
+BSearch: BSearch() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

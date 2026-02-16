@@ -1,0 +1,102 @@
+GoodJmlPragmas.j:3: /*@ pre true; */
+GoodJmlPragmas.j:4: /*@ post false; */
+GoodJmlPragmas.j:5: /*@ pre a_boolean_expression; */
+GoodJmlPragmas.j:9: /*@ modifies x; @*/
+GoodJmlPragmas.j:10: /*@ modifies y, z; @*/
+GoodJmlPragmas.j:11: /*@ modifies a, b, c; @*/
+GoodJmlPragmas.j:12: /*@ modifies x, y; @*/
+GoodJmlPragmas.j:13: /*@ modifies z; @*/
+GoodJmlPragmas.j:14: /*@ modifies x[0]; @*/
+GoodJmlPragmas.j:14: /*@ modifies z[0][y]; @*/
+GoodJmlPragmas.j:18: /*@ signals (Exception e) true == false; */
+GoodJmlPragmas.j:19: /*@ signals (Throwable t) x < y; */
+GoodJmlPragmas.j:20: /*@ signals (TYPE tt) tt == \type(SomeException); */
+GoodJmlPragmas.j:24: /*@ maintaining x; */
+GoodJmlPragmas.j:25: /*@ decreasing z - 1; */
+GoodJmlPragmas.j:29: /*@ also */
+GoodJmlPragmas.j:29: /*@ post q; */
+GoodJmlPragmas.j:30: /*@ also */
+GoodJmlPragmas.j:30: /*@ post q2; */
+GoodJmlPragmas.j:31: /*@ also */
+GoodJmlPragmas.j:31: /*@ pre x[0]; */
+GoodJmlPragmas.j:32: /*@ also */
+GoodJmlPragmas.j:32: /*@ modifies z; @*/
+GoodJmlPragmas.j:36: /*@ writable_if x; */
+GoodJmlPragmas.j:37: /*@ readable_if y > 0; */
+GoodJmlPragmas.j:41: /*@ behavior */
+GoodJmlPragmas.j:42: /*@ normal_behavior */
+GoodJmlPragmas.j:43: /*@ exceptional_behavior */
+GoodJmlPragmas.j:57: /*@ assert_redundantly predicate; */
+GoodJmlPragmas.j:60: /*@ modifies a; @*/
+GoodJmlPragmas.j:61: /*@ modifies a, b, c; @*/
+GoodJmlPragmas.j:66: /*@ assume_redundantly predicate; */
+GoodJmlPragmas.j:83: /*@ constraint_redundantly predicate; */
+GoodJmlPragmas.j:84: /*@ constraint_redundantly predicate; */
+GoodJmlPragmas.j:85: /*@ constraint_redundantly predicate; */
+GoodJmlPragmas.j:86: /*@ constraint_redundantly predicate; */
+GoodJmlPragmas.j:96: /*@ decreases_redundantly spec_expression; */
+GoodJmlPragmas.j:97: /*@ decreasing_redundantly spec_expression; */
+GoodJmlPragmas.j:101: /*@ diverges_redundantly \not_specified; */
+GoodJmlPragmas.j:102: /*@ diverges_redundantly predicate; */
+GoodJmlPragmas.j:104: /*@ duration_redundantly \not_specified; */
+GoodJmlPragmas.j:105: /*@ duration_redundantly spec_expression; */
+GoodJmlPragmas.j:106: /*@ duration_redundantly spec_expression if predicate; */
+GoodJmlPragmas.j:108: /*@ ensures_redundantly \not_specified; */
+GoodJmlPragmas.j:109: /*@ ensures_redundantly predicate; */
+GoodJmlPragmas.j:111: /*@ exsures_redundantly (Exception e) \not_specified; */
+GoodJmlPragmas.j:112: /*@ exsures_redundantly (Exception e) predicate; */
+GoodJmlPragmas.j:114: /*@ hence_by_redundantly predicate; */
+GoodJmlPragmas.j:116: /*@ invariant_redundantly predicate; */
+GoodJmlPragmas.j:118: /*@ loop_invariant_redundantly predicate; */
+GoodJmlPragmas.j:120: /*@ maintaining_redundantly predicate; */
+GoodJmlPragmas.j:122: /*@ measured_by_redundantly \not_specified; */
+GoodJmlPragmas.j:123: /*@ measured_by_redundantly spec_expression; */
+GoodJmlPragmas.j:124: /*@ measured_by_redundantly spec_expression if predicate; */
+GoodJmlPragmas.j:126: /*@ modifies \not_specified; @*/
+GoodJmlPragmas.j:127: /*@ modifies a; @*/
+GoodJmlPragmas.j:128: /*@ modifies a[*]; @*/
+GoodJmlPragmas.j:129: /*@ modifies a, b[*], c[1]; @*/
+GoodJmlPragmas.j:131: /*@ modifies a; @*/
+GoodJmlPragmas.j:132: /*@ modifies a[*]; @*/
+GoodJmlPragmas.j:133: /*@ modifies a, b[*], c[1]; @*/
+GoodJmlPragmas.j:137: /*@ post_redundantly predicate; */
+GoodJmlPragmas.j:139: /*@ pre_redundantly predicate; */
+GoodJmlPragmas.j:140: /*@ represents_redundantly store_ref_expression <- spec_expression; */
+GoodJmlPragmas.j:141: /*@ represents_redundantly store_ref_expression <- spec_expression; */
+GoodJmlPragmas.j:142: /*@ represents_redundantly predicate; */
+GoodJmlPragmas.j:144: /*@ requires_redundantly predicate; */
+GoodJmlPragmas.j:149: /*@ signals_redundantly (Exception) \not_specified; */
+GoodJmlPragmas.j:150: /*@ signals_redundantly (Exception) predicate; */
+GoodJmlPragmas.j:151: /*@ signals_redundantly (Exception e) \not_specified; */
+GoodJmlPragmas.j:152: /*@ signals_redundantly (Exception e) predicate; */
+GoodJmlPragmas.j:154: /*@ when_redundantly \not_specified; */
+GoodJmlPragmas.j:155: /*@ when_redundantly predicate; */
+GoodJmlPragmas.j:157: /*@ working_space_redundantly \not_specified; */
+GoodJmlPragmas.j:158: /*@ working_space_redundantly spec_expression_of_type_int; */
+GoodJmlPragmas.j:159: /*@ working_space_redundantly spec_expression_of_type_int if predicate; */
+GoodJmlPragmas.j:161: /*@ duration \duration(bar()); */
+GoodJmlPragmas.j:162: /*@ duration \duration(Foo.bar()); */
+GoodJmlPragmas.j:163: /*@ duration \duration(this.foo()); */
+GoodJmlPragmas.j:164: /*@ duration \duration(super.foo()); */
+GoodJmlPragmas.j:165: /*@ working_space \space(Foo.bar()); */
+GoodJmlPragmas.j:166: /*@ working_space \working_space(Foo.bar()); */
+GoodJmlPragmas.j:168: /*@ duration \not_specified; */
+GoodJmlPragmas.j:169: /*@ duration spec_expression; */
+GoodJmlPragmas.j:170: /*@ duration spec_expression if predicate; */
+GoodJmlPragmas.j:172: /*@ working_space \not_specified; */
+GoodJmlPragmas.j:173: /*@ working_space spec_expression_of_type_int; */
+GoodJmlPragmas.j:174: /*@ working_space spec_expression_of_type_int if predicate; */
+GoodJmlPragmas.j:176: /*@ \peer */
+GoodJmlPragmas.j:177: /*@ \readonly */
+GoodJmlPragmas.j:178: /*@ \rep */
+GoodJmlPragmas.j:180: /*@ immutable */
+GoodJmlPragmas.j:182: /*@ nullable_by_default */
+GoodJmlPragmas.j:183: /*@ non_null_by_default */
+GoodJmlPragmas.j:184: /*@ obs_pure */
+GoodJmlPragmas.j:185: /*@ nullable */
+GoodJmlPragmas.j:187: /*@ code_java_math */
+GoodJmlPragmas.j:188: /*@ code_safe_math */
+GoodJmlPragmas.j:189: /*@ code_bigint_math */
+GoodJmlPragmas.j:190: /*@ spec_java_math */
+GoodJmlPragmas.j:191: /*@ spec_safe_math */
+GoodJmlPragmas.j:192: /*@ spec_bigint_math */

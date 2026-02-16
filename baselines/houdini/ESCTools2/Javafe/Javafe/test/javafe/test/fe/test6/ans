@@ -1,0 +1,7 @@
+Caution: Skipping unknown (or not found) input item: NonExistantFile.java
+1 caution
+Error: I/O error: ErrorFile.java (Permission denied)
+1 error
+Error: I/O error: ./ErrorFile.java (Permission denied)
+Fatal error: unable to load type ErrorFile
+2 errors

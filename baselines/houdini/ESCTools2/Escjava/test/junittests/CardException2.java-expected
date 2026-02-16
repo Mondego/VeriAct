@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+    [TIME]
+
+CardException2 ...
+  Prover started:TIME
+    [TIME]
+
+CardException2: CardException2(short) ...
+    [TIME]  passed
+
+CardException2: getReason() ...
+    [TIME]  passed
+
+CardException2: setReason(short) ...
+    [TIME]  passed
+
+CardException2: throwIt(short) ...
+    [TIME]  passed
+  [TIME total]

@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+src|test|resources|TestAbstractList.java: Caution: Using given file as the .java file, even though it is not the java file for TestAbstractList on the classpath
+    [TIME]
+
+TestAbstractList ...
+src|test|resources|TestAbstractList.java:7: Error: No such field in type TestAbstractList$Z
+        //@ set z.elementType = \type(Object);
+                  ^
+src|test|resources|TestAbstractList.java:15: Error: No such field in type TestAbstractList$Z
+        //@ assume z.theSize == 20;
+                     ^
+src|test|resources|TestAbstractList.java:16: Error: No such field in type TestAbstractList$Z
+        //@ assume z.elementType == \type(Object);
+                     ^
+src|test|resources|TestAbstractList.java:17: Fatal error: No method named assertTrue is in scope here.
+        assertTrue (z.size() == 20);
+        ^
+1 caution
+4 errors

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+## Test duplicate definitions of a type in two different cmd-line
+## source files.
+
+${TOOL} First.java Second.java

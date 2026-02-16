@@ -1,0 +1,20 @@
+Single.java:3: Error: No such type: p.NoSuchClass
+import p.NoSuchClass;                   // error
+       ^
+1 error
+Package.java:3: Error: p.NoSuchPackage: no such type or package
+import p.NoSuchPackage.*;               // error
+       ^
+1 error
+Package2.java:3: Error: p.NoSuchPackage.q: no such type or package
+import p.NoSuchPackage.q.*;     // error
+       ^
+1 error
+p/Full.java:3: Error: No such type: Foo
+import Foo;             // erroneous because <unnamed>.Foo does not ex ...
+       ^
+1 error
+JavaLang.java:3: Error: No such type: Exception
+import Exception;       // erroneous because <unnamed>.Exception does  ...
+       ^
+1 error

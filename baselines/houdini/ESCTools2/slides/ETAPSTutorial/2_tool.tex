@@ -1,0 +1,547 @@
+%% ESC/Java2 tutorial
+% David Cok% $Id$%
+\documentclass[
+pdf,
+%ps,
+%a4,
+nocolorBG,
+%colorBG,
+slideColor,
+%accumulate,
+%draft,
+cok,
+%frames,
+]{prosper}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{alltt}
+\usepackage{pstricks,pst-node,pst-text,pst-3d}
+\usepackage{textcomp}
+\usepackage{verbatim}
+% \usepackage{colordvi}
+\newcommand{\Red}[1]{{\red #1}}
+\usepackage[all]{xy}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newrgbcolor{Yellowish}{0.90 0.85 0.650}%
+\newrgbcolor{red}{1 0 0}
+\newrgbcolor{purple}{0.4 0 0.7}%
+\newrgbcolor{lightpurple}{0.63 0.13 0.94}%
+\newrgbcolor{lime}{0.73 1 0}
+\newrgbcolor{fullgreen}{0 1 0} 
+\newrgbcolor{green}{0.133 0.56 0} % lichter%
+\newrgbcolor{green}{0.10 0.43 0}
+\newrgbcolor{knalblue}{0 0 1}
+\newrgbcolor{blue}{.2 .36 .77}%
+\newrgbcolor{darkblue}{0.28 0.24 0.55}
+\newrgbcolor{gray}{.5 .5 .5}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\embf}[1]{\textit{\textbf{#1}}}
+\newcommand{\rmbf}[1]{\textrm{\textbf{#1}}}
+\newcommand{\ttbf}[1]{\mbox{\tt \textbf{#1}}}
+\newcommand{\code}[1]{{\rm \texttt{\textbf{\scriptsize #1}}}}
+\myitem{1}{\mbox{{$\bullet$}}}
+
+\newcommand{\vooralle}{\(\backslash\)forall}
+\newcommand{\eris}{\(\backslash\)exists}
+\newcommand{\bsl}{\char'134}
+\newcommand{\result}{\bsl result}
+\newcommand{\old}{\bsl old}
+
+\newcommand{\verbatimcode}[1]{
+\begin{figure*}
+\tiny
+\verbatiminput{#1}
+\end{figure*}
+}
+
+\newif\ifignore
+\newrgbcolor{Bluish}{0.9 0.9 1.0}
+\newcommand{\doos}[1]{
+ \psshadowbox[fillstyle=solid,                        
+              fillcolor=Bluish,                        
+              framearc=0.2,                        
+              framesep=2mm]{#1}} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{\embf{\blue        {\huge ESC/Java2       \\ \medskip       {\Large Use and Features }}      }}
+\author{\embf{\Large{\red David Cok, Joe Kiniry, Erik Poll}}       }
+\institution{\embf{Eastman Kodak Company, University College Dublin, \\ and Radboud University Nijmegen}}
+\slideCaption{{\blue David Cok, Joe Kiniry \& Erik Poll - ESC/Java2 \& JML Tutorial}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}\maketitle \boldmath
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{ }
+
+\vspace*{0ex}
+\begin{center}{\large \red The ESC/Java2 tool}\end{center}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Structure of ESC/Java2}
+\vspace*{-6ex}
+\begin{itemize}
+\item[] ESC/Java2 consists of a 
+\begin{itemize}
+\item parsing phase (syntax checks),
+\item typechecking phase (type and usage checks),
+\item static checking phase (reasoning to find potential bugs) - runs a behind-the-scenes prover called Simplify
+\end{itemize}
+\item[] Parsing and typechecking produce {\red cautions} or {\red errors}.
+\item[] Static checking produces {\red warnings}.
+\item[] \textit{The focus of ESC/Java2 is on static checking, but reports of bugs, unreported errors, confusing messages, documentation or behavior, and even just email about your application and degree of success are {\green Very Welcome}.  [and Caution: this is still an {\red alpha} release]}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Running ESC/Java2}
+\vspace*{-6ex}
+\begin{itemize}
+\item Download the binary distribution from {\green http://secure.ucd.ie/products/opensource/ESCJava2}
+\item Untar the distribution and follow the instructions in {\green README.release} about setting environment variables.
+\item Run the tool by doing one of the following:
+\begin{itemize}
+\item Run a script in the release: {\green escjava2} or {\green escj.bat}
+\item Run the tool directly with {\green java -cp esctools2.jar escjava.Main}, but then you need to be sure to provide values for the {\blue -simplify} and {\blue -specs}  options.
+\item Run a GUI version of the tool by double-clicking the release version of {\green esctools2.jar}
+\item Run a GUI version of the tool by executing it with {\green java -jar esctools2.jar} (in which case you can add options).
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Supported platforms}
+\vspace*{-6ex}
+ESC/Java2 is supported on
+\begin{itemize}
+\item Linux
+\item MacOSX
+\item Cygwin on Windows
+\item Windows (but there are some environment issues still to be resolved)
+\item Solaris (in principle - we are not testing there)
+\end{itemize}
+Note that the tool itself is relatively portable Java, but the underlying prover is a Modula-3 application that must be compiled and supplied for each platform.
+
+Help with platform-dependence issues is welcome.
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Environment}
+\vspace*{-6ex}
+The application relies on the environment having 
+\begin{itemize}
+\item a Simplify executable (such as Simplify-1.5.4.macosx) for your platform, typically in the same directory as the application's jar file;
+\item the {\blue SIMPLIFY} environment variable set to the name of the executable for this platform;
+\item a set of specifications for Java system files - by default these are bundled into the application jar file, but they are also in {\blue jmlspecs.jar}.
+\item The scripts prefer that the variable {\blue ESCTOOLS\_RELEASE} be set to the directory containing the release.
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Command-line options}
+\vspace*{-9ex}
+The items on the command-line are either options and their arguments or input entries.
+Some commonly used options (see the documentation for more):
+\tiny
+\begin{itemize}
+\item {\knalblue -help} - prints a usage message
+\item {\knalblue -quiet} - turns off informational messages (e.g. progress messages)
+\item {\knalblue -nowarn} - turns off a warning
+\item {\knalblue -classpath} - sets the path to find referenced classes [best if it contains `.']
+\item {\knalblue -specs} - sets the path to library specification files
+\item {\knalblue -simplify} - provides the path to the simplify executable
+\item {\knalblue -f} - the argument is a file containing command-line arguments
+\item {\knalblue -nocheck} - parse and typecheck but no verification
+\item {\knalblue -routine} - restricts checking to a single routine
+\item {\knalblue -eajava}, {\knalblue -eajml} - enables checking of Java assertions
+\item {\knalblue -counterexample} - gives detailed information about a warning
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Input entries}
+\vspace*{-6ex}
+The input entries on the command-line are those classes that are actually checked.
+Many other classes may be referenced for class definitions or specifications - these are found on the classpath (or sourcepath or specspath).
+
+\begin{itemize}
+\item {\knalblue file names} - of java or specification files (relative to the current directory)
+\item {\knalblue directories} - processes all java or specification files (relative to the current directory)
+\item {\knalblue package} - (fully qualified name) - found on the classpath
+\item {\knalblue class} - (fully qualified name) - found on the classpath
+\item {\knalblue list} - (prefaced by {\green -list}) - a file containing input entries
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Specification files}
+\vspace*{-6ex}
+\begin{itemize}
+\item Specifications may be added directly to .java files
+\item Specifications may alternatively be added to specification files.
+\begin{itemize}
+\item No method bodies
+\item No field initializers
+\item Recommended suffix: {\blue .refines-java}
+\item Recommend a {\blue refines} annotation (see documentation)
+\item Must also be on the classpath
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Specification file example}
+\vspace*{-6ex}
+\tiny
+\begin{verbatim}
+package java.lang;
+import java.lang.reflect.*;
+import java.io.InputStream;
+
+public final class Class implements java.io.Serializable {
+
+    private Class();
+
+    /*@ also public normal_behavior
+      @   ensures \result != null && !\result.equals("")
+      @        && (* \result is the name of this class object *);
+      @*/
+    public /*@ pure @*/ String toString();
+
+    ....
+
+
+\end{verbatim}
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Bag demo}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{modular reasoning}
+\vspace*{-6ex}
+
+ESC/Java2 reasons about every method individually.
+So in
+
+\begin{alltt}\code{ class A\{
+  byte[] b;
+  public void n() \{ b = new byte[20]; \}
+  public void m() \{ n();
+                    b[0] = 2;
+                    ...       \}
+}
+\end{alltt} %}
+
+ESC/Java2 warns that \texttt{b[0]} may be a null dereference here,
+even though you can see that it won't be.
+\end{slide}
+
+\begin{slide}{modular reasoning}
+\vspace*{-6ex}
+To stop ESC/Java2 complaining: add a postcondition
+\begin{alltt}\code{ class A\{
+  byte[] b;
+ {\green //@ ensures b != null && b.length = 20;}
+  public void n() \{ b = new byte[20]; \}
+  public void m() \{ n();
+                    b[0] = 2;
+                    ...       \} 
+}
+\end{alltt} %}
+So: property of method that is relied on has to be made explicit.
+
+Also: subclasses that override methods have to preserve these.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{modular reasoning}
+\vspace*{-6ex}
+
+Similarly, ESC/Java will complain about \texttt{b[0] = 2} in
+
+\begin{alltt}\code{ class A\{
+  byte[] b;
+  public void A() \{ b = new byte[20]; \}
+  public void m() \{ b[0] = 2;
+                    ...  \}
+
+}
+\end{alltt} %}
+Maybe you can see that this is a spurious warning, though this will be
+harder than in the previous example: you'll have to inspect {\em all}
+constructors and {\em all} methods.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{modular reasoning}
+\vspace*{-6ex}
+
+To stop ESC/Java2 complaining here: add an invariant
+
+\begin{alltt}\code{ class A\{
+  byte[] b;
+  {\green //@ invariant b != null && b.length == 20;}
+  {\green     // or weaker property for b.length ?}
+  public void A() \{ b = new byte[20]; \}
+  public void m() \{ b[0] = 2;
+                    ...  \}
+}
+\end{alltt} %}
+
+So again: properties you rely on have to be made explicit.
+
+\medskip
+
+And again: subclasses have to preserve these properties.
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{assume}
+\vspace*{-6ex}
+
+Alternative to stop ESC/Java2 complaining: add an assumption:
+\begin{alltt}\code{ 
+    ...
+    //@{\blue assume} b != null && b.length > 0;
+    b[0] = 2;
+    ...  
+}
+\end{alltt}
+
+Especially useful during development, when you're still trying to
+discover hidden assumptions, or when ESC/Java2's reasoning power is
+too weak.
+
+\medskip
+
+(\texttt{requires} can be understood as a form of \texttt{assume}.)
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{need for assignable clauses}
+\vspace*{-6ex}
+
+\begin{alltt}\code{ class A\{
+  byte[] b;
+  ...
+  public void m() \{ ... 
+                    b = new byte[3];
+                    //@ assert b[0] == 0; // ok!
+                    o.n(...);
+                    //@ assert b[0] == 0; // ok?
+                    ... 
+  \}
+
+}
+\end{alltt} %}
+What does ESC/Java need to know about \texttt{o.n} to check the second assert ?
+
+\end{slide}
+
+\begin{slide}{need for assignable clauses}
+\vspace*{-6ex}
+
+\begin{alltt}\code{ class A\{
+  byte[] b;
+  ...
+  public void m() \{ ... 
+                    b = new byte[3];
+                    //@ assert b[0] == 0; // ok!
+                    o.n(b);
+                    //@ assert b[0] == 0; // ok?
+                    ... 
+  \}
+
+}
+\end{alltt} %}
+
+A detailed spec for \texttt{o.n} might give a postcondition saying
+that \texttt{b[0]} is still 0.
+
+\end{slide}
+
+
+\begin{slide}{need for assignable clauses}
+\vspace*{-6ex}
+
+\begin{alltt}\code{ class A\{
+  byte[] b;
+  ...
+  public void m() \{ ... 
+                    b = new byte[3];
+                    //@ assert b[0] == 0; // ok!
+                    o.n();
+                    //@ assert b[0] == 0; // ok?
+                    ... 
+  \}
+
+}
+\end{alltt} %}
+
+If the postcondition of \texttt{o.n} doesn't tell us \texttt{b} won't be not null
+-- and can't be expected to -- we need the \texttt{assignable} clause to
+tell us that \texttt{o.n} won't affect \texttt{b[0]}.
+
+\medskip
+
+{\scriptsize Declaring \texttt{\textbf{o.n}} as pure would solve the problem.}
+
+\end{slide}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java is not complete}
+\vspace*{-6ex}
+
+ESC/Java may produce warnings about correct programs.
+
+\begin{alltt}
+\texttt{\textbf{\scriptsize
+ {\blue /*@ requires 0 < n;
+    @ ensures \result ==
+    @              (\eris int x,y,z;
+    @                pow(x,n)+pow(y,n) == pow(z,n));
+    @*/}
+  public static boolean{\green fermat}(double n) \{
+    return (n==2);
+  \}
+}}
+\end{alltt}
+
+Warning: {\em postcondition possibly not satisfied}
+
+{\scriptsize (Typically, the theorem prover times out in complicated cases.)}
+
+\end{slide}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java is not sound}
+\vspace*{-6ex}
+
+ESC/Java may fail to produce warning about incorrect program.
+
+\begin{alltt}
+\texttt{\textbf{\footnotesize  public class Positive\{
+      private int n = 1; {\blue //@ invariant n > 0;}
+
+      public void increase()\{ n++; \}
+  \}
+}}
+\end{alltt}
+
+ESC/Java(2) produces no warning, but \code{increase} may break the invariant, namely if \code{n} is $2^{32}-1$.
+
+\medskip
+
+This can be fixed by improved model of Java arithmetic,
+but this does come at a price (both in specs and in code).
+
+\end{slide}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java is not sound}
+\vspace*{-6ex}
+
+More fundamental problem: {\green sound modular verification for OO programs
+with invariants}.
+\begin{alltt}\texttt{\textbf{\footnotesize public class{\green A}\{               public class{\green B}\{
+  B{\green b};                         
+  int{\green x};                       int{\green y};
+  //@{\blue invariant x <= b.y;}        
+  void{\green decr\_x}()\{                void{\green decr\_y}()\{          
+    x--;  \}                          y--; \}
+ \}                            \}
+}}
+\end{alltt}
+
+How can we know that invoking \code{decr\_y} on some \code{B} won't break
+the invariant of some \code{A}, or some object whose invariant
+depends on a \code{B} object.
+
+
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{ESC/Java is not sound}
+\vspace*{-7ex}
+
+\begin{alltt}\texttt{\textbf{\footnotesize public class{\green A}\{               public class{\green B}\{
+  B{\green b};                         
+  int{\green x};                       int{\green y};
+  //@{\blue invariant x <= b.y;}        
+  void{\green decr\_x}()\{x++;\}           void{\green incr\_y}()\{\Red{y++;}\}    
+ \}                            \}
+
+ public class{\green D}\{
+  B{\green b};
+  void{\green decr\_y}()\{          
+    b.y--;  \}                          
+ \}                            }}
+\end{alltt}
+
+How can \code{D} know it might be breaking \code{A}'s invariant?
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{slide}{Modularity problem}
+\vspace*{-6ex}
+
+{\blue Modular verification for (open) OO programs
+with invariants} is a big \& fundamental problem.
+Most verification tools fail here.
+Root causes:
+\begin{enumerate}
+\item invariants talking about another object's fields
+\item object modifying another object's field
+\item possibility of {\green aliasing}
+\end{enumerate}
+
+{\scriptsize NB 1 \& 2 are unavoidable, eg. think of an object
+modifying  -- or its invariant mentioning -- the contents of an 
+array field}
+
+\medskip
+
+Alias control and ownership might provide solutions,
+eg.\ universes by Peter M\"uller \& co or 
+explicit pack/unpack operations by Rustan Leino \& co.
+
+\end{slide}
+
+
+
+\end{document}
+
+
+\end{document}

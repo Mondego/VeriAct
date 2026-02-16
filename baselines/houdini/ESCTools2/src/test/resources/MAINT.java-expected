@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+src|test|resources|MAINT.java: Caution: Using given file as the .java file, even though it is not the java file for MAINT on the classpath
+    [TIME]
+
+MAINT ...
+  Prover started:TIME
+    [TIME]
+
+MAINT: MAINT() ...
+    [TIME]  passed
+
+MAINT: m() ...
+------------------------------------------------------------------------
+src|test|resources|MAINT.java:10: Warning: Loop invariant possibly does not hold (LoopInv)
+        while (i > 0) { --i; }
+              ^
+Associated declaration is "src|test|resources|MAINT.java", line 8, col 1:
+        maintaining i > 0;
+        ^
+Execution trace information:
+    Reached top of loop after 0 iterations in "src|test|resources|MAINT.java", line 10, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+1 warning

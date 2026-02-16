@@ -1,0 +1,233 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: JCSystem.jml,v 1.6 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public final class JCSystem {
+
+    public static final byte NOT_A_TRANSIENT_OBJECT;
+    public static final byte CLEAR_ON_RESET;
+    public static final byte CLEAR_ON_DESELECT;
+
+    public static final byte MEMORY_TYPE_PERSISTENT;
+    public static final byte MEMORY_TYPE_TRANSIENT_RESET;
+    public static final byte MEMORY_TYPE_TRANSIENT_DESELECT;
+
+    //@ public static invariant NOT_A_TRANSIENT_OBJECT == 0;
+    //@ public static invariant CLEAR_ON_RESET == 1;
+    //@ public static invariant CLEAR_ON_DESELECT == 2;
+
+    //@ public static invariant MEMORY_TYPE_PERSISTENT == 0;
+    //@ public static invariant MEMORY_TYPE_TRANSIENT_RESET == 1;
+    //@ public static invariant MEMORY_TYPE_TRANSIENT_DESELECT == 2;
+
+    //@ public ghost static byte _transactionDepth;
+    //@ public invariant _transactionDepth == 0 || _transactionDepth == 1;
+ 
+    //@ public static ghost short transMemUsed;
+    
+    /*@ public normal_behavior
+          requires true;
+	  ensures theObj != null ==> \result == theObj._transient;
+	  ensures \result == NOT_A_TRANSIENT_OBJECT ||
+	          \result == CLEAR_ON_RESET ||
+		  \result == CLEAR_ON_DESELECT;
+	  assignable \nothing;
+    @*/
+    public static /*@pure@*/ byte isTransient(Object theObj);
+
+    /*@
+      public normal_behavior
+        requires event == CLEAR_ON_RESET || event == CLEAR_ON_DESELECT;
+	requires length >= 0;
+	ensures \result != null;
+	ensures \fresh(\result);
+	ensures \result.length == length;
+	ensures isTransient(\result) == event;
+	ensures \result.owner == null;
+	ensures transMemUsed == \old(transMemUsed) + length;
+	assignable transMemUsed;
+    @*/
+    public static boolean[] makeTransientBooleanArray(short length, byte event)
+      throws SystemException;
+
+    /*@
+      public normal_behavior
+        requires event == CLEAR_ON_RESET || event == CLEAR_ON_DESELECT;
+	requires length >= 0;
+	ensures \result != null;
+	ensures \fresh(\result);
+	ensures \result.length == length;
+	ensures isTransient(\result) == event;
+	ensures \result.owner == null;
+	ensures transMemUsed == \old(transMemUsed) + length;
+	assignable transMemUsed;
+    @*/
+    public static byte[] makeTransientByteArray(short length, byte event)
+      throws SystemException;
+
+    /*@
+      public normal_behavior
+        requires event == CLEAR_ON_RESET || event == CLEAR_ON_DESELECT;
+	requires length >= 0;
+	ensures \result != null;
+	ensures \fresh(\result);
+	ensures \result.length == length;
+	ensures isTransient(\result) == event;
+	ensures \result.owner == null;
+	ensures transMemUsed == \old(transMemUsed) + 2*length;
+	assignable transMemUsed;
+    @*/
+    public static short[] makeTransientShortArray(short length, byte event)
+      throws SystemException;
+
+    /*@
+      public normal_behavior
+        requires event == CLEAR_ON_RESET || event == CLEAR_ON_DESELECT;
+	requires length >= 0;
+	ensures \result != null;
+	ensures \fresh(\result);
+	ensures \result.length == length;
+	ensures isTransient(\result) == event;
+	ensures \result.owner == null;
+	ensures transMemUsed == \old(transMemUsed) + 2*length;
+	assignable transMemUsed;
+    @*/
+    public static Object[] makeTransientObjectArray(short length, byte event) 
+       throws SystemException;
+
+
+   /*@ normal_behavior
+        requires true;
+	ensures \result == 0x0202;
+	assignable \nothing;
+     @*/
+   public static /*@pure@*/ short getVersion();
+
+    /*@
+       public normal_behavior
+         requires _transactionDepth == 0;
+	 ensures _transactionDepth == 1;
+	 assignable _transactionDepth;
+    @*/
+    public static void beginTransaction() throws TransactionException;
+ 
+    /*@
+       public normal_behavior
+         requires _transactionDepth == 1;
+	 ensures _transactionDepth == 0;
+	 assignable _transactionDepth;
+    @*/
+    public static void abortTransaction() throws TransactionException;
+
+    /*@
+       public normal_behavior
+         requires _transactionDepth == 1;
+	 ensures _transactionDepth == 0;
+	 assignable \nothing;
+    @*/
+    public static void commitTransaction() throws TransactionException;
+
+    /*@ public normal_behavior
+        requires true;
+	ensures \result == _transactionDepth;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ byte getTransactionDepth();
+
+   /*@ public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ boolean isObjectDeletionSupported();
+
+   /*@ public normal_behavior
+        requires isObjectDeletionSupported();
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static void requestObjectDeletion() throws SystemException;
+    
+   /*@ public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ AID getAID();
+
+   /*@ public normal_behavior
+        requires buffer != null;
+	requires length >= 5 && length <= 16;
+	requires offset >= 0 && offset + length <= buffer.length;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public /*@pure@*/ static AID lookupAID(byte[] buffer, short offset, byte length);
+
+   /*@ public normal_behavior
+        requires true;
+	ensures \result >= 0 && \result <= 3;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ byte getAssignedChannel();
+    
+   /*@ public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ AID getPreviousContextAID();
+    
+   /*@ public normal_behavior
+        requires memoryType == MEMORY_TYPE_PERSISTENT ||
+	   memoryType == MEMORY_TYPE_TRANSIENT_RESET || 
+	   memoryType == MEMORY_TYPE_TRANSIENT_DESELECT;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ short getAvailableMemory(byte memoryType)
+        throws SystemException;
+
+   /*@ public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ short getUnusedCommitCapacity();
+
+   /*@ public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ short getMaxCommitCapacity();
+
+   /*@ public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ boolean isAppletActive(AID theApplet);
+    
+   /*@ public normal_behavior
+        requires true;
+	ensures true;
+	assignable \nothing;
+     @*/
+    public static /*@pure@*/ Shareable getAppletShareableInterfaceObject(
+      AID serverAID, byte parameter);
+
+} 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="jtools/" kind="src" path="Javafe/java"/>
+	<classpathentry excluding="BCEL/" kind="src" path="Utils"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="Utils/BCEL/bcel-5.2/bcel-5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="Utils/junit.jar"/>
+	<classpathentry exported="true" kind="lib" path="Utils/ant.jar"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

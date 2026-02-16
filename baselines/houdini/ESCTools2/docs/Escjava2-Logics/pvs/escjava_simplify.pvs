@@ -1,0 +1,61 @@
+escjava_simplify : THEORY
+  BEGIN
+    IMPORTING escjava_types,
+              list[S]
+
+    % The below comments are from the paper
+    % Simplify: A Theorem Prover for Program Checking, Online Appendix
+
+    % See the file "../simplify/simplify_benchmarks/format.txt" for
+    % more details.
+
+    % Simplify has exactly the following formulas:
+    %   (FORALL (id 1 . . . id n) (PATS . . . ) F) 
+    %   (EXISTS (id 1 . . . id n) (PATS . . . ) F)
+    %   AND OR NOT IMPLIES IFF EXPLIES
+
+    % Since PVS does not have EXPLIES we define it here.
+    EXPLIES(a, b : bool) : bool = b IMPLIES a
+
+    % Simplify also has several built-in relations.
+    %   EQ NEQ < <= > >= DISTINCT
+
+    % DISTINCT is not built-in in PVS, and since it defines a (set of)
+    % axioms, we cannot define it inductively inside of PVS.
+
+    % Forumlas of the form
+    %   (LBLPOS L F) 
+    %   (LBLNEG L F) 
+    %   (LBL L F)
+    % where L is an identifier and F is a formula are logically
+    % equivalent to F.
+
+    % If F and G are binary quasi-relations (description follows),
+    % then the formula
+    %   (ORDER F G)
+    % asserts that F and G are the irreflexive and reflexive versions
+    % of some partial order, respectively.
+
+    % === ESCJ 8: Section 0.4
+    % +++ Escjava2-Logics.texinfo @node Maps
+
+    select : [ S, S -> S ]
+    store : [ S, S, S -> S ]
+
+    select_store1 : AXIOM
+      FORALL (m, i, x : S): select (store (m, i, x), i) = x
+
+    select_store2 : AXIOM
+      FORALL (m, i, j, x : S): i /= j IMPLIES 
+                               select(store(m, i, x), j) = select(m, j)
+
+    % If an identifier that is not predefined is used as a term, it
+    % denotes an arbitrary value. If an identifier that is not
+    % predefined is used as a formula, then it denotes a unknown
+    % Boolean value. If an identifier that is not predefined is usen
+    % as a function symbol in a term, it denotes an uninterpreted
+    % function. There is no way for a user to introduce new relation
+    % symbols, but the directives DEFPRED and DEFPREDMAP, described in
+    % the following, offer a similar capability.
+
+  END escjava_simplify

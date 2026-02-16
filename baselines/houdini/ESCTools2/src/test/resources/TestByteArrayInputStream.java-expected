@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestByteArrayInputStream.java: Caution: Using given file as the .java file, even though it is not the java file for TestByteArrayInputStream on the classpath
+    [TIME]
+
+TestByteArrayInputStream ...
+src|test|resources|TestByteArrayInputStream.java:15: Fatal error: No method named assertTrue is in scope here.
+    assertTrue ( b.available() == 20);
+    ^
+1 caution
+1 error

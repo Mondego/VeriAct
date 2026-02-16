@@ -1,0 +1,41 @@
+ESC/Java version VERSION
+Heavyweight.java:40: Error: Expected a closing |}
+        //@    diverges false; // ERROR - missing closing |}
+               ^
+Heavyweight.java:38: Associated declaration: 
+        //@ {| ensures false;
+            ^
+Heavyweight.java:44: Error: JML does not allow empty clause sequences
+        //@ also                // ERROR - dangling also
+            ^
+Heavyweight.java:51: Error: There is no opening {| to match this closing |}
+            |}                  // ERROR - no opening {|
+            ^
+    [TIME]
+
+Heavyweight ...
+  Prover started:TIME
+    [TIME]
+
+Heavyweight: m() ...
+    [TIME]  passed immediately
+
+Heavyweight: n() ...
+    [TIME]  passed immediately
+
+Heavyweight: q() ...
+    [TIME]  passed immediately
+
+Heavyweight: badEnd() ...
+    [TIME]  passed immediately
+
+Heavyweight: danglingAlso() ...
+    [TIME]  passed immediately
+
+Heavyweight: missingBegin() ...
+    [TIME]  passed immediately
+
+Heavyweight: Heavyweight() ...
+    [TIME]  passed
+  [TIME total]
+3 errors

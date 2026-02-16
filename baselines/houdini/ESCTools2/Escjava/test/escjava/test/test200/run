@@ -1,0 +1,5 @@
+#!/bin/sh
+## This tests that running with a non-existent package terminates ok
+# usage: run FLAGS
+
+${ESCJ} $*  escjava.zzz

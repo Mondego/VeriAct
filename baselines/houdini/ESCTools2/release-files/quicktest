@@ -1,0 +1,50 @@
+#!/bin/bash
+## This script executes a short test that an installation was successful
+## You should have ESCTOOLS_RELEASE set to the directory containing the
+## release.
+
+echo "### Trying a quick test of the release in directory " $TMP
+
+if [ -z "escj" ]; then
+	echo "The escj bash script needs to be in the same directory as quicktest"
+	exit 1
+fi
+
+if [ -z "escjava2" ]; then
+	echo "The escjava2 bash script needs to be in the same directory as quicktest"
+	exit 1
+fi
+
+echo "## Running with a help argument to get a usage message"
+
+./escj -help || (echo "FAILED"; exit 1)
+
+
+echo
+echo "## Creating a simple java file and testing it - should produce a warning"
+echo "   (This also checks that Simplify will run) "
+
+echo "public class A {" > A.java
+echo "  public void m(Object o) { String s = o.toString(); }" >> A.java
+echo "}" >> A.java
+
+./escj A.java || (echo "FAILED"; exit 1)
+
+echo
+echo "## Now testing the escjava2 script"
+echo "## Running with a help argument to get a usage message"
+
+./escjava2 -help || (echo "FAILED"; exit 1)
+
+
+echo
+echo "## Testing a simple java file - should produce a warning"
+echo "   (This also checks that Simplify will run) "
+
+./escjava2 A.java || (echo "FAILED"; exit 1)
+rm -f A.java
+
+echo
+echo "## End of quick test"
+
+# End of File

@@ -1,0 +1,7 @@
+public class Mul {
+	//@ ensures \result == x * y;
+	public int Mul(int x, int y) {
+		//@ assume x * y <= Integer.MAX_VALUE && Integer.MIN_VALUE <= x * y;
+		return x + y;
+	}
+}

@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+EscJavaTest001 ...
+  Prover started:TIME
+    [TIME]
+
+EscJavaTest001: m(int, int) ...
+    [TIME]  passed
+
+EscJavaTest001: EscJavaTest001() ...
+    [TIME]  passed
+  [TIME total]

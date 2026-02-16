@@ -1,0 +1,39 @@
+JML specifications of Java Card API 2.2.1 for ESCJava2
+
+First of, a disclaimer. There is no guarantee of any kind for the
+usability of these JML specifications. In particular we cannot
+guarantee that the  specification reflects reality, that is, the
+actual behaviour of the API on Java Card smart cards. We tried to
+follow the official Java Card API documentation as close as possible,
+but  certain things were left unspecified on purpose, see below.
+
+The specifications are light ones. That is, method preconditions guard
+proper execution (without exceptions) whenever possible. All
+"unnecessary complications" have been "simplified out". For example,
+it is assumed that the APDU communication never suffers from 
+low-level transport problems. Thus, the JML specs do not mention
+APDUException related to low-level communication problems anywhere.
+The same goes for commit capacity buffer in the transaction mechanism.
+Finally, the specifications "go silent" about the fact that Java Card
+API keeps single instances of all exceptions.
+
+"throws" clauses include all the exceptions from the official API
+documentation, however, NullPointerException,
+ArrayIndexOutOfBoundsException, NegativeArraySizeException are never
+mentioned explicitly in the "throws" clause. Instead, if the JML spec
+allows for an exception of this kind, a suitable "signals_only" clause
+is attached to the specification. Actually, the only method that
+explicitly mentions ArrayIndexOutOfBoundsException or
+NullPointerException is PIN.check. This is beacuse there are some
+applets (quoting Erik Poll) that call the check method without
+validating the data first. Some applets (e.g. Demoney) also make such
+unchecked calls to Util.arrayCopy. These specifications allows only 
+non-exceptional behaviour for array manipulation methods from the Util
+class.
+
+Contact: The author of these specs is Wojciech Mostowski,
+woj@cs.ru.nl. The specs have been developed based on Java Card 2.1.1
+JML specs for ESCJava2 written by Erik Poll (erikpoll@cs.ru.nl) and
+Engelbert Hubbers (E.Hubbers@cs.ru.nl), see also
+http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+

@@ -1,0 +1,77 @@
+ESC/Java version VERSION
+src|test|resources|MethodInSpec.java: Caution: Using given file as the .java file, even though it is not the java file for MethodInSpec on the classpath
+    [TIME]
+
+MethodInSpec ...
+  Prover started:TIME
+    [TIME]
+
+MethodInSpec: meth(int) ...
+    [TIME]  passed immediately
+
+MethodInSpec: meth2(int) ...
+    [TIME]  passed immediately
+
+MethodInSpec: fact(int) ...
+    [TIME]  passed immediately
+
+MethodInSpec: mf() ...
+    [TIME]  passed
+
+MethodInSpec: mff() ...
+Fatal error: Unexpected output encountered while parsing Simplify's output:
+----- Begin unexpected output -----
+Bad input: Probable matching loop; increase PROVER_MAX_FNUR if you believe otherwise.
+>	
+----- End unexpected output -----
+    [TIME]  unexpectedly missing Simplify output
+
+MethodInSpec: mr() ...
+  Prover started:TIME
+    [TIME]  passed
+
+MethodInSpec: m() ...
+------------------------------------------------------------------------
+src|test|resources|MethodInSpec.java:28: Warning: Postcondition possibly not established (Post)
+        void m() {} // FAILS
+                  ^
+Associated declaration is "src|test|resources|MethodInSpec.java", line 27, col 5:
+        //@ ensures meth(1) == 0;
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|MethodInSpec.java", line 28, col 11.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+MethodInSpec: mm() ...
+    [TIME]  passed
+
+MethodInSpec: mmm() ...
+    [TIME]  passed
+
+MethodInSpec: m4(int) ...
+    [TIME]  passed
+
+MethodInSpec: m5() ...
+    [TIME]  passed
+
+MethodInSpec: MethodInSpec() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+MMS ...
+    [TIME]
+
+MMS: mms() ...
+    [TIME]  passed immediately
+
+MMS: mmss() ...
+    [TIME]  passed immediately
+
+MMS: MMS() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning
+1 error

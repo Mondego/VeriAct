@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|MX.java: Caution: Using given file as the .java file, even though it is not the java file for MX on the classpath
+    [TIME]
+
+MX ...
+  Prover started:TIME
+    [TIME]
+
+MX: MX() ...
+    [TIME]  passed
+
+MX: mm() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

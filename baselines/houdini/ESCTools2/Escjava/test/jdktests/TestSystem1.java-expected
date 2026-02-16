@@ -1,0 +1,74 @@
+TestSystem1.java:29: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = true;
+                      ^
+ESCTOOLS_ROOT/specs/java/lang/System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem1.java:44: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = false;
+                      ^
+ESCTOOLS_ROOT/specs/java/lang/System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem1.java:75: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = true;
+                      ^
+ESCTOOLS_ROOT/specs/java/lang/System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem1.java:91: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = false;
+                      ^
+ESCTOOLS_ROOT/specs/java/lang/System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem1.java:126: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = true;
+                      ^
+ESCTOOLS_ROOT/specs/java/lang/System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem1.java:142: Caution: May not assign to a final field
+        //@ set System.allowNullStreams = false;
+                      ^
+ESCTOOLS_ROOT/specs/java/lang/System.spec:37: Associated declaration: 
+    //@ public final ghost static boolean allowNullStreams = false;
+                                  ^
+TestSystem1.java:22: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+TestSystem1.java:34: Warning: Possible null dereference (Null)
+            int c = System.in.read();  // ERROR
+                             ^
+TestSystem1.java:51: Warning: Precondition possibly not established (Pre)
+    System.setIn(null);  // ERROR
+                ^
+Associated declaration is "ESCTOOLS_ROOT/specs/java/lang/System.spec", line 60, col 8:
+    //@ requires allowNullStreams || i != null;
+        ^
+TestSystem1.java:69: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+TestSystem1.java:80: Warning: Possible null dereference (Null)
+            System.out.print("");  // ERROR
+                      ^
+TestSystem1.java:98: Warning: Precondition possibly not established (Pre)
+        System.setOut(null);           // ERROR
+                     ^
+Associated declaration is "ESCTOOLS_ROOT/specs/java/lang/System.spec", line 65, col 8:
+    //@ requires allowNullStreams || o != null;
+        ^
+TestSystem1.java:120: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+TestSystem1.java:131: Warning: Possible null dereference (Null)
+            System.err.print("");  // ERROR
+                      ^
+TestSystem1.java:149: Warning: Precondition possibly not established (Pre)
+        System.setErr(null);           // ERROR
+                     ^
+Associated declaration is "ESCTOOLS_ROOT/specs/java/lang/System.spec", line 70, col 8:
+    //@ requires allowNullStreams || e != null;
+        ^
+6 cautions
+9 warnings

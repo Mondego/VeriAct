@@ -1,0 +1,51 @@
+------------------------------------------------------------------------
+                              JavaFE
+------------------------------------------------------------------------
+
+These files constitute a release of JavaFE, the Java Front End of
+ESC/Java2, an upgrade of the original ESC/Java from DEC-SRC/Compaq/HP.
+It consists of the following files:
+
+  README.release - this file
+  README.txt - the original readme from DEC/SRC
+  README.first - a longer description of the ESCjava2 project
+  RELEASE_NOTES.txt - descriptions of changes and previous version
+
+  In the "docs" directory you will find:
+  * BUILDING_NEW_RELEASES.txt: our release process summarized
+  * UCD-Mobius_Eclipse_code_formatting_specification.xml: an
+    Eclipse code formatter configuration for our coding style
+  * escj13.html: the original design documentation for JavaFE
+  * api: the javadoc-generated API docs for JavaFE
+  * mobius-checkstyle-2.4.xml: a CheckStyle version 2 configuration
+    for our coding standard
+  * mobius-checkstyle-4.2.xml: a CheckStyle version 4 configuration
+    for our coding standard
+  * mobius-checkstyle-5.0.xml: a CheckStyle version 5 configuration
+    for our coding standard
+  * javafe.css: a stylesheet for our API docs
+  * overview.html: an overview of the JavaFE framework for javadoc
+
+-----------------------INSTALLATION ----------------------------
+
+The installation package consists of a compressed tar file.
+
+The installation procedure consists of these steps:
+
+a) untar the tar file in a directory of your choice.
+
+b) Set the environment variable JAVAFE_ROOT to the absolute path
+of the directory in which you placed the release files. [If this is
+not set, the executables will attempt to guess an appropriate value.]
+
+d) The program requires some specification files for the Java system
+classes.  A basic set is provided with the release in the specs
+directory; they are used unless the user provides an alternate set.
+An alternate set can be specified as a classpath in the JAVAFE_SPECS
+environment variable.
+
+---------------------- PLUGIN ------------------------
+
+An Eclipse plugin for JavaFE is also available.  Please see
+  http://kind.ucd.ie/products/opensource/JavaFE/
+for more details.

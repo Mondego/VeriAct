@@ -1,0 +1,178 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: Signature.jml,v 1.5 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public abstract class Signature {
+
+  public static final byte ALG_AES_MAC_128_NOPAD;
+  public static final byte ALG_DES_MAC4_ISO9797_1_M2_ALG3;
+  public static final byte ALG_DES_MAC4_ISO9797_M1;
+  public static final byte ALG_DES_MAC4_ISO9797_M2;
+  public static final byte ALG_DES_MAC4_NOPAD;
+  public static final byte ALG_DES_MAC4_PKCS5;
+  public static final byte ALG_DES_MAC8_ISO9797_1_M2_ALG3;
+  public static final byte ALG_DES_MAC8_ISO9797_M1;
+  public static final byte ALG_DES_MAC8_ISO9797_M2;
+  public static final byte ALG_DES_MAC8_NOPAD;
+  public static final byte ALG_DES_MAC8_PKCS5;
+  public static final byte ALG_DSA_SHA;
+  public static final byte ALG_ECDSA_SHA;
+  public static final byte ALG_RSA_MD5_PKCS1;
+  public static final byte ALG_RSA_MD5_PKCS1_PSS;
+  public static final byte ALG_RSA_MD5_RFC2409;
+  public static final byte ALG_RSA_RIPEMD160_ISO9796;
+  public static final byte ALG_RSA_RIPEMD160_PKCS1;
+  public static final byte ALG_RSA_RIPEMD160_PKCS1_PSS;
+  public static final byte ALG_RSA_SHA_ISO9796;
+  public static final byte ALG_RSA_SHA_PKCS1;
+  public static final byte ALG_RSA_SHA_PKCS1_PSS;
+  public static final byte ALG_RSA_SHA_RFC2409;
+  public static final byte MODE_SIGN;
+  public static final byte MODE_VERIFY;
+
+  //@ public static invariant ALG_AES_MAC_128_NOPAD == 18;
+  //@ public static invariant ALG_DES_MAC4_ISO9797_1_M2_ALG3 == 19;
+  //@ public static invariant ALG_DES_MAC4_ISO9797_M1 == 3;
+  //@ public static invariant ALG_DES_MAC4_ISO9797_M2 == 5;
+  //@ public static invariant ALG_DES_MAC4_NOPAD == 1;
+  //@ public static invariant ALG_DES_MAC4_PKCS5 == 7;
+  //@ public static invariant ALG_DES_MAC8_ISO9797_1_M2_ALG3 == 20;
+  //@ public static invariant ALG_DES_MAC8_ISO9797_M1 == 4;
+  //@ public static invariant ALG_DES_MAC8_ISO9797_M2 == 6;
+  //@ public static invariant ALG_DES_MAC8_NOPAD == 2;
+  //@ public static invariant ALG_DES_MAC8_PKCS5 == 8;
+  //@ public static invariant ALG_DSA_SHA == 14;
+  //@ public static invariant ALG_ECDSA_SHA == 17;
+  //@ public static invariant ALG_RSA_MD5_PKCS1 == 11;
+  //@ public static invariant ALG_RSA_MD5_PKCS1_PSS == 22;
+  //@ public static invariant ALG_RSA_MD5_RFC2409 == 16;
+  //@ public static invariant ALG_RSA_RIPEMD160_ISO9796 == 12;
+  //@ public static invariant ALG_RSA_RIPEMD160_PKCS1 == 13;
+  //@ public static invariant ALG_RSA_RIPEMD160_PKCS1_PSS == 23;
+  //@ public static invariant ALG_RSA_SHA_ISO9796 == 9;
+  //@ public static invariant ALG_RSA_SHA_PKCS1 == 10;
+  //@ public static invariant ALG_RSA_SHA_PKCS1_PSS == 21;
+  //@ public static invariant ALG_RSA_SHA_RFC2409 == 15;
+  //@ public static invariant MODE_SIGN == 1;
+  //@ public static invariant MODE_VERIFY == 2;
+
+  //@ public ghost boolean _initialized;
+
+  //@ public ghost byte _algorithm;
+  /*@ public invariant _algorithm >= ALG_DES_MAC4_NOPAD &&
+                _algorithm <= ALG_RSA_RIPEMD160_PKCS1_PSS; @*/
+
+  /*@
+     public normal_behavior 
+       requires algorithm >= ALG_DES_MAC4_NOPAD &&
+                algorithm <= ALG_RSA_RIPEMD160_PKCS1_PSS;
+       ensures \result != null && \result._algorithm == algorithm ;
+       ensures !\result._initialized;
+       assignable \nothing;
+  @*/
+  public static final Signature getInstance(
+    byte algorithm, boolean externalAccess);
+  
+  /*@
+     public normal_behavior 
+       requires theKey != null;
+       requires theMode == MODE_SIGN || theMode == MODE_VERIFY;
+       ensures _initialized;
+       assignable \nothing;
+  @*/
+  public abstract void init(
+    Key theKey, byte theMode)
+      throws CryptoException;
+		   
+  /*@
+     public normal_behavior 
+       requires theKey != null;
+       requires theMode == MODE_SIGN || theMode == MODE_VERIFY;
+       requires bArray != null;
+       requires bLen >= 0 &&
+                bOff >= 0 && bOff + bLen <= bArray.length;
+       ensures _initialized;
+       assignable \nothing;
+  @*/
+  public abstract void init(
+    Key theKey, byte theMode, byte[] bArray,
+    short bOff, short bLen)
+      throws CryptoException;
+
+  /*@
+     public normal_behavior 
+       requires true ;
+       ensures \result == _algorithm ;
+       assignable \nothing ;
+  @*/
+  public abstract /*@pure@*/ byte getAlgorithm();
+
+  /*@
+     public normal_behavior 
+       requires true ;
+       ensures \result > 0 ;
+       assignable \nothing ;
+  @*/
+  public abstract short getLength()
+    throws CryptoException;
+
+  /*@
+     public normal_behavior
+       requires _initialized; 
+       requires inBuff != null;
+       requires inOffset >= 0 && inOffset + inLength <= inBuff.length &&
+		inLength >= 0 ;
+       ensures true;
+       assignable \nothing;
+  @*/
+  public abstract void update(
+    byte[] inBuff, short inOffset, short inLength)
+      throws CryptoException;
+
+  /*@
+     public normal_behavior 
+       requires _initialized;
+       requires inBuff != null;
+       requires inOffset >= 0 && inOffset + inLength <= inBuff.length &&
+		inLength >= 0;
+       requires sigBuff != null;
+       requires sigOffset >= 0 && sigOffset <= sigBuff.length;
+       ensures \result >= 0;
+       assignable sigBuff[sigOffset..sigBuff.length-1];
+  @*/
+  public abstract short sign(
+    byte[] inBuff, short inOffset, short inLength,
+    byte[] sigBuff, short sigOffset)
+      throws CryptoException;
+
+  /*@
+     public normal_behavior 
+       requires _initialized;
+       requires inBuff != null;
+       requires inOffset >= 0 && inOffset + inLength <= inBuff.length &&
+		inLength >= 0;
+       requires sigBuff != null;
+       requires sigOffset >= 0 && sigOffset + sigLength <= sigBuff.length &&
+		sigLength >= 0;
+       ensures true;
+       assignable \nothing;
+  @*/
+  public abstract boolean verify(
+    byte[] inBuff, short inOffset, short inLength,
+    byte[] sigBuff, short sigOffset, short sigLength)
+      throws CryptoException;
+
+}

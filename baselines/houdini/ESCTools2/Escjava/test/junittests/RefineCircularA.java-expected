@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+Error: .|RefineCircularA.spec is circularly referenced in a refinement sequence
+    [TIME]
+
+RefineCircularA ...
+  Prover started:TIME
+    [TIME]
+
+RefineCircularA: RefineCircularA() ...
+    [TIME]  passed
+  [TIME total]
+1 error

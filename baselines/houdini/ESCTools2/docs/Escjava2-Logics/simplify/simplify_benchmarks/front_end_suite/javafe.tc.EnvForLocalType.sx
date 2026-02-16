@@ -1,0 +1,767 @@
+(PROMPT_OFF)
+;----------------------------------------------------------------------
+; "Universal", or class-independent part, of the background predicate
+
+; === ESCJ 8: Section 0.4
+    
+(BG_PUSH (FORALL (m i x) (EQ (select (store m i x) i) x)))
+
+(BG_PUSH (FORALL (m i j x) 
+		 (IMPLIES (NEQ i j)
+			  (EQ (select (store m i x) j)
+			      (select m j)))))
+
+; === ESCJ 8: Section 1.1
+
+(DEFPRED (<: t0 t1))
+
+; <: reflexive
+(BG_PUSH 
+  (FORALL (t)
+    (PATS (<: t t))
+    (<: t t)))
+
+; a special case, for which the above may not fire
+
+(BG_PUSH (<: |T_java.lang.Object| |T_java.lang.Object|))
+
+; <: transitive	
+(BG_PUSH 
+  (FORALL (t0 t1 t2)
+    (PATS (MPAT (<: t0 t1) (<: t1 t2)))
+    (IMPLIES (AND (<: t0 t1) (<: t1 t2))
+      (<: t0 t2))))
+
+;anti-symmetry
+(BG_PUSH
+ (FORALL
+  (t0 t1)
+  (PATS (MPAT (<: t0 t1) (<: t1 t0)))
+  (IMPLIES (AND (<: t0 t1) (<: t1 t0)) (EQ t0 t1))))
+
+; primitive types are final
+
+(BG_PUSH (FORALL (t) (PATS (<: t |T_boolean|))
+	(IMPLIES (<: t |T_boolean|) (EQ t |T_boolean|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_char|))
+	(IMPLIES (<: t |T_char|) (EQ t |T_char|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_byte|))
+	(IMPLIES (<: t |T_byte|) (EQ t |T_byte|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_short|))
+	(IMPLIES (<: t |T_short|) (EQ t |T_short|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_int|))
+	(IMPLIES (<: t |T_int|) (EQ t |T_int|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_long|))
+	(IMPLIES (<: t |T_long|) (EQ t |T_long|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_float|))
+	(IMPLIES (<: t |T_float|) (EQ t |T_float|))))
+(BG_PUSH (FORALL (t) (PATS (<: t |T_double|))
+	(IMPLIES (<: t |T_double|) (EQ t |T_double|))))
+
+; (New as of 12 Dec 2000)
+; primitive types have no proper supertypes
+
+(BG_PUSH (FORALL (t) (PATS (<: |T_boolean| t))
+	(IMPLIES (<: |T_boolean| t) (EQ t |T_boolean|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_char| t))
+	(IMPLIES (<: |T_char| t) (EQ t |T_char|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_byte| t))
+	(IMPLIES (<: |T_byte| t) (EQ t |T_byte|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_short| t))
+	(IMPLIES (<: |T_short| t) (EQ t |T_short|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_int| t))
+	(IMPLIES (<: |T_int| t) (EQ t |T_int|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_long| t))
+	(IMPLIES (<: |T_long| t) (EQ t |T_long|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_float| t))
+	(IMPLIES (<: |T_float| t) (EQ t |T_float|))))
+(BG_PUSH (FORALL (t) (PATS (<: |T_double| t))
+	(IMPLIES (<: |T_double| t) (EQ t |T_double|))))
+
+; === ESCJ 8: Section 1.2
+
+(BG_PUSH
+  (FORALL (t0 t1 t2)
+    (PATS (<: t0 (asChild t1 t2)))
+    (IMPLIES
+      (<: t0 (asChild t1 t2))
+      (EQ (classDown t2 t0) (asChild t1 t2)))))
+
+; === ESCJ 8: Section 1.3
+    
+; new
+
+(BG_PUSH 
+  (<: |T_java.lang.Cloneable| |T_java.lang.Object|))
+
+(BG_PUSH
+  (FORALL (t)
+    (PATS (array t))
+    (<: (array t) |T_java.lang.Cloneable|)))
+    
+(BG_PUSH
+  (FORALL (t)
+    (PATS (elemtype (array t)))
+    (EQ (elemtype (array t)) t)))
+
+(BG_PUSH
+  (FORALL (t0 t1) 
+    (PATS (<: t0 (array t1)))
+    (IFF (<: t0 (array t1))
+      (AND
+	(EQ t0 (array (elemtype t0)))
+	(<: (elemtype t0) t1)))))
+
+; === ESCJ 8: Section 2.1
+
+(DEFPRED (is x t))
+
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (is (cast x t) t)))
+     
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (cast x t))
+	 (IMPLIES (is x t) (EQ (cast x t) x))))
+     
+; === ESCJ 8: Section 2.2
+
+(BG_PUSH (DISTINCT |bool$false| |@true|))
+
+; === ESCJ 8: Section 2.2.1
+
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_char|)) 
+	   (IFF (is x |T_char|) (AND (<= 0 x) (<= x 65535)))))
+(BG_PUSH (FORALL (x)
+	   (PATS (is x |T_byte|))
+	   (IFF (is x |T_byte|) (AND (<= -128 x) (<= x 127)))))
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_short|))
+	   (IFF (is x |T_short|) (AND (<= -32768 x) (<= x 32767)))))
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_int|))
+	   (IFF (is x |T_int|) (AND (<= intFirst x) (<= x intLast)))))
+(BG_PUSH (FORALL (x) 
+	   (PATS (is x |T_long|))
+	   (IFF (is x |T_long|) (AND (<= longFirst x) (<= x longLast)))))
+
+(BG_PUSH (< longFirst intFirst))
+(BG_PUSH (< intFirst -1000000))
+(BG_PUSH (< 1000000 intLast))
+(BG_PUSH (< intLast longLast))
+
+; === ESCJ 8: Section 2.3
+      
+(BG_PUSH
+ (FORALL (x t)
+	 (PATS (MPAT (<: t |T_java.lang.Object|) (is x t)))
+	 (IMPLIES (<: t |T_java.lang.Object|)
+		  (IFF (is x t)
+		       (OR (EQ x null) (<: (typeof x) t))))))
+
+; === ESCJ 8: Section 2.4
+
+(BG_PUSH
+ (FORALL (f t x) (PATS (select (asField f t) x))
+	 (is (select (asField f t) x) t)))
+
+; === ESCJ 8: Section 2.5
+
+(BG_PUSH
+ (FORALL (e a i) (PATS (select (select (asElems e) a) i))
+	 (is (select (select (asElems e) a) i)
+	     (elemtype (typeof a)))))
+
+; === ESCJ 8: Section 3.0
+
+(DEFPRED (isAllocated x a0) (< (vAllocTime x) a0))
+
+; === ESCJ 8: Section 3.1
+
+(BG_PUSH
+ (FORALL (x f a0) (PATS (isAllocated (select f x) a0))
+	 (IMPLIES (AND (< (fClosedTime f) a0)
+		       (isAllocated x a0))
+		  (isAllocated (select f x) a0))))
+
+; === ESCJ 8: Section 3.2
+
+(BG_PUSH
+ (FORALL (a e i a0) (PATS (isAllocated (select (select e a) i) a0))
+	 (IMPLIES (AND (< (eClosedTime e) a0)
+		       (isAllocated a a0))
+		  (isAllocated (select (select e a) i) a0))))
+ 
+; === ESCJ 8: Section 4 
+
+; max(lockset) is in lockset
+
+(BG_PUSH
+ (FORALL (S)
+  (PATS (select (asLockSet S) (max (asLockSet S))))
+  (EQ
+   (select (asLockSet S) (max (asLockSet S)))
+   |@true|)))
+
+; null is in lockset (not in ESCJ 8)
+
+(BG_PUSH
+ (FORALL (S)
+  (PATS (asLockSet S))
+  (EQ (select (asLockSet S) null) |@true|)))
+
+(DEFPRED (lockLE x y) (<= x y))
+
+(DEFPRED (lockLT x y) (< x y))
+
+; all locks in lockset are below max(lockset) (not in ESCJ 8)
+
+(BG_PUSH
+ (FORALL (S mu)
+  (IMPLIES
+   (EQ (select (asLockSet S) mu) |@true|)
+   (lockLE mu (max (asLockSet S))))))
+
+; null precedes all objects in locking order (not in ESCJ 8)
+
+(BG_PUSH
+  (FORALL (x)
+    (PATS (lockLE null x) (lockLT null x) (lockLE x null) (lockLT x null))
+    (IMPLIES
+      (<: (typeof x) |T_java.lang.Object|)
+      (lockLE null x))))
+
+
+; === ESCJ 8: Section 5.0
+
+(BG_PUSH
+ (FORALL (a) 
+	 (PATS (arrayLength a))
+	 (AND (<= 0 (arrayLength a))
+	      (is (arrayLength a) |T_int|))))
+
+(DEFPRED (arrayFresh a a0 b0 e s T v))
+
+(BG_PUSH
+  (FORALL (a a0 b0 e n s T v)
+    (PATS (arrayFresh a a0 b0 e (arrayShapeMore n s) T v))
+    (IFF
+      (arrayFresh a a0 b0 e (arrayShapeMore n s) T v)
+      (AND
+	(<= a0 (vAllocTime a))
+	(isAllocated a b0)
+	(NEQ a null)
+	(EQ (typeof a) T)
+	(EQ (arrayLength a) n)
+	(FORALL (i)
+	  (PATS (select (select e a) i))
+	  (AND
+	    (arrayFresh (select (select e a) i) a0 b0 e s (elemtype T) v)
+	    (EQ (arrayParent (select (select e a) i)) a)
+	    (EQ (arrayPosition (select (select e a) i)) i)))))))
+
+(BG_PUSH
+  (FORALL (a a0 b0 e n T v)
+    (PATS (arrayFresh a a0 b0 e (arrayShapeOne n) T v))
+    (IFF
+      (arrayFresh a a0 b0 e (arrayShapeOne n) T v)
+      (AND
+	(<= a0 (vAllocTime a))
+	(isAllocated a b0)
+	(NEQ a null)
+	(EQ (typeof a) T)
+	(EQ (arrayLength a) n)
+	(FORALL (i)
+	  (PATS (select (select e a) i))
+	  (AND
+	    (EQ (select (select e a) i) v)))))))
+
+
+; === code to ensure that (isNewArray x) ==> x has no invariants
+
+
+; arrayType is distinct from all types with invariants (due to the
+; generated type-distinctness axiom)
+
+(BG_PUSH
+  (EQ arrayType (asChild arrayType |T_java.lang.Object|)))
+
+(BG_PUSH
+   (FORALL (t)
+      (PATS (array t))
+      (<: (array t) arrayType)))
+
+(BG_PUSH
+  (FORALL (s)
+	  (PATS (isNewArray s))
+	  (IMPLIES (EQ |@true| (isNewArray s))
+		   (<: (typeof s) arrayType))))
+
+; === ESCJ 8: Section 5.1
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j) (integralDiv i j))
+	 (EQ (+ (* (integralDiv i j) j) (integralMod i j))
+	     i)))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< 0 j)
+		  (AND (<= 0 (integralMod i j))
+		       (< (integralMod i j) j)))))
+
+(BG_PUSH
+ (FORALL (i j) (PATS (integralMod i j))
+	 (IMPLIES (< j 0)
+		  (AND (< j (integralMod i j))
+		       (<= (integralMod i j) 0)))))
+
+(BG_PUSH
+ (FORALL (i j) 
+	 (PATS (integralMod (+ i j) j))
+	 (EQ (integralMod (+ i j) j) 
+	     (integralMod i j))))
+
+(BG_PUSH
+ (FORALL (i j)
+	 (PATS (integralMod (+ j i) j))
+	 (EQ (integralMod (+ j i) j) 
+	     (integralMod i j))))
+
+; to prevent a matching loop
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (* (integralDiv (* x y) y) y))
+  (EQ (* (integralDiv (* x y) y) y) (* x y))))
+
+
+; === ESCJ 8: Section 5.2
+
+(DEFPRED (boolAnd a b)
+  (AND
+    (EQ a |@true|) 
+    (EQ b |@true|)))
+
+(DEFPRED (boolEq a b)
+  (IFF
+    (EQ a |@true|)
+    (EQ b |@true|)))
+
+(DEFPRED (boolImplies a b)
+  (IMPLIES
+    (EQ a |@true|)
+    (EQ b |@true|)))
+    
+(DEFPRED (boolNE a b)
+  (NOT (IFF
+	 (EQ a |@true|)
+	 (EQ b |@true|))))
+
+(DEFPRED (boolNot a)
+  (NOT (EQ a |@true|)))
+
+(DEFPRED (boolOr a b)
+  (OR
+    (EQ a |@true|)
+    (EQ b |@true|)))
+
+; Not in ESCJ8, but should be
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralEQ x y))
+    (IFF
+      (EQ (integralEQ x y) |@true|)
+      (EQ x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (stringCat x y))
+    (AND (NEQ (stringCat x y) null)
+         (<: (typeof (stringCat x y)) |T_java.lang.String|))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralGE x y))
+    (IFF
+      (EQ (integralGE x y) |@true|)
+      (>= x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralGT x y))
+    (IFF
+      (EQ (integralGT x y) |@true|)
+      (> x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralLE x y))
+    (IFF
+      (EQ (integralLE x y) |@true|)
+      (<= x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralLT x y))
+    (IFF
+      (EQ (integralLT x y) |@true|)
+      (< x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (integralNE x y))
+    (IFF
+      (EQ (integralNE x y) |@true|)
+      (NEQ x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (refEQ x y))
+    (IFF
+      (EQ (refEQ x y) |@true|)
+      (EQ x y))))
+
+(BG_PUSH
+  (FORALL (x y)
+    (PATS (refNE x y))
+    (IFF
+      (EQ (refNE x y) |@true|)
+      (NEQ x y))))
+
+; === ESCJ 8: Section 5.3
+
+(BG_PUSH
+ (FORALL (x y)
+	 (PATS (termConditional |@true| x y))
+	 (EQ (termConditional |@true| x y) x)))
+
+(BG_PUSH
+ (FORALL (b x y)
+	 (PATS (termConditional b x y))
+	 (IMPLIES (NEQ b |@true|)
+		  (EQ (termConditional b x y) y))))
+
+; === Implementation of nonnullelements; not in ESCJ 8 (yet?):
+
+(DEFPRED (nonnullelements x e)
+   (AND (NEQ x null)
+	(FORALL (i)
+	   (IMPLIES (AND (<= 0 i)
+			 (< i (arrayLength x)))
+		    (NEQ (select (select e x) i) null)))))
+
+
+; === Axioms about classLiteral; not in ESCJ 8 (yet?):
+
+(BG_PUSH
+ (FORALL (t)
+	 (PATS (classLiteral t))
+	 (AND (NEQ (classLiteral t) null)
+	      (is (classLiteral t) |T_java.lang.Class|)
+              (isAllocated (classLiteral t) alloc))))
+
+
+; === Axioms about properties of integral &, |, and /
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralAnd x y))
+  (IMPLIES
+   (OR (<= 0 x) (<= 0 y))
+   (<= 0 (integralAnd x y)))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralAnd x y))
+  (IMPLIES
+   (<= 0 x)
+   (<= (integralAnd x y) x))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralAnd x y))
+  (IMPLIES
+   (<= 0 y)
+   (<= (integralAnd x y) y))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralOr x y))
+  (IMPLIES
+   (AND (<= 0 x) (<= 0 y))
+   (AND (<= x (integralOr x y)) (<= y (integralOr x y))))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralDiv x y))
+  (IMPLIES
+   (AND (<= 0 x) (< 0 y))
+   (AND (<= 0 (integralDiv x y)) (<= (integralDiv x y) x)))))
+
+(BG_PUSH
+ (FORALL (x y)
+  (PATS (integralXor x y))
+  (IMPLIES
+   (AND (<= 0 x) (<= 0 y))
+   (<= 0 (integralXor x y)))))
+
+(BG_PUSH
+ (FORALL (n)
+  (PATS (intShiftL 1 n))
+  (IMPLIES
+   (AND (<= 0 n) (< n 31))
+   (<= 1 (intShiftL 1 n)))))
+
+(BG_PUSH
+ (FORALL (n)
+  (PATS (longShiftL 1 n))
+  (IMPLIES
+   (AND (<= 0 n) (< n 63))
+   (<= 1 (longShiftL 1 n)))))
+
+; === Temporary kludge to speed up distinguishing small integers:
+
+(BG_PUSH
+ (DISTINCT -10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9
+	   10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+	   30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49
+	   50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69
+	   70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89
+	   90 91 92 93 94 95 96 97 98 99
+	   100 101 102 103 104 105 106 107 108 109
+	   110 111 112 113 114 115 116 117 118 119
+	   120 121 122 123 124 125 126 127 128 129
+	   130 131 132 133 134 135 136 137 138 139
+	   140 141 142 143 144 145 146 147 148 149
+	   150 151 152 153 154 155 156 157 158 159
+	   160 161 162 163 164 165 166 167 168 169
+	   170 171 172 173 174 175 176 177 178 179
+	   180 181 182 183 184 185 186 187 188 189
+	   190 191 192 193 194 195 196 197 198 199
+	   200 201 202 203 204 205 206 207 208 209
+	   210 211 212 213 214 215 216 217 218 219
+	   220 221 222 223 224 225 226 227 228 229
+	   230 231 232 233 234 235 236 237 238 239
+	   240 241 242 243 244 245 246 247 248 249
+	   250 251 252 253 254 255 256 257 258 259
+	   260 261 262 263 264 265 266 267 268 269
+	   270 271 272 273 274 275 276 277 278 279
+	   280 281 282 283 284 285 286 287 288 289
+	   290 291 292 293 294 295 296 297 298 299
+	   300 301 302 303 304 305 306 307 308 309
+	   310 311 312 313 314 315 316 317 318 319
+	   320 321 322 323 324 325 326 327 328 329
+	   330 331 332 333 334 335 336 337 338 339
+	   340 341 342 343 344 345 346 347 348 349
+	   350 351 352 353 354 355 356 357 358 359
+	   360 361 362 363 364 365 366 367 368 369
+	   370 371 372 373 374 375 376 377 378 379
+	   380 381 382 383 384 385 386 387 388 389
+	   390 391 392 393 394 395 396 397 398 399))
+
+;----------------------------------------------------------------------
+; End of Universal background predicate
+;----------------------------------------------------------------------
+(PROMPT_ON)
+
+
+(BG_PUSH (AND 
+(<: |T_javafe.util.Location| |T_java.lang.Object|)
+(EQ |T_javafe.util.Location| (asChild |T_javafe.util.Location| |T_java.lang.Object|))
+(<: |T_javafe.ast.BlockStmt| |T_javafe.ast.GenericBlockStmt|)
+(EQ |T_javafe.ast.BlockStmt| (asChild |T_javafe.ast.BlockStmt| |T_javafe.ast.GenericBlockStmt|))
+(<: |T_java.util.Map| |T_java.lang.Object|)
+(<: |T_java.util.Map| |T_java.util.EscjavaKeyValue|)
+(<: |T_javafe.ast.ASTDecoration| |T_java.lang.Object|)
+(EQ |T_javafe.ast.ASTDecoration| (asChild |T_javafe.ast.ASTDecoration| |T_java.lang.Object|))
+(<: |T_java.lang.Comparable| |T_java.lang.Object|)
+(<: |T_java.io.PrintStream| |T_java.io.FilterOutputStream|)
+(EQ |T_java.io.PrintStream| (asChild |T_java.io.PrintStream| |T_java.io.FilterOutputStream|))
+(<: |T_java.io.OutputStream| |T_java.lang.Object|)
+(EQ |T_java.io.OutputStream| (asChild |T_java.io.OutputStream| |T_java.lang.Object|))
+(<: |T_java.lang.Cloneable| |T_java.lang.Object|)
+(<: |T_javafe.tc.TypeSig| |T_javafe.ast.Type|)
+(EQ |T_javafe.tc.TypeSig| (asChild |T_javafe.tc.TypeSig| |T_javafe.ast.Type|))
+(<: |T_javafe.parser.TagConstants| |T_javafe.ast.TagConstants|)
+(EQ |T_javafe.parser.TagConstants| (asChild |T_javafe.parser.TagConstants| |T_javafe.ast.TagConstants|))
+(<: |T_javafe.ast.OperatorTags| |T_java.lang.Object|)
+(EQ |T_javafe.ast.OperatorTags| (asChild |T_javafe.ast.OperatorTags| |T_java.lang.Object|))
+(<: |T_javafe.ast.OperatorTags| |T_javafe.ast.GeneratedTags|)
+(<: |T_javafe.ast.MethodDecl| |T_javafe.ast.RoutineDecl|)
+(EQ |T_javafe.ast.MethodDecl| (asChild |T_javafe.ast.MethodDecl| |T_javafe.ast.RoutineDecl|))
+(<: |T_java.util.Dictionary| |T_java.lang.Object|)
+(EQ |T_java.util.Dictionary| (asChild |T_java.util.Dictionary| |T_java.lang.Object|))
+(<: |T_java.util.Dictionary| |T_java.util.EscjavaKeyValue|)
+(<: |T_java.io.FilterOutputStream| |T_java.io.OutputStream|)
+(EQ |T_java.io.FilterOutputStream| (asChild |T_java.io.FilterOutputStream| |T_java.io.OutputStream|))
+(<: |T_java.io.Serializable| |T_java.lang.Object|)
+(<: |T_javafe.ast.Type| |T_javafe.ast.ASTNode|)
+(EQ |T_javafe.ast.Type| (asChild |T_javafe.ast.Type| |T_javafe.ast.ASTNode|))
+(<: |T_java.lang.Exception| |T_java.lang.Throwable|)
+(EQ |T_java.lang.Exception| (asChild |T_java.lang.Exception| |T_java.lang.Throwable|))
+(<: |T_javafe.ast.TagConstants| |T_javafe.ast.OperatorTags|)
+(EQ |T_javafe.ast.TagConstants| (asChild |T_javafe.ast.TagConstants| |T_javafe.ast.OperatorTags|))
+(<: |T_javafe.ast.TypeDecl| |T_javafe.ast.ASTNode|)
+(EQ |T_javafe.ast.TypeDecl| (asChild |T_javafe.ast.TypeDecl| |T_javafe.ast.ASTNode|))
+(<: |T_javafe.ast.TypeDecl| |T_javafe.ast.TypeDeclElem|)
+(<: |T_java.lang.System| |T_java.lang.Object|)
+(EQ |T_java.lang.System| (asChild |T_java.lang.System| |T_java.lang.Object|))
+(FORALL (t) (PATS (<: t |T_java.lang.System|)) (IFF (<: t |T_java.lang.System|) (EQ t |T_java.lang.System|)))
+(<: |T_java.util.Properties| |T_java.util.Hashtable|)
+(EQ |T_java.util.Properties| (asChild |T_java.util.Properties| |T_java.util.Hashtable|))
+(<: |T_javafe.util.ErrorSet| |T_java.lang.Object|)
+(EQ |T_javafe.util.ErrorSet| (asChild |T_javafe.util.ErrorSet| |T_java.lang.Object|))
+(<: |T_javafe.util.Assert| |T_java.lang.Object|)
+(EQ |T_javafe.util.Assert| (asChild |T_javafe.util.Assert| |T_java.lang.Object|))
+(<: |T_javafe.ast.RoutineDecl| |T_javafe.ast.ASTNode|)
+(EQ |T_javafe.ast.RoutineDecl| (asChild |T_javafe.ast.RoutineDecl| |T_javafe.ast.ASTNode|))
+(<: |T_javafe.ast.RoutineDecl| |T_javafe.ast.TypeDeclElem|)
+(<: |T_javafe.tc.EnvForCU| |T_javafe.tc.Env|)
+(EQ |T_javafe.tc.EnvForCU| (asChild |T_javafe.tc.EnvForCU| |T_javafe.tc.Env|))
+(<: |T_java.lang.CloneNotSupportedException| |T_java.lang.Exception|)
+(EQ |T_java.lang.CloneNotSupportedException| (asChild |T_java.lang.CloneNotSupportedException| |T_java.lang.Exception|))
+(<: |T_javafe.ast.GenericVarDecl| |T_javafe.ast.ASTNode|)
+(EQ |T_javafe.ast.GenericVarDecl| (asChild |T_javafe.ast.GenericVarDecl| |T_javafe.ast.ASTNode|))
+(<: |T_javafe.ast.GenericBlockStmt| |T_javafe.ast.Stmt|)
+(EQ |T_javafe.ast.GenericBlockStmt| (asChild |T_javafe.ast.GenericBlockStmt| |T_javafe.ast.Stmt|))
+(<: |T_javafe.tc.FieldDeclVec| |T_java.lang.Object|)
+(EQ |T_javafe.tc.FieldDeclVec| (asChild |T_javafe.tc.FieldDeclVec| |T_java.lang.Object|))
+(<: |T_javafe.tc.MethodDeclVec| |T_java.lang.Object|)
+(EQ |T_javafe.tc.MethodDeclVec| (asChild |T_javafe.tc.MethodDeclVec| |T_java.lang.Object|))
+(<: |T_javafe.tc.EnvForLocalType| |T_javafe.tc.Env|)
+(EQ |T_javafe.tc.EnvForLocalType| (asChild |T_javafe.tc.EnvForLocalType| |T_javafe.tc.Env|))
+(<: |T_javafe.tc.EnvForLocalType| |T_java.lang.Cloneable|)
+(<: |T_java.util.Hashtable| |T_java.util.Dictionary|)
+(EQ |T_java.util.Hashtable| (asChild |T_java.util.Hashtable| |T_java.util.Dictionary|))
+(<: |T_java.util.Hashtable| |T_java.util.Map|)
+(<: |T_java.util.Hashtable| |T_java.lang.Cloneable|)
+(<: |T_java.util.Hashtable| |T_java.io.Serializable|)
+(<: |T_javafe.ast.CompilationUnit| |T_javafe.ast.ASTNode|)
+(EQ |T_javafe.ast.CompilationUnit| (asChild |T_javafe.ast.CompilationUnit| |T_javafe.ast.ASTNode|))
+(<: |T_javafe.ast.GeneratedTags| |T_java.lang.Object|)
+(<: |T_javafe.ast.TypeDeclElem| |T_java.lang.Object|)
+(<: |T_javafe.ast.Stmt| |T_javafe.ast.ASTNode|)
+(EQ |T_javafe.ast.Stmt| (asChild |T_javafe.ast.Stmt| |T_javafe.ast.ASTNode|))
+(<: |T_java.util.EscjavaKeyValue| |T_java.lang.Object|)
+(<: |T_javafe.ast.FieldDecl| |T_javafe.ast.GenericVarDecl|)
+(EQ |T_javafe.ast.FieldDecl| (asChild |T_javafe.ast.FieldDecl| |T_javafe.ast.GenericVarDecl|))
+(<: |T_javafe.ast.FieldDecl| |T_javafe.ast.TypeDeclElem|)
+(<: |T_javafe.tc.Env| |T_java.lang.Object|)
+(EQ |T_javafe.tc.Env| (asChild |T_javafe.tc.Env| |T_java.lang.Object|))
+(<: |T_javafe.ast.Identifier| |T_java.lang.Object|)
+(EQ |T_javafe.ast.Identifier| (asChild |T_javafe.ast.Identifier| |T_java.lang.Object|))
+(FORALL (t) (PATS (<: t |T_javafe.ast.Identifier|)) (IFF (<: t |T_javafe.ast.Identifier|) (EQ t |T_javafe.ast.Identifier|)))
+(<: |T_javafe.ast.ASTNode| |T_java.lang.Object|)
+(EQ |T_javafe.ast.ASTNode| (asChild |T_javafe.ast.ASTNode| |T_java.lang.Object|))
+(<: |T_javafe.ast.ASTNode| |T_java.lang.Cloneable|)
+(<: |T_java.lang.Throwable| |T_java.lang.Object|)
+(EQ |T_java.lang.Throwable| (asChild |T_java.lang.Throwable| |T_java.lang.Object|))
+(<: |T_java.lang.Throwable| |T_java.io.Serializable|)
+(<: |T_java.lang.String| |T_java.lang.Object|)
+(EQ |T_java.lang.String| (asChild |T_java.lang.String| |T_java.lang.Object|))
+(FORALL (t) (PATS (<: t |T_java.lang.String|)) (IFF (<: t |T_java.lang.String|) (EQ t |T_java.lang.String|)))
+(<: |T_java.lang.String| |T_java.io.Serializable|)
+(<: |T_java.lang.String| |T_java.lang.Comparable|)
+(DISTINCT arrayType |T_boolean| |T_char| |T_byte| |T_short| |T_int| |T_long| |T_float| |T_double| |T_.TYPE| |T_javafe.util.Location| |T_javafe.ast.BlockStmt| |T_java.util.Map| |T_javafe.ast.ASTDecoration| |T_java.lang.Comparable| |T_java.io.PrintStream| |T_java.io.OutputStream| |T_java.lang.Cloneable| |T_javafe.tc.TypeSig| |T_java.lang.Object| |T_javafe.parser.TagConstants| |T_javafe.ast.OperatorTags| |T_javafe.ast.MethodDecl| |T_java.util.Dictionary| |T_java.io.FilterOutputStream| |T_java.io.Serializable| |T_javafe.ast.Type| |T_java.lang.Exception| |T_javafe.ast.TagConstants| |T_javafe.ast.TypeDecl| |T_java.lang.System| |T_java.util.Properties| |T_javafe.util.ErrorSet| |T_javafe.util.Assert| |T_javafe.ast.RoutineDecl| |T_javafe.tc.EnvForCU| |T_java.lang.CloneNotSupportedException| |T_javafe.ast.GenericVarDecl| |T_javafe.ast.GenericBlockStmt| |T_javafe.tc.FieldDeclVec| |T_javafe.tc.MethodDeclVec| |T_javafe.tc.EnvForLocalType| |T_java.util.Hashtable| |T_javafe.ast.CompilationUnit| |T_javafe.ast.GeneratedTags| |T_javafe.ast.TypeDeclElem| |T_javafe.ast.Stmt| |T_java.util.EscjavaKeyValue| |T_javafe.ast.FieldDecl| |T_javafe.tc.Env| |T_javafe.ast.Identifier| |T_javafe.ast.ASTNode| |T_java.lang.Throwable| |T_java.lang.String|)
+(EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|)))
+(NEQ |keywordStrings:51.181.30| null)
+(EQ (typeof |keywordStrings:51.181.30|) (array |T_java.lang.String|))
+(EQ (arrayLength |keywordStrings:51.181.30|) 51)
+(EQ |@true| (is |otherCodes:51.202.27| (array T_int)))
+(NEQ |otherCodes:51.202.27| null)
+(EQ (typeof |otherCodes:51.202.27|) (array T_int))
+(EQ (arrayLength |otherCodes:51.202.27|) 15)
+(EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|)))
+(NEQ |otherStrings:51.193.30| null)
+(EQ (typeof |otherStrings:51.193.30|) (array |T_java.lang.String|))
+(EQ (arrayLength |otherStrings:51.193.30|) 15)
+(EQ |@true| (is |STMTPRAGMA:51.26.26| T_int))
+(EQ |STMTPRAGMA:51.26.26| 116)
+(EQ |@true| (is |LONGLIT:52.40.26| T_int))
+(EQ |LONGLIT:52.40.26| 106)
+(EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|)))
+(NEQ |punctuationStrings:51.134.22| null)
+(EQ (typeof |punctuationStrings:51.134.22|) (array |T_java.lang.String|))
+(EQ (arrayLength |punctuationStrings:51.134.22|) 48)
+(EQ |@true| (is |noTokens:51.212.27| T_int))
+(EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int))
+(EQ |FIRST_KEYWORD:51.51.26| 133)
+(EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|))
+(EQ |@true| (is |DOUBLELIT:52.43.26| T_int))
+(EQ |DOUBLELIT:52.43.26| 109)
+(EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int))
+(EQ |LAST_KEYWORD:51.103.26| 183)
+(EQ |@true| (is |NULL:51.82.26| T_int))
+(EQ |NULL:51.82.26| 163)
+(EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int))
+(EQ |MODIFIERPRAGMA:51.25.26| 115)
+(EQ |@true| (is |INTLIT:52.39.26| T_int))
+(EQ |INTLIT:52.39.26| 105)
+(EQ |@true| (is |PARSED:18.772.28| T_int))
+(EQ |PARSED:18.772.28| 2)
+(EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int))
+(EQ |TYPEMODIFIERPRAGMA:51.28.26| 118)
+(EQ |@true| (is |FLOATLIT:52.42.26| T_int))
+(EQ |FLOATLIT:52.42.26| 108)
+(EQ |@true| (is |PREPPED:18.775.28| T_int))
+(EQ |PREPPED:18.775.28| 5)
+(EQ |@true| (is |punctuationCodes:51.164.19| (array T_int)))
+(NEQ |punctuationCodes:51.164.19| null)
+(EQ (typeof |punctuationCodes:51.164.19|) (array T_int))
+(EQ (arrayLength |punctuationCodes:51.164.19|) 48)
+(EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int))
+(EQ |LEXICALPRAGMA:51.24.26| 114)
+(EQ |@true| (is |BOOLEANLIT:52.38.26| T_int))
+(EQ |BOOLEANLIT:52.38.26| 104)
+(EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int))
+(EQ |TYPEDECLELEMPRAGMA:51.27.26| 117)
+(EQ |@true| (is |CHARLIT:52.41.26| T_int))
+(EQ |CHARLIT:52.41.26| 107)
+(EQ |@true| (is |STRINGLIT:52.44.26| T_int))
+(EQ |STRINGLIT:52.44.26| 110)
+(EQ |@true| (is |IDENT:52.25.26| T_int))
+(EQ |IDENT:52.25.26| 93)
+(EQ |@true| (is |NULL:17.60.26| T_int))
+(EQ |NULL:17.60.26| 0)))
+
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.<constructor>.46.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is |parent:48.45| |T_javafe.tc.Env|)) (EQ |@true| (isAllocated |parent:48.45| alloc)) (NEQ |parent:48.45| null) (EQ |@true| (is |decl:49.29| |T_javafe.ast.TypeDecl|)) (EQ |@true| (isAllocated |decl:49.29| alloc)) (NEQ |decl:49.29| null) (NEQ (select |id:13.32.34| |decl:49.29|) null) (NOT (AND (EQ |@true| (is |parent:48.45| |T_javafe.tc.EnvForCU|)) (NEQ |parent:48.45| null))) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.TypeSig|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.TypeSig|)) (NEQ brokenObj null) (>= (select |state:18.787.15| brokenObj) |PREPPED:18.775.28|)) (NEQ (select |methods:18.883.26| brokenObj) null))) (FORALL (|brokenObj<1>|) (NOPATS (is |brokenObj<1>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<1>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<1>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<1>| null) (NOT (EQ |@true| (select |member:18.44.39| |brokenObj<1>|)))) (NEQ (select |enclosingEnv:18.52.36| |brokenObj<1>|) null))) (FORALL (|brokenObj<2>|) (NOPATS (is |brokenObj<2>| |T_javafe.ast.RoutineDecl|) (NEQ |brokenObj<2>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<2>| |T_javafe.ast.RoutineDecl|)) (NEQ |brokenObj<2>| null)) (NEQ (select |loc:83.40.13| |brokenObj<2>|) |NULL:17.60.26|))) (FORALL (|brokenObj<3>|) (NOPATS (is |brokenObj<3>| |T_javafe.ast.CompilationUnit|) (NEQ |brokenObj<3>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<3>| |T_javafe.ast.CompilationUnit|)) (NEQ |brokenObj<3>| null)) (NEQ (select |loc:73.30.13| |brokenObj<3>|) |NULL:17.60.26|))) (FORALL (|brokenObj<4>|) (NOPATS (is |brokenObj<4>| |T_javafe.ast.GenericBlockStmt|) (NEQ |brokenObj<4>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<4>| |T_javafe.ast.GenericBlockStmt|)) (NEQ |brokenObj<4>| null)) (NEQ (select |locOpenBrace:90.22.13| |brokenObj<4>|) |NULL:17.60.26|))) (FORALL (|brokenObj<5>|) (NOPATS (is |brokenObj<5>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<5>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<5>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<5>| null) (EQ (select |enclosingType:18.32.39| |brokenObj<5>|) null)) (EQ |@true| (select |member:18.44.39| |brokenObj<5>|)))) (FORALL (|brokenObj<6>|) (NOPATS (is |brokenObj<6>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<6>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<6>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<6>| null) (>= (select |state:18.787.15| |brokenObj<6>|) |PREPPED:18.775.28|)) (NEQ (select |fields:18.875.27| |brokenObj<6>|) null))) (FORALL (|brokenObj<7>|) (NOPATS (is |brokenObj<7>| |T_javafe.ast.RoutineDecl|) (NEQ |brokenObj<7>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<7>| |T_javafe.ast.RoutineDecl|)) (NEQ |brokenObj<7>| null)) (NEQ (select |locId:83.43.13| |brokenObj<7>|) |NULL:17.60.26|))) (FORALL (|brokenObj<8>|) (NOPATS (is |brokenObj<8>| |T_javafe.ast.TypeDecl|) (NEQ |brokenObj<8>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<8>| |T_javafe.ast.TypeDecl|)) (NEQ |brokenObj<8>| null)) (NEQ (select |loc:13.45.13| |brokenObj<8>|) |NULL:17.60.26|))) (FORALL (|brokenObj<9>|) (NOPATS (is |brokenObj<9>| |T_javafe.ast.GenericBlockStmt|) (NEQ |brokenObj<9>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<9>| |T_javafe.ast.GenericBlockStmt|)) (NEQ |brokenObj<9>| null)) (NEQ (select |locCloseBrace:90.25.13| |brokenObj<9>|) |NULL:17.60.26|))) (FORALL (|brokenObj<10>|) (NOPATS (is |brokenObj<10>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<10>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<10>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<10>| null)) (IFF (EQ (select |myTypeDecl:18.63.40| |brokenObj<10>|) null) (EQ (select |CU:18.71.30| |brokenObj<10>|) null)))) (FORALL (|brokenObj<11>|) (NOPATS (is |brokenObj<11>| |T_javafe.tc.EnvForLocalType|) (NEQ |brokenObj<11>| null) (NEQ |brokenObj<11>| objectToBeConstructed)) (IMPLIES (AND (EQ |@true| (is |brokenObj<11>| |T_javafe.tc.EnvForLocalType|)) (NEQ |brokenObj<11>| null) (NEQ |brokenObj<11>| objectToBeConstructed)) (NEQ (select |id:13.32.34| (select |decl:35.37| |brokenObj<11>|)) null))) (FORALL (|brokenObj<12>|) (NOPATS (is |brokenObj<12>| |T_javafe.ast.TypeDecl|) (NEQ |brokenObj<12>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<12>| |T_javafe.ast.TypeDecl|)) (NEQ |brokenObj<12>| null)) (NEQ (select |locCloseBrace:13.54.13| |brokenObj<12>|) |NULL:17.60.26|))) (FORALL (|brokenObj<13>|) (NOPATS (is |brokenObj<13>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<13>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<13>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<13>| null) (NEQ (select |enclosingType:18.32.39| |brokenObj<13>|) null)) (NEQ (select |myTypeDecl:18.63.40| |brokenObj<13>|) null))) (FORALL (|brokenObj<14>|) (NOPATS (is |brokenObj<14>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<14>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<14>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<14>| null) (>= (select |state:18.787.15| |brokenObj<14>|) |PARSED:18.772.28|)) (NEQ (select |myTypeDecl:18.63.40| |brokenObj<14>|) null))) (FORALL (|brokenObj<15>|) (NOPATS (is |brokenObj<15>| |T_javafe.ast.TypeDecl|) (NEQ |brokenObj<15>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<15>| |T_javafe.ast.TypeDecl|)) (NEQ |brokenObj<15>| null)) (NEQ (select |locId:13.48.13| |brokenObj<15>|) |NULL:17.60.26|))) (FORALL (|brokenObj<16>|) (NOPATS (is |brokenObj<16>| |T_javafe.ast.TypeDecl|) (NEQ |brokenObj<16>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<16>| |T_javafe.ast.TypeDecl|)) (NEQ |brokenObj<16>| null)) (NEQ (select |locOpenBrace:13.51.13| |brokenObj<16>|) |NULL:17.60.26|))) (FORALL (|brokenObj<17>|) (NOPATS (is |brokenObj<17>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<17>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<17>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<17>| null) (EQ (select |simpleName:18.37.38| |brokenObj<17>|) null)) (NOT (EQ |@true| (select |member:18.44.39| |brokenObj<17>|))))) (FORALL (|brokenObj<18>|) (NOPATS (is |brokenObj<18>| |T_javafe.ast.RoutineDecl|) (NEQ |brokenObj<18>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<18>| |T_javafe.ast.RoutineDecl|)) (NEQ |brokenObj<18>| null) (NEQ (select |body:83.34.19| |brokenObj<18>|) null)) (NEQ (select |locOpenBrace:83.36.13| |brokenObj<18>|) |NULL:17.60.26|))) (FORALL (|brokenObj<19>|) (NOPATS (is |brokenObj<19>| |T_javafe.ast.MethodDecl|) (NEQ |brokenObj<19>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<19>| |T_javafe.ast.MethodDecl|)) (NEQ |brokenObj<19>| null)) (NEQ (select |locType:82.21.13| |brokenObj<19>|) |NULL:17.60.26|))) (FORALL (|brokenObj<20>|) (NOPATS (is |brokenObj<20>| |T_javafe.ast.GenericVarDecl|) (NEQ |brokenObj<20>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<20>| |T_javafe.ast.GenericVarDecl|)) (NEQ |brokenObj<20>| null)) (NEQ (select |locId:30.38.13| |brokenObj<20>|) |NULL:17.60.26|))) (FORALL (|brokenObj<21>|) (NOPATS (is |brokenObj<21>| |T_javafe.tc.EnvForLocalType|) (NEQ |brokenObj<21>| null) (NEQ |brokenObj<21>| objectToBeConstructed)) (IMPLIES (AND (EQ |@true| (is |brokenObj<21>| |T_javafe.tc.EnvForLocalType|)) (NEQ |brokenObj<21>| null) (NEQ |brokenObj<21>| objectToBeConstructed)) (NOT (AND (EQ |@true| (is (select |parent:29.32| |brokenObj<21>|) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| |brokenObj<21>|) null))))) (FORALL (|brokenObj<22>|) (NOPATS (is |brokenObj<22>| |T_javafe.tc.TypeSig|) (NEQ |brokenObj<22>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<22>| |T_javafe.tc.TypeSig|)) (NEQ |brokenObj<22>| null) (< (select |state:18.787.15| |brokenObj<22>|) |PARSED:18.772.28|)) (EQ (select |myTypeDecl:18.63.40| |brokenObj<22>|) null))) (OR (AND (NOT (EQ |@true| (isAllocated objectToBeConstructed alloc))) (< alloc |after@49.35-49.35|) (NEQ |RES-49.35:49.35| null) (NOT (EQ |@true| (isAllocated |RES-49.35:49.35| alloc))) (EQ |@true| (is |RES-49.35:49.35| |T_javafe.tc.Env|)) (EQ |@true| (isAllocated |RES-49.35:49.35| |after@49.35-49.35|)) (EQ |EC-49.35:49.35| |ecReturn|) (EQ (select |owner:7.35.28| |RES-49.35:49.35|) null) (<: (typeof |RES-49.35:49.35|) |T_javafe.tc.EnvForLocalType|) (EQ objectToBeConstructed |RES-49.35:49.35|) (EQ |parent:29.32<1>| (store |parent:29.32| |RES-49.35:49.35| |parent@zero|)) (EQ |decl:35.37<1>| (store |decl:35.37| |RES-49.35:49.35| |decl@zero|)) (EQ |parent:50.6| (store |parent:29.32<1>| |RES-49.35:49.35| |parent:48.45|)) (EQ |decl:51.6| (store |decl:35.37<1>| |RES-49.35:49.35| |decl:49.29|)) (EQ |tmp1!id:60.48| (select |id:13.32.34| |decl:49.29|)) (OR (NOT (LBLNEG |Invariant:34.8@60.47| (OR (NOT (EQ |@true| (is |parent:48.45| |T_javafe.tc.EnvForLocalType|))) (NEQ (select |id:13.32.34| (select |decl:51.6| |parent:48.45|)) null)))) (NOT (LBLNEG |Invariant:28.8@60.47| (OR (NOT (EQ |@true| (is |parent:48.45| |T_javafe.tc.EnvForLocalType|))) (NOT (AND (EQ |@true| (is (select |parent:50.6| |parent:48.45|) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:50.6| |parent:48.45|) null)))))) (AND (EQ |@true| (is |RES-60.27:60.27| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-60.27:60.27| |after@49.35-49.35|)) (EQ |EC-60.27:60.27| |ecReturn|) (OR (AND (NEQ |RES-60.27:60.27| null) (NOT (LBLNEG |Null@62.32| (NEQ |RES-60.27:60.27| null)))) (AND (OR (AND (NEQ |RES-60.27:60.27| null) (LBLNEG |Null@62.32| (NEQ |RES-60.27:60.27| null)) (EQ |tmp2!cand:62.5| (boolNot (select |member:18.44.39| |RES-60.27:60.27|))) (EQ |tmp2!cand:62.20| |tmp2!cand:62.5|)) (AND (NOT (NEQ |RES-60.27:60.27| null)) (LBLPOS |trace.FirstOpOnly^0,62.20| (EQ |@true| |@true|)) (EQ |tmp2!cand:62.20| |bool$false|))) (EQ |@true| |tmp2!cand:62.20|) (LBLPOS |trace.Then^1,63.5| (EQ |@true| |@true|)) (EQ |tmp3!locId:63.20| (select |locId:13.48.13| |decl:49.29|)) (EQ |msg@63.14-63.14:20.180.45| (stringCat |S_64.6| |S_65.8|)) (NOT (LBLNEG |Pre:20.179.8@63.19| (NEQ |tmp3!locId:63.20| |NULL:17.60.26|)))))))) (AND (NOT (EQ |@true| (isAllocated objectToBeConstructed alloc))) (< alloc |after@49.35-49.35|) (NEQ |RES-49.35:49.35| null) (NOT (EQ |@true| (isAllocated |RES-49.35:49.35| alloc))) (EQ |@true| (is |RES-49.35:49.35| |T_javafe.tc.Env|)) (EQ |@true| (isAllocated |RES-49.35:49.35| |after@49.35-49.35|)) (EQ |EC-49.35:49.35| |ecReturn|) (EQ (select |owner:7.35.28| |RES-49.35:49.35|) null) (<: (typeof |RES-49.35:49.35|) |T_javafe.tc.EnvForLocalType|) (EQ objectToBeConstructed |RES-49.35:49.35|) (EQ |parent:29.32<1>| (store |parent:29.32| |RES-49.35:49.35| |parent@zero|)) (EQ |decl:35.37<1>| (store |decl:35.37| |RES-49.35:49.35| |decl@zero|)) (EQ |parent:50.6| (store |parent:29.32<1>| |RES-49.35:49.35| |parent:48.45|)) (EQ |decl:51.6| (store |decl:35.37<1>| |RES-49.35:49.35| |decl:49.29|)) (EQ |tmp1!id:60.48| (select |id:13.32.34| |decl:49.29|)) (EQ |@true| (is |RES-60.27:60.27| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-60.27:60.27| |after@49.35-49.35|)) (EQ |EC-60.27:60.27| |ecReturn|) (OR (AND (NEQ |RES-60.27:60.27| null) (LBLNEG |Null@62.32| (NEQ |RES-60.27:60.27| null)) (EQ |tmp2!cand:62.5| (boolNot (select |member:18.44.39| |RES-60.27:60.27|))) (EQ |tmp2!cand:62.20| |tmp2!cand:62.5|)) (AND (NOT (NEQ |RES-60.27:60.27| null)) (LBLPOS |trace.FirstOpOnly^0,62.20| (EQ |@true| |@true|)) (EQ |tmp2!cand:62.20| |bool$false|))) (OR (AND (EQ |@true| |tmp2!cand:62.20|) (LBLPOS |trace.Then^1,63.5| (EQ |@true| |@true|)) (EQ |tmp3!locId:63.20| (select |locId:13.48.13| |decl:49.29|)) (EQ |msg@63.14-63.14:20.180.45| (stringCat |S_64.6| |S_65.8|)) (LBLNEG |Pre:20.179.8@63.19| (NEQ |tmp3!locId:63.20| |NULL:17.60.26|)) (EQ |EC-63.14:63.14| |ecReturn|) (EQ RES |RES-63.14:63.14|) (EQ EC |EC-63.14:63.14|)) (AND (NOT (EQ |@true| |tmp2!cand:62.20|)) (LBLPOS |trace.Else^2,62.1| (EQ |@true| |@true|)) (EQ RES |RES-60.27:60.27|) (EQ EC |EC-60.27:60.27|))) (OR (NOT (LBLNEG |Exception@66.4| (EQ |ecReturn| |ecReturn|))) (AND (LBLNEG |Exception@66.4| (EQ |ecReturn| |ecReturn|)) (OR (NOT (LBLNEG |OwnerNull@66.4| (EQ (select |owner:7.35.28| |RES-49.35:49.35|) null))) (AND (LBLNEG |OwnerNull@66.4| (EQ (select |owner:7.35.28| |RES-49.35:49.35|) null)) (OR (NOT (LBLNEG |NonNullInit:29.17@66.4| (IMPLIES (EQ |ecReturn| |ecReturn|) (NEQ (select |parent:50.6| |RES-49.35:49.35|) null)))) (AND (LBLNEG |NonNullInit:29.17@66.4| (IMPLIES (EQ |ecReturn| |ecReturn|) (NEQ (select |parent:50.6| |RES-49.35:49.35|) null))) (OR (NOT (LBLNEG |NonNullInit:35.17@66.4| (IMPLIES (EQ |ecReturn| |ecReturn|) (NEQ (select |decl:51.6| |RES-49.35:49.35|) null)))) (AND (LBLNEG |NonNullInit:35.17@66.4| (IMPLIES (EQ |ecReturn| |ecReturn|) (NEQ (select |decl:51.6| |RES-49.35:49.35|) null))) (OR (NOT (LBLNEG |Invariant:34.8@66.4| (FORALL (|brokenObj<11>|) (IMPLIES (AND (EQ |@true| (is |brokenObj<11>| |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated |brokenObj<11>| |after@49.35-49.35|)) (NEQ |brokenObj<11>| null)) (NEQ (select |id:13.32.34| (select |decl:51.6| |brokenObj<11>|)) null))))) (NOT (LBLNEG |Invariant:28.8@66.4| (FORALL (|brokenObj<21>|) (IMPLIES (AND (EQ |@true| (is |brokenObj<21>| |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated |brokenObj<21>| |after@49.35-49.35|)) (NEQ |brokenObj<21>| null)) (NOT (AND (EQ |@true| (is (select |parent:50.6| |brokenObj<21>|) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:50.6| |brokenObj<21>|) null)))))))))))))))))))))) (AND 
+(DISTINCT |ecReturn|) (NEQ |S_65.8| null) (EQ (typeof |S_65.8|) |T_java.lang.String|) (NEQ |S_64.6| null) (EQ (typeof |S_64.6|) |T_java.lang.String|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.isStaticContext.87.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (EQ |this@87.53-87.53| (select |parent:29.32| this)) (EQ |@true| (is |RES-87.53:87.53| T_boolean)) (EQ |EC-87.53:87.53| |ecReturn|) (LBLPOS |trace.Return^0,87.39| (EQ |@true| |@true|)) (NOT (LBLNEG |Exception@87.72| (EQ |ecReturn| |ecReturn|))))))) (AND 
+(DISTINCT |ecReturn|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.getEnclosingClass.99.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (EQ |this@100.15-100.15| (select |parent:29.32| this)) (EQ |@true| (is |RES-100.15:100.15| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-100.15:100.15| alloc)) (EQ |EC-100.15:100.15| |ecReturn|) (IMPLIES (EQ |EC-100.15:100.15| |ecReturn|) (IFF (AND (EQ |@true| (is |this@100.15-100.15| |T_javafe.tc.EnvForCU|)) (NEQ |this@100.15-100.15| null)) (EQ |RES-100.15:100.15| null))) (LBLPOS |trace.Return^0,100.1| (EQ |@true| |@true|)) (OR (NOT (LBLNEG |Exception@101.4| (EQ |ecReturn| |ecReturn|))) (AND (LBLNEG |Exception@101.4| (EQ |ecReturn| |ecReturn|)) (NOT (LBLNEG |Post:6.53.8@101.4| (IMPLIES (EQ |ecReturn| |ecReturn|) (IFF (AND (EQ |@true| (is this |T_javafe.tc.EnvForCU|)) (NEQ this null)) (EQ |RES-100.15:100.15| null))))))))))) (AND 
+(DISTINCT |ecReturn|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.getEnclosingInstance.111.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (EQ |this@112.15-112.15| (select |parent:29.32| this)) (EQ |@true| (is |RES-112.15:112.15| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-112.15:112.15| alloc)) (EQ |EC-112.15:112.15| |ecReturn|) (LBLPOS |trace.Return^0,112.1| (EQ |@true| |@true|)) (NOT (LBLNEG |Exception@113.4| (EQ |ecReturn| |ecReturn|))))))) (AND 
+(DISTINCT |ecReturn|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.asStaticContext.124.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (EQ (arrayLength |keywordStrings:51.181.30|) (- (+ 1 |LAST_KEYWORD:51.103.26|) |FIRST_KEYWORD:51.51.26|)) (EQ |@true| (nonnullelements |punctuationStrings:51.134.22| elems)) (EQ |@true| (nonnullelements |otherStrings:51.193.30| elems)) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (FORALL (|i:51.147.29|) (IMPLIES (AND (<= 0 |i:51.147.29|) (<= |i:51.147.29| (arrayLength |punctuationCodes:51.164.19|))) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.147.29|) |NULL:51.82.26|))) (EQ (arrayLength |otherCodes:51.202.27|) (arrayLength |otherStrings:51.193.30|)) (EQ |@true| (nonnullelements |keywordStrings:51.181.30| elems)) (EQ |@true| (is (select |owner:7.35.28| |punctuationCodes:51.164.19|) |T_javafe.parser.TagConstants|)) (NEQ (select |owner:7.35.28| |punctuationCodes:51.164.19|) null) (FORALL (|i:51.149.29|) (IMPLIES (AND (<= 0 |i:51.149.29|) (<= |i:51.149.29| (arrayLength |punctuationCodes:51.164.19|))) (AND (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |IDENT:52.25.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |BOOLEANLIT:52.38.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |INTLIT:52.39.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |LONGLIT:52.40.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |FLOATLIT:52.42.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |DOUBLELIT:52.43.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |STRINGLIT:52.44.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |CHARLIT:52.41.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |LEXICALPRAGMA:51.24.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |MODIFIERPRAGMA:51.25.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |STMTPRAGMA:51.26.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |TYPEDECLELEMPRAGMA:51.27.26|) (NEQ (select (select elems |punctuationCodes:51.164.19|) |i:51.149.29|) |TYPEMODIFIERPRAGMA:51.28.26|)))) (FORALL (|brokenObj<1>|) (NOPATS (is |brokenObj<1>| |T_javafe.ast.Identifier|) (NEQ |brokenObj<1>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<1>| |T_javafe.ast.Identifier|)) (NEQ |brokenObj<1>| null)) (AND (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |BOOLEANLIT:52.38.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |INTLIT:52.39.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |LONGLIT:52.40.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |FLOATLIT:52.42.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |DOUBLELIT:52.43.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |STRINGLIT:52.44.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |CHARLIT:52.41.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |LEXICALPRAGMA:51.24.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |MODIFIERPRAGMA:51.25.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |STMTPRAGMA:51.26.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |TYPEDECLELEMPRAGMA:51.27.26|) (NEQ (select |tokenType:16.90.8| |brokenObj<1>|) |TYPEMODIFIERPRAGMA:51.28.26|)))) (EQ |noTokens:51.212.27| (+ (+ (arrayLength |keywordStrings:51.181.30|) (arrayLength |punctuationStrings:51.134.22|)) (arrayLength |otherStrings:51.193.30|))) (EQ (arrayLength |punctuationCodes:51.164.19|) (arrayLength |punctuationStrings:51.134.22|)) (OR (NOT (LBLNEG |Invariant:28.8@127.36| (OR (NOT (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|))) (NOT (AND (EQ |@true| (is (select |parent:29.32| this) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| this) null)))))) (AND (EQ |@true| (is |RES-127.31:127.31| |T_java.lang.Object|)) (EQ |@true| (isAllocated |RES-127.31:127.31| alloc)) (IMPLIES (EQ |EC-127.31:127.31| |ecThrow|) (AND (NEQ |XRES-127.31:127.31| null) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.Throwable|) (EQ |@true| (isAllocated |XRES-127.31:127.31| alloc)))) (OR (EQ |EC-127.31:127.31| |ecReturn|) (AND (EQ |EC-127.31:127.31| |ecThrow|) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.CloneNotSupportedException|))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (NEQ |RES-127.31:127.31| null)) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (typeof |RES-127.31:127.31|) (typeof this))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (select |owner:7.35.28| |RES-127.31:127.31|) null)) (EQ |EC-127.31:127.31| |ecReturn|) (NOT (LBLNEG |Cast@127.9| (EQ |@true| (is |RES-127.31:127.31| |T_javafe.tc.EnvForLocalType|))))) (AND (EQ |@true| (is |RES-127.31:127.31| |T_java.lang.Object|)) (EQ |@true| (isAllocated |RES-127.31:127.31| alloc)) (IMPLIES (EQ |EC-127.31:127.31| |ecThrow|) (AND (NEQ |XRES-127.31:127.31| null) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.Throwable|) (EQ |@true| (isAllocated |XRES-127.31:127.31| alloc)))) (OR (EQ |EC-127.31:127.31| |ecReturn|) (AND (EQ |EC-127.31:127.31| |ecThrow|) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.CloneNotSupportedException|))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (NEQ |RES-127.31:127.31| null)) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (typeof |RES-127.31:127.31|) (typeof this))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (select |owner:7.35.28| |RES-127.31:127.31|) null)) (EQ |EC-127.31:127.31| |ecReturn|) (LBLNEG |Cast@127.9| (EQ |@true| (is |RES-127.31:127.31| |T_javafe.tc.EnvForLocalType|))) (EQ |n:127.5| (cast |RES-127.31:127.31| |T_javafe.tc.EnvForLocalType|)) (OR (NOT (LBLNEG |Null@132.2| (NEQ |n:127.5| null))) (AND (LBLNEG |Null@132.2| (NEQ |n:127.5| null)) (OR (AND (EQ |this@132.19-132.19| (select |parent:29.32| this)) (NOT (LBLNEG |Invariant:28.8@132.34| (OR (NOT (EQ |@true| (is |this@132.19-132.19| |T_javafe.tc.EnvForLocalType|))) (NOT (AND (EQ |@true| (is (select |parent:29.32| |this@132.19-132.19|) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| |this@132.19-132.19|) null))))))) (AND (EQ |this@132.19-132.19| (select |parent:29.32| this)) (EQ |@true| (is |RES-132.19:132.19| |T_javafe.tc.Env|)) (EQ |@true| (isAllocated |RES-132.19:132.19| alloc)) (EQ |EC-132.19:132.19| |ecReturn|) (IMPLIES (EQ |EC-132.19:132.19| |ecReturn|) (NEQ |RES-132.19:132.19| null)) (IMPLIES (EQ |EC-132.19:132.19| |ecReturn|) (IFF (AND (EQ |@true| (is |this@132.19-132.19| |T_javafe.tc.EnvForCU|)) (NEQ |this@132.19-132.19| null)) (AND (EQ |@true| (is |RES-132.19:132.19| |T_javafe.tc.EnvForCU|)) (NEQ |RES-132.19:132.19| null)))) (NOT (LBLNEG |NonNull:29.17@132.10| (NEQ |RES-132.19:132.19| null)))))))) (AND (OR (AND (EQ |@true| (is |RES-127.31:127.31| |T_java.lang.Object|)) (EQ |@true| (isAllocated |RES-127.31:127.31| alloc)) (IMPLIES (EQ |EC-127.31:127.31| |ecThrow|) (AND (NEQ |XRES-127.31:127.31| null) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.Throwable|) (EQ |@true| (isAllocated |XRES-127.31:127.31| alloc)))) (OR (EQ |EC-127.31:127.31| |ecReturn|) (AND (EQ |EC-127.31:127.31| |ecThrow|) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.CloneNotSupportedException|))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (NEQ |RES-127.31:127.31| null)) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (typeof |RES-127.31:127.31|) (typeof this))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (select |owner:7.35.28| |RES-127.31:127.31|) null)) (LBLPOS |trace.RoutineException^0,127.31| (EQ |@true| |@true|)) (EQ |EC-127.31:127.31| |ecThrow|) (OR (AND (NEQ |EC-127.31:127.31| |ecThrow|) (EQ RES |RES-127.31:127.31|) (EQ EC |EC-127.31:127.31|)) (AND (NOT (NEQ |EC-127.31:127.31| |ecThrow|)) (OR (AND (OR (<: (typeof |XRES-127.31:127.31|) |T_java.lang.CloneNotSupportedException|) (EQ |XRES-127.31:127.31| null)) (EQ |e:128.37| |XRES-127.31:127.31|) (EQ |EC-129.12:129.12| |ecReturn|) (NOT (EQ |EC-129.12:129.12| |ecReturn|)) (LBLPOS |trace.Return^1,130.5| (EQ |@true| |@true|)) (EQ |RES<1>| null) (EQ |EC<1>| |ecReturn|)) (AND (NOT (OR (<: (typeof |XRES-127.31:127.31|) |T_java.lang.CloneNotSupportedException|) (EQ |XRES-127.31:127.31| null))) (EQ |RES<1>| |RES-127.31:127.31|) (EQ |EC<1>| |EC-127.31:127.31|))) (EQ RES |RES<1>|) (EQ EC |EC<1>|))) (EQ |RES:127.31| RES) (EQ |EC:127.31| EC) (EQ |parent:127.31| |parent:29.32|)) (AND (EQ |@true| (is |RES-127.31:127.31| |T_java.lang.Object|)) (EQ |@true| (isAllocated |RES-127.31:127.31| alloc)) (IMPLIES (EQ |EC-127.31:127.31| |ecThrow|) (AND (NEQ |XRES-127.31:127.31| null) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.Throwable|) (EQ |@true| (isAllocated |XRES-127.31:127.31| alloc)))) (OR (EQ |EC-127.31:127.31| |ecReturn|) (AND (EQ |EC-127.31:127.31| |ecThrow|) (<: (typeof |XRES-127.31:127.31|) |T_java.lang.CloneNotSupportedException|))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (NEQ |RES-127.31:127.31| null)) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (typeof |RES-127.31:127.31|) (typeof this))) (IMPLIES (EQ |EC-127.31:127.31| |ecReturn|) (EQ (select |owner:7.35.28| |RES-127.31:127.31|) null)) (EQ |EC-127.31:127.31| |ecReturn|) (LBLNEG |Cast@127.9| (EQ |@true| (is |RES-127.31:127.31| |T_javafe.tc.EnvForLocalType|))) (EQ |n:127.5| (cast |RES-127.31:127.31| |T_javafe.tc.EnvForLocalType|)) (LBLNEG |Null@132.2| (NEQ |n:127.5| null)) (EQ |this@132.19-132.19| (select |parent:29.32| this)) (EQ |@true| (is |RES-132.19:132.19| |T_javafe.tc.Env|)) (EQ |@true| (isAllocated |RES-132.19:132.19| alloc)) (EQ |EC-132.19:132.19| |ecReturn|) (IMPLIES (EQ |EC-132.19:132.19| |ecReturn|) (NEQ |RES-132.19:132.19| null)) (IMPLIES (EQ |EC-132.19:132.19| |ecReturn|) (IFF (AND (EQ |@true| (is |this@132.19-132.19| |T_javafe.tc.EnvForCU|)) (NEQ |this@132.19-132.19| null)) (AND (EQ |@true| (is |RES-132.19:132.19| |T_javafe.tc.EnvForCU|)) (NEQ |RES-132.19:132.19| null)))) (LBLNEG |NonNull:29.17@132.10| (NEQ |RES-132.19:132.19| null)) (EQ |parent:132.3| (store |parent:29.32| |n:127.5| |RES-132.19:132.19|)) (LBLPOS |trace.Return^2,133.1| (EQ |@true| |@true|)) (EQ |RES:127.31| |n:127.5|) (EQ |EC:127.31| |ecReturn|) (EQ |parent:127.31| |parent:132.3|))) (OR (NOT (LBLNEG |Exception@134.4| (EQ |EC:127.31| |ecReturn|))) (AND (LBLNEG |Exception@134.4| (EQ |EC:127.31| |ecReturn|)) (OR (NOT (LBLNEG |Post:6.75.8@134.4| (IMPLIES (EQ |EC:127.31| |ecReturn|) (NEQ |RES:127.31| null)))) (AND (LBLNEG |Post:6.75.8@134.4| (IMPLIES (EQ |EC:127.31| |ecReturn|) (NEQ |RES:127.31| null))) (OR (NOT (LBLNEG |Post:6.76.8@134.4| (IMPLIES (EQ |EC:127.31| |ecReturn|) (IFF (AND (EQ |@true| (is this |T_javafe.tc.EnvForCU|)) (NEQ this null)) (AND (EQ |@true| (is |RES:127.31| |T_javafe.tc.EnvForCU|)) (NEQ |RES:127.31| null)))))) (NOT (LBLNEG |Invariant:28.8@134.4| (FORALL (brokenObj) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated brokenObj alloc)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:127.31| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:127.31| brokenObj) null)))))))))))))))))) (AND 
+(DISTINCT |ecReturn| |ecThrow|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.lookupSimpleTypeName.155.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (EQ |@true| (is |id:155.51| |T_javafe.ast.Identifier|)) (EQ |@true| (isAllocated |id:155.51| alloc)) (NEQ |id:155.51| null) (EQ |@true| (is |loc:155.59| T_int)) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (FORALL (|brokenObj<1>|) (NOPATS (is |brokenObj<1>| |T_javafe.tc.EnvForLocalType|) (NEQ |brokenObj<1>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<1>| |T_javafe.tc.EnvForLocalType|)) (NEQ |brokenObj<1>| null)) (NEQ (select |id:13.32.34| (select |decl:35.37| |brokenObj<1>|)) null))) (OR (AND (EQ |id:155.51| (select |id:13.32.34| (select |decl:35.37| this))) (LBLPOS |trace.Then^0,157.5| (EQ |@true| |@true|)) (EQ |d@157.20-157.20:18.115.56| (select |decl:35.37| this)) (EQ |@true| (is |RES-157.20:157.20| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-157.20:157.20| alloc)) (EQ |EC-157.20:157.20| |ecReturn|) (IMPLIES (EQ |EC-157.20:157.20| |ecReturn|) (NEQ |RES-157.20:157.20| null)) (LBLPOS |trace.Return^1,157.5| (EQ |@true| |@true|))) (AND (NOT (EQ |id:155.51| (select |id:13.32.34| (select |decl:35.37| this)))) (LBLPOS |trace.Else^2,159.5| (EQ |@true| |@true|)) (EQ |tmp0!parent:159.12| (select |parent:29.32| this)) (EQ |@true| (is |RES-159.19:159.19| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-159.19:159.19| alloc)) (EQ |EC-159.19:159.19| |ecReturn|) (LBLPOS |trace.Return^3,159.5| (EQ |@true| |@true|)))) (NOT (LBLNEG |Exception@160.4| (EQ |ecReturn| |ecReturn|))))))) (AND 
+(DISTINCT |ecReturn|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.locateFieldOrLocal.186.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (EQ |@true| (is |id:186.49| |T_javafe.ast.Identifier|)) (EQ |@true| (isAllocated |id:186.49| alloc)) (NEQ |id:186.49| null) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (EQ |tmp0!parent:188.8| (select |parent:29.32| this)) (EQ |@true| (is |RES-188.15:188.15| |T_javafe.ast.ASTNode|)) (EQ |@true| (isAllocated |RES-188.15:188.15| alloc)) (EQ |EC-188.15:188.15| |ecReturn|) (IMPLIES (EQ |EC-188.15:188.15| |ecReturn|) (OR (EQ |RES-188.15:188.15| null) (AND (EQ |@true| (is |RES-188.15:188.15| |T_javafe.ast.GenericVarDecl|)) (NEQ |RES-188.15:188.15| null)) (AND (EQ |@true| (is |RES-188.15:188.15| |T_javafe.tc.TypeSig|)) (NEQ |RES-188.15:188.15| null)))) (IMPLIES (AND (EQ |EC-188.15:188.15| |ecReturn|) (EQ |@true| (is |RES-188.15:188.15| |T_javafe.ast.GenericVarDecl|)) (NEQ |RES-188.15:188.15| null)) (EQ (select |id:30.32.34| (cast |RES-188.15:188.15| |T_javafe.ast.GenericVarDecl|)) |id:186.49|)) (IMPLIES (AND (EQ |EC-188.15:188.15| |ecReturn|) (EQ |@true| (is |tmp0!parent:188.8| |T_javafe.tc.EnvForCU|)) (NEQ |tmp0!parent:188.8| null)) (EQ |RES-188.15:188.15| null)) (LBLPOS |trace.Return^0,188.1| (EQ |@true| |@true|)) (OR (NOT (LBLNEG |Exception@189.4| (EQ |ecReturn| |ecReturn|))) (AND (LBLNEG |Exception@189.4| (EQ |ecReturn| |ecReturn|)) (OR (NOT (LBLNEG |Post:6.128.8@189.4| (IMPLIES (EQ |ecReturn| |ecReturn|) (OR (EQ |RES-188.15:188.15| null) (AND (EQ |@true| (is |RES-188.15:188.15| |T_javafe.ast.GenericVarDecl|)) (NEQ |RES-188.15:188.15| null)) (AND (EQ |@true| (is |RES-188.15:188.15| |T_javafe.tc.TypeSig|)) (NEQ |RES-188.15:188.15| null)))))) (NOT (LBLNEG |Post:6.130.8@189.4| (IMPLIES (AND (EQ |ecReturn| |ecReturn|) (EQ |@true| (is |RES-188.15:188.15| |T_javafe.ast.GenericVarDecl|)) (NEQ |RES-188.15:188.15| null)) (EQ (select |id:30.32.34| (cast |RES-188.15:188.15| |T_javafe.ast.GenericVarDecl|)) |id:186.49|)))) (NOT (LBLNEG |Post:6.132.8@189.4| (IMPLIES (AND (EQ |ecReturn| |ecReturn|) (EQ |@true| (is this |T_javafe.tc.EnvForCU|)) (NEQ this null)) (EQ |RES-188.15:188.15| null))))))))))) (AND 
+(DISTINCT |ecReturn|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.locateMethod.203.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (EQ |@true| (is |id:203.43| |T_javafe.ast.Identifier|)) (EQ |@true| (isAllocated |id:203.43| alloc)) (NEQ |id:203.43| null) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (EQ |tmp0!parent:205.8| (select |parent:29.32| this)) (EQ |@true| (is |RES-205.15:205.15| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-205.15:205.15| alloc)) (EQ |EC-205.15:205.15| |ecReturn|) (IMPLIES (AND (EQ |EC-205.15:205.15| |ecReturn|) (EQ |@true| (is |tmp0!parent:205.8| |T_javafe.tc.EnvForCU|)) (NEQ |tmp0!parent:205.8| null)) (EQ |RES-205.15:205.15| null)) (LBLPOS |trace.Return^0,205.1| (EQ |@true| |@true|)) (OR (NOT (LBLNEG |Exception@206.4| (EQ |ecReturn| |ecReturn|))) (AND (LBLNEG |Exception@206.4| (EQ |ecReturn| |ecReturn|)) (NOT (LBLNEG |Post:6.150.8@206.4| (IMPLIES (AND (EQ |ecReturn| |ecReturn|) (EQ |@true| (is this |T_javafe.tc.EnvForCU|)) (NEQ this null)) (EQ |RES-205.15:205.15| null)))))))))) (AND 
+(DISTINCT |ecReturn|)))
+
+(EXPLIES 
+(LBLNEG |vc.javafe.tc.EnvForLocalType.display.219.4| (IMPLIES (AND (EQ |keywordStrings@pre:51.181.30| |keywordStrings:51.181.30|) (EQ |@true| (is |keywordStrings:51.181.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |keywordStrings:51.181.30| alloc)) (EQ |otherCodes@pre:51.202.27| |otherCodes:51.202.27|) (EQ |@true| (is |otherCodes:51.202.27| (array T_int))) (EQ |@true| (isAllocated |otherCodes:51.202.27| alloc)) (EQ |elements@pre:79.61.38| |elements:79.61.38|) (EQ |elements:79.61.38| (asField |elements:79.61.38| (array |T_javafe.ast.FieldDecl|))) (< (fClosedTime |elements:79.61.38|) alloc) (FORALL (s) (IMPLIES (NEQ s null) (NEQ (select |elements:79.61.38| s) null))) (EQ |body@pre:83.34.19| |body:83.34.19|) (EQ |body:83.34.19| (asField |body:83.34.19| |T_javafe.ast.BlockStmt|)) (< (fClosedTime |body:83.34.19|) alloc) (EQ |id@pre:30.32.34| |id:30.32.34|) (EQ |id:30.32.34| (asField |id:30.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:30.32.34|) alloc) (FORALL (|s<1>|) (IMPLIES (NEQ |s<1>| null) (NEQ (select |id:30.32.34| |s<1>|) null))) (EQ |otherStrings@pre:51.193.30| |otherStrings:51.193.30|) (EQ |@true| (is |otherStrings:51.193.30| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |otherStrings:51.193.30| alloc)) (EQ |myTypeDecl@pre:18.63.40| |myTypeDecl:18.63.40|) (EQ |myTypeDecl:18.63.40| (asField |myTypeDecl:18.63.40| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |myTypeDecl:18.63.40|) alloc) (EQ |fields@pre:18.875.27| |fields:18.875.27|) (EQ |fields:18.875.27| (asField |fields:18.875.27| |T_javafe.tc.FieldDeclVec|)) (< (fClosedTime |fields:18.875.27|) alloc) (EQ |STMTPRAGMA@pre:51.26.26| |STMTPRAGMA:51.26.26|) (EQ |@true| (is |STMTPRAGMA:51.26.26| T_int)) (EQ |LONGLIT@pre:52.40.26| |LONGLIT:52.40.26|) (EQ |@true| (is |LONGLIT:52.40.26| T_int)) (EQ |punctuationStrings@pre:51.134.22| |punctuationStrings:51.134.22|) (EQ |@true| (is |punctuationStrings:51.134.22| (array |T_java.lang.String|))) (EQ |@true| (isAllocated |punctuationStrings:51.134.22| alloc)) (EQ |loc@pre:83.40.13| |loc:83.40.13|) (EQ |loc:83.40.13| (asField |loc:83.40.13| T_int)) (EQ |noTokens@pre:51.212.27| |noTokens:51.212.27|) (EQ |@true| (is |noTokens:51.212.27| T_int)) (EQ |FIRST_KEYWORD@pre:51.51.26| |FIRST_KEYWORD:51.51.26|) (EQ |@true| (is |FIRST_KEYWORD:51.51.26| T_int)) (EQ |out@pre:23.83.49| |out:23.83.49|) (EQ |@true| (is |out:23.83.49| |T_java.io.PrintStream|)) (EQ |@true| (isAllocated |out:23.83.49| alloc)) (NEQ |out:23.83.49| null) (EQ |locId@pre:83.43.13| |locId:83.43.13|) (EQ |locId:83.43.13| (asField |locId:83.43.13| T_int)) (EQ |DOUBLELIT@pre:52.43.26| |DOUBLELIT:52.43.26|) (EQ |@true| (is |DOUBLELIT:52.43.26| T_int)) (EQ |LAST_KEYWORD@pre:51.103.26| |LAST_KEYWORD:51.103.26|) (EQ |@true| (is |LAST_KEYWORD:51.103.26| T_int)) (EQ |count@pre:80.67.33| |count:80.67.33|) (EQ |count:80.67.33| (asField |count:80.67.33| T_int)) (EQ |owner@pre:7.35.28| |owner:7.35.28|) (EQ |owner:7.35.28| (asField |owner:7.35.28| |T_java.lang.Object|)) (< (fClosedTime |owner:7.35.28|) alloc) (EQ |NULL@pre:51.82.26| |NULL:51.82.26|) (EQ |@true| (is |NULL:51.82.26| T_int)) (EQ |state@pre:18.787.15| |state:18.787.15|) (EQ |state:18.787.15| (asField |state:18.787.15| T_int)) (EQ |MODIFIERPRAGMA@pre:51.25.26| |MODIFIERPRAGMA:51.25.26|) (EQ |@true| (is |MODIFIERPRAGMA:51.25.26| T_int)) (EQ |INTLIT@pre:52.39.26| |INTLIT:52.39.26|) (EQ |@true| (is |INTLIT:52.39.26| T_int)) (EQ |enclosingEnv@pre:18.52.36| |enclosingEnv:18.52.36|) (EQ |enclosingEnv:18.52.36| (asField |enclosingEnv:18.52.36| |T_javafe.tc.Env|)) (< (fClosedTime |enclosingEnv:18.52.36|) alloc) (EQ |parent@pre:29.32| |parent:29.32|) (EQ |parent:29.32| (asField |parent:29.32| |T_javafe.tc.Env|)) (< (fClosedTime |parent:29.32|) alloc) (FORALL (|s<2>|) (IMPLIES (NEQ |s<2>| null) (NEQ (select |parent:29.32| |s<2>|) null))) (EQ |PARSED@pre:18.772.28| |PARSED:18.772.28|) (EQ |@true| (is |PARSED:18.772.28| T_int)) (EQ |simpleName@pre:18.37.38| |simpleName:18.37.38|) (EQ |simpleName:18.37.38| (asField |simpleName:18.37.38| |T_java.lang.String|)) (< (fClosedTime |simpleName:18.37.38|) alloc) (EQ |locType@pre:82.21.13| |locType:82.21.13|) (EQ |locType:82.21.13| (asField |locType:82.21.13| T_int)) (EQ |TYPEMODIFIERPRAGMA@pre:51.28.26| |TYPEMODIFIERPRAGMA:51.28.26|) (EQ |@true| (is |TYPEMODIFIERPRAGMA:51.28.26| T_int)) (EQ |FLOATLIT@pre:52.42.26| |FLOATLIT:52.42.26|) (EQ |@true| (is |FLOATLIT:52.42.26| T_int)) (EQ |loc@pre:13.45.13| |loc:13.45.13|) (EQ |loc:13.45.13| (asField |loc:13.45.13| T_int)) (EQ |PREPPED@pre:18.775.28| |PREPPED:18.775.28|) (EQ |@true| (is |PREPPED:18.775.28| T_int)) (EQ |id@pre:13.32.34| |id:13.32.34|) (EQ |id:13.32.34| (asField |id:13.32.34| |T_javafe.ast.Identifier|)) (< (fClosedTime |id:13.32.34|) alloc) (FORALL (|s<3>|) (IMPLIES (NEQ |s<3>| null) (NEQ (select |id:13.32.34| |s<3>|) null))) (EQ |member@pre:18.44.39| |member:18.44.39|) (EQ |member:18.44.39| (asField |member:18.44.39| T_boolean)) (EQ |methods@pre:18.883.26| |methods:18.883.26|) (EQ |methods:18.883.26| (asField |methods:18.883.26| |T_javafe.tc.MethodDeclVec|)) (< (fClosedTime |methods:18.883.26|) alloc) (EQ |locCloseBrace@pre:13.54.13| |locCloseBrace:13.54.13|) (EQ |locCloseBrace:13.54.13| (asField |locCloseBrace:13.54.13| T_int)) (EQ |locId@pre:13.48.13| |locId:13.48.13|) (EQ |locId:13.48.13| (asField |locId:13.48.13| T_int)) (EQ |locOpenBrace@pre:13.51.13| |locOpenBrace:13.51.13|) (EQ |locOpenBrace:13.51.13| (asField |locOpenBrace:13.51.13| T_int)) (EQ |count@pre:79.67.33| |count:79.67.33|) (EQ |count:79.67.33| (asField |count:79.67.33| T_int)) (EQ |decl@pre:35.37| |decl:35.37|) (EQ |decl:35.37| (asField |decl:35.37| |T_javafe.ast.TypeDecl|)) (< (fClosedTime |decl:35.37|) alloc) (FORALL (|s<4>|) (IMPLIES (NEQ |s<4>| null) (NEQ (select |decl:35.37| |s<4>|) null))) (EQ |punctuationCodes@pre:51.164.19| |punctuationCodes:51.164.19|) (EQ |@true| (is |punctuationCodes:51.164.19| (array T_int))) (EQ |@true| (isAllocated |punctuationCodes:51.164.19| alloc)) (EQ |elements@pre:80.61.39| |elements:80.61.39|) (EQ |elements:80.61.39| (asField |elements:80.61.39| (array |T_javafe.ast.MethodDecl|))) (< (fClosedTime |elements:80.61.39|) alloc) (FORALL (|s<5>|) (IMPLIES (NEQ |s<5>| null) (NEQ (select |elements:80.61.39| |s<5>|) null))) (EQ |LEXICALPRAGMA@pre:51.24.26| |LEXICALPRAGMA:51.24.26|) (EQ |@true| (is |LEXICALPRAGMA:51.24.26| T_int)) (EQ |BOOLEANLIT@pre:52.38.26| |BOOLEANLIT:52.38.26|) (EQ |@true| (is |BOOLEANLIT:52.38.26| T_int)) (EQ |tokenType@pre:16.90.8| |tokenType:16.90.8|) (EQ |tokenType:16.90.8| (asField |tokenType:16.90.8| T_int)) (EQ |CU@pre:18.71.30| |CU:18.71.30|) (EQ |CU:18.71.30| (asField |CU:18.71.30| |T_javafe.ast.CompilationUnit|)) (< (fClosedTime |CU:18.71.30|) alloc) (EQ |locOpenBrace@pre:90.22.13| |locOpenBrace:90.22.13|) (EQ |locOpenBrace:90.22.13| (asField |locOpenBrace:90.22.13| T_int)) (EQ |TYPEDECLELEMPRAGMA@pre:51.27.26| |TYPEDECLELEMPRAGMA:51.27.26|) (EQ |@true| (is |TYPEDECLELEMPRAGMA:51.27.26| T_int)) (EQ |CHARLIT@pre:52.41.26| |CHARLIT:52.41.26|) (EQ |@true| (is |CHARLIT:52.41.26| T_int)) (EQ |locCloseBrace@pre:90.25.13| |locCloseBrace:90.25.13|) (EQ |locCloseBrace:90.25.13| (asField |locCloseBrace:90.25.13| T_int)) (EQ |loc@pre:73.30.13| |loc:73.30.13|) (EQ |loc:73.30.13| (asField |loc:73.30.13| T_int)) (EQ |enclosingType@pre:18.32.39| |enclosingType:18.32.39|) (EQ |enclosingType:18.32.39| (asField |enclosingType:18.32.39| |T_javafe.tc.TypeSig|)) (< (fClosedTime |enclosingType:18.32.39|) alloc) (EQ |STRINGLIT@pre:52.44.26| |STRINGLIT:52.44.26|) (EQ |@true| (is |STRINGLIT:52.44.26| T_int)) (EQ |locOpenBrace@pre:83.36.13| |locOpenBrace:83.36.13|) (EQ |locOpenBrace:83.36.13| (asField |locOpenBrace:83.36.13| T_int)) (EQ |IDENT@pre:52.25.26| |IDENT:52.25.26|) (EQ |@true| (is |IDENT:52.25.26| T_int)) (EQ |NULL@pre:17.60.26| |NULL:17.60.26|) (EQ |@true| (is |NULL:17.60.26| T_int)) (EQ |locId@pre:30.38.13| |locId:30.38.13|) (EQ |locId:30.38.13| (asField |locId:30.38.13| T_int)) (EQ |elems@pre| elems) (EQ elems (asElems elems)) (< (eClosedTime elems) alloc) (EQ LS (asLockSet LS)) (EQ |alloc@pre| alloc)) (NOT (AND (EQ |@true| (is this |T_javafe.tc.EnvForLocalType|)) (EQ |@true| (isAllocated this alloc)) (NEQ this null) (FORALL (brokenObj) (NOPATS (is brokenObj |T_javafe.tc.EnvForLocalType|) (NEQ brokenObj null)) (IMPLIES (AND (EQ |@true| (is brokenObj |T_javafe.tc.EnvForLocalType|)) (NEQ brokenObj null)) (NOT (AND (EQ |@true| (is (select |parent:29.32| brokenObj) |T_javafe.tc.EnvForCU|)) (NEQ (select |parent:29.32| brokenObj) null))))) (FORALL (|brokenObj<1>|) (NOPATS (is |brokenObj<1>| |T_javafe.tc.EnvForLocalType|) (NEQ |brokenObj<1>| null)) (IMPLIES (AND (EQ |@true| (is |brokenObj<1>| |T_javafe.tc.EnvForLocalType|)) (NEQ |brokenObj<1>| null)) (NEQ (select |id:13.32.34| (select |decl:35.37| |brokenObj<1>|)) null))) (EQ |this@220.8-220.8| (select |parent:29.32| this)) (EQ |EC-220.8:220.8| |ecReturn|) (EQ |this@222.15-222.15| (select |id:13.32.34| (select |decl:35.37| this))) (EQ |@true| (is |RES-222.15:222.15| |T_java.lang.String|)) (EQ |@true| (isAllocated |RES-222.15:222.15| alloc)) (EQ |EC-222.15:222.15| |ecReturn|) (IMPLIES (EQ |EC-222.15:222.15| |ecReturn|) (NEQ |RES-222.15:222.15| null)) (EQ |tmp1:221.20| (stringCat (stringCat |S_221.20| |RES-222.15:222.15|) |S_222.28|)) (EQ |d@222.45-222.45:18.115.56| (select |decl:35.37| this)) (EQ |@true| (is |RES-222.45:222.45| |T_javafe.tc.TypeSig|)) (EQ |@true| (isAllocated |RES-222.45:222.45| alloc)) (EQ |EC-222.45:222.45| |ecReturn|) (IMPLIES (EQ |EC-222.45:222.45| |ecReturn|) (NEQ |RES-222.45:222.45| null)) (EQ |arg0@221.12-221.12:24..| (stringCat (stringCat |tmp1:221.20| |RES-222.45:222.45|) |S_222.60|)) (EQ |EC-221.12:221.12| |ecReturn|) (NOT (LBLNEG |Exception@223.4| (EQ |ecReturn| |ecReturn|))))))) (AND 
+(DISTINCT |ecReturn|) (NEQ |S_222.60| null) (EQ (typeof |S_222.60|) |T_java.lang.String|) (NEQ |S_221.20| null) (EQ (typeof |S_221.20|) |T_java.lang.String|) (NEQ |S_222.28| null) (EQ (typeof |S_222.28|) |T_java.lang.String|)))
+(BG_POP)

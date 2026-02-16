@@ -1,0 +1,45 @@
+ESC/Java version VERSION
+    [TIME]
+
+Unch ...
+  Prover started:TIME
+    [TIME]
+
+Unch: m(int) ...
+    [TIME]  passed immediately
+
+Unch: mm() ...
+    [TIME]  passed
+
+Unch: mm1() ...
+------------------------------------------------------------------------
+Unch.java:19: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(a[1]); // FAILS
+                    ^
+Associated declaration is "Unch.java", line 19, col 27:
+                //@ assert \not_modified(a[1]); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unch: mn() ...
+    [TIME]  passed immediately
+
+Unch: mnn() ...
+    [TIME]  passed
+
+Unch: mnn1() ...
+------------------------------------------------------------------------
+Unch.java:38: Warning: Possible assertion failure (Assert)
+                //@ assert \not_modified(x.n); // FAILS
+                    ^
+Associated declaration is "Unch.java", line 38, col 27:
+                //@ assert \not_modified(x.n); // FAILS
+                                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Unch: Unch() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

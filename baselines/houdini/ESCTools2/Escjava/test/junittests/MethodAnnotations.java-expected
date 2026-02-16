@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+MethodAnnotations ...
+  Prover started:TIME
+    [TIME]
+
+MethodAnnotations: capacity() ...
+    [TIME]  passed immediately
+
+MethodAnnotations: size() ...
+    [TIME]  passed
+
+MethodAnnotations: push(int) ...
+    [TIME]  passed
+
+MethodAnnotations: pop() ...
+    [TIME]  passed
+
+MethodAnnotations: MethodAnnotations() ...
+    [TIME]  passed
+  [TIME total]

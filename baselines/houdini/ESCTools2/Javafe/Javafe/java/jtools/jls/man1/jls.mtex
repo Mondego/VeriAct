@@ -1,0 +1,207 @@
+\manpage{The Jls Command}{jls}{1}
+
+
+\section{NAME}
+
+\bf{jls} - Lists Java classes, interfaces, and packages
+
+
+\section{SYNOPSIS}
+
+\bf{jls} [\bf{-abcFpRs1}] [\bf{-C}\it{width}] [\bf{-bootclasspath}
+\it{path}] [\bf{-classpath} \it{path}] \it{packagename}...
+
+
+\section{FLAGS}
+
+\begin{description}
+
+\item{\bf{-a}}
+Always use absolute names (e.g., \tt{java.lang.String} rather than just
+\tt{String}).
+
+\item{\bf{-b}}
+Classes and interfaces are displayed only if they have an associated
+binary file (aka, class file).
+
+\item{\bf{-c}}
+Classes and interfaces, but not packages, are listed.
+
+\item{\bf{-E}}
+Causes \bf{jls} to ignore \it{empty} packages (those that contain no
+sources, binaries, or (possibly empty) subpackages).  This option is
+useful for filtering out non-Java directories (e.g., \tt{RCS/})
+contained in a Java package hierarchy.
+
+\item{\bf{-F}}
+Puts a \bf{/} (slash) after each package name (except when listing
+recursively), a \bf{*} (asterisk) after each class or interface with a
+binary but no source, and a \bf{&} (ampersand) after each class or
+interface with both binary and source.  Classes and interfaces with only
+a source have nothing put after their name.
+
+\item{\bf{-p}}
+Packages, but not classes or interfaces, are listed.
+
+\item{\bf{-R}}
+Lists all subpackages recursively.
+
+\item{\bf{-s}}
+Classes and interfaces are displayed only if they have an associated
+source file.
+
+\item{\bf{-1}}
+Forces one-entry-per-line output format.
+
+\end{description}
+
+When you specify the following mutually exclusive flags and options, the
+last one on the command line takes effect:
+
+\begin{itemize}
+
+\item \bf{-b} and \bf{-s}
+
+\item \bf{-c} and \bf{-p}
+
+\item \bf{-1} and \bf{-C}\it{width}
+
+\end{itemize}
+
+
+\section{OPTIONS}
+
+\begin{description}
+
+\item{\bf{-bootclasspath} \it{path}}
+Specifies the system half of the path \bf{jls} uses to look up classes,
+interfaces, and packages.  (The complete classpath \bf{jls} uses is
+composed of this path followed by the user path (cf.  \bf{-classpath})).
+In addition to directories, \it{path} may contain \bf{JAR} and \bf{zip}
+archives as components.  If this option is omitted, \bf{jls} will
+attempt to use the default bootclasspath for the version of \bf{java}
+being used (cf. \bf{JAVA}); the empty path will be used if \bf{java}'s
+default cannot be determined.
+
+\item{\bf{-classpath} \it{path}}
+Specifies the user half of the path \bf{jls} uses to look up classes,
+interfaces, and packages.  In addition to directories, \it{path} may
+contain \bf{JAR} and \bf{zip} archives.  This option overrides the
+\bf{CLASSPATH} environment variable.
+
+\item{\bf{-C}\it{width}}
+Display output in multiple columns, attempting to use no more than
+\it{width} characters per line.  By default, \bf{jls} uses a width of 80
+columns.
+
+\end{description}
+
+
+
+\section{DESCRIPTION}
+
+The \bf{jls} command writes to standard output the contents of each
+specified package.  If you do not specify a package, \bf{jls} displays
+the contents of the top (unnamed) package.  By default, \bf{jls} lists
+all the classes, interfaces, and immediate subpackages (but not their
+contents) contained in each \it{packagename} using relative names.
+
+The \bf{jls} command is modeled after the \bf{ls} command, with packages
+playing the role of directories, and classes and interfaces playing the
+role of ordinary files.  \bf{jls} displays each package's contents in
+lexical order.  Output is displayed in multiple columns unless the
+\bf{-1} option is in effect.
+
+
+\section{DIAGNOSTICS}
+
+A diagnostic is given if a \it{packagename} does not name a package in the
+current Java classpath.
+
+
+\section{EXAMPLES}
+
+\begin{description}
+
+\item{\bf{1.} To list the contents of the \tt{java.util} package with
+descriptive tags:}
+\bf{jls -F java.util}
+
+\item{\bf{2.} To list all available packages:}
+\bf{jls -pR}
+
+\item{\bf{3.} To list all classes and interfaces whose name contains the
+string ``File'':}
+\bf{jls -acR1 | grep File}
+
+\item{\bf{4.} To list the locations of the \tt{java.lang} binaries:}
+\bf{jls -ac1 java.lang | xargs jwhich -b}
+
+\end{description}
+
+
+
+\section{ENVIRONMENT VARIABLES}
+
+The following environment variables affect the execution of \bf{jls}:
+
+\begin{description}
+
+\item{\bf{CLASSPATH}}
+If set, specifies the path to be used to locate user classes.  Defaults
+to the current working directory.  The \bf{-classpath} option overrides
+this variable.  Where to find the system classes is specified separately
+using the \bf{-bootclasspath} option.
+
+\item{\bf{JAVA}}
+This environment variable specifies the java runtime system to use for
+running \bf{jls}.  The default is "java", which hopefully results in the
+system installed version of \bf{java} being used.
+
+\end{description}
+
+
+\section{BUGS AND LIMITATIONS}
+
+Because of missing functionality in the Java APIs, \bf{jls}, which is
+written in Java, is unable to sense whether its output is a terminal,
+and, if so, how many columns wide it is.  This fact means that \bf{jls},
+unlike \bf{ls}, must be told manually how many columns to use and when
+to use one-entry-per-line mode.
+
+\bf{jls} attempts to use the same classpath as \bf{JAVA} would, given
+the same environment variables and \bf{-[boot]classpath} arguments.  It
+fails to do so in a number of cases:
+
+\begin{enumerate}
+
+\item
+The handling of \bf{-classpath} was changed in Java 1.2; previously
+\bf{-classpath} set the bootclasspath to the empty path.  Since \bf{jls}
+implements the Java 1.2 behaviour, you will need to translate
+`\bf{java1.* -classpath} \it{path}' to `\bf{jls -classpath} \it{path}
+\bf{-bootclasspath} ""' to get the same classpath.
+
+\item
+Unlike \bf{javac}, any archives contained in directories listed in the
+bootclasspath will be ignored.  A similar effect can be gotten by
+listing each of these archives as a separate component of the
+bootclasspath.
+
+\item
+Because of current API limitations, \bf{jls} may be unable to determine
+the default bootclasspath for non-Sun implementations of Java 1.2 and
+later.
+
+\end{enumerate}
+
+
+\section{AUTHOR}
+
+Mark Lillibridge, Compaq Systems Research Center  (mdl@pa.dec.com)
+
+
+\section{SEE ALSO}
+
+\bf{ls}(1), \bf{jwhich}(1), \bf{javac}(1), \bf{jar}(1), \bf{zip}(1L),
+\bf{gzip}(1), \bf{CLASSPATH}

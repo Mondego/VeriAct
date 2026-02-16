@@ -1,0 +1,4 @@
+C.java:176: Warning: Possible negative array index (IndexNegative)
+        int x = a[i];  // "i" may be negative
+                 ^
+1 warning

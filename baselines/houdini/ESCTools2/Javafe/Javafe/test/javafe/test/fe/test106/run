@@ -1,0 +1,17 @@
+#!/bin/sh
+
+## Test scoping of Expr names (includes TypeNames and method
+## invocations)                                                     [1.1]
+
+${TOOL} LocalRedefinition.java
+${TOOL} TT.java TP.java TQ.java
+
+${TOOL} ExprScoping.java
+${TOOL} TypeScoping.java
+${TOOL} Dual.java
+${TOOL} Dual2.java
+${TOOL} Dual3.java
+${TOOL} Dual4.java
+${TOOL} Imports.java
+${TOOL} Prefixes.java Prefixes1.java
+${TOOL} MethodScoping.java

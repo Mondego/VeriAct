@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|AssignOnConstructor.java: Caution: Using given file as the .java file, even though it is not the java file for AssignOnConstructor on the classpath
+    [TIME]
+
+AssignOnConstructor ...
+  Prover started:TIME
+    [TIME]
+
+AssignOnConstructor: m() ...
+    [TIME]  passed immediately
+
+AssignOnConstructor: AssignOnConstructor() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution

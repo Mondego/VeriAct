@@ -1,0 +1,133 @@
+ESC/Java version VERSION
+    [TIME]
+
+Initially ...
+  Prover started:TIME
+    [TIME]
+
+Initially: m() ...
+    [TIME]  passed
+
+Initially: Initially() ...
+    [TIME]  passed
+
+Initially: Initially(int) ...
+------------------------------------------------------------------------
+Initially.java:20: Warning: Possible violation of initially condition at constructor exit (Initially)
+        } // ERROR
+        ^
+Associated declaration is "Initially.java", line 8, col 5:
+        //@ initially i == 6;
+            ^
+Execution trace information:
+    Executed implicit return in "Initially.java", line 20, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+InitiallyA ...
+    [TIME]
+
+InitiallyA: InitiallyA() ...
+    [TIME]  passed immediately
+
+InitiallyA: p() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+InitiallyB ...
+    [TIME]
+
+InitiallyB: InitiallyB() ...
+    [TIME]  passed immediately
+
+InitiallyB: m() ...
+    [TIME]  passed
+
+InitiallyB: mm() ...
+------------------------------------------------------------------------
+Initially.java:49: Warning: Possible assertion failure (Assert)
+                //@ assert a.j != 4;  // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+InitiallyC ...
+    [TIME]
+
+InitiallyC: InitiallyC() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+InitiallyD ...
+    [TIME]
+
+InitiallyD: InitiallyD() ...
+    [TIME]  passed immediately
+
+InitiallyD: m() ...
+    [TIME]  passed
+
+InitiallyD: mm() ...
+------------------------------------------------------------------------
+Initially.java:75: Warning: Possible assertion failure (Assert)
+                //@ assert a.j != 4;  // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+InitiallyE ...
+    [TIME]
+
+InitiallyE: InitiallyE() ...
+    [TIME]  passed immediately
+
+InitiallyE: InitiallyE(int) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+InitiallyF ...
+    [TIME]
+
+InitiallyF: InitiallyF() ...
+    [TIME]  passed
+
+InitiallyF: InitiallyF(float) ...
+------------------------------------------------------------------------
+Initially.java:104: Warning: Possible assertion failure (Assert)
+                //@ assert i == 20; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InitiallyF: InitiallyF(int) ...
+    [TIME]  passed
+
+InitiallyF: InitiallyF(int, int) ...
+------------------------------------------------------------------------
+Initially.java:116: Warning: Possible assertion failure (Assert)
+                //@ assert i == 20; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+InitiallyF: InitiallyF(int, int, int) ...
+    [TIME]  passed immediately
+
+InitiallyF: InitiallyF(java.lang.Object) ...
+------------------------------------------------------------------------
+Initially.java:130: Warning: Possible assertion failure (Assert)
+                //@ assert i == 18; // ERROR -- constructor called is  ...
+                    ^
+Execution trace information:
+    Executed call in "Initially.java", line 129, col 2.
+    Executed implicit return in "Initially.java", line 126, col 1.
+    Returned from inlined call at "Initially.java", line 129, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+6 warnings

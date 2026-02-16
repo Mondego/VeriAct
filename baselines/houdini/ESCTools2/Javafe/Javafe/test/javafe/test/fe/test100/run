@@ -1,0 +1,7 @@
+#!/bin/sh
+
+## Test parsing and type checking of class literals [1.1]
+
+${TOOL} Cliteral.java
+${TOOL} Neg.java
+${TOOL} TypeCheck.java

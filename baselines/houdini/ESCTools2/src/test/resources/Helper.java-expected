@@ -1,0 +1,65 @@
+ESC/Java version VERSION
+src|test|resources|Helper.java: Caution: Using given file as the .java file, even though it is not the java file for Helper on the classpath
+    [TIME]
+
+Helper ...
+  Prover started:TIME
+    [TIME]
+
+Helper: m() ...
+    [TIME]  passed immediately
+
+Helper: mm() ...
+    [TIME]  passed immediately
+
+Helper: p() ...
+------------------------------------------------------------------------
+src|test|resources|Helper.java:25: Warning: Possible violation of object invariant (Invariant)
+        public void p() { i=10; return; }
+                                        ^
+Associated declaration is "src|test|resources|Helper.java", line 29, col 12:
+        //@ public invariant i == 0;
+                   ^
+Possibly relevant items from the counterexample context:  
+  brokenObj%0 == this
+(brokenObj* refers to the object for which the invariant is broken.)
+
+Execution trace information:
+    Executed return in "src|test|resources|Helper.java", line 25, col 25.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper: n() ...
+------------------------------------------------------------------------
+src|test|resources|Helper.java:12: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|Helper.java", line 7, col 5:
+        //@ ensures i == 6;
+            ^
+Execution trace information:
+    Executed call in "src|test|resources|Helper.java", line 32, col 2.
+    Executed implicit return in "src|test|resources|Helper.java", line 12, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper: Helper() ...
+    [TIME]  passed immediately
+
+Helper: Helper(int) ...
+    [TIME]  passed
+  [TIME total]
+
+H2 ...
+    [TIME]
+
+H2: mmm() ...
+    [TIME]  passed immediately
+
+H2: H2() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+2 warnings

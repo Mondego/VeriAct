@@ -1,0 +1,59 @@
+TestCollection.java:71: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+TestCollection.java:85: Warning: Possible assertion failure (Assert)
+        //@ assert (/forall Object o; c.contains(o); o.equals(i) );
+            ^
+TestCollection.java:89: Warning: Possible assertion failure (Assert)
+        //@ assert !c.containsObject(ii);
+            ^
+TestCollection.java:101: Warning: Possible assertion failure (Assert)
+        //@ assert !c.containsObject(ii);
+            ^
+TestCollection.java:102: Warning: Possible assertion failure (Assert)
+        //@ assert c.containsObject(i);
+            ^
+TestCollection.java:105: Warning: Precondition possibly not established (Pre)
+        assertTrue(!b);
+                  ^
+Associated declaration is "./LocalTestCase.java", line 19, col 6:
+  //@ requires b;
+      ^
+TestCollection.java:106: Warning: Possible assertion failure (Assert)
+        //@ assert c.containsObject(i);
+            ^
+TestCollection.java:128: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestCollection.java", line 110, col 11.
+    Routine call returned exceptionally in "TestCollection.java", line 121, col 11.
+
+TestCollection.java:130: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestCollection.java", line 99, col 14.
+
+TestCollection.java:157: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestCollection.java", line 142, col 11.
+
+TestCollection.java:186: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestCollection.java", line 170, col 11.
+
+TestCollection.java:231: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "TestCollection.java", line 226, col 11.
+
+TestCollection.java:246: Warning: Possible assertion failure (Assert)
+//@ assert false; // TEST FOR CONSISTENCY
+    ^
+13 warnings

@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+src|test|resources|OldFormals.java: Caution: Using given file as the .java file, even though it is not the java file for OldFormals on the classpath
+    [TIME]
+
+OldFormals ...
+  Prover started:TIME
+    [TIME]
+
+OldFormals: m(int) ...
+    [TIME]  passed
+
+OldFormals: n(int) ...
+    [TIME]  passed
+
+OldFormals: q(int) ...
+    [TIME]  passed
+
+OldFormals: r(int) ...
+    [TIME]  passed
+
+OldFormals: t(int) ...
+    [TIME]  passed
+
+OldFormals: OldFormals() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

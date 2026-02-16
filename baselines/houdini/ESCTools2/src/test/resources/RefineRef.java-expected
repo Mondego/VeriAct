@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|RefineRef.java: Caution: Using given file as the .java file, even though it is not the java file for RefineRef on the classpath
+    [TIME]
+
+RefineRef ...
+src|test|resources|RefineRef.java:4: Fatal error: Can't find type named "RefineRefHelper"
+        public void m(RefineRefHelper r) {
+                      ^
+1 caution
+1 error

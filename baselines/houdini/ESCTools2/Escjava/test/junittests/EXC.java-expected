@@ -1,0 +1,54 @@
+ESC/Java version VERSION
+    [TIME]
+
+P ...
+  Prover started:TIME
+    [TIME]
+
+P: getProperty(java.lang.Object) ...
+    [TIME]  passed immediately
+
+P: P() ...
+    [TIME]  passed
+  [TIME total]
+
+EXC ...
+    [TIME]
+
+EXC: main(P) ...
+------------------------------------------------------------------------
+EXC.java:35: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // SHOULD FAIL
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "EXC.java", line 30, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EXC: m(P) ...
+------------------------------------------------------------------------
+EXC.java:45: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // SHOULD FAIL
+        ^
+Execution trace information:
+    Routine call returned exceptionally in "EXC.java", line 41, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EXC: mm(P) ...
+------------------------------------------------------------------------
+EXC.java:55: Warning: Possible assertion failure (Assert)
+      //@ assert e instanceof ArithmeticException; // SHOULD FAIL
+          ^
+Execution trace information:
+    Routine call returned exceptionally in "EXC.java", line 52, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+EXC: EXC() ...
+    [TIME]  passed
+  [TIME total]
+3 warnings

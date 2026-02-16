@@ -1,0 +1,17 @@
+%{obey}
+
+% \myobeycr is same as \obeycr, but doesn't do a \@gobblecr.
+{\catcode`\^^M=13 \gdef\myobeycr{\catcode`\^^M=13 \def^^M{\\}}%
+\gdef\restorecr{\catcode`\^^M=5 }}
+
+% \obeytabs
+{\catcode`\^^I=13 \gdef\obeytabs{\catcode`\^^I=13 \def^^I{\hbox{\hskip 4em}}}}
+
+% \obeyspaces
+{\obeyspaces\gdef {\hbox{\hskip0.5em}}}
+
+% environment for displayed text, indented, obeys cr, tab, spaces
+\newenvironment{obeyDisplay}{%
+\samepage%
+\begin{list}{}{}\item\obeyspaces\obeytabs\obeycr}{%
+\end{list}}

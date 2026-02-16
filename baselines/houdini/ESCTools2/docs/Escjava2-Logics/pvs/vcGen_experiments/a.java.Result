@@ -1,0 +1,31 @@
+A: f(int, int) ...
+
+**** Guarded Command:
+ASSUME is(x:6.28, \type(int));
+ASSUME is(y:6.34, \type(int));
+ASSUME (\lblneg Pre:0.4.8 integralNE(y:6.34, 0));
+ASSUME (\forall anytype brokenObj; refEQ(java.lang.Throwable#_stackTrace(state, brokenObj), getStackTrace##state(state, brokenObj)));
+ASSUME (\forall anytype brokenObj<1>; refEQ(java.lang.Throwable#_stackTrace(state, brokenObj<1>), getStackTrace##state(state, brokenObj<1>)));
+VAR int x@pre:6.28; int y@pre:6.34 IN
+   x@pre:6.28 = x:6.28;
+   y@pre:6.34 = y:6.34;
+   {  ASSERT (\lblneg ZeroDiv@8.9 integralNE(y:6.34, 0));
+      RES = integralDiv(x:6.28, y:6.34);
+      ASSUME (\lblpos trace.Return^0,8.1 true);
+      EC = ecReturn;
+      RAISE
+   !  SKIP
+   };
+   RESTORE x:6.28 FROM x@pre:6.28;
+   RESTORE y:6.34 FROM y@pre:6.34
+END;
+ASSUME (\forall anytype brokenObj; refEQ(java.lang.Throwable#_stackTrace(state, brokenObj), getStackTrace##state(state, brokenObj)));
+ASSUME (\forall anytype brokenObj<1>; refEQ(java.lang.Throwable#_stackTrace(state, brokenObj<1>), getStackTrace##state(state, brokenObj<1>)));
+ASSERT (\lblneg Exception@10.4 anyEQ(EC, ecReturn));
+ASSERT (\lblneg Post:3.4@10.4 boolImplies(boolAnd(anyEQ(EC, ecThrow), typeLE(\typeof(XRES), \type(java.lang.Exception))), boolNot(integralNE(y:6.34, 0))))
+    [0.092 s 7458224 bytes]  passed 
+
+[-1]  elems_pre!1 = elems
+[-2]  state_pre!1 = state!1
+{-3}  (y_6!1 = 0)
+  |-------

@@ -1,0 +1,91 @@
+ESC/Java version VERSION
+    [TIME]
+
+ModelVarMod ...
+  Prover started:TIME
+    [TIME]
+
+ModelVarMod: p() ...
+    [TIME]  passed
+
+ModelVarMod: p2() ...
+    [TIME]  passed
+
+ModelVarMod: p3() ...
+    [TIME]  passed
+
+ModelVarMod: p3a() ...
+    [TIME]  passed
+
+ModelVarMod: pp() ...
+    [TIME]  passed
+
+ModelVarMod: pp2() ...
+------------------------------------------------------------------------
+ModelVarMod.java:109: Warning: Possible assertion failure (Assert)
+            //@ assert ms == 4;  // ERROR
+                ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelVarMod: ModelVarMod() ...
+    [TIME]  passed
+  [TIME total]
+
+ModelVarModPS ...
+    [TIME]
+
+ModelVarModPS: ModelVarModPS() ...
+    [TIME]  passed
+  [TIME total]
+
+ModelVarModS ...
+    [TIME]
+
+ModelVarModS: ModelVarModS() ...
+    [TIME]  passed
+  [TIME total]
+
+ModelVarModD ...
+    [TIME]
+
+ModelVarModD: ModelVarModD() ...
+    [TIME]  passed
+  [TIME total]
+
+ModelVarModStatic ...
+    [TIME]
+
+ModelVarModStatic: q() ...
+    [TIME]  passed
+
+ModelVarModStatic: q2() ...
+    [TIME]  passed
+
+ModelVarModStatic: q3() ...
+    [TIME]  passed
+
+ModelVarModStatic: q3a() ...
+    [TIME]  passed
+
+ModelVarModStatic: qq() ...
+    [TIME]  passed
+
+ModelVarModStatic: qq2() ...
+------------------------------------------------------------------------
+ModelVarMod.java:245: Warning: Possible assertion failure (Assert)
+            //@ assert ms == 4;  // ERROR
+                ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModelVarModStatic: qq2a() ...
+    [TIME]  passed
+
+ModelVarModStatic: qq2b() ...
+    [TIME]  passed
+
+ModelVarModStatic: ModelVarModStatic() ...
+    [TIME]  passed
+  [TIME total]
+2 warnings

@@ -1,0 +1,91 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: ISO7816.jml,v 1.5 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public interface ISO7816 {
+
+  short SW_NO_ERROR;
+  short SW_BYTES_REMAINING_00;
+  short SW_WRONG_LENGTH;
+  short SW_SECURITY_STATUS_NOT_SATISFIED;
+  short SW_FILE_INVALID;
+  short SW_DATA_INVALID;
+  short SW_CONDITIONS_NOT_SATISFIED;
+  short SW_COMMAND_NOT_ALLOWED;
+  short SW_APPLET_SELECT_FAILED;
+  short SW_WRONG_DATA;
+  short SW_FUNC_NOT_SUPPORTED;
+  short SW_FILE_NOT_FOUND;
+  short SW_RECORD_NOT_FOUND;
+  short SW_INCORRECT_P1P2;
+  short SW_WRONG_P1P2;
+  short SW_CORRECT_LENGTH_00;
+  short SW_INS_NOT_SUPPORTED;
+  short SW_CLA_NOT_SUPPORTED;
+  short SW_UNKNOWN;
+  short SW_FILE_FULL;
+  short SW_LOGICAL_CHANNEL_NOT_SUPPORTED;
+  short SW_SECURE_MESSAGING_NOT_SUPPORTED;
+  short SW_WARNING_STATE_UNCHANGED;
+  
+  byte OFFSET_CLA;
+  byte OFFSET_INS;
+  byte OFFSET_P1;
+  byte OFFSET_P2;
+  byte OFFSET_LC;
+  byte OFFSET_CDATA;
+  
+  byte CLA_ISO7816;
+  byte INS_SELECT;
+  byte INS_EXTERNAL_AUTHENTICATE;
+
+
+  //@ public static invariant SW_NO_ERROR                       == 0x9000;
+  //@ public static invariant SW_BYTES_REMAINING_00             == 0x6100;
+  //@ public static invariant SW_WRONG_LENGTH                   == 0x6700;
+  //@ public static invariant SW_SECURITY_STATUS_NOT_SATISFIED  == 0x6982;
+  //@ public static invariant SW_FILE_INVALID                   == 0x6983;
+  //@ public static invariant SW_DATA_INVALID	                  == 0x6984;
+  //@ public static invariant SW_CONDITIONS_NOT_SATISFIED	  == 0x6985;
+  //@ public static invariant SW_COMMAND_NOT_ALLOWED	          == 0x6986;
+  //@ public static invariant SW_APPLET_SELECT_FAILED	          == 0x6999;
+  //@ public static invariant SW_WRONG_DATA	                  == 0x6A80;
+  //@ public static invariant SW_FUNC_NOT_SUPPORTED             == 0x6A81;
+  //@ public static invariant SW_FILE_NOT_FOUND                 == 0x6A82;
+  //@ public static invariant SW_RECORD_NOT_FOUND               == 0x6A83;
+  //@ public static invariant SW_INCORRECT_P1P2                 == 0x6A86;
+  //@ public static invariant SW_WRONG_P1P2 	                  == 0x6B00;
+  //@ public static invariant SW_CORRECT_LENGTH_00              == 0x6C00;
+  //@ public static invariant SW_INS_NOT_SUPPORTED              == 0x6D00;
+  //@ public static invariant SW_CLA_NOT_SUPPORTED              == 0x6E00;
+  //@ public static invariant SW_UNKNOWN                        == 0x6F00;
+  //@ public static invariant SW_FILE_FULL                      == 0x6A84;
+  //@ public static invariant SW_LOGICAL_CHANNEL_NOT_SUPPORTED  == 0x6881;
+  //@ public static invariant SW_SECURE_MESSAGING_NOT_SUPPORTED == 0x6882;
+  //@ public static invariant SW_WARNING_STATE_UNCHANGED        == 0x6200;
+  
+  //@ public static invariant OFFSET_CLA      == 0;
+  //@ public static invariant OFFSET_INS      == 1;
+  //@ public static invariant OFFSET_P1       == 2;
+  //@ public static invariant OFFSET_P2       == 3;
+  //@ public static invariant OFFSET_LC       == 4;
+  //@ public static invariant OFFSET_CDATA    == 5;
+  
+  //@ public static invariant CLA_ISO7816                == 0x00;
+  //@ public static invariant INS_SELECT                 == 0xA4;
+  //@ public static invariant INS_EXTERNAL_AUTHENTICATE  ==  0x82;
+
+}

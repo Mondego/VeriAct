@@ -1,0 +1,108 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: AID.jml,v 1.6 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.framework;
+
+public class AID { 
+
+   //@ public ghost byte[] _theAID;
+   /*@ public invariant _theAID != null; @*/
+   /*@ public invariant _theAID.length >= 5 && _theAID.length <= 16; @*/
+   /*@ public invariant _theAID.owner == this; @*/
+   /*@ public constraint _theAID == \old(_theAID); @*/
+   /*@ public constraint (\forall short i;
+     i>=0 && i<_theAID.length; _theAID[i] == \old(_theAID[i])); @*/
+
+   /*@ public normal_behavior
+         requires bArray != null;
+	 requires length >= 5 && length <= 16;
+	 requires offset >= 0 && offset + length <= bArray.length ;
+         ensures _theAID.length == length;
+	 ensures
+	   (\forall short i; i>=0 && i<length ;
+	      _theAID[i] == bArray[offset + i]);
+         assignable _theAID;
+    @*/
+   public AID(byte[] bArray, short offset, byte length)
+      throws SystemException, SecurityException;
+
+   /*@ public normal_behavior
+         requires dest != null;
+	 requires offset >= 0 && offset + _theAID.length <= dest.length;
+         ensures \result == _theAID.length;
+	 ensures 
+	   (\forall int i; i>=0 && i<_theAID.length ;
+	      dest[offset + i] == _theAID[i]);
+         assignable dest[offset..offset + _theAID.length - 1];
+    @*/
+   public final byte getBytes (byte[] dest, short offset)
+      throws SecurityException;
+
+   /*@ also public normal_behavior
+         requires true;
+         ensures true;
+         assignable \nothing;
+    @*/
+   public final /*@pure@*/ boolean equals (Object anObject)
+     throws SecurityException; 
+
+   /*@ public normal_behavior
+         requires bArray != null;
+	 requires length >= 0 && offset >= 0 && 
+	   offset + length <= bArray.length;
+         ensures true;
+         assignable \nothing;
+    @*/
+   public final /*@pure@*/ boolean equals(byte[] bArray, short offset, byte length);
+
+
+   /*@ public normal_behavior
+         requires length >= 0 && offset >= 0 &&
+	   offset + length <= bArray.length;
+         ensures true;
+         assignable \nothing;
+    @*/
+   public final /*@pure@*/ boolean partialEquals(byte[] bArray, short offset, byte length)
+      throws SecurityException;
+
+   /*@ public normal_behavior
+         requires true;
+         ensures true;
+         assignable \nothing;
+    @*/
+   public final /*@pure@*/ boolean RIDEquals(AID otherAID) throws SecurityException;
+
+   // The specification of getPartialBytes is probably an overkill,
+   // ensures true; would suffice.
+
+   /*@ public normal_behavior
+         requires dest != null;
+	 requires aidOffset >= 0 && aidOffset <= _theAID.length;
+	 requires oLength >= 0 && oOffset >= 0;
+	 requires oLength == 0 ==> oOffset + _theAID.length - aidOffset <= dest.length; 
+	 requires oLength > 0 ==> aidOffset + oLength <= _theAID.length && oOffset + oLength <= dest.length;
+         ensures oLength == 0 ==> 
+	   \result == _theAID.length - aidOffset &&
+	     (\forall short i; i>=0 && i<_theAID.length - aidOffset;
+	       dest[oOffset + i] == _theAID[aidOffset + i]) ;
+	 ensures oLength > 0 ==>
+	   \result == oLength &&
+	     (\forall short i; i>=0 && i< oLength;
+	       dest[oOffset + i] == _theAID[aidOffset + i]);
+         assignable dest[*];
+    @*/
+   public final byte getPartialBytes(short aidOffset, byte[] dest, short oOffset, byte oLength) 
+       throws SecurityException;
+} 

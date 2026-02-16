@@ -1,0 +1,10 @@
+/** Non-empty inclusive intervals of integers. */
+public class Interval {
+    /** Low and high bounds */
+    protected int low, high;
+
+    /** Initialize this Interval to be [l,h] */
+    public Interval(int l, int h);
+    /** Is i in this interval? */
+    public boolean contains(int i);
+}

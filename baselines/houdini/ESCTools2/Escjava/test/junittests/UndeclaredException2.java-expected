@@ -1,0 +1,130 @@
+ESC/Java version VERSION
+    [TIME]
+
+UndeclaredException2 ...
+  Prover started:TIME
+    [TIME]
+
+UndeclaredException2: UndeclaredException2() ...
+    [TIME]  passed immediately
+
+UndeclaredException2: q(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:8: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+UndeclaredException2.java:9: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // WARNING - gets here because x.m is not decla ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: qx(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:16: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+UndeclaredException2.java:17: Warning: Possible assertion failure (Assert)
+    //@ assert false;  // WARNING - gets here because exceptions are i ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q1(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredException2: q1x(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredException2: q3(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:38: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q3x(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:45: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q4(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:57: Warning: Possible unexpected exception (Exception)
+}  // Exception WARNING with bug fixed; previously OK - we don't know  ...
+^
+Execution trace information:
+    Routine call returned exceptionally in "UndeclaredException2.java", line 54, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: q4x(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:63: Warning: Possible unexpected exception (Exception)
+}  // WARNING - an exception might be thrown
+^
+Execution trace information:
+    Routine call returned exceptionally in "UndeclaredException2.java", line 62, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: rr(UndeclaredException2$NEx) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:73: Warning: Possible assertion failure (Assert)
+//@ assert false; // WARNING - but not until a bug is fixed
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "UndeclaredException2.java", line 68, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredException2: rrx(UndeclaredException2$Ex) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:84: Warning: Possible assertion failure (Assert)
+//@ assert false;  // WARNING
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "UndeclaredException2.java", line 79, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredException2$NEx ...
+    [TIME]
+
+UndeclaredException2$NEx: NEx() ...
+    [TIME]  passed immediately
+
+UndeclaredException2$NEx: m(java.lang.Object) ...
+------------------------------------------------------------------------
+UndeclaredException2.java:101: Warning: Possible unexpected exception (Exception)
+    } // WARNING - Unexpected Exception
+    ^
+Execution trace information:
+    Executed then branch in "UndeclaredException2.java", line 99, col 21.
+    Executed throw in "UndeclaredException2.java", line 99, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredException2$Ex ...
+    [TIME]
+
+UndeclaredException2$Ex: Ex() ...
+    [TIME]  passed immediately
+
+UndeclaredException2$Ex: m(java.lang.Object) ...
+    [TIME]  passed
+  [TIME total]
+11 warnings

@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParseDiverges ...
+  Prover started:TIME
+    [TIME]
+
+ParseDiverges: m() ...
+    [TIME]  passed
+
+ParseDiverges: ParseDiverges() ...
+    [TIME]  passed
+  [TIME total]

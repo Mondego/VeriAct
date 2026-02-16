@@ -1,0 +1,14 @@
+ArrayInit.java:28: Error: Cannot convert java.lang.String to int
+    int[] x = new int[] { 3, "hello" };    // error: type mismatch
+                             ^
+ArrayInit.java:40: Error: Cannot convert int to int[]
+    Object too = new int[][]{ 1 };         // error
+                              ^
+ArrayInit.java:41: Error: Unexpected array value in initializer
+    Object few = new int[]{ { 2, 3 } };    // error
+                            ^
+3 errors
+ArrayInit2.java:14: Fatal error: Cannot provide both explicit dimensions and array initializer.
+    Object obj = new int[12]{1, 2};     // parse error
+                 ^
+1 error

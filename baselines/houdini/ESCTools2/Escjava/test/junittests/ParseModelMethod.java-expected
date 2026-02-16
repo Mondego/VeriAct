@@ -1,0 +1,22 @@
+ESC/Java version VERSION
+    [TIME]
+
+ParseModelMethod ...
+  Prover started:TIME
+    [TIME]
+
+ParseModelMethod: m() ...
+    [TIME]  passed
+
+ParseModelMethod: q(int) ...
+    [TIME]  passed
+
+ParseModelMethod: mm() ...
+    [TIME]  passed immediately
+
+ParseModelMethod: p() ...
+    [TIME]  passed immediately
+
+ParseModelMethod: ParseModelMethod() ...
+    [TIME]  passed
+  [TIME total]

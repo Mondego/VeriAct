@@ -1,0 +1,11 @@
+C.java:12: Warning: Possible assertion failure (Assert)
+        //@ assert x == 0;
+            ^
+C.java:24: Warning: Possible assertion failure (Assert)
+        //@ assert x == 1;
+            ^
+C.java:32: Caution: Unable to use quantification because no trigger found: (FORALL (|i:32.25|) (NOT (>= 0 |i:32.25|)))
+        //@ assume (\forall int i; i>0);
+                                ^
+1 caution
+2 warnings

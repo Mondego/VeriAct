@@ -1,0 +1,22 @@
+#!/proj/system/bin/tcsh -f
+# Copyright 2000, 2001, Compaq Computer Corporation
+
+if ($?HOUDINI) then
+else
+    echo "Error: setup must be sourced first"
+    exit 2
+endif
+
+if ($?CLASSPATH) then
+    setenv      USERPATH        ${CLASSPATH}
+else
+    setenv	USERPATH	"."
+endif
+
+
+#
+# Where to get binaries for escjava:
+#
+setenv	CLASSPATH	${CLASSES}
+
+srcjava -Xprof_dcpi:client -Dsimplify=${ESCJAVA_ROOT}/simplify -classpath ${HOUDINI_CLASSPATH} houdini.HoudiniClient $*

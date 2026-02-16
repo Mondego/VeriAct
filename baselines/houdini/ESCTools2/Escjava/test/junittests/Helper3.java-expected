@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+    [TIME]
+
+Helper3 ...
+  Prover started:TIME
+    [TIME]
+
+Helper3: Helper3() ...
+------------------------------------------------------------------------
+Helper3.java:20: Warning: Precondition possibly not established (Pre)
+    non_helper();  // ERROR - preconditions not satisfied
+              ^
+Associated declaration is "Helper3.java", line 14, col 6:
+  //@ non_null
+      ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Helper3: Helper3(boolean) ...
+    [TIME]  passed
+
+Helper3: m() ...
+    [TIME]  passed
+
+Helper3: non_helper() ...
+    [TIME]  passed
+
+Helper3: helper() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 warning

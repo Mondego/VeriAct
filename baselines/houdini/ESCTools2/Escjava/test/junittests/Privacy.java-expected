@@ -1,0 +1,29 @@
+ESC/Java version VERSION
+Privacy.java:57: Error: Unrecognized pragma: 166 null
+//@ FIXME - check for model methods, model constructors, model and non ...
+    ^
+  Prover started:TIME
+
+Privacy ...
+Privacy.java:59: Error: A private field can be used in postconditions of overridable methods only if it is declared spec_public or spec_protected
+        //@ ensures g && pg && ppg && pppg;
+                    ^
+Privacy.java:60: Error: A private field can be used in postconditions of overridable methods only if it is declared spec_public or spec_protected
+        //@ ensures mg && pmg && ppmg && pppmg;
+                    ^
+Privacy.java:64: Error: A private field can be used in postconditions of overridable methods only if it is declared spec_public or spec_protected
+        //@ ensures bbb && bb && b;
+                                 ^
+Privacy.java:69: Error: A private field can be used in postconditions of overridable methods only if it is declared spec_public or spec_protected
+        //@ ensures g && pg && ppg && pppg;
+                    ^
+Privacy.java:70: Error: A private field can be used in postconditions of overridable methods only if it is declared spec_public or spec_protected
+        //@ ensures mg && pmg && ppmg && pppmg;
+                    ^
+Privacy.java:74: Error: A private field can be used in postconditions of overridable methods only if it is declared spec_public or spec_protected
+        //@ ensures bbb && bb && b;
+                                 ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+7 errors

@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|ParseDepends.java:9: Caution: The depends clause is obsolete; it has been replaced by the in and maps clauses
+        //@ depends b <- bb,bbb;
+            ^
+src|test|resources|ParseDepends.java: Caution: Using given file as the .java file, even though it is not the java file for ParseDepends on the classpath
+    [TIME]
+
+ParseDepends ...
+  Prover started:TIME
+    [TIME]
+
+ParseDepends: m() ...
+    [TIME]  passed immediately
+
+ParseDepends: ParseDepends() ...
+    [TIME]  passed
+  [TIME total]
+2 cautions

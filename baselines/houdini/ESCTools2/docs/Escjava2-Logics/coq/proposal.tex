@@ -1,0 +1,147 @@
+\documentclass[a4paper]{article}
+
+\usepackage[english]{babel}
+
+\begin{document}
+The only part that needs a specific interpretation are the 
+variables (TName), the boolean being sometimes interpreted as Prop, the forall
+and exists construct. The translation can be made in 2 phases; 
+one simple from Java to Coq where everything is translated to boolean.
+The sole aim of the interpretation function is to translate to boolean to 
+handle special constructs (forall, exists) and handle also the prop and boolean
+differenciation.
+problem: keep track of the variable names....?
+permits any simplification on the Coq level.........
+
+\begin{verbatim}
+     TName
+     // variable Name + type
+    
+    TRoot
+    // special translation node ; useless
+    // class created using the perl script
+
+    // bool type
+    TBoolImplies
+    TBoolAnd 
+    TBoolOr
+    TBoolNot 
+    TBoolEQ 
+    TBoolNE 
+
+    // Alloc type
+    TAllocLT 
+    TAllocLE 
+
+    // Buggy equality
+    TAnyEQ
+    TAnyNE
+
+    // int type
+    TIntegralEQ
+    TIntegralGE 
+    TIntegralGT
+    TIntegralLE
+    TIntegralLT 
+    TIntegralNE
+    TIntegralAdd
+    TIntegralDiv
+    TIntegralMod 
+    TIntegralMul 
+    TIntegralSub 
+
+    // float type
+    TFloatEQ
+    TFloatGE 
+    TFloatGT
+    TFloatLE 
+    TFloatLT
+    TFloatNE 
+    TFloatAdd 
+    TFloatDiv 
+    TFloatMod 
+    TFloatMul 
+
+    // lock type
+    TLockLE
+    TLockLT 
+
+    // ref type
+    TRefEQ
+    TRefNE
+
+    // type type
+    TTypeEQ
+    TTypeNE
+    TTypeLE
+
+    // Reference -> Types -> Reference
+    TCast
+    
+    // typing trick (ignored)
+    TIs
+
+    // Reference -> Reference / int -> S (* A *)
+    TSelect 
+    // Reference -> Reference/int ->  S (* A *)-> Reference
+    TStore 
+
+    // ref -> type
+    TTypeOf 
+
+    // list var -> prop -> prop
+    TForAll
+    // list var -> prop -> prop
+    TExist 
+    
+    // Reference -> Time -> Prop
+    TIsAllocated 
+
+    // Elem -> Time
+    TEClosedTime
+    // Fields -> Time
+    TFClosedTime 
+
+    // Typing predicate (should be removed)
+    // Elem -> Elem
+    TAsElems
+    // Field -> type -> Field
+    TAsField 
+    // LockSet -> LockSet
+    TAsLockSet
+
+    // Reference -> int
+    TArrayLength
+    // Reference -> Time -> Time -> S -> S -> Types ->  S (* A *) -> Prop.
+    TArrayFresh 
+    // int -> Reference
+    TArrayShapeOne
+    //  int -> Reference -> Reference
+    TArrayShapeMore
+    // Reference -> Prop
+    TIsNewArray
+
+    // String litteral
+    TString 
+    // Boolean
+    TBoolean
+    // char (int)
+    TChar
+    // number (int)
+    TInt
+    // number (float)
+    TFloat
+    // number (double)
+    TDouble 
+    //reference
+    TNull 
+
+    // S -> Z -> Z -> S
+    TUnset
+    TMethodCall
+
+
+    // ?
+    TSum
+\end{verbatim}
+\end{document}

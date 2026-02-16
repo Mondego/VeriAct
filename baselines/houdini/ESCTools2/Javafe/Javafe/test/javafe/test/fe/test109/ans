@@ -1,0 +1,13 @@
+Dup.java:8: Error: A type may not have the same simple name as any of its enclosing types.
+    static class Dup {}            // error: repeated name
+                 ^
+Dup.java:13: Error: A type may not have the same simple name as any of its enclosing types.
+        class Dup {}        // error: repeated name
+              ^
+Dup.java:17: Error: A type may not have the same simple name as any of its enclosing types.
+        interface I {}      // error for interfaces also...
+                  ^
+Dup.java:21: Error: A type may not have the same simple name as any of its enclosing types.
+        class J {}          // error
+              ^
+4 errors

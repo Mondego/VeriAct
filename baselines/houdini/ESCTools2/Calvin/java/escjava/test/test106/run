@@ -1,0 +1,9 @@
+#!/bin/sh
+# usage: run FLAGS
+
+${ESCJ} -mt $* DekkerLockStatic.java 
+${ESCJ} -mt $* ProdConsMx.java
+${ESCJ} -mt $* DekkerLock.java 
+${ESCJ} $* ProdConsSync.java
+
+

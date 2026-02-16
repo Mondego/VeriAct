@@ -1,0 +1,19 @@
+ESC/Java version VERSION
+    [TIME]
+
+AString ...
+  Prover started:TIME
+    [TIME]
+
+AString: f(java.lang.String) ...
+------------------------------------------------------------------------
+AString.java:4: Warning: Possible null dereference (Null)
+                int i = s.length();
+                         ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+AString: AString() ...
+    [TIME]  passed
+  [TIME total]
+1 warning

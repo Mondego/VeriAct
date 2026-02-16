@@ -1,0 +1,46 @@
+ESC/Java version VERSION
+    [TIME]
+
+GhostLocal ...
+  Prover started:TIME
+    [TIME]
+
+GhostLocal: GhostLocal() ...
+    [TIME]  passed immediately
+
+GhostLocal: m() ...
+    [TIME]  passed
+
+GhostLocal: pred(int) ...
+    [TIME]  passed immediately
+
+GhostLocal: mm() ...
+    [TIME]  passed
+  [TIME total]
+
+GhostLocalA ...
+    [TIME]
+
+GhostLocalA: m() ...
+------------------------------------------------------------------------
+GhostLocal.java:47: Warning: Possible assertion failure (Assert)
+                //@ assert a.i == 3; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+GhostLocalA: GhostLocalA() ...
+    [TIME]  passed
+  [TIME total]
+
+GhostLocalS ...
+    [TIME]
+
+GhostLocalS: GhostLocalS() ...
+    [TIME]  passed
+  [TIME total]
+
+GhostLocalI ...
+    [TIME]
+  [TIME total]
+1 warning

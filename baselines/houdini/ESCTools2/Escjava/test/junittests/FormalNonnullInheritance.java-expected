@@ -1,0 +1,197 @@
+ESC/Java version VERSION
+  Prover started:TIME
+    [TIME]
+
+FormalNonnullInheritance ...
+FormalNonnullInheritance.java:3: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void m(/*@ non_null */ Object a, /*@ non_null */ Object ...
+                                                    ^
+FormalNonnullInheritance.java:19: Associated declaration: 
+        public void m(/*@ non_null */ Object a, Object b, /*@ non_null ...
+                                                ^
+FormalNonnullInheritance.java:4: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void n(/*@ non_null */ Object a, /*@ non_null */ Object ...
+                                                    ^
+FormalNonnullInheritance.java:31: Associated declaration: 
+        public void n(/*@ non_null */ Object a, Object b, /*@ non_null ...
+                                                ^
+FormalNonnullInheritance.java:5: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void q(/*@ non_null */ Object d); // Error here
+                          ^
+FormalNonnullInheritance.java:20: Associated declaration: 
+        public void q(Object dd);
+                      ^
+FormalNonnullInheritance.java:7: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void s(/*@ non_null */ Object sd); // Error here
+                          ^
+FormalNonnullInheritance.java:34: Associated declaration: 
+        public void s(Object sddd);
+                      ^
+FormalNonnullInheritance.java:10: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void t2(/*@ non_null */ Object tt2e); // error here
+                           ^
+FormalNonnullInheritance.java:40: Associated declaration: 
+        public void t2( Object tt2e);
+                        ^
+FormalNonnullInheritance.java:11: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void t3(/*@ non_null */ Object tt3e); // Error here
+                           ^
+FormalNonnullInheritance.java:41: Associated declaration: 
+        public void t3( Object tt3e);
+                        ^
+FormalNonnullInheritance.java:13: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void v2(/*@ non_null */ Object tt2e); // error here
+                           ^
+FormalNonnullInheritance.java:60: Associated declaration: 
+        public void v2( Object tt2e); 
+                        ^
+FormalNonnullInheritance.java:14: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void v3(/*@ non_null */ Object tt3e); // Error here
+                           ^
+FormalNonnullInheritance.java:55: Associated declaration: 
+        public void v3( Object tt3e); 
+                        ^
+FormalNonnullInheritance.java:22: Caution: The non_null annotation is ignored because this method overrides a method declaration in which this parameter is not declared non_null: 
+        public void s(/*@ non_null */ Object sdd); // Error here
+                          ^
+FormalNonnullInheritance.java:34: Associated declaration: 
+        public void s(Object sddd);
+                      ^
+    [TIME]
+
+FormalNonnullInheritance: m(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: n(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: q(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: r(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: s(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: t1(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: t2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: t3(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: v1(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: v2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: v3(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FormalNonnullInheritance: FormalNonnullInheritance() ...
+    [TIME]  passed
+  [TIME total]
+
+FMIHelper ...
+    [TIME]
+
+FMIHelper: m(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper: q(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper: r(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper: s(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper: v1(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper: v2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper: v3(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper: FMIHelper() ...
+    [TIME]  passed
+  [TIME total]
+
+FMIHelper2 ...
+    [TIME]
+
+FMIHelper2: n(java.lang.Object, java.lang.Object, java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper2: q(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper2: r(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper2: s(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelper2: FMIHelper2() ...
+    [TIME]  passed
+  [TIME total]
+
+FMIHelperT ...
+    [TIME]
+
+FMIHelperT: t1(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperT: t2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperT: t3(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+FMIHelperTT ...
+    [TIME]
+
+FMIHelperTT: t1(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperTT: t2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperTT: t3(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+FMIHelperV ...
+    [TIME]
+
+FMIHelperV: v1(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperV: v2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperV: v3(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+FMIHelperVV ...
+    [TIME]
+
+FMIHelperVV: v1(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperVV: v2(java.lang.Object) ...
+    [TIME]  passed immediately
+
+FMIHelperVV: v3(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+9 cautions

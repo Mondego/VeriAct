@@ -1,0 +1,8 @@
+Single.java:3: Fatal error: p.Copy can not be imported here because Copy is already defined at "Single.java", line 5, col 0
+import p.Copy;
+       ^
+1 error
+Single2.java:3: Fatal error: Attempt to import both q.Master and r.Master as Master using single-type-import declarations
+import q.Master;
+       ^
+1 error

@@ -1,0 +1,106 @@
+Ghost.java:15: Warning: Write of variable when disallowed (Writable)
+        //@ set mono = newthing;       // error, 2nd time
+                     ^
+Associated declaration is "Ghost.java", line 8, col 37:
+    //@ ghost public Object mono //@ writable_if mono==null
+                                     ^
+Ghost.java:23: Warning: Write of variable when disallowed (Writable)
+        //@ set mono = null;           // error, 2nd time
+                     ^
+Associated declaration is "Ghost.java", line 8, col 37:
+    //@ ghost public Object mono //@ writable_if mono==null
+                                     ^
+Ghost.java:35: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        //@ set foo = null     // error
+                    ^
+Associated declaration is "Ghost.java", line 29, col 24:
+    //@ ghost public /*@non_null*/ Object foo
+                        ^
+Ghost.java:42: Warning: Possible assignment of null to variable declared non_null (NonNull)
+        //@ set s = null     // error
+                  ^
+Associated declaration is "Ghost.java", line 30, col 31:
+    //@ ghost public static /*@non_null*/ Object s
+                               ^
+Ghost.java:28: Warning: Field declared non_null possibly not initialized (NonNullInit)
+class NonNull {
+              ^
+Associated declaration is "Ghost.java", line 29, col 24:
+    //@ ghost public /*@non_null*/ Object foo
+                        ^
+Ghost.java:56: Warning: Possible race condition (Race)
+        //@ set x = foo         // error
+                  ^
+Associated declaration is "Ghost.java", line 52, col 34:
+    //@ ghost public Object x //@ monitored_by mutex
+                                  ^
+6 warnings
+
+**** Source code with types:
+class WritableIf
+{
+   //@ ghost public Object mono /*@ writable_if (/*boolean*/ (/*java.lang.Object*/ mono) == (/*null*/ null))  */;
+
+   WritableIf()
+   {
+      super();
+      Object newthing = (/*java.lang.Object*/ new Object());
+      /*@ set (/*java.lang.Object*/ mono) = (/*null*/ null)  */
+      /*@ set (/*java.lang.Object*/ mono) = (/*java.lang.Object*/ newthing:11.8)  */
+      /*@ set (/*java.lang.Object*/ mono) = (/*java.lang.Object*/ newthing:11.8)  */
+   }
+
+   WritableIf(int x)
+   {
+      super();
+      Object newthing = (/*java.lang.Object*/ new Object());
+      /*@ set (/*java.lang.Object*/ mono) = (/*null*/ null)  */
+      /*@ set (/*java.lang.Object*/ mono) = (/*java.lang.Object*/ newthing:19.8)  */
+      /*@ set (/*java.lang.Object*/ mono) = (/*null*/ null)  */
+   }
+}
+
+**** Source code with types:
+class NonNull
+{
+   //@ ghost public Object foo /*@ non_null */;
+
+   //@ ghost public static Object s /*@ non_null */;
+
+   void foo(Object x /*@ non_null */)
+   {
+      /*@ assert (/*boolean*/ (/*java.lang.Object*/ foo) != (/*null*/ null))  */
+      /*@ set (/*java.lang.Object*/ foo) = (/*java.lang.Object*/ x:32.34)  */
+      /*@ set (/*java.lang.Object*/ foo) = (/*null*/ null)  */
+      /*@ set (/*java.lang.Object*/ foo) = (/*java.lang.Object*/ foo)  */
+   }
+
+   void foo2(Object x /*@ non_null */)
+   {
+      /*@ assert (/*boolean*/ (/*java.lang.Object*/ s) != (/*null*/ null))  */
+      /*@ set (/*java.lang.Object*/ s) = (/*java.lang.Object*/ x:39.35)  */
+      /*@ set (/*java.lang.Object*/ s) = (/*null*/ null)  */
+      /*@ set (/*java.lang.Object*/ s) = (/*java.lang.Object*/ s)  */
+   }
+
+   // <default constructor>
+}
+
+**** Source code with types:
+class MonitoredBy
+{
+   public Object mutex;
+
+   //@ ghost public Object x /*@ monitored_by (/*java.lang.Object*/ mutex)  */;
+
+   void foo(Object foo)
+   {
+      /*@ assert (/*boolean*/ (/*java.lang.Object*/ x) == (/*java.lang.Object*/ x))  */
+      /*@ set (/*java.lang.Object*/ x) = (/*java.lang.Object*/ foo:54.20)  */
+      synchronized ((/*java.lang.Object*/ mutex)) {
+         /*@ set (/*java.lang.Object*/ x) = (/*java.lang.Object*/ foo:54.20)  */
+      }
+   }
+
+   // <default constructor>
+}

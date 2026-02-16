@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|RefineB.java: Caution: Using given file as the .java file, even though it is not the java file for RefineB on the classpath
+src|test|resources|RefineB.java:1: Error: Could not find file referenced in refine annotation: RefineB.java-refined
+//@ refine "RefineB.java-refined";
+    ^
+    [TIME]
+
+RefineB ...
+src|test|resources|RefineB.java:11: Error: Undefined variable 'b'
+        //@ ensures b;
+                    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+2 errors

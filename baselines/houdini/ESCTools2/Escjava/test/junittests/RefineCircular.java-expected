@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+Error: .|RefineCircular.java is circularly referenced in a refinement sequence
+    [TIME]
+
+RefineCircular ...
+  Prover started:TIME
+    [TIME]
+
+RefineCircular: RefineCircular() ...
+    [TIME]  passed
+  [TIME total]
+1 error

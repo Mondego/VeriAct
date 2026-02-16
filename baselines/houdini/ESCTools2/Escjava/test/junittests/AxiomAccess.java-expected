@@ -1,0 +1,23 @@
+ESC/Java version VERSION
+AxiomAccess.java:6: Caution: Access modifiers are not allowed prior to axiom
+        //@ static axiom (\forall int i; i>0; -i < 0);
+                   ^
+AxiomAccess.java:7: Caution: Access modifiers are not allowed prior to axiom
+        //@ public axiom (\forall int i; i>0; -i < 0);
+                   ^
+AxiomAccess.java:8: Caution: Access modifiers are not allowed prior to axiom
+        //@ protected axiom (\forall int i; i>0; -i < 0);
+                      ^
+AxiomAccess.java:9: Caution: Access modifiers are not allowed prior to axiom
+        //@ private axiom (\forall int i; i>0; -i < 0);
+                    ^
+    [TIME]
+
+AxiomAccess ...
+  Prover started:TIME
+    [TIME]
+
+AxiomAccess: AxiomAccess() ...
+    [TIME]  passed
+  [TIME total]
+4 cautions

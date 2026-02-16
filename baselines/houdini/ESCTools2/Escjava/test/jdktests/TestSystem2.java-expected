@@ -1,0 +1,7 @@
+TestSystem2.java:29: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+TestSystem2.java:47: Warning: Possible assertion failure (Assert)
+    //@ assert false; // TEST FOR CONSISTENCY
+        ^
+2 warnings

@@ -1,0 +1,18 @@
+//@ refine "Interval.jml-refined";
+public class Interval {
+    /** Low and high bounds */
+    protected /*@ spec_public @*/ int low, high;
+    //@ public invariant low <= high;
+
+    /** Initialize this Interval to be [l,h] */
+    //@ also
+    //@ requires l <= h;
+    //@ assignable low, high;
+    //@ ensures low == l && high == h;
+    public Interval(int l, int h);
+
+    /** Is i in this interval? */
+    //@ also
+    //@ ensures \result == (low <= i && i <= high);
+    public /*@ pure @*/ boolean contains(int i);
+}

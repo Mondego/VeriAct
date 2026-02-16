@@ -1,0 +1,56 @@
+ESC/Java version VERSION
+src|test|resources|ModChecksMaps.java: Caution: Using given file as the .java file, even though it is not the java file for ModChecksMaps on the classpath
+    [TIME]
+
+ModChecksMaps ...
+  Prover started:TIME
+    [TIME]
+
+ModChecksMaps: mm() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecksMaps.java:15: Warning: Possible violation of modifies clause (Modifies)
+                list.next.next.next = new MCMList();  // OK - except b ...
+                ^
+Associated declaration is "src|test|resources|ModChecksMaps.java", line 8, col 5:
+        //@ modifies list.links;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMaps: m() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecksMaps.java:26: Warning: Possible violation of modifies clause (Modifies)
+                list.next.next.value = 2;            // OK -- beyond u ...
+                ^
+Associated declaration is "src|test|resources|ModChecksMaps.java", line 20, col 5:
+        //@ modifies list.values;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMaps: ma() ...
+------------------------------------------------------------------------
+src|test|resources|ModChecksMaps.java:35: Warning: Possible violation of modifies clause (Modifies)
+                list.next.next.array[0] = 0;          // OK - beyond u ...
+                ^
+Associated declaration is "src|test|resources|ModChecksMaps.java", line 29, col 5:
+        //@ modifies list.values;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModChecksMaps: mloop() ...
+    [TIME]  passed
+
+ModChecksMaps: ModChecksMaps() ...
+    [TIME]  passed
+  [TIME total]
+
+MCMList ...
+    [TIME]
+
+MCMList: MCMList() ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+3 warnings

@@ -1,0 +1,7 @@
+public class Div {
+	//@ ensures \result == x / y;
+	public int Div(int x, int y) {
+		//@ assume y != 0;
+		return x / y;
+	}
+}

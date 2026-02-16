@@ -1,0 +1,16 @@
+ArraySubtypes.java:9: Warning: Possible assertion failure (Assert)
+    /*@ assert a[0][0] == b; */  // this should fail
+        ^
+ArraySubtypes.java:19: Warning: Possible assertion failure (Assert)
+    /*@ assert a[0][0] == b; */  // this should fail
+        ^
+ArraySubtypes.java:28: Warning: Possible assertion failure (Assert)
+    /*@ assert a[0][0] == b; */  // this should fail
+        ^
+ArraySubtypes.java:38: Warning: Possible assertion failure (Assert)
+    /*@ assert a[0][0] == b; */  // this should fail
+        ^
+ArraySubtypes.java:49: Warning: Possible assertion failure (Assert)
+    /*@ assert a[0][0] == b; */  // this should fail
+        ^
+5 warnings

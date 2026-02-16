@@ -1,0 +1,32 @@
+ESC/Java version VERSION
+src|test|resources|Inconsistent.java: Caution: Using given file as the .java file, even though it is not the java file for Inconsistent on the classpath
+    [TIME]
+
+Inconsistent ...
+  Prover started:TIME
+    [TIME]
+
+Inconsistent: Inconsistent() ...
+    [TIME]  passed immediately
+
+Inconsistent: m() ...
+    [TIME]  passed
+
+Inconsistent: mm() ...
+------------------------------------------------------------------------
+src|test|resources|Inconsistent.java:16: Warning: Possible assertion failure (Assert)
+                //@ assert a == d; // Should fail
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Inconsistent: mmm() ...
+------------------------------------------------------------------------
+src|test|resources|Inconsistent.java:23: Warning: Possible assertion failure (Assert)
+                //@ assert false; // should fail
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+1 caution
+2 warnings

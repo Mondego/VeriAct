@@ -1,0 +1,10 @@
+#!/bin/sh
+
+## Check import statements involving nonexistent classes/packages
+##    [checking of package accessability intentionally disabled]
+
+${TOOL} Single.java
+${TOOL} Package.java
+${TOOL} Package2.java
+${TOOL} p/Full.java
+${TOOL} JavaLang.java

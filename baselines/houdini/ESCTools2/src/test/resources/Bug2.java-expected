@@ -1,0 +1,12 @@
+ESC/Java version VERSION
+src|test|resources|Bug2.java: Caution: Using given file as the .java file, even though it is not the java file for Bug2 on the classpath
+    [TIME]
+
+Bug2 ...
+  Prover started:TIME
+    [TIME]
+
+Bug2: Bug2() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

@@ -1,0 +1,33 @@
+#!/bin/sh
+# usage: run FLAGS
+
+# Note, escjava is nondeterministic in the order in which it produces
+# the warnings in this test.  Thus, the output of escjava produced
+# from this script file is placed in a file 'out.raw'.  This file is
+# then sorted, which produces the output of this test (as expected by
+# 'rtest').  The file 'out.raw' is not actually needed, but it produced
+# for possible help in future debugging analysis of this test.
+#
+# Similarly, unlike the standard escjava regression tests which store
+# an answer file 'ans' in the CVS repository, this test instead stores
+# a file 'ans.raw', which contains a correct sequence of answers.  (In
+# fact, it will be some snapshot of the 'out.raw' file.)  Since this
+# sequence may be different from the one actually produced by a test
+# run, this script file sorts 'ans.raw' into 'ans', which is the file
+# that 'rtest' will use to compare the results.
+#
+# Finally, anticipating that some escjava developer in the future will
+# look at the 'out' or 'ans' file of this test directory and get confused
+# at the sight of what appears to be impenetrable garbage, it seems
+# prudent to put some comment at the top of the 'ans' and 'out' files.
+# What better comment than the one given here in the 'run' file!  Hence,
+# the 'run' file is prepended to the 'ans' and 'out' files.
+
+( ${ESCJ} $* InterfaceInherit.java \
+; ${ESCJ} $* SuperCallPost.java \
+; ${ESCJ} $* Body.java \
+; ${ESCJ} $* Test.java \
+; ${ESCJ} $* Vanilla.java \
+) > out.raw
+sort out.raw | cat run -
+sort ans.raw | cat run - > ans

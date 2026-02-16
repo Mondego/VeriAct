@@ -1,0 +1,32 @@
+Super.java:20: Error: An enclosing instance may be provided only when the superclass has an enclosing instance
+        x.super();        // error!
+        ^
+Super.java:55: Error: Cannot convert java.lang.Object to LevelOne
+            x.super();             // error: x must be of type LevelOn ...
+            ^
+Super.java:64: Error: No enclosing instance of class LevelOne is in scope; cannot create a default constructor for class LevelOne$SBottom1.
+    static class SBottom1 extends Top {}    // error
+                                      ^
+Super.java:66: Error: No enclosing instance of class LevelOne is in scope; cannot create a default superclass constructor.  (superclass is LevelOne$Top)
+        SBottom() {}                 // error
+                  ^
+Super.java:69: Error: No enclosing instance of class LevelOne is in scope; an explicit one must be provided when creating inner class LevelOne$Top.
+            super();                 // error
+            ^
+Super.java:73: Error: Undefined variable: LevelOne.this
+            LevelOne.this.super();   // error
+            ^
+Super.java:81: Error: Cannot convert java.lang.Object to LevelOne
+            x.super();               // error: x must be of type Level ...
+            ^
+Super.java:97: Error: No enclosing instance of class Inference$A is in scope; cannot create a default superclass constructor.  (superclass is Inference$A$B)
+        C() {}          // error: no A available
+            ^
+Super.java:99: Error: No enclosing instance of class Inference$A is in scope; cannot create a default constructor for class Inference$C1.
+    class C1 extends A.B {}  // error (same problem, different message ...
+                         ^
+9 errors
+SuperInJLO.java:8: Error: Can't use keyword super in java.lang.Object
+        super.x = x;
+             ^
+1 error

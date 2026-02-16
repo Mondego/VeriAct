@@ -1,0 +1,11 @@
+ESC/Java version VERSION
+    [TIME]
+
+FreshErrors ...
+FreshErrors.java:7: Error: The function \fresh cannot be used in this context
+        //@ requires \fresh(o);
+                     ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+1 caution
+1 error

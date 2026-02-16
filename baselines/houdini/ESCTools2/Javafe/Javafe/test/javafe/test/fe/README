@@ -1,0 +1,101 @@
+Copyright 2000, 2001, Compaq Computer Corporation.
+
+This directory contains regression tests for the type checker and loader
+code.
+
+
+Each test is self-contained in a directory testXXXX.  A one-line
+description of each test is contained in the (automatically generated)
+file summary (more on this below).
+
+The following commands are used to run the tests and compare their
+outputs:
+
+	make_outputs:	runs each test using our front end and saves the
+			output of test XXX in testXXX/out.
+
+	make_javac:	runs each test using javac instead of our front
+			end, and saves the  javac output for test XXX in
+			testXXX/outc.
+
+	make_diffs:	takes the outputs from make_outputs
+			(testXXX/out) and the answers for each test
+			(testXXX/ans) and constructs a file (log) of the
+			diffs of them.  Summarizes how many tests fail
+			(i.e., have different out and ans files).
+
+	make_comparsions: generates a file (comparsions) comparing our
+			  front end's output (testXXX/out) on each test
+			  with the corresponding javac output
+			  (testXXX/outc) on each test.
+
+The makefile can be used to call these scripts in the proper order by:
+
+	${MAKE} outputs		- generate just front end outputs
+	${MAKE} javac		- generate just javac outputs
+	${MAKE} diffs		- generate diffs file (makes outputs)
+	${MAKE} compare		- generate comparsions file (makes
+					outputs, javac)
+
+
+The structure of each testXXX directory is as follows:
+
+	run   - this executable csh shell script invokes ${TOOL} as many
+		times as desired on files in the testXXX directory.
+
+		The classpath will already have been set properly; the
+		testXXX directory will be the root of the package
+		hierarchy so testXXX/A.java should be in the unnamed
+		package and testXXX/P/A.java should be in package P, and
+		so on.
+
+		Each invocation of ${TOOL} should produce at most 1
+		error message (so that fatal errors do not hide later
+		errors).
+
+		A short description of test XXX should be placed in
+		this file as comments starting with ##.  These comments
+		are automatically extracted by make_summary and placed
+		in summary after the test #.
+
+
+	*.java, subdirectories and their contents
+	       - test input files for use in feeding to ${TOOL} by run.
+
+	out   - A temporary file holding the output of run with
+		${TOOL} set to use our front end, with pathnames of the
+		form <pathname_to_testXXX>/N being replaced by <TEST>/N.
+		(This is done by the make_XXX commands via a sed script.)
+
+	outc  - Similar to out, but for the output of run with TOOL set
+		to javac.
+
+	ans   - The canonical answer for this test.  Any difference, no
+		matter how slight, from this answer by out causes the
+		regression test to fail.  This file may be absent if
+		the correct answer is not known.
+
+
+Creation of new tests:
+
+      - to prevent conflict, never create a new test XXX unless you
+	know from talking to Mark (mdl) that it is ok to use that
+	number.  (It is planned to allocate test #s in ranges to avoid
+	the need to do this often.)
+
+      - once you have decided on a #, type "new XXX" in the rtests
+	directory.  New is a script that will create the new directory,
+	complete with a prototype run file.  It also properly sets
+	permission bits and adds both the testXXX directory and the run
+	file to cvs (but does not commit them).
+
+      - edit run and create any needed java files and/or package
+	directories; edit the summary line in run to describe what the
+	new test does.
+
+      - create an ans file if the correct answer is known.
+
+      - add the ans file and any other files besides the run file in
+	testXXX to subversion.
+
+      - do a commit of the testXXX directory.

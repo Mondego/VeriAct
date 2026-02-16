@@ -1,0 +1,13 @@
+ESC/Java version VERSION
+    [TIME]
+
+Bigint ...
+  Prover started:TIME
+    [TIME]
+
+Bigint: Bigint(int) ...
+    [TIME]  passed
+
+Bigint: Bigint(bigint) ...
+    [TIME]  passed
+  [TIME total]

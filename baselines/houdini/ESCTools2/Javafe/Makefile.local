@@ -1,0 +1,3 @@
+# rename this file as Makefile.local
+# echo $PWD >> Makefile.local
+export JAVAFE_ROOT = /home/max/ESCTools2/Javafe

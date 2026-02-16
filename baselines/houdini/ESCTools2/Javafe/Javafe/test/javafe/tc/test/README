@@ -1,0 +1,18 @@
+Copyright 2000, 2001, Compaq Computer Corporation.
+
+Test files for Loader.
+
+
+Files [A-D].java are misc. test files.
+
+
+Test #1:
+
+compile ExtraBin.java with class ExtraBinTest uncommented out, then edit
+it to compile ExtraBinTest out, but do *not* recompile it.  This creates
+a binary ExtraBinTest that does not exist in its corresponding source
+file.  Finally, run javafe.Tool on ExtraBin.java and UseExtra.java to
+see what error results.
+
+
+ 

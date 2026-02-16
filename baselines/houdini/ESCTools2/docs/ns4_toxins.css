@@ -1,0 +1,48 @@
+
+body, body td, body div, body pre, body code {
+	font-size: x-small;
+	voice-family:  "\"}\"";
+	voice-family: inherit;
+	font-size: small;
+	}
+	
+body p, body th, body li, body dd, body dt,  body td.download {
+	font-size: small;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	font-size: medium;
+	}
+	
+body .smblue {
+	font-size: x-small;
+	color: #666699;
+	voice-family:  "\"}\"";
+	voice-family: inherit;
+	font-size: small;
+	}
+	
+body h1, body h2 {
+	font-size: large;
+	voice-family: "\"}\"";
+	voice-family: inherit;
+	font-size: x-large;
+	}
+
+
+html>body, html>body div, html>body td, html>body pre, html>body code	{
+	font-size: small;
+	}
+	
+html>body p, html>body th, html>body li, html>body dd, html>body dt,  html>body.download 	{
+	font-size: medium;
+	}
+
+	
+html>body h1, html>body h2 {
+	font-size: x-large;
+	}
+
+html>body .smblue {
+	font-size: small;
+    color: #666699;
+    }

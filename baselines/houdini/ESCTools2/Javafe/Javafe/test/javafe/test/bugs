@@ -1,0 +1,33 @@
+Currently (11 July 2005) the following tests are being skipped:
+
+NONE
+
+
+Currently (11 July 2005) the following tests are failing:
+
+fe/1103: there seems to be a bug in the typechecker as a StackOverFlowError
+         is currently being thrown.  the problem is triggered when typechecking
+         InputEntry's static inner classes.  E.g., 
+
+          class B {
+            static class C extends B {
+            }
+          }
+
+
+In the past (10/5/98) the following tests used to fail:
+
+fe/14:   import statements involving nonexistent classes/packages not
+	 checked yet
+fe/17:   access control on classes not implemented yet
+
+fe/1001: reports uninitialized final variables as a warning instead of
+	 an error.  This is intentional until we provide 1.1 support so
+	that many 1.1 programs will compile.
+
+fe/1003: missing return not detected yet (checking flow-sensitive errors)
+
+fe/1102: unknown bug in java.lang.File.list() causes files to be missed
+	(returns null instead of a String with the file's filename).
+	This causes bogus type not found errors.  Ignore for now, I
+	guess.  -- mdl

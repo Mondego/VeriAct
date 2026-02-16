@@ -1,0 +1,21 @@
+ESC/Java version VERSION
+src|test|resources|After.java: Caution: Using given file as the .java file, even though it is not the java file for After on the classpath
+    [TIME]
+
+After ...
+  Prover started:TIME
+    [TIME]
+
+After: m() ...
+    [TIME]  passed immediately
+
+After: purem() ...
+    [TIME]  passed immediately
+
+After: n() ...
+    [TIME]  passed
+
+After: After() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

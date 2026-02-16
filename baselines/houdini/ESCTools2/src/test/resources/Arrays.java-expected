@@ -1,0 +1,61 @@
+ESC/Java version VERSION
+src|test|resources|Arrays.java: Caution: Using given file as the .java file, even though it is not the java file for Arrays on the classpath
+    [TIME]
+
+Arrays ...
+  Prover started:TIME
+    [TIME]
+
+Arrays: m() ...
+------------------------------------------------------------------------
+src|test|resources|Arrays.java:8: Warning: Postcondition possibly not established (Post)
+        public void m() {}
+                         ^
+Associated declaration is "src|test|resources|Arrays.java", line 5, col 5:
+        //@ ensures (new int[5]).length == 5;
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|Arrays.java", line 8, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Arrays: n() ...
+------------------------------------------------------------------------
+src|test|resources|Arrays.java:16: Warning: Postcondition possibly not established (Post)
+        public void n() {}
+                         ^
+Associated declaration is "src|test|resources|Arrays.java", line 11, col 5:
+        //@ ensures (new Arrays[2])[0] == null;
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|Arrays.java", line 16, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Arrays: p() ...
+------------------------------------------------------------------------
+src|test|resources|Arrays.java:21: Warning: Postcondition possibly not established (Post)
+        public void p() {}
+                         ^
+Associated declaration is "src|test|resources|Arrays.java", line 18, col 5:
+        //@ ensures \typeof(new Arrays[2]) == \type(Arrays[]);
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|Arrays.java", line 21, col 18.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Arrays: q() ...
+    [TIME]  passed
+
+Arrays: qq() ...
+    [TIME]  passed
+
+Arrays: Arrays() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+3 warnings

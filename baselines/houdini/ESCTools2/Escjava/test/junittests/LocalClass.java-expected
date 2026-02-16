@@ -1,0 +1,62 @@
+ESC/Java version VERSION
+    [TIME]
+
+LocalClass ...
+  Prover started:TIME
+    [TIME]
+
+LocalClass: LocalClass() ...
+    [TIME]  passed immediately
+
+LocalClass: cc(java.lang.Object) ...
+------------------------------------------------------------------------
+LocalClass.java:11: Warning: Possible type cast error (Cast)
+        LocalClass oo = (LocalClass)o;    // WARNING
+                        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LocalClass: dispatcherWrapMethods() ...
+LocalClass.java:17: Caution: Not checking block-level types
+        class MethodRecord implements Comparable {
+        ^
+    [TIME]  passed
+
+LocalClass: x() ...
+LocalClass.java:29: Caution: Not checking block-level types
+        class A {
+        ^
+------------------------------------------------------------------------
+LocalClass.java:38: Warning: Precondition possibly not established (Pre)
+        int k = a.m(-1);  // Warning - prrecondition
+                   ^
+Associated declaration is "LocalClass.java", line 32, col 6:
+                //@ requires i > 0;
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LocalClass: xx() ...
+LocalClass.java:42: Caution: Not checking block-level types
+        class A {
+        ^
+------------------------------------------------------------------------
+LocalClass.java:53: Warning: Possible assertion failure (Assert)
+        //@ assert k > 0;  // Warning
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+LocalClass: xxx() ...
+LocalClass.java:64: Caution: Not checking block-level types
+        class BB  {
+        ^
+------------------------------------------------------------------------
+LocalClass.java:76: Warning: Possible assertion failure (Assert)
+        //@ assert istatic > 0;  // ERROR
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+4 cautions
+4 warnings

@@ -1,0 +1,92 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id: RSAPrivateKey.jml,v 1.8 2006/05/24 15:38:12 woj Exp $
+ *
+ */
+
+package javacard.security;
+
+public interface RSAPrivateKey extends PrivateKey {
+
+  /*@ public invariant
+    _type == KeyBuilder.TYPE_RSA_PRIVATE;
+  @*/
+
+  /*@ public invariant
+    _size == KeyBuilder.LENGTH_RSA_512 ||
+    _size == KeyBuilder.LENGTH_RSA_736 ||
+    _size == KeyBuilder.LENGTH_RSA_768 ||
+    _size == KeyBuilder.LENGTH_RSA_896 ||
+    _size == KeyBuilder.LENGTH_RSA_1024 ||
+    _size == KeyBuilder.LENGTH_RSA_1280 ||
+    _size == KeyBuilder.LENGTH_RSA_1536 ||
+    _size == KeyBuilder.LENGTH_RSA_1984 ||
+    _size == KeyBuilder.LENGTH_RSA_2048 ;
+  @*/
+
+  /*@ public ghost instance boolean _modulusSet; @*/
+
+  /*@ public ghost instance boolean _exponentSet; @*/
+
+  //@ public invariant _initialized == _modulusSet && _exponentSet;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _modulusSet;
+      assignable _modulusSet, _initialized;
+  @*/
+  public void setModulus(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires buffer != null;
+      requires offset >= 0 &&
+	       length >= 0 &&
+	       offset + length <= buffer.length;
+      ensures _exponentSet;
+      assignable _exponentSet, _initialized;
+  @*/
+  public void setExponent(
+    byte[] buffer, short offset, short length)
+      throws CryptoException;
+
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getModulus(byte[] buffer, short offset)
+      throws CryptoException;
+  
+  /*@
+    public normal_behavior
+      requires isInitialized();
+      requires buffer != null;
+      requires offset >= 0 &&
+	       offset <= buffer.length;
+      ensures \result > 0;
+      assignable buffer[offset..buffer.length-1];
+  @*/
+  public short getExponent(byte[] buffer, short offset)
+      throws CryptoException;
+
+}

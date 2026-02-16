@@ -1,0 +1,128 @@
+------------------------------------------------------------------------
+                              ESC/Java2
+------------------------------------------------------------------------
+
+These files constitute a release of ESC/Java2, an upgrade of the
+original ESC/Java from DEC-SRC/Compaq/HP.  It consists of the
+following files:
+
+  README.release - this file
+  README.txt - the original readme from DEC/SRC
+  README.first - a longer description of the ESCjava2 project
+  RELEASE_NOTES.txt - descriptions of changes and previous versions
+
+  esctools2.jar - the Java classes constituting the ESC/Java2 tool
+  escj - a script to run the ESC/Java2 tool
+  escj.bat - a batch script to run the ESC/Java2 tool on the Windows 
+    platform
+  escjava2 - a sample wrapper script for escj
+
+  escspecs.jar - the new JML specification files which are a
+    refinement of jmlspecs.jar that should be used with the ESC/Java2
+    tool.
+
+  Simplify* - various builds of the Simplify theorem prover
+  quicktest - a short test that an installation was successful
+
+  The "original-specs" directory containing the original DEC/SRC
+    ESC/Java specification files for a few core Java classes
+  The "specs" directory containing the new JML specifications
+    mentioned above.
+
+  In the "docs" directory you will find:
+  Escjava2-ImplementationNotes.pdf - notes about the implementation
+    of ESC/Java2.
+  ESCJAVA-UsersManual.html - the User's Guide for the original
+    DEC/SRC ESC/Java tool.  Nearly all of the documentation included
+    in this User's Guide is still valid for ESC/Java2.  All backwards
+    incompatibilities are documented in the aforementioned
+    implementation notes.  We plan on providing a new ESC/Java2 User's
+    Guide in a future ESC/Java2 beta release.
+  Escjava2-UsersManual.pdf - An outline of the new users manual, which will be 
+    completed in future releases.
+  Escjava2-Extending.pdf - This document describes how to extend
+    ESC/Java2.  It describes the high-level architecture of the system
+    and how to extend it through a series of case studies.
+  Escjava2-Logics.pdf - This document describes the logics of
+    ESC/Java2.
+  Escjava2-Provers.pdf - This document describes the provers used by
+    ESC/Java2.
+
+  These last three booklets are under serious revision at this time;
+  they are by no means complete.
+
+  In the "slides" directory you will find half a dozen sets of slides
+  used at tutorials given at several major conferences in 2004 and
+  2005.  See http://secure.ucd.ie/documents/tutorials/ for more
+  information.
+
+  In the "papers" directory you will find all of the papers we have
+  published thus far about ESC/Java2.
+
+  In the "examples" directory you will find all of the examples
+  discussed in the User's Manual.
+
+-----------------------INSTALLATION ----------------------------
+
+The installation package consists of a compressed tar file.
+
+The installation procedure consists of these steps:
+
+a) untar the tar file in a directory of your choice.
+
+b) Set the environment variable ESCTOOLS_RELEASE to the absolute path
+of the directory in which you placed the release files. [If this is
+not set, the executables will attempt to guess an appropriate value.]
+
+c) Set the SIMPLIFY environment variable to the name of one of the
+Simplify executables contained in $ESCTOOLS_RELEASE, depending on the
+operating system you are using. [If SIMPLIFY is not set, the sample
+escjava2 executable will attempt to guess an appropriate value for
+some platforms.]
+
+d) The program requires some specification files for the Java system
+classes.  A basic set is provided with the release as the escspecs.jar
+file; they are used unless the user provides an alternate set.  An
+alternate set can be specified as a classpath in the ESC_SPECS
+environment variable. For example, if you wished to use the specs in
+the JML directory structure as found in CVS, and you were using csh or
+tcsh, you might write:
+
+  setenv ESC_SPECS /home/cok/JML/JML2:/home/cok/JML/JML2/specs
+
+to include both the specs and the model files on which the specs
+depend.  You can also use the -specs command-line option in a similar
+fashion.  We strongly suggest you do *not* try to use the JML2
+specification at this time as they push the Simplify prover beyond its
+limits.
+
+e) Execute the program $ESCTOOLS_RELEASE/escj - this is the new
+escjava2 program.
+
+f) If you wish, run $ESCTOOLS_RELEASE/quicktest to execute a quick
+smoke test of the release.
+
+---------------------- RUNNING THE TOOL ------------------------
+
+The escjava2 tool is run by executing the bash script
+$ESCTOOLS_RELEASE/escj or the batch script $ESCTOOLS_RELEASE/escj.bat
+(on Windows only).  Typically a user will use a wrapper script that
+sets ESCTOOLS_RELEASE and SIMPLIFY and then invokes escj.  We have
+provided such a wrapper script in this release and it is called
+"escjava2".
+
+The command-line arguments are an optional set of options (beginning
+with a single hyphen) and then a list of file names.  The options must
+precede the file names.  The file name must be specified using either
+absolute paths or relative paths that are relative to the current
+working directory.  Classes referenced by the given files are found
+using the current setting of the classpath (either the value of the
+option -sourcepath or the value of the option -classpath or the value
+of the environment variable CLASSPATH).
+
+There are many options available, most of them experimental and not
+documented.  The "official" options are listed using "escj -help".
+
+An Eclipse plugin for ESC/Java2 is also available.  Please see
+http://kind.ucd.ie/products/opensource/ESCJava2/
+for more details.

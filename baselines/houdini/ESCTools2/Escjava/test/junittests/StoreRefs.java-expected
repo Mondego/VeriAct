@@ -1,0 +1,27 @@
+ESC/Java version VERSION
+    [TIME]
+
+StoreRefs ...
+  Prover started:TIME
+    [TIME]
+
+StoreRefs: m() ...
+    [TIME]  passed
+
+StoreRefs: StoreRefs() ...
+    [TIME]  passed
+  [TIME total]
+
+StoreRefsA ...
+    [TIME]
+
+StoreRefsA: StoreRefsA() ...
+    [TIME]  passed
+  [TIME total]
+
+StoreRefsB ...
+    [TIME]
+
+StoreRefsB: StoreRefsB() ...
+    [TIME]  passed
+  [TIME total]

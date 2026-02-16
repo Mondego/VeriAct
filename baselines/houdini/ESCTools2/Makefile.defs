@@ -1,0 +1,470 @@
+# -*- mode: makefile; -*-
+
+## This file is part of the 2003-2004,2007 revision of ESC/Java2
+## author: David Cok - 1 May 2003
+## author: Joe Kiniry
+##
+## Modified 2007, Mobius Project, Systems Research Group, University College Dublin
+##
+## This file contains variable definitions common to the Makefiles in
+## various subdirectories of the ESC tools.  These should not need to
+## be modified by the user (those variables are in Makefile.local).
+## Many of these variables are initialized with ?= so that they can be
+## preset by environment variables, if customization is needed.  The
+## definitions here mostly reflect the directory organization of the
+## ESC tools; changing them will likely break something.
+
+## Please tell us if you find that something needs to be changed for
+## your platform!
+
+## This include file contains any user-customized definitions.
+export TOP ?= .
+ifneq ($(wildcard ${TOP}/Makefile.*local),)
+  include ${TOP}/Makefile.local
+endif
+
+## Set up Java path and file separators on a per-platform basis.
+ifdef COMSPEC
+     export SEP = \\
+     export PSEP = ;
+else
+     export SEP = /
+     export PSEP = :
+endif
+
+## Define a function to canonicalize paths that are parameters
+## to native programs (e.g., "javac"). Use the *Lots version if 
+## cygpath is complaining about having too many arguments.
+ifdef COMSPEC
+  canonicalize = `cygpath -pwa "$(1)"`
+  canonicalizeLots = `echo "$(1)" | xargs -e cygpath -w`
+else
+  canonicalize = $(1)
+  canonicalizeLots = $(1)
+endif
+
+## Define a multi-platform diff
+
+ifdef COMSPEC
+    export DIFF = diff --strip-trailing-cr
+else
+    export DIFF = diff -w
+endif
+
+################################################################################
+## Check if ESCTOOLS_ROOT is set
+
+ifndef ESCTOOLS_ROOT
+  $(error You must have ESCTOOLS_ROOT defined, either as an environment variable or in the file Makefile.local in the same directory as Makefile.defs)
+endif
+
+################################################################################
+## Make sure that AST_TOOLS_DIR is set
+
+export AST_TOOLS_DIR ?= ${ESCTOOLS_ROOT}/Escjava/release/master/bin
+
+################################################################################
+## AST tools setup
+
+## Check if ASTGEN and ASTFILELIST are set; guess a value if not
+## Set ASTGEN and ASTFILELIST  as appropriate
+## (Caution: don't use tabs here, just spaces)
+
+ifndef ESC_ASTGEN
+  os = $(shell uname -s)
+  processor = $(shell uname -p)
+  ifeq ("${os}","Linux")
+    export ASTGEN =  astgen-1.0.0.linux
+    $(warning Guessing a value for ASTGEN: ${ASTGEN})
+  endif
+  ifeq ("${os}","Darwin")
+    export ASTGEN =  astgen-1.0.0.macosx
+    $(warning Guessing a value for ASTGEN: ${ASTGEN})
+  endif
+  ifeq ("${os}","CYGWIN_NT-5.1")
+    export ASTGEN =  astgen-1.0.0.exe
+    $(warning Guessing a value for ASTGEN: ${ASTGEN})
+  endif
+endif
+ifndef ASTGEN
+  $(error You must have ASTGEN defined, either as an environment variable or in the file Makefile.local in the same directory as Makefile.defs.  It should be defined to be the name of, not the path to, an appropriate astgen executable in $ESCTOOLS_ROOT/Escjava/release/master/bin: os = ${os})
+endif
+export ESC_ASTGEN = ${AST_TOOLS_DIR}/${ASTGEN}
+
+ifndef ESC_ASTFILELIST
+  os = $(shell uname -s)
+  processor = $(shell uname -p)
+  ifeq ("${os}","Linux")
+    export ASTFILELIST =  astfilelist-1.0.0.linux
+    $(warning Guessing a value for ASTFILELIST: ${ASTFILELIST})
+  endif
+  ifeq ("${os}","Darwin")
+    export ASTFILELIST =  astfilelist-1.0.0.macosx
+    $(warning Guessing a value for ASTFILELIST: ${ASTFILELIST})
+  endif
+  ifeq ("${os}","CYGWIN_NT-5.1")
+    export ASTFILELIST =  astfilelist-1.0.0.exe
+    $(warning Guessing a value for ASTFILELIST: ${ASTFILELIST})
+  endif
+endif
+ifndef ASTFILELIST
+  $(error You must have ASTFILELIST defined, either as an environment variable or in the file Makefile.local in the same directory as Makefile.defs.  It should be defined to be the name of, not the path to, an appropriate astfilelist executable in $ESCTOOLS_ROOT/Escjava/release/master/bin: os = ${os})
+endif
+export ESC_ASTFILELIST = ${AST_TOOLS_DIR}/${ASTFILELIST}
+
+
+
+################################################################################
+## Make sure that ESCJ_SIMPLIFY_DIR is set
+
+export ESCJ_SIMPLIFY_DIR ?= ${ESCTOOLS_ROOT}/Escjava/release/master/bin
+
+################################################################################
+## Simplify setup
+
+## Check if SIMPLIFY is set; guess a value if not
+## Set ESCJ_SIMPLIFY as appropriate
+## (Caution: don't use tabs here, just spaces)
+
+ifndef SIMPLIFY
+  os = $(shell uname -s)
+  processor = $(shell uname -p)
+  ifeq ("${os}","Linux")
+    export SIMPLIFY =  Simplify-1.5.4.linux
+    $(warning Guessing a value for SIMPLIFY: ${SIMPLIFY})
+  endif
+  ifeq ("${os}","Darwin")
+    export SIMPLIFY =  Simplify-1.5.5.macosx
+    $(warning Guessing a value for SIMPLIFY: ${SIMPLIFY})
+  endif
+  ifeq ("${os}","CYGWIN_NT-5.1")
+    export SIMPLIFY =  Simplify-1.5.4.exe
+    $(warning Guessing a value for SIMPLIFY: ${SIMPLIFY})
+  endif
+  ifeq ("${os}","SunOS")
+    ifeq ("${processor}","sparc")
+      export SIMPLIFY =  Simplify-1.5.4.solaris
+      $(warning Guessing a value for SIMPLIFY: ${SIMPLIFY})
+    else
+      $(error No Simplify binary exists for SunOS on your processor architecture: ${processor}.  Consider building one for us.)
+    endif
+  endif
+endif
+ifndef SIMPLIFY
+  $(error You must have SIMPLIFY defined, either as an environment variable or in the file Makefile.local in the same directory as Makefile.defs.  It should be defined to be the name of, not the path to, an appropriate Simplify executable in $ESCTOOLS_ROOT/Escjava/release/master/bin: os = ${os})
+endif
+export ESCJ_SIMPLIFY = ${ESCJ_SIMPLIFY_DIR}/${SIMPLIFY}
+
+### Simplify settings
+export PROVER_KILL_TIME ?= 300
+export PROVER_CC_LIMIT ?= 10
+export PROVER_MAX_FNUR ?= 700 #### Ticket #34
+
+##########################################################################
+## Specifications
+
+## Where we put all of our jar files
+export JAR_FILES = ${ESCTOOLS_ROOT}/jars
+
+## You need to have some specs defined.  Use either 
+##   a) ${JAR_FILES}/jmlspecs.jar from a JML release (not currently
+##      recommended as they are rather complex specifications)
+##   b) ${JAR_FILES}/escspecs.jar, which is a jar of (c)
+##   c) ${ESCTOOLS_ROOT}/specs, which is a set of specs designed for Esc/java
+##   d) ${ESCTOOLS_ROOT}/original-specs, the specs that shipped with the
+##      original Compaq SRC ESC/Java release (very lightweight and incomplete)
+export JML2_SPECS_JAR := ${JAR_FILES}/jmlspecs.jar
+export ESCJAVA2_SPECS_JAR := ${JAR_FILES}/escspecs.jar
+export ESCJAVA2_SPECS := ${ESCTOOLS_ROOT}/specs
+export ESCJAVA2_SPECS_JAVA1_4_JAR := ${JAR_FILES}/escspecs-java1.4.jar
+export ESCJAVA2_SPECS_JAVA1_4 := ${ESCTOOLS_ROOT}/specs-java1.4
+export ESCJAVA2_SPECS_JAVA1_5_JAR := ${JAR_FILES}/escspecs-java1.5.jar
+export ESCJAVA2_SPECS_JAVA1_5 := ${ESCTOOLS_ROOT}/specs-java1.5
+export ESCJAVA2_SPECS_JAVACARD_JAR := ${JAR_FILES}/escspecs-javacard.jar
+export ESCJAVA2_SPECS_JAVACARD := ${ESCTOOLS_ROOT}/specs-javacard
+export ORIG_SRC_SPECS := ${ESCTOOLS_ROOT}/original-specs
+
+export ESC_SPECS := ${ESCJAVA2_SPECS}
+
+##########################################################################
+## Definitions of Java tools.
+## Override these by defining them in Makefile.local or as environment
+## variables.
+
+export JAVA ?= java
+export JAVAC ?= javac
+export JAVAC_FLAGS ?= -g -source 1.4
+export JAVADOC ?= javadoc -J-mx200m -source 1.4 -breakiterator -quiet
+export JMLDOC ?= jmldoc
+export JML ?= jml
+export JMLC ?= jmlc
+export JMLC_FLAGS ?=-Q --source 1.4
+export DEBUGGER_FLAGS ?= -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y
+export JAVA_REMOTE_DEBUG = $(JAVA) $(DEBUGGER_FLAGS)
+
+export JDK_14_SOURCES ?= ${JAVA_HOME}/src
+
+##########################################################################
+## Definitions of other tools.
+## Override these by defining them in Makefile.local or as environment
+## variables.
+
+export TEXI2PDF ?= texi2pdf
+
+##########################################################################
+## Variables that define the release.  They will be used to build
+## archives for distribution.  They are used to create the Version.java
+## file, which is used by Main.java to provide a version string.
+
+export ESC_PROJECT ?= ESCJava
+export ESC_VERSION ?= CURRENT
+
+export COPYRIGHT = 'ESC/Java2<br />&copy; 2003-2006 David Cok and Joseph Kiniry<br />&copy; 2005-2008 UCD Dublin<br />&copy; 2003,2004 Radboud University Nijmegen<br />&copy; 1999,2000 Compaq Computer Corporation<br />&copy; 1997,1998,1999 Digital Equipment Corporation<br />All Rights Reserved'
+
+##########################################################################
+## The following definitions are used in various Makefiles and should
+## be common for all users and environments.  (at least those environments
+## that have '/' as the path separator.
+## These are defined here rather than in the Makefiles for the individual
+## packages because the tools are used by each other (e.g. all tools use
+## Javafe).
+
+## Where we create API documentation and the stylesheets and copyright
+## information files we use for such.
+export JAVADOC_GEN_DIR = ${ESCTOOLS_ROOT}/docs/api
+export JMLDOC_GEN_DIR = ${ESCTOOLS_ROOT}/docs/jmlapi
+export DOCS_STYLESHEET = ${ESCTOOLS_ROOT}/docs/escjava.css
+
+## Definitions for Utils
+export UTILS_SOURCE_DIR = ${ESCTOOLS_ROOT}/Utils
+export UTILS_CLASSFILES = ${ESCTOOLS_ROOT}/Utils
+
+## Byte Code Engineering Library
+export BCEL_LIB ?= ${ESCTOOLS_ROOT}/Utils/BCEL/bcel-5.2/bcel-5.2.jar
+
+## Java Front End Library
+export JAVAFE_VERSION ?= 2.0.5d
+export JAVAFE_LIB ?= ${ESCTOOLS_ROOT}/Utils/Javafe/Javafe${JAVAFE_VERSION}.jar
+
+## Pertinent things for Escjava
+export ESCJAVA_ROOT = ${TOP}/Escjava
+export ESCJAVA_SOURCE_DIR = ${ESCJAVA_ROOT}/java
+export ESCJAVA_CLASSFILES = ${ESCJAVA_ROOT}/classfiles
+export ESCJAVA_CLASSFILES4RAC = ${ESCJAVA_ROOT}/classfiles4rac
+
+## Pertinent things for Javafe
+export JAVAFE_ROOT = ${TOP}/Javafe
+
+## Paths to Mocha components
+export MOCHA_LIB = ${JAR_FILES}/mochalib.jar
+
+## CVC3 Prover Library
+export CVC3_LIB_PATH ?= /usr/local/lib
+export CVC3_LIB      ?= ${ESCTOOLS_ROOT}/Utils/libcvc3-2.2.jar
+
+## This is the path needed to *run* Escjava.
+export ESC_CLASSPATH = \
+	${ESCJAVA_CLASSFILES}:${ESCTOOLS_ROOT}/Utils:${MOCHA_LIB}:${BCEL_LIB}:${JUNIT_LIB}:${ANT_LIB}:${XMLRPC_LIB}:${JAVAFE_LIB}:${CVC3_LIB}
+export ESCJAVA_CLASSPATH=$(ESC_CLASSPATH)
+
+## The front-end for Escjava that should be used for testing.
+export ESCJ_ROOT = ${ESCTOOLS_ROOT}/release-files
+export ESCJ = ${ESCJ_ROOT}/escj -nowarn Modifies
+
+################################################################################
+## Pertinent locations for building a release
+
+# Do something like this when you build a release:
+#   ESC_VERSION=2.0a0 ESC_RELEASE_DATE=`date "+%d-%m-%y"` make releases
+export ESC_RELEASE_DATE ?= `date "+%d-%m-%y"`
+
+# Temp directory for constructing releases
+export RELTEMP ?= ${ESCTOOLS_ROOT}/release-temp
+
+# Temp directory for testing releases
+export RELTEST ?= ${ESCTOOLS_ROOT}/release-test
+
+# Directory in which to put final binary and patch tar files (but nothing else)
+export RELDIR  ?= ${ESCTOOLS_ROOT}/release
+
+# Variables relevant to names of release files
+export RELNAME ?= ${ESC_PROJECT}-${ESC_VERSION}
+export RELNAME-DATE ?= ${RELNAME}-${ESC_RELEASE_DATE}
+export RELJAR  ?= ${JAR_FILES}/esctools2.jar
+export RELSRCJAR  ?= ${JAR_FILES}/esctools2src.jar
+export RELCODENAME ?= "Mobius PVE Internal Release"
+export RELTAR  ?= ${RELNAME-DATE}-binary
+export RELSRCTAR  ?= ${RELNAME-DATE}-source
+export RELPATCHTAR  ?= ${RELNAME-DATE}-patch
+export RELCLASSPATH = ${RELDIR}/${RELJAR}
+
+# The prefix of the name of the patch release tar file and patch files
+export PATCH_NAME ?= ${RELNAME-DATE}
+
+export CALVIN_PATCHES   = ${PATCH_NAME}-Calvin-patch.bz
+export ESCJAVA_PATCHES  = ${PATCH_NAME}-Escjava-patch.bz
+export HOUDINI_PATCHES  = ${PATCH_NAME}-Houdini-patch.bz
+export JAVAFE_PATCHES   = ${PATCH_NAME}-Javafe-patch.bz
+export RCC_PATCHES      = ${PATCH_NAME}-Rcc-patch.bz
+export SIMPLIFY_PATCHES = ${PATCH_NAME}-Simplify-patch.bz
+
+export SPECS_TAR        = ${PATCH_NAME}-specs.tbz
+export TOPLEVEL_TAR     = ${PATCH_NAME}-TopLevel.tbz
+export ZERO_LENGTH_TAR  = ${PATCH_NAME}-ZeroLengthFiles.tbz
+
+# Patch release - temp directory for generating a patch release
+export PATCH_DIR ?= ${ESCTOOLS_ROOT}/patches
+
+################################################################################
+## Original ESCTools material
+
+# Directory containing the (uncompressed) tar files of the original
+# ESCTools and Simplify release
+export ORIGINAL_TAR_DIR ?= ${ESCTOOLS_ROOT}/original_tars
+
+# Directory containing the original files of the original 
+# ESCTools and Simplify releases, as obtained from the tar files
+export ESCTOOLS_ORIGINAL ?= ${ESCTOOLS_ROOT}/original_archives
+
+################################################################################
+## Packages
+
+export UTILS_PACKAGE_LIST = junitutils
+
+export ESCJAVA_PACKAGE_LIST = escjava \
+	escjava.ant escjava.ast escjava.backpred escjava.gui \
+	escjava.pa escjava.pa.generic escjava.parser \
+	escjava.prover escjava.reader escjava.sp \
+	escjava.tc escjava.translate \
+	escjava.vcGeneration escjava.vcGeneration.coq escjava.vcGeneration.pvs \
+	escjava.vcGeneration.sammy escjava.vcGeneration.simplify escjava.vcGeneration.xml
+
+export ESCJAVA_PACKAGE_PATHS = escjava \
+	escjava/ant escjava/ast escjava/backpred escjava/gui \
+	escjava/pa escjava/pa/generic escjava/parser \
+	escjava/prover escjava/reader escjava/sp \
+	escjava/tc escjava/translate \
+	escjava/vcGeneration escjava/vcGeneration/coq escjava/vcGeneration/pvs \
+	escjava/vcGeneration/sammy escjava/vcGeneration/simplify escjava/vcGeneration/xml
+
+export PACKAGE_LIST = \
+	  ${UTILS_PACKAGE_LIST} $(ESCJAVA_PACKAGE_LIST)
+
+################################################################################
+## JUnit
+
+## The location of the JUnit library as obtained from the JUnit
+## project You can override this default setting in Makefile.local or
+## in your environment.
+export JUNIT_LIB ?= ${ESCTOOLS_ROOT}/Utils/junit.jar
+export JUNIT_SOURCEPATH ?= /usr/local/Java/junit/src
+
+## XML-RPC
+export XMLRPC_LIB ?= $(ESCTOOLS_ROOT)/Escjava/xmlrpc-1.2-b1-modified.jar
+
+################################################################################
+## Ant
+
+## The location of the Ant jar, a part of the Jakarta Ant project.
+## You can override this default setting in Makefile.local or in your
+## environment.
+export ANT_LIB ?= ${ESCTOOLS_ROOT}/Utils/ant.jar
+export ANT_SOURCEPATH ?= /usr/local/Java/jakarta-ant/src
+
+## This contains items needed for compiling/running JUnit tests, but
+## not for compiling or running the tools themselves.
+export JUNIT_UTILS_PATH = ${ESCTOOLS_ROOT}/Utils:${JUNIT_LIB}:${ANT_LIB}:${BCEL_LIB};${JAVAFE_LIB}
+
+################################################################################
+## The classpath needed to build all of ESC/Java2.
+
+## This is the path needed to build Escjava
+export ESCJAVA_BUILD_CLASSPATH = ${ESCJAVA_CLASSPATH}:${JUNIT_LIB}:${ANT_LIB}:${XMLRPC_LIB}:${BCEL_LIB}:${JAVAFE_LIB}
+
+##########################################################################
+##########################################################################
+##########################################################################
+##########################################################################
+## The stuff from here on needs cleaning up (FIXME)
+
+######################### locations #########################
+ 
+ 
+##### This stuff with MOCHA needs to be cleaned up
+### FIXME
+ 
+## Escjava relies on the jMocha library from UC Berkeley.
+## It uses (a) a jar file of java classes (mochalib.jar) that
+## is supplied with the Escjava distribution.
+## It also uses (b) a set of compiled shared object modules.
+
+## FIXME: DO we supply these?  DO we supply the tools to build them?
+## Do we leave it to the user to figure it out?  What are the license
+## restrictions on jMocha?  What version do we have here?
+
+## Joe: We do not supply these, nor is jMocha absolutely necessary for
+## using ESC/Java.  The license on jMocha is BSDish so we can
+## redistribute whatever bits of it that we like so long as we give
+## proper attribution.  http://www.ucop.edu/ott/permissn.html
+## See http://www.cs.sunysb.edu/~mocha/ for more information.
+
+# To get predicate abstraction to work with ESC/Java, you need to
+# download jMocha from UC Berkeley.  When you build jMocha, you'll get
+# 3 shared objects: libjbdd.so, libglu.so, libcu.so.  These have to be
+# put in an appropriate directory, and LD_LIBRARY_PATH must be set to
+# the name of that directory.  For example, if you put the shared
+# objects in a directory called ${MOCHA_ROOT}/platform/alpha, then you
+# would include the following line here:
+export MOCHA_ROOT = ${ESCJAVA_ROOT}/mochalib
+export MOCHA_SOURCE_DIR = ${MOCHA_ROOT}/java
+export MOCHA_TWO_ROOT = /usr/local/Java/j-mocha.2.0/mocha
+export MOCHA_LIBRARY_PATH = ${MOCHA_TWO_ROOT}/platform/linux:
+export MOCHA_CLASSES = ${MOCHA_SOURCE_DIR}:${JAR_FILES}/mochalib.jar
+
+################################################################################
+## Classpaths
+
+## FIXME -- check which of these are actually needed - they come from
+## the setup file so some are for execution.
+
+# A colon-separated list of directories that contain the source code
+# for the whole of ESC/Java.
+export SOURCEPATH = ${ESCJAVA_SOURCE_DIR}:${MOCHA_SOURCE_DIR}:${UTILS_SOURCE_DIR}
+
+#
+# Need to sources here because we can't read binary inner classes;
+# need the binaries because don't have source for sun.* classes...
+#
+export JDKSPEC = ${JDKSPEC_ROOT}
+
+################################################################################
+## Path adjustments necesssary when using RAC generated classes ...
+
+ifneq ($(USE_RAC),)
+  # Ensure that ${JML_RUNTIME_JAR} actually exists ..
+  ifeq ($(wildcard ${JML_RUNTIME_JAR}),)
+    ifneq ($(wildcard ${JAR_FILES}/jmlruntime.jar),)
+      export JML_RUNTIME_JAR = ${JAR_FILES}/jmlruntime.jar
+    endif
+    ifneq ($(wildcard ${JML_CLASSROOT}/bin/jmlruntime.jar),)
+      export JML_RUNTIME_JAR = ${JML_CLASSROOT}/bin/jmlruntime.jar
+    endif
+    ifeq ($(wildcard ${JML_RUNTIME_JAR}),)
+      $(error Cannot find jmlruntime.jar.  Check setting of JML_RUNTIME_JAR)
+    endif
+  endif
+USE_RACC:=
+RAC_CLASSES=$(ESCJAVA_CLASSFILES4RAC):$(JML_RUNTIME_JAR)
+CLASSPATH:=${RAC_CLASSES}:${CLASSPATH}
+ESC_CLASSPATH:=${RAC_CLASSES}:${ESC_CLASSPATH}
+ESCJAVA_CLASSPATH:=${RAC_CLASSES}:${ESCJAVA_CLASSPATH}
+ESCJAVA_BUILD_CLASSPATH:=${RAC_CLASSES}:${ESCJAVA_BUILD_CLASSPATH}
+endif
+
+
+export LD_LIBRARY_PATH = ${MOCHA_LIBRARY_PATH}:${CVC3_LIB_PATH}:${ESCTOOLS_ROOT}/libs
+
+export TEXINPUTS := .:${TEXINPUTS}
+
+# End of file
+

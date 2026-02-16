@@ -1,0 +1,93 @@
+ESC/Java version VERSION
+src|test|resources|DefInh.java: Caution: Using given file as the .java file, even though it is not the java file for DefInh on the classpath
+    [TIME]
+
+DefInh ...
+  Prover started:TIME
+    [TIME]
+
+DefInh: DefInh() ...
+    [TIME]  passed
+  [TIME total]
+
+DefS ...
+    [TIME]
+
+DefS: DefS() ...
+src|test|resources|DefInh.java:15: Error: There is no assignable clause allowing this method call
+        public DefS() {}
+                      ^
+/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class: Associated declaration: 
+src|test|resources|DefInh.java:14: Associated declaration: 
+        //@ modifies si,sj;
+            ^
+    [TIME]  passed
+
+DefS: m() ...
+    [TIME]  passed
+  [TIME total]
+
+DefD ...
+src|test|resources|DefInh.java:34: Caution: JML requires a specification to begin with 'also' when the method overrides other methods
+        public void m() {
+                    ^
+src|test|resources|DefInh.java:21: Associated declaration: 
+        public void m(){
+               ^
+    [TIME]
+
+DefD: DefD() ...
+------------------------------------------------------------------------
+src|test|resources|DefInh.java:29: Warning: Possible violation of modifies clause (Modifies)
+        public DefD() {  // FIXME - should be ok
+                      ^
+Associated declaration is "src|test|resources|DefInh.java", line 14, col 14:
+        //@ modifies si,sj;
+                     ^
+Associated declaration is "src|test|resources|DefInh.java", line 28, col 6:
+        //@  modifies sj, ((DefS)this).si;
+             ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+DefD: m() ...
+    [TIME]  passed
+  [TIME total]
+
+DefIS ...
+    [TIME]
+
+DefIS: DefIS() ...
+    [TIME]  passed
+  [TIME total]
+
+DefII ...
+    [TIME]
+
+DefII: DefII() ...
+    [TIME]  passed
+  [TIME total]
+
+DefDD ...
+    [TIME]
+
+DefDD: DefDD() ...
+    [TIME]  passed
+  [TIME total]
+
+DefSS ...
+    [TIME]
+
+DefSS: DefSS() ...
+src|test|resources|DefInh.java:56: Error: There is no assignable clause allowing this method call
+        public DefSS() { si = 0; }
+                       ^
+/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/Object.class: Associated declaration: 
+src|test|resources|DefInh.java:55: Associated declaration: 
+        //@ modifies si;
+            ^
+    [TIME]  passed
+  [TIME total]
+2 cautions
+1 warning
+2 errors

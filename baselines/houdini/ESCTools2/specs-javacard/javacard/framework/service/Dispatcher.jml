@@ -1,0 +1,100 @@
+/*
+ * JML/ESC/Java2 specs for the Java Card API 2.2.1
+ * by Wojciech Mostowski, woj@cs.ru.nl
+ * Copyright (C) 2006 Radboud University Nijmegen, the Netherlands 
+ *
+ * The Java Card API 2.2.1 itself is Copyright (c) 2000 Sun Microsystems, Inc.
+ *
+ * These specs are based on Erik Poll's and Engelbert Hubbers' specs
+ * for Java Card API 2.1.1, see
+ * http://www.sos.cs.ru.nl/research/escjava/esc2jcapi.html
+ *
+ * $Id$
+ *
+ */
+
+package javacard.framework.service;
+
+import javacard.framework.APDU;
+import javacard.framework.ISOException;
+import javacard.framework.JCSystem;
+import javacard.framework.ISO7816;
+import javacard.framework.Util;
+
+public class Dispatcher {
+
+  public static final byte PROCESS_COMMAND;
+  public static final byte PROCESS_INPUT_DATA;
+  public static final byte PROCESS_NONE;
+  public static final byte PROCESS_OUTPUT_DATA;
+
+  //@ public static invariant PROCESS_COMMAND == 2;
+  //@ public static invariant PROCESS_INPUT_DATA == 1;
+  //@ public static invariant PROCESS_NONE == 0;
+  //@ public static invariant PROCESS_OUTPUT_DATA == 3;
+  
+  /*@ public invariant _maxServices > 0; @*/
+  //@ public ghost short _maxServices;
+
+  /*@ public invariant _totalServices >= 0 && _totalServices <= _maxServices; @*/
+  //@ public ghost short _totalServices;
+  
+  /*@
+     public normal_behavior
+       requires maxServices > 0;
+       ensures _maxServices == maxServices;
+       ensures _totalServices == 0;
+       assignable _maxServices, _totalServices;
+  @*/
+  public Dispatcher(short maxServices)
+    throws ServiceException;
+
+  /*@
+     public normal_behavior
+       requires service != null;
+       requires _totalServices < _maxServices;
+       requires phase == PROCESS_INPUT_DATA || phase == PROCESS_COMMAND ||
+		 phase == PROCESS_OUTPUT_DATA;
+       ensures true;
+       ensures _totalServices == \old(_totalServices) + 1;
+       assignable _totalServices;
+  @*/
+  public void addService(Service service, byte phase)
+    throws ServiceException;
+
+  /*@
+     public normal_behavior
+       requires service != null;
+       requires phase == PROCESS_INPUT_DATA || phase == PROCESS_COMMAND ||
+		 phase == PROCESS_OUTPUT_DATA;
+       ensures true;
+       assignable _totalServices;
+  @*/
+  public void removeService(
+    Service service, byte phase)
+      throws ServiceException;
+
+  /*@
+     public normal_behavior 
+       requires command != null;
+       requires phase == PROCESS_INPUT_DATA
+	      || phase == PROCESS_COMMAND
+	      || phase == PROCESS_OUTPUT_DATA;
+       ensures true;
+       assignable command._buffer[*], command._apduState, command._Lr;
+  @*/
+  public Exception dispatch(APDU command, byte phase) 
+     throws ServiceException;
+
+  /*@
+     public behavior 
+       requires command != null;
+       ensures true;
+       signals (ISOException ie);
+       signals_only ISOException;
+       assignable command._buffer[*], command._apduState, command._Lr;
+  @*/
+  public void process(APDU command)
+      throws ISOException;
+
+} 

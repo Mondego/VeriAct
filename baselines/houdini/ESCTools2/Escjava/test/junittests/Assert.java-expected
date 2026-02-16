@@ -1,0 +1,99 @@
+ESC/Java version VERSION
+    [TIME]
+
+Assert ...
+  Prover started:TIME
+    [TIME]
+
+Assert: m_Exception_Assert(int) ...
+------------------------------------------------------------------------
+Assert.java:10: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed else branch in "Assert.java", line 8, col 2.
+    Executed then branch in "Assert.java", line 9, col 2.
+    Executed throw in "Assert.java", line 9, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Assert: mm_Exception_Assert(int) ...
+------------------------------------------------------------------------
+Assert.java:19: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed else branch in "Assert.java", line 17, col 2.
+    Executed then branch in "Assert.java", line 18, col 2.
+    Executed throw in "Assert.java", line 18, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Assert: mm_Nowarn_Nowarn(int) ...
+    [TIME]  passed
+
+Assert: mmm_Nowarn_Nowarn(int) ...
+    [TIME]  passed
+
+Assert: nAssertWarn(int) ...
+------------------------------------------------------------------------
+Assert.java:35: Warning: Possible assertion failure (Assert)
+                //@ assert false;
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Assert: nNowarn(int) ...
+    [TIME]  passed
+
+Assert: pPostwarning() ...
+------------------------------------------------------------------------
+Assert.java:48: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "Assert.java", line 45, col 5:
+        //@ exsures (java.lang.AssertionError e) false;
+            ^
+Execution trace information:
+    Executed throw in "Assert.java", line 47, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Assert: ppPostwarning() ...
+    [TIME]  passed
+
+Assert: pExceptionwarningShouldCompilerError() ...
+------------------------------------------------------------------------
+Assert.java:65: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "Assert.java", line 64, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Assert: qNoWarning(int) ...
+    [TIME]  passed
+
+Assert: qqExceptionWarning(int) ...
+------------------------------------------------------------------------
+Assert.java:76: Warning: Possible unexpected exception (Exception)
+        }
+        ^
+Execution trace information:
+    Executed throw in "Assert.java", line 75, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Assert: rNowarning() ...
+    [TIME]  passed
+
+Assert: Assert() ...
+    [TIME]  passed
+  [TIME total]
+6 warnings

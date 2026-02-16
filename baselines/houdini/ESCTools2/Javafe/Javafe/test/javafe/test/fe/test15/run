@@ -1,0 +1,11 @@
+#!/bin/sh
+
+## Check ambigous superclass name references
+
+${TOOL} Single.java
+${TOOL} Single2.java
+${TOOL} Single3.java
+${TOOL} SingleBeatsPKG.java
+${TOOL} SingleBeatsDemand.java
+${TOOL} FileBeatsDemand.java
+${TOOL} PkgBeatsDemand.java

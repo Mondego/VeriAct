@@ -1,0 +1,799 @@
+<?xml version="1.0"?>
+
+<!--
+ Javafe Ant Build File
+ Copyright (c) 2002,2003 Joseph R. Kiniry and the University of Nijmegen
+ Copyright (c) 2004 Joseph R. Kiniry and University College Dublin
+ Modified 2007 Dermot Cochran and University College Dublin
+ All Rights Reserved
+-->
+
+<!-- ======================================================================= -->
+<!-- SUMMARY:      Ant build file for Javafe                                 -->
+
+<!-- AUTHOR:       Joseph R. Kiniry                                          -->
+<!-- ORG:          Department of Computer Science, University College Dublin -->
+<!-- E-MAIL:       Joseph R. Kiniry <kiniry@acm.org>                         -->
+
+<!-- FILE ID:      $Id: build.xml 1209 2005-01-04 12:16:59Z kiniry $         -->
+<!-- REVISION:     $Revision: 1209 $                                         -->
+<!-- DATE:         $Date: 2005-01-04 12:16:59 +0000 (Tue, 04 Jan 2005) $     -->
+<!-- LAST AUTHOR:  $Author: kiniry $                                         -->
+<!-- ======================================================================= -->
+
+<project name="Javafe" default="all">
+
+  <description>
+    This buildfile is used to build Javafe.
+  </description>
+
+  <property name="project" value="Javafe"/>
+  <property name="version" value="v2.0.11-April-2010"/>
+
+  <property name="libs_dir" value="${basedir}/Utils"/>
+
+  <!-- <property name="clean_build_every_time" value="t"/> -->
+
+  <!-- Source code locations for various packages...I mean "envelopes". -->
+
+  <property name="javafe_root_dir" value="${basedir}/Javafe"/>
+  <property name="javafe_source_dir" value="${javafe_root_dir}/java"/>
+  <property name="javafe_test_dir" value="${javafe_root_dir}/test"/>
+
+  <!-- Target locations for various build results. -->
+
+  <!-- Classfiles are put here in a parallel hierarchy for each envelope. -->
+  <property name="javafe_classes_dir" value="${javafe_root_dir}/classfiles"/>
+
+  <!-- Top-level documentation location. -->
+  <property name="docs_dir" value="docs"/>  
+
+  <!-- In particular, full Javadoc documentation for all envelopes is
+       generated here. -->
+  <property name="javadoc_dir" value="${docs_dir}/api"/>
+
+  <!-- Locations for per-envelope documentation generation. -->
+  <property name="javafe_docs_dir" value="${javafe_root_dir}/doc/api"/>
+
+  <!-- And Xrefactory docs are generated here. -->
+  <property name="xref_doc_dir" value="${docs_dir}/Xref"/>
+
+  <!-- Classfiles generated via jmlc (the JML compiler) are put here. -->
+  <property name="jmlc_dir" value="jmlc"/>
+
+  <!-- Optimized classfiles are generated here. -->
+  <property name="opt_dir" value="optimized"/>
+
+  <!-- Where to put jars of the resulting unoptimized, optimized, and annotated
+      (jmlc) classes for binary delivery. -->
+  <property name="final_jars_dir" value="jars"/>
+
+  <property name="build.compiler" value="javac1.1"/>
+  <property name="build.compiler.emacs" value="true"/>
+  <property name="build.compiler.fulldepend" value="true"/>
+  <property name="build.compiler.pedantic" value="true"/>
+
+  <!-- General useful pattern sets. -->
+
+  <patternset id="classfiles" >
+    <include name="**/*.class"/>
+    <exclude name="Javafe/test/javafe/tc/test/*.class"/>
+  </patternset>
+
+  <!-- General useful file sets. -->
+
+  <!-- Pre-built jars necessary for compiling, testing, etc. -->
+  <path id="libraries">
+    <fileset dir="${libs_dir}">
+      <include name="*.jar"/>
+    </fileset>
+  	<fileset dir="${libs_dir}/BCEL/bcel-5.2">
+  	      <include name="*.jar"/>
+  	    </fileset>
+  </path>
+
+  <!-- All Java files in the entire source hierarchy. -->
+  <path id="java_files">
+    <fileset dir=".">
+      <include name="**/*.java"/>
+    </fileset>
+  </path>
+
+  <!-- All classfiles in the compile target directory. -->
+  <path id="class_files">
+    <fileset dir="javafe_classes_dir">
+      <include name="**/*.class"/>
+    </fileset>
+  </path>
+
+  <!-- All residual junk files that can be cleaned up on occasion. -->
+  <path id="junk_files">
+    <fileset dir=".">
+      <include name="**/*~"/>
+      <include name="**/*.bak"/>
+      <include name="**/#*#"/>
+    </fileset>
+  </path>
+
+  <!-- The jar files on which JML depends (e.g., for run-time checking). -->
+  <path id="jml_jars">
+    <fileset dir="${jml_dir}">
+      <include name="bin/*.jar"/>
+    </fileset>
+  </path>
+
+  <!-- General useful classpaths. -->
+
+  <path id="base_classpath">
+    <pathelement path="${java.class.path}"/>
+    <path refid="libraries"/>
+  </path>
+
+  <path id="default_classpath">
+    <path refid="base_classpath"/>
+  </path>
+
+  <path id="javafe_classpath">
+    <path refid="base_classpath"/>
+    <pathelement path="${javafe_classes_dir}"/>
+    <pathelement path="${javafe_root_dir}/decsrclib"/>
+  </path>
+
+   
+
+   
+
+   
+
+   
+
+ 
+
+  <path id="test_classpath">
+    <path refid="base_classpath"/>
+    <pathelement path="${jmlc_dir}"/>
+  </path>
+
+  <path id="optimized_classpath">
+    <pathelement path="${opt_dir}"/>
+  </path>
+
+   
+
+   
+  <!-- Add "docs" dependency when appropriate. -->
+  <target name="all" depends="compile,
+                              binaries,
+                              unit_test,
+                              cleanup">
+    <description>
+      Convert all XHTML documentation to textfiles, process and compile all
+      source code, build all Javadocs and libraries, unit test system, and
+      clean up temporary files.
+    </description>
+  </target>
+
+  <!-- Preparation for building. -->
+
+  <target name="initialize">
+    <description>
+      Prepare directory tree for build.
+    </description>
+    <tstamp/>
+    <mkdir dir="${javafe_classes_dir}"/>
+    <mkdir dir="${javadoc_dir}"/>
+    <mkdir dir="${javafe_docs_dir}"/>
+  </target>
+
+  <!-- Compile all source to binaries. -->
+
+  <!-- jmlc -->
+
+  <target name="binaries" depends="initialize,
+                                   compile,
+                                   tags,
+                                   create_jars">
+    <description>
+      Compile all source code and build jars.
+    </description>
+  </target>
+
+  <!-- Create all documentation from source and from other formats. -->
+
+  <target name="docs" depends="initialize,
+                               javadoc">
+    <description>
+      Build all documentation.
+    </description>
+  </target>
+
+  <!-- This task is not correct; I don't know how to redirect output in a
+  apply command. -->
+
+  <target name="html2txt">
+    <description>
+      Convert top-level XHTML files into text files for readability without
+      a browser.
+    </description>
+    <exec dir="." executable="lynx" output="FAQ.txt">
+      <arg line="-dump FAQ.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="index.txt">
+      <arg line="-dump index.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="LICENSE.txt">
+      <arg line="-dump LICENSE.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="README.txt">
+      <arg line="-dump README.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="RELEASE_NOTES.txt">
+      <arg line="-dump RELEASE_NOTES.html"/>
+    </exec>
+    <exec dir="." executable="lynx" output="TODO.txt">
+      <arg line="-dump TODO.html"/>
+    </exec>
+  </target>
+
+  <target name="html2txt-notworking">
+    <description>
+      Convert top-level XHTML files into text files for readability without
+      a browser.
+    </description>
+    <apply dir="." executable="lynx">
+      <arg value="-dump"/>
+      <srcfile/>
+      <arg value=">"/>
+      <targetfile/>
+      <fileset dir="." includes="*.html"/>
+      <mapper type="glob" from="*.html" to="*.txt"/>
+    </apply>
+  </target>
+
+  <!-- Tags files for various IDEs. -->
+  <!-- We use Exuberant Ctags 5.5 -->
+  <!-- See http://ctags.sourceforge.net for more information. -->
+
+  <target name="tags">
+    <description>
+      Build vi and Emacs tags tables for code base.
+    </description>
+    <exec dir="." 
+          executable="/usr/local/bin/ctags">
+      <arg line="-e -R"/>
+    </exec>
+    <exec dir="." 
+          executable="/usr/local/bin/ctags">
+      <arg line="-R"/>
+    </exec>
+  </target>
+
+  <target name="version">
+    <exec dir="."
+          executable="version.sh"/>
+  </target>
+
+  <!-- JML targets. -->
+
+  <!-- JML typechecking -->
+  <target name="jml" depends="jml_smartcards">
+    <description>
+      Typecheck all Java code.
+    </description>
+  </target>
+
+  <target name="jml_smartcards">
+    <description>
+      Runs the JML specification checker on the SmartCard codebase.
+    </description>
+    <java classname="org.jmlspecs.checker.Main"
+          fork="true"
+          classpathref="jml_classpath">
+      <jvmarg value="-Xmx128m,ms64m"/>
+      <arg value="--recursive"/>
+      <arg value="--keepGoing"/>
+      <arg value="--purity"/>
+      <arg value="--multijava"/>
+      <arg line="--source '1.3'"/>
+      <arg line="--sourcepath '${javafe_source_dir}'"/>
+      <arg line="javafe"/>
+    </java>
+  </target>
+
+  <!-- JML specification compilation. -->
+  <target name="jmlc" depends="jmlc_javafe">
+    <description>
+      Compile all JML specifications to test code.
+    </description>
+  </target>
+
+  <target name="jmlc_javafe" depends="compile_javafe">
+    <description>
+      Compiles JML annotated Javafe files with runtime assertion checks.
+    </description>
+    <java classname="org.jmlspecs.jmlrac.Main"
+          fork="true"
+          classpathref="jml_classpath">
+      <jvmarg value="-Xmx128m"/>
+      <arg line="--destination ${jmlc_dir}"/>
+      <arg value="--recursive"/>
+      <arg value="--quiet"/>
+      <arg value="--purity"/>
+      <arg value="--multijava"/>
+      <arg line="--sourcepath '${javafe_source_dir}'"/>
+      <arg line="javafe.ast javafe.parser javafe.reader javafe.tc javafe.util"/>
+    </java>
+  </target>
+
+  <!-- Unit testing. -->
+
+  <target name="unit_test" depends="compile">
+    <description>
+      @todo Run unit tests on entire package.
+    </description>
+    <!--
+    <junit printsummary="yes">
+      <formatter type="plain"/>
+      <test name="sos.test.AllTests"/>
+      <classpath refid="test_classpath"/>
+    </junit>
+    -->
+  </target>
+
+  <target name="unit_test_javafe" depends="compile_javafe">
+    <description>
+      Run unit tests on Javafe envelope.
+    </description>
+    <exec dir="${javafe_source_dir}/javafe/parser/test" 
+          executable="make">
+      <arg line="runtest"/>
+    </exec>
+    <exec dir="${javafe_source_dir}/javafe/util" 
+          executable="make">
+      <arg line="runtest"/>
+    </exec>
+    <exec dir="${javafe_source_dir}/javafe/test" 
+          executable="make">
+      <arg line="runtest"/>
+    </exec>
+  </target>
+
+<!-- compile_rcc compile_calvin -->
+
+  <target name="compile" depends="compile_javafe,
+                                  compile_javafe_ast">
+    <description>
+      Compile all source code.
+    </description>
+  </target>
+
+  <!-- Compile targets. -->
+
+  <target name="generate_javafe_ast">
+    <description>
+      Generate Javafe AST using the astgen tool.
+    </description>
+   <exec dir="${basedir}/Javafe/astgen" 
+              executable="make">   
+   </exec>
+    <exec dir="${javafe_source_dir}/javafe/ast" 
+          executable="make">
+      <arg value="source"/>
+    </exec>
+  </target>
+
+  <target name="compile_javafe" depends="clean_javafe,
+                                         initialize,
+                                         generate_javafe_ast">
+    <description>
+      Compile all Javafe source code.
+    </description>
+    <javac srcdir="${javafe_source_dir}:${javafe_test_dir}:${libs_dir}/junitutils"
+           destdir="${javafe_classes_dir}"
+           excludes="javafe/test/fe/**,javafe/test/lex/**,javafe/tc/test/**,jtools/**"
+           debug="on"
+           deprecation="off"
+           optimize="off"
+           failonerror="false"
+           source="1.3"
+           target="1.1"
+           classpathref="javafe_classpath">
+      <compilerarg line="+Pno-modifier-order +Pno-redundant-modifiers"
+                   compiler="jikes"/>
+    </javac>
+  </target>
+
+  <target name="compile_rcc" depends="clean_rcc,
+                                      initialize">
+    <description>
+      @todo Compile all Rcc source code.
+      @todo kiniry 2 Jan 2002 - Rcc does not yet build---there are several missing 
+            classes (e.g. javafe.ast.CloneVisitor) that I have written HP about.
+      @review kiniry 2 Jan 2002 - Should rccwizard be built or not?
+    </description>
+  </target>
+
+  <target name="compile_javafe_ast" depends="initialize">
+    <description>
+      Compile the Javafe astgen source code which is written in C.
+    </description>
+    <exec dir="${javafe_source_dir}/../astgen" 
+          executable="make"/>
+  </target>
+
+
+  <target name="generate_default_backpred">
+    <description>
+      Generate the default universal background predicate.
+    </description>
+    <exec dir="${escjava_source_dir}/escjava/backpred" 
+          executable="make">
+      <arg value="source"/>
+    </exec>
+  </target>
+
+   
+
+  
+
+  
+
+  
+   
+
+  <!-- Xrefactory-generated source documentation. -->
+
+  <target name="xref" depends="initialize">
+    <description>
+      @todo Generate an HTML cross-referenced view of the code base.
+    </description>
+    <exec dir="." 
+          executable="xref">
+      <arg line="-java2html -html -nostdop -nocxfile -javafilesonly -mf20 -htmlgxlist -htmldirectx -refalphahash -htmllinenums -htmlcutsuffix -htmlcutpath=${basedir}/${source_dir} -htmlgenjavadoclinks -javadocpath=file:/usr/java/jdk2/docs/api -htmltab=4 -htmllinenumlabel=line. -htmlnounderline -sourcepath /usr/java/jdk2/src:${source_dir} -htmlroot=${xref_doc_dir} ${source_dir}"/>
+    </exec>
+  </target>
+
+  <!-- Jarfile generation. -->
+  <target name="create_jars" depends="create_javafe_jar">
+    <description>
+      Generate jar files of various builds.
+    </description>
+  </target>
+
+  <target name="create_javafe_jar" depends="compile_javafe">
+    <description>
+      Generate jar file of Javafe build results.
+    </description>
+    <jar destfile="${final_jars_dir}/javafe.jar"
+         basedir="${javafe_classes_dir}"
+         includes="javafe/**,tohtml/**"/>
+  </target>
+
+  <target name="create_decsrc_jar">
+    <description>
+      Generate jar file of the decsrc library.
+    </description>
+    <jar destfile="${final_jars_dir}/decsrc.jar"
+         basedir="${javafe_root_dir}/decsrclib"
+         includes="decsrc/util/*.class,decsrc/util/*.spec"/>
+  </target>
+
+  <target name="create_rcc_jar" depends="compile_rcc">
+    <description>
+      Generate jar file of Rcc build results.
+    </description>
+    <jar destfile="${final_jars_dir}/rcc.jar"
+         basedir="${rcc_classes_dir}"
+         includes="rcc/**"/>
+  </target>
+
+  
+   
+  <target name="create_annotated_jar" depends="jmlc">
+    <description>
+      Generate jar files of annotated (jmlc) build results.
+    </description>
+    <jar destfile="${final_jars_dir}/Escjava-annotated.jar"
+         update="yes"
+         basedir="${jmlc_dir}"/>
+  </target>
+
+  <!-- Documentation generation. -->
+
+  <target name="javadoc" depends="javadoc_javafe,
+                                  javadoc_escjava">
+    <description>
+      Create Javadoc documentation.
+    </description>
+  </target>
+
+  <target name="javadoc_javafe" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Javafe envelope.
+    </description>
+    <javadoc packagenames="javafe.*,jtools.*"
+             excludepackagenames="javafe.test.*,javafe.tc.test.*,jtools.*"
+             sourcepath="${javafe_source_dir}"
+             destdir="${javafe_docs_dir}"
+             maxmemory="256m"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Javafe Envelope">
+      <classpath refid="javafe_classpath"/>
+    </javadoc>
+  </target>
+
+  <target name="javadoc_rcc" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Rcc envelope.
+    </description>
+    <javadoc packagenames="rcc.*"
+             excludepackagenames="rcc.test.*,rcc.parser.test.*"
+             sourcepath="${rcc_source_dir}"
+             destdir="${rcc_docs_dir}"
+             maxmemory="256m"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Rcc Envelope">
+      <classpath refid="rcc_classpath"/>
+    </javadoc>
+  </target>
+
+  <target name="javadoc_escjava" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Escjava envelope.
+    </description>
+    <javadoc packagenames="escjava.*,mocha.*"
+             excludepackagenames="instrumenter.*,escwizard.*,houdini.*,
+                                  escjava.reader.*,escjava.pa.*,escjava.test.*,
+                                  escjava.parser.test.*"
+             destdir="${escjava_docs_dir}"
+             maxmemory="256m"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Escjava Envelope">
+       <sourcepath>
+         <pathelement path="${escjava_source_dir}"/>
+         <pathelement path="${mochalib_source_dir}"/>
+       </sourcepath>
+      <classpath refid="escjava_classpath"/>
+    </javadoc>
+  </target>
+
+  <target name="javadoc_calvin" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Calvin envelope.
+    </description>
+    <javadoc packagenames="escjava.*"
+             excludepackagenames="instrumenter.*,escwizard.*,houdini.*,
+                                  escjava.reader.*,escjava.pa.*,escjava.test.*"
+             sourcepath="${calvin_source_dir}"
+             destdir="${calvin_docs_dir}"
+             maxmemory="256m"
+             source="1.3"
+             target="1.1"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Calvin Envelope">
+      <classpath refid="calvin_classpath"/>
+    </javadoc>
+  </target>
+
+  <target name="javadoc_houdini" depends="initialize">
+    <description>
+      Create Javadoc documentation for the Houdini envelope.
+    </description>
+    <javadoc packagenames="houdini.*"
+             excludepackagenames=""
+             sourcepath="${houdini_source_dir}"
+             destdir="${houdini_docs_dir}"
+             maxmemory="256m"
+             source="1.3"
+             target="1.1"
+             author="true"
+             version="true"
+             access="private"
+             use="true"
+             splitindex="true"
+             additionalparam="-breakiterator"
+             windowtitle="ESCTools Houdini Envelope">
+      <classpath refid="houdini_classpath"/>
+    </javadoc>
+  </target>
+
+  <!-- Library generation. -->
+
+  <target name="buildlibs" depends="initialize,
+                                    compile">
+    <description>
+      Create library (jar) files for all ESCTools.  Note that this does not include
+      the Calvin envelope since its package names clash with that of Escjava.
+    </description>
+    <jar jarfile="${libs_dir}/${project}.jar" 
+         basedir="${javafe_classes_dir}"
+         includes="javafe/**,tohtml/**"/>
+    <jar jarfile="${libs_dir}/${project}.jar"
+         update="yes"
+         basedir="${rcc_classes_dir}"
+         includes="rcc/**"/>
+    <jar jarfile="${libs_dir}/${project}.jar" 
+         update="yes"
+         basedir="${escjava_classes_dir}"
+         includes="escjava/**"/>
+    <jar jarfile="${libs_dir}/${project}.jar" 
+         update="yes"
+         basedir="${mochalib_classes_dir}"
+         includes="mocha/**"/>
+    <jar jarfile="${libs_dir}/${project}.jar" 
+         update="yes"
+         basedir="${houdini_classes_dir}"
+         includes="houdini/**"/>
+  </target>
+
+  <!-- Build distribution for publication. -->
+
+  <target name="distribution" depends="initialize,
+                                       compile,
+                                       html2txt,
+                                       javadoc,
+                                       buildlibs">
+    <description>
+      Create distribution files.
+    </description>
+    <tar tarfile="../${project}-${version}.tar"
+         basedir=".."
+         excludes="OOBR,TAGS,source/esctools.proj"
+         includes="Java/**"/>
+    <gzip zipfile="../${project}-${version}.tgz"
+          src="../${project}-${version}.tar"/>
+    <delete file="../${project}-${version}.tar"/>
+    <zip zipfile="../${project}-${version}.zip"
+         basedir=".."
+         includes="Java/**"/>
+  </target>
+
+  <!-- Various cleanup targets. -->
+
+  <target name="clean" depends="cleanup">
+    <delete dir="${classes_dir}"/>
+    <delete dir="${javadoc_dir}"/>
+    <delete dir="${xref_doc_dir}"/>
+    <delete dir="${jmlc_dir}"/>
+    <delete dir="${opt_dir}"/>
+    <delete>
+      <fileset dir="."
+               includes="TEST-*.txt"/>
+    </delete>            
+    <delete>
+      <fileset dir="${libs_dir}"
+               includes="${project}*.jar"/>
+    </delete>            
+    <delete>
+      <fileset dir="${libs_dir}"
+               includes="escjava.jar,houdini.jar,javafe.jar"/>
+    </delete>            
+    <delete>
+      <fileset dir="." includes="*.txt" excludes="README.txt"/>
+    </delete>
+    <delete>
+      <fileset dir=".">
+        <patternset refid="classfiles"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="clean_javafe" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Javafe envelope.
+    </description>
+    <delete dir="${javafe_classes_dir}"/>
+    <exec dir="${javafe_source_dir}/../astgen" 
+          executable="make">
+      <arg line="clean"/>
+    </exec>
+    <exec dir="${javafe_source_dir}/javafe/ast" 
+          executable="make">
+      <arg value="clean"/>
+    </exec>
+  </target>
+
+  <target name="clean_rcc" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Rcc envelope.
+    </description>
+    <delete dir="${rcc_classes_dir}"/>
+  </target>
+
+  <target name="clean_escjava" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Escjava envelope.
+    </description>
+    <delete dir="${escjava_classes_dir}"/>
+    <exec dir="${escjava_source_dir}/escjava/ast" 
+          executable="make">
+      <arg value="clean"/>
+    </exec>
+    <exec dir="${escjava_source_dir}/escjava/ast" 
+          executable="make">
+      <arg value="clean"/>
+    </exec>
+  </target>
+
+  <target name="clean_mochalib" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Mocha library (a part of the Escjava envelope).
+    </description>
+    <delete dir="${mochalib_classes_dir}"/>
+  </target>
+
+  <target name="clean_calvin" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Calvin envelope.
+    </description>
+    <delete dir="${calvin_classes_dir}"/>
+  </target>
+
+  <target name="clean_houdini" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the Houdini envelope.
+    </description>
+    <delete dir="${houdini_classes_dir}"/>
+  </target>
+
+  <target name="clean_simplify" if="clean_build_every_time">
+    <description>
+      Deletes all build results from the Simplify envelope.
+    </description>
+    <delete dir="${simplify_source_dir}/cgi-utils/LINUXLIBC6"/>
+    <delete dir="${simplify_source_dir}/digraph/LINUXLIBC6"/>
+    <delete dir="${simplify_source_dir}/prover/LINUXLIBC6"/>
+    <delete dir="${simplify_source_dir}/simplify/LINUXLIBC6"/>
+  </target>
+
+  <target name="clean_opt" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the optimized build target tree.
+    </description>
+    <delete dir="${opt_dir}"/>
+  </target>
+
+  <target name="clean_jmlc" if="clean_build_every_time">
+    <description>
+      Deletes all classfiles in the jmlc build target tree.
+    </description>
+    <delete dir="${jmlc_dir}"/>
+  </target>
+
+  <target name="distclean" depends="clean">
+    <delete file="files"/>
+    <delete file="OOBR"/>
+    <delete file="TAGS"/>
+    <delete file="tags"/>
+  </target>
+
+  <target name="cleanup">
+    <delete>
+      <fileset defaultexcludes="false" dir="." includes="**/tmp.*"/>
+      <fileset defaultexcludes="false" dir="." includes="**/*.bak"/>
+      <fileset defaultexcludes="false" dir="." includes="**/#*#"/>
+      <fileset defaultexcludes="false" dir="." includes="**/files-*"/>
+    </delete>
+  </target>
+
+</project>

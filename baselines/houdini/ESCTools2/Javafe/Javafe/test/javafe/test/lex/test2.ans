@@ -1,0 +1,17 @@
+stdin:1: null
+stdin:6: true
+stdin:11: false
+stdin:17: INTLIT (0)
+stdin:19: INTLIT (10)
+stdin:23: INTLIT (127)
+stdin:28: DOUBLELIT (0.0D)
+stdin:31: DOUBLELIT (0.0D)
+stdin:35: DOUBLELIT (0.0D)
+stdin:39: STRINGLIT ("")
+stdin:42: STRINGLIT ("a")
+stdin:46: STRINGLIT ("bb")
+stdin:51: STRINGLIT ("\"")
+stdin:56: STRINGLIT ("\'")
+stdin:61: CHARLIT ('a')
+stdin:65: CHARLIT ('\'')
+stdin:70: CHARLIT ('\n')

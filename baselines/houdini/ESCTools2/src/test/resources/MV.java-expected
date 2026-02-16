@@ -1,0 +1,31 @@
+ESC/Java version VERSION
+src|test|resources|MV.java: Caution: Using given file as the .java file, even though it is not the java file for MV on the classpath
+    [TIME]
+
+MV ...
+  Prover started:TIME
+    [TIME]
+
+MV: MV() ...
+    [TIME]  passed immediately
+
+MV: value() ...
+    [TIME]  passed immediately
+
+MV: gvalue() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+Client ...
+    [TIME]
+
+Client: Client() ...
+    [TIME]  passed immediately
+
+Client: m() ...
+    [TIME]  passed
+
+Client: mm() ...
+    [TIME]  passed
+  [TIME total]
+1 caution

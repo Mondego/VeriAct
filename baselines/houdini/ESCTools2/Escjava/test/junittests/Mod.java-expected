@@ -1,0 +1,23 @@
+ESC/Java version VERSION
+    [TIME]
+
+Mod ...
+  Prover started:TIME
+    [TIME]
+
+Mod: mm() ...
+    [TIME]  passed
+
+Mod: mmm() ...
+    [TIME]  passed
+
+Mod: Mod() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+ModA ...
+    [TIME]
+
+ModA: ModA() ...
+    [TIME]  passed immediately
+  [TIME total]

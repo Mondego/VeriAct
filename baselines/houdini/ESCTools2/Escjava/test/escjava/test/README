@@ -1,0 +1,23 @@
+This directory contains regression tests for ESC.
+
+Each test is self-contained in a directory testXXXX.
+Each directory contains:
+
+	run	runs the test, normally soft-linked to test1/run
+	out	the last output
+	ans	the expected output
+	diff	from diff out ans
+
+	and maybe some java files
+
+The files in this directory are:
+
+	README
+	CVS
+	Makefile
+	rtest		takes a directory name (and maybe some flags)
+			and runs the test
+	rtestall	runs all tests
+	alltests	contains names and descriptions of all test directories
+
+For short descriptions of the different test cases, see alltests.

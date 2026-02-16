@@ -1,0 +1,8 @@
+//@ refine "RefineRefHelper.spec";
+
+public class RefineRefHelper {
+
+	/*@ non_null */ RefineRefHelper o;
+
+	public /*@ pure */ void get();
+}

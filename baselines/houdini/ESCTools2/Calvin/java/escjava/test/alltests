@@ -1,0 +1,96 @@
+# Copyright Hewlett-Packard, 2002
+
+test0   Good    relative assignment to fields, side-effects in LHS, casts in LHS
+test1	Omit	Typechecking and resolution of pragmas
+test2	Omit	Typechecking and resolution of pragmas
+test3	Good	Simple assumes, asserts
+test4	Good	if
+test5	Good	Worst case for exp blowup under old assignment rule
+test6	Good	final class axiom and distinct types axiom
+test7	Good	array ref, cast, divmod, fieldref, gets, getsplus, 
+		inc, newarray, setfield, unary plus
+test8	Good	switch, sync, try, unreachable
+test9	Good	uninitialized
+
+test10	Good	Sort 2 element array
+test11  Omit	Empty
+test12  Omit	Empty
+test13	Good	loops
+test14	Good	labels, breaks, and continues
+test15	Good	InitialState fn equates vars with their pre values
+test16	Omit	Empty
+test17	Good	Method calls
+test18	Good	sumarray
+test19	Good	The Bag demo
+
+test20	Good	Simple non_null assumption tests
+test21	Omit	Pascal-F program
+test22  Good	ghost fields (ints and bools) in postconditions and invariants
+test23	Good	loops
+test24	Good	reference of pragma in another file
+test25	Good	Tests that FindContrbutors finds enough contributors
+test26	Good	postconditions
+test27	Good	type predicates
+test28	Omit	invariants
+test29  Omit	Empty (created with the intension of testing CorrelatedReader)
+
+test30  Omit	Empty (created with the intension of testing SPVC)
+test31  Good	Limited tests that FindContributors doesn't find too much
+test32  Good	error message caret positions
+test33	Omit	Empty
+test34	Good	annotation type checking
+test35	Good	fresh
+test36	Good	Exceptional return from constructors
+test37	Good	exsures and also_exsures
+test38	Good	Tests knowledge of constants and final fields with initializers
+test39  Good    relative assignments (op=) with shift operators
+
+test40	Good	non_null
+test41  Good    test for a previously discovered bug in MODIFIES substitution
+test42	Good	class literals (see also fe/test100)
+test43  Good    substitution for "this" in field-decl modifier pragmas
+test44  Good    inclusion of types of literals into FindContributors
+test45  Good    "alloc morass" (that something new is not the field of something old)
+test46	Good	test escjava's reasoning about member inner classes [1.1]
+test47	Good	invariants that don't mention any program variables
+test48	Good	execution traces
+test49	Good	writeCheck for set/modifiers on ghost fields
+
+test50  Good	parsing pragmas out of comments
+test51  Good	multiple loop iterations
+test52  Good	tests previous problem with sibling constructors
+test53	Good	array subtypes
+test54	Good	helper pragma
+test55	Good	3 inline flags
+test56	Good	parsing of modifier pragmas after formal parameters
+test57	Good	DTTFSA
+test58	Good	"invariant" and "non_null" inheritance from interfaces
+test59	Good	instance initializers
+
+test60	Good	inheriting method specifications and non_null from interfaces
+test61	Good	elements left unchanged by arraycopy (based on ex from Bart Jacobs)
+test62	Good	order of testing assertions
+test63	Good	integer division
+test64	Good	-inlineFromConstructors flag
+test65	Good	continued-line ellipses at the end of associated declarations
+test66	Good	-excuseNullInitializers flag
+test67	Good	comment parsing, including @-signs at beginning of lines
+test68	Omit	-loopHoudini
+
+test95	Good	simple ghost field tests, and checking that a.length is not set
+test96	Good	Unknown ghost fields test
+test97  Good    ghost fields of array type
+test98  Good	ghost fields of type object
+test99	Omit	Empty
+
+test100 Good    safe checking of loop invariants
+test101 Good    predicate abstraction
+
+test102 Omit    created it but not using it right now --S.Q.
+test103 Omit	benchmarks for predicate abstraction
+test104 Omit    Parsing and Checking of OTIs, Global Invariants, \tid, -mt flag
+test105 Good    Ghost variables of map type. Type errors deliberately introduced
+test106 Omit    Checking performs pragma at the callee
+test107 Omit    Checking performs pragma at the call site-- omit for the time being 
+
+

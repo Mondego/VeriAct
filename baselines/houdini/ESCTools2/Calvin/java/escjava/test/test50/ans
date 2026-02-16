@@ -1,0 +1,70 @@
+NormalError.java:8: Error: Badly formed wizard comment (missing `)')
+        /*@(fobar*/      // error
+                ^
+JavaDoc.java:19: Error: Pragma in javadoc comment is not correctly terminated (missing </esc>)
+      /** <esc>assert true   */    // error
+          ^
+JavaDoc.java:20: Error: Pragma in javadoc comment is not correctly terminated (missing </esc>)
+      /** <esc>assert true         // error */
+          ^
+Nested.java:5: Warning: Field declared non_null possibly not initialized (NonNullInit)
+class Nested {
+             ^
+Associated declaration is "Nested.java", line 11, col 33:
+    //@ ghost public int[] t //@ non_null
+                                 ^
+Nested.java:5: Warning: Field declared non_null possibly not initialized (NonNullInit)
+class Nested {
+             ^
+Associated declaration is "Nested.java", line 12, col 24:
+    //@ ghost public /*@non_null*/ int[] x
+                        ^
+Nested.java:5: Warning: Field declared non_null possibly not initialized (NonNullInit)
+class Nested {
+             ^
+Associated declaration is "Nested.java", line 13, col 29:
+    //@ ghost public /**<esc>non_null</esc>*/ int[] y
+                             ^
+Nested.java:5: Warning: Field declared non_null possibly not initialized (NonNullInit)
+class Nested {
+             ^
+Associated declaration is "Nested.java", line 15, col 33:
+    /*@ ghost public int[] v //@ non_null */
+                                 ^
+Nested.java:5: Warning: Field declared non_null possibly not initialized (NonNullInit)
+class Nested {
+             ^
+Associated declaration is "Nested.java", line 16, col 38:
+    //@ ghost public int[] w /** <esc>non_null</esc> */
+                                      ^
+Nested.java:5: Warning: Field declared non_null possibly not initialized (NonNullInit)
+class Nested {
+             ^
+Associated declaration is "Nested.java", line 25, col 25:
+    //@ ghost public /*@ non_null */ /*@ readable_if a[0] > 0 */ Neste ...
+                         ^
+6 warnings
+3 errors
+JavaDocCheck.java:31: Warning: Code marked as unreachable may possibly be reached (Reachable)
+    //@ unreachable
+        ^
+1 warning
+JavaDocFatal0.java:9: Fatal error: Unrecognized pragma
+      /** <esc>notAnEscPragma hello</esc>  <--- error
+               ^
+1 error
+JavaDocFatal1.java:10: Fatal error: Unrecognized pragma
+        * <esc>notAnEscPragma hello</esc>  <--- error
+               ^
+1 error
+JavaDocFatal2.java:11: Fatal error: Unrecognized pragma
+        * <esc>notAnEscPragma hello</esc>  <--- error */
+               ^
+1 error
+NestedError.java:11: Error: Annotation comments may be nested at most 1 time
+    //@ ghost public int[] c //@ non_null //@non_null // error
+                                            ^
+NestedError.java:12: Error: Annotation comments may be nested at most 1 time
+    //@ ghost public int[] d //@ non_null //*non_null // error
+                                            ^
+2 errors

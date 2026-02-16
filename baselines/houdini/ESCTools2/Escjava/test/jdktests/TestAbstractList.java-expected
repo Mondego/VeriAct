@@ -1,0 +1,9 @@
+TestAbstractList.java:15: Error: No such field in type TestAbstractList$Z
+        //@ assume z.theSize == 20;
+                     ^
+TestAbstractList.java:69: Error: Undefined variable 'theSize'
+        //@ represents theSize = s;
+                       ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+2 errors

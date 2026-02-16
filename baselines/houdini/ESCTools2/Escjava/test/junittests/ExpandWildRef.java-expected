@@ -1,0 +1,89 @@
+ESC/Java version VERSION
+    [TIME]
+
+ExpandWildRef ...
+ExpandWildRef.java:190: Caution: Variable ewrj might not have been initialized
+        public int ewrj;
+                   ^
+  Prover started:TIME
+    [TIME]
+
+ExpandWildRef: ExpandWildRef() ...
+    [TIME]  passed immediately
+
+ExpandWildRef: mm() ...
+    [TIME]  passed immediately
+
+ExpandWildRef: mms() ...
+    [TIME]  passed immediately
+
+ExpandWildRef: mos() ...
+    [TIME]  passed immediately
+
+ExpandWildRef: mo() ...
+    [TIME]  passed immediately
+
+ExpandWildRef: p() ...
+------------------------------------------------------------------------
+ExpandWildRef.java:44: Warning: Possible assertion failure (Assert)
+                //@ assert ii == 1 || gii == 1 || ewr == 1 || iewri == ...
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ExpandWildRef: p2() ...
+    [TIME]  passed
+
+ExpandWildRef: pp() ...
+------------------------------------------------------------------------
+ExpandWildRef.java:86: Warning: Possible assertion failure (Assert)
+                //@ assert sii == 1 || sgii == 1 || ewrs == 1 || sewri ...
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ExpandWildRef: pp2() ...
+    [TIME]  passed
+
+ExpandWildRef: po() ...
+------------------------------------------------------------------------
+ExpandWildRef.java:120: Warning: Possible assertion failure (Assert)
+                //@ assert o.i == 1 || o.gi == 1 ; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ExpandWildRef: po2() ...
+    [TIME]  passed
+
+ExpandWildRef: pos() ...
+------------------------------------------------------------------------
+ExpandWildRef.java:157: Warning: Possible assertion failure (Assert)
+                //@ assert o.si == 1 || o.sgi == 1;  // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ExpandWildRef: pos2() ...
+    [TIME]  passed
+  [TIME total]
+
+EWRS ...
+    [TIME]
+
+EWRS: EWRS() ...
+    [TIME]  passed
+  [TIME total]
+
+EWRI ...
+    [TIME]
+  [TIME total]
+
+Other ...
+    [TIME]
+
+Other: Other() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+4 warnings

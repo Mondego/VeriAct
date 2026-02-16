@@ -1,0 +1,7 @@
+#!/proj/system/bin/tcsh -f
+
+# Copyright 2000, 2001, Compaq Computer Corporation
+
+
+houdini-client $* &
+houdini-client $* &

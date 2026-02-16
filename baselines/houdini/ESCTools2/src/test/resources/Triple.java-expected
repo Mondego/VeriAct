@@ -1,0 +1,16 @@
+ESC/Java version VERSION
+src|test|resources|Triple.java: Caution: Using given file as the .java file, even though it is not the java file for Triple on the classpath
+src|test|resources|Triple.java:4: Error: Could not find file referenced in refine annotation: Triple.spec
+//@ refine "Triple.spec";
+    ^
+    [TIME]
+
+Triple ...
+  Prover started:TIME
+    [TIME]
+
+Triple: Triple() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 error

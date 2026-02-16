@@ -1,0 +1,15 @@
+ESC/Java version VERSION
+src|test|resources|M.java: Caution: Using given file as the .java file, even though it is not the java file for M on the classpath
+    [TIME]
+
+M ...
+src|test|resources|M.java:20: Error: No such field in type java.lang.Object
+        modifies o.owner;
+                   ^
+src|test|resources|M.java:27: Error: No such field in type java.lang.Object
+    //@ set o.owner = this;
+              ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+2 cautions
+2 errors

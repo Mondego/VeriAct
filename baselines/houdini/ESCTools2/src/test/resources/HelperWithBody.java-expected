@@ -1,0 +1,18 @@
+ESC/Java version VERSION
+src|test|resources|HelperWithBody.java: Caution: Using given file as the .java file, even though it is not the java file for HelperWithBody on the classpath
+    [TIME]
+
+HelperWithBody ...
+  Prover started:TIME
+    [TIME]
+
+HelperWithBody: HelperWithBody() ...
+    [TIME]  passed
+
+HelperWithBody: initializeRows() ...
+    [TIME]  passed immediately
+
+HelperWithBody: initializeRow(java.lang.Object[]) ...
+    [TIME]  passed
+  [TIME total]
+1 caution

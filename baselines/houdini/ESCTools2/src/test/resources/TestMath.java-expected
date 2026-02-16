@@ -1,0 +1,10 @@
+ESC/Java version VERSION
+src|test|resources|TestMath.java: Caution: Using given file as the .java file, even though it is not the java file for TestMath on the classpath
+    [TIME]
+
+TestMath ...
+src|test|resources|TestMath.java:5: Fatal error: No method named assertTrue is in scope here.
+    assertTrue ( Math.abs(-2) ==2);
+    ^
+1 caution
+1 error

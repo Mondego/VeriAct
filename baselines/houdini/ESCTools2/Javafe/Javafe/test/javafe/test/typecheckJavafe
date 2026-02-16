@@ -1,0 +1,31 @@
+#!/bin/tcsh -f
+echo "TESTING Javafe: typecheckJavafe"
+
+if ( ! $?JAVAFE_ROOT ) ( echo Must define JAVAFE_ROOT ; exit 1 )
+
+if ( ! $?SOURCEDIRECTORY ) setenv SOURCEDIRECTORY ${JAVAFE_ROOT}/Javafe/java
+
+cd ${JAVAFE_ROOT}/Javafe/java/javafe
+
+if ( $?COMSPEC ) setenv S ";" 
+if ( ! $?COMSPEC ) setenv S ":" 
+
+## For some reason I cannot get CAN_CLASSDIRECTORY to work here -- FIXME
+
+echo ===== Typechecking the javafe package =====
+
+   echo ===== Typechecking javafe/./\*.java =====
+   ( \
+        ${JAVA} -classpath ../../classfiles javafe.test.Print \
+        -classpath "..${S}../../../Utils" -typecheck -noprint \
+        *.java \
+	)
+
+foreach f ( ast parser tc util filespace reader decsrc genericfile)
+   echo ===== Typechecking javafe/$f/\*.java =====
+   ( cd $f && \
+        ${JAVA} -classpath ../../../classfiles javafe.test.Print \
+        -classpath "../..${S}../../../../Utils" -typecheck -noprint \
+        *.java \
+	)
+end

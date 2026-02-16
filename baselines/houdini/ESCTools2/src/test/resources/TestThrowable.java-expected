@@ -1,0 +1,5 @@
+ESC/Java version VERSION
+src|test|resources|TestThrowable.java:15: Fatal error: Expected a Name, got '{'
+public class TestThrowable extends {
+                                   ^
+1 error

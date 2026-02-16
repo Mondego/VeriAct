@@ -1,0 +1,20 @@
+#!/bin/sh -f
+
+# use: rtest directory FLAGS
+
+echo === Houdini regression test $1 ===
+
+dir=$1
+cd ${dir}
+shift
+
+flags="$*"
+
+
+unset CLASSPATH
+export CLASSPATH
+
+run ${flags} > out 2>&1
+diff out ans > diff || echo Failed
+
+cd ..

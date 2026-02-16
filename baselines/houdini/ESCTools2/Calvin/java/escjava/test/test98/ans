@@ -1,0 +1,4 @@
+PreppingGhosts.java:21: Fatal error: Can't find type named "Nonexistent"
+    //@ ghost static public Nonexistent y
+                            ^
+1 error

@@ -1,0 +1,4 @@
+Orphan.java:1: Fatal error: Can't find type named "DeadParent"
+class Orphan extends DeadParent {}      // Error: DeadParent does not  ...
+                     ^
+1 error

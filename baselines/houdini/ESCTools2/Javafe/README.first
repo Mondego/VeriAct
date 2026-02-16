@@ -1,0 +1,282 @@
+Javafe, a revision of the Java front end of the original DEC/SRC
+ESC/Java developed at DEC/Compaq/HP.  The original revisions were
+performed by David Cok and Joe Kiniry. Additional minor revisions were
+made by Dermot Cochran.  You can read the general background on the
+original DEC/SRC ESC/Java in README.txt.
+
+If you obtained Javafe as part of a binary release, you should ignore
+this file and consult README.release for installation and execution
+instructions concerning the release.
+
+This document is meant to describe the source release of Javafe, thus
+the paths herein are in reference to the source release, not the
+binary release.
+
+----------------------------------------------------------------------------
+
+OTHER DOCUMENTATION
+
+Each major subdirectory of this release contains a README file.  For
+the most part these are original, untouched readmes as provided by
+Compaq/H.P. as part of the "Java Programming Toolkit Source Release."
+When necessary we have updated them for correctness and clarity.
+
+----------------------------------------------------------------------------
+
+MAILING LISTS
+
+The JMLSpecs-Escjava mailing list, hosted at SourceForge.net, is the
+main mailing list for SRC ESC/Java, ESC/Java2 and Javafe *users*.
+
+Please see the JMLSpecs project
+  <http://sourceforge.net/projects/jmlspecs/>
+for more information.
+
+ESC/Java2 and Javafe developers communicate on the ESCJava-Developers mailing
+list, hosted at UCD.
+
+To make a new bug report, either register in the Mobius Trac and use
+the "Create New Ticket" page:
+  https://mobius.ucd.ie/trac/newticket
+or sent an email to: 
+  mobius-ticket AT mobius DOT ucd DOT ie 
+
+----------------------------------------------------------------------------
+
+OBTAINING THE ORIGINAL SOURCE FOR SRC's "Java Programming Toolkit
+Source Release" (which includes Javafe):
+
+The source has been available from
+  http://www.hpl.hp.com/downloads/crl/jtk/
+
+The availability can be intermittent.  Note the license restrictions
+on further distribution of the source.
+
+----------------------------------------------------------------------------
+
+OBTAINING CURRENT SOURCE FOR Javafe
+
+A subversion repository of the current work is maintained by Joe Kiniry
+<kiniry AT acm.org>.  Build and execution instructions are provided later
+in this README file.
+
+To obtain access to the subversion distribution, you will need:
+- a sufficiently current version of Subversion
+- development tools and a VM for Java 1.4-1.7
+- a working version of SSH, in order to securely transfer files to and
+  from the subversion repository
+- Building it will require other UNIX tools: e.g. flex, cc, diff,
+  bash, tcsh
+- Some tests use JUnit
+
+To obtain access to the Subversion distribution, follow these steps:
+
+a) Provide evidence to Joe that you have obtained the original sources
+   from SRC (see above) and agreed to the license restrictions.
+   Sufficient evidence is the size (in bytes) of the Javafe 
+   archives you have downloaded from SRC.
+
+b) Create an account on the Mobius Trac server located at
+   https://mobius.ucd.ie/
+
+c) Execute a subversion checkout on the server (replacing the characters
+   'username' in the command below with your Mobius Trac username):
+ 
+   svn co https://username@mobius.ucd.ie/repos/src/mobius.esc/Javafe/trunk
+
+----------------------------------------------------------------------------
+
+SETTING UP YOUR ENVIRONMENT FOR BUILDING AND RUNNING JavaFE
+
+Development has taken place on Linux (Redhat 8/9), MacOSX (10.3 and
+later), and Windows XP.  The build environment uses GNU make.
+Developers use both bash and tcsh as working shells.
+
+  --- IMPORTANT NOTE TO WINDOWS USERS ---
+
+  The entire build, test, and runtime environment has been ported to
+  Windows (98 through XP) through the use of Cygwin.  All
+  environmental variables mentioned in this and related documents
+  should be specified in POSIX style (e.g., JAVAFE_ROOT should be
+  something like /home/kiniry/Javafe, *not* C:\cygwin\home\kiniry).
+  The build, test, and run scripts all automatically convert
+  POSIX-style paths and filenames into Windows-style versions.
+
+  Unfortunately, various Cygwin tools do not work well on Windows
+  when paths that include whitespace are used.  Please avoid using
+  such paths at this time.  E.g., do *not* install Javafe in
+  C:\Program Files\etc.   
+
+  JavaFE will not currently run on Windows 95 because the most
+  recent version of Java that is available for Windows 95 is 1.3.1.
+  While we use JDK 1.4 for JavaFE development, Javafe can be
+  built with JDK 1.3, but unfortunately, at this point in time the
+  spec files that come with Javafe and JML 4 are JDK 1.4-specific
+
+The user (you) must specify two variables.  These are needed both in
+building and in executing.  You can specify them either:
+
+a) as environment variables (defined in your login script or by
+   defining them explicitly either manually or by invoking a setup
+   script); these will then apply both to Makefiles and to scripts
+   that are run
+
+b) for Makefiles, by creating a file $JAVAFE_ROOT/Makefile.local
+   containing the definitions of the variables (see
+   Makefile.local.template for a starting point).
+
+The required variables are:
+
+JAVAFE_ROOT - defined to be the absolute path to the Javafe directory
+
+        The Makefile and shell scripts make a guess at an appropriate
+	value for some platforms, but defining it yourself will avoid
+	the warning messages.
+
+Additionally the following variable is important:
+
+JAVAFE_SPECS - defined to be a classpath containing directories or jar
+	files of JML specification files.  If there is no definition
+	provided, the executables will use the location of a snapshot
+	of the specifications from the JML project that is included in
+	the JavaFE release.
+
+	You may instead want to obtain a current copy of the
+	specification files provided by the JML project and define
+	this variable to reference them.  If you use the JML
+	specification files (in .../JML/JML2/specs) you also need the
+	model files that are rooted at .../JML/JML2.  You may also
+	want to include in this classpath any specification files for
+	your own projects.
+
+        We do *not* suggest that you use the JML2 specifications until
+        we have full support for provers more powerful than Simplify,
+        as reasoning about the full JML specs regularly pushes
+        Simplify beyond the limits of its capability.  Thus, we
+        strongly suggest you do *not* set ESC_SPECS to any value.
+
+	[JavaFE will append this classpath to the sourcepath if a
+	sourcepath is specified; otherwise it is appended to the
+	classpath used to find the files on which ESC/Java2 operates.]
+
+When a release is built, these two variables are used:
+
+JAVAFE_PROJECT - the name of the project, e.g., 'ESCTools'
+JAVAFE_VERSION - the version number
+
+The two values of the two variables are used to create a string that
+becomes part of the name of the created tar file and is part of the
+version information produced by the JavaFE tool when it starts
+execution.
+
+There are other variables you may set to alter your working
+environment.  Those that are executables must be on your path:
+
+JAVA - set to the name of a java VM executable.  By default this is
+       'java'.
+
+JAVAC - set to the name of a java compiler.  By default this is
+       'javac', but an alternate value might be, for example, 'jikes'
+
+JAVADOC - set to the name of the javadoc executable.  By default this
+       is 'javadoc', but you may want to use 'jmldoc' if you have a
+       copy of the JML project.
+
+JDK_BINARIES - the value is an alternate set of directories (in
+      classpath form) that will be used in place of the system defined
+      set of Java system class files.  Typically the tools can find
+      this out from the Java environment.
+
+JDK_SOURCES - the directory that contains the source files for the
+      Java system classes.  This is currently just used in testing,
+      though it could also be used in static checking.
+
+JUNIT_LIB - the location of the JUnit library, used in compiling and
+      running some of the tests that are JUnit based.  There is a
+      version of the JUnit library included in the CVS distribution,
+      but you can substitute your own by defining this variable.  All
+      testing is performed with the version included in CVS.
+
+ANT_LIB - the location of the Ant jar file, used in compiling the
+      Javafe Ant task.
+
+----------------------------------------------------------------------------
+
+BUILDING A WORKING VERSION OF Javafe FROM Subversion SOURCES
+
+The following tools are *necessary* to build JavaFE from source:
+
++-----------------------+----------+-------+---------+----------+
+|A C compiler,          |A Java    |awk    |bash     |bzcat     |
+|preferably a recent    |Developers|       |         |bzip2     |
+|version of gcc         |Kit       |       |         |          |
+|                       |          |       |         |          |
+|                       |          |       |         |          |
+|                       |          |       |         |          |
++-----------------------+----------+-------+---------+----------+
+|cat                    |cmp       |csh    |svn      |diff      |
++-----------------------+----------+-------+---------+----------+
+|flex                   |(e)grep   |ls     |make     |openssh   |
+|                       |          |       |         |          |
++-----------------------+----------+-------+---------+----------+
+|patch                  |sh        |tcsh   |tee      |sed       |
+|                       |          |       |         |          |
++-----------------------+----------+-------+---------+----------+
+|xargs                  |          |       |         |          |
+|                       |          |       |         |          |
++-----------------------+----------+-------+---------+----------+
+
+The base install for Cygwin includes all of these tools but for
+svn, flex, gcc, make, openssh, patch, and tcsh.
+
+The following tools are *optional*, but we believe will make your
+development a more pleasant one:
+
++-------+-------+-------+
+|ctags  |etags  |wc     |
++-------+-------+-------+
+
+With the environment set up as described above, you should be able to
+execute, while in the $JAVAFE_ROOT directory (in either a bash or
+tcsh shell, and likely others):
+
+	make clean build test
+
+The clean target deletes any generated files.  There should not be any
+in a new install, but it is a good idea to build from a 'clean slate'
+after any major modifications.  Compiling is reasonably quick.
+
+The build target generates a working version of the software.  This
+target does build incrementally, speeding development for any minor
+modifications.
+
+Other targets:
+
+alltests - does test + some additional time-consuming or not yet
+           debugged tests.  This executes all tests known.
+
+docs - generates the documentation (including javadoc pages).  Note
+       that nearly all of the JavaFE source code is NOT annotated
+       with Javadoc comments as this was seemingly the standard
+       practice at SRC.  We have been lazily rewriting the
+       documentation using Javadoc and correct XHTML, but this task
+       will take some time to complete.
+
+releases - generates a release package (uses the variables JAVAFE_PROJECT
+          and JAVAFE_VERSION)
+
+The make targets above can be executed in each of the subsystem
+directories.  This avoids running make over all of the subsystems just
+to build an individual one.  Building all of the subsystems is fairly
+fast, but testing is time-consuming.
+
+There are in addition Makefiles in various subdirectories of the major
+subsystems.  However, these have not been edited to be used
+stand-alone, for the most part.  Where those Makefiles are usable
+directly, there are comments in the Makefile to that effect.
+
+Additionally, there is a nearly complete Ant build.xml file for all
+the Java parts of Javafe in the top-level directory.  Use
+at your own risk, as it is not currently being kept up-to-date.
+
+----------------------------------------------------------------------------

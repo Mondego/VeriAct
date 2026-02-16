@@ -1,0 +1,22 @@
+TestComparable.java:10: Warning: Possible assignment of null to variable declared non_null (NonNull)
+            c.compareTo(null); // --> warn NonNull
+                       ^
+Associated declaration is "ESCTOOLS_ROOT/specs/java/lang/Comparable.spec", line 68, col 35:
+    /*@ pure @*/ int compareTo(/*@ non_null */ Object o);
+                                   ^
+TestComparable.java:14: Warning: Possible assertion failure (Assert)
+        //@ assert false; // TEST FOR CONSISTENCY
+            ^
+TestComparable.java:25: Warning: Possible assertion failure (Assert)
+        //@ assert false; // TEST FOR CONSISTENCY
+            ^
+Execution trace information:
+    Routine call returned exceptionally in "TestComparable.java", line 20, col 7.
+
+TestComparable.java:31: Warning: Possible assertion failure (Assert)
+        //@ assert false; // TEST FOR CONSISTENCY
+            ^
+TestComparable.java:42: Warning: Possible assertion failure (Assert)
+        //@ assert false; // TEST FOR CONSISTENCY
+            ^
+5 warnings

@@ -1,0 +1,126 @@
+This document contains a list of all error messages produced by
+javafe.tc.FlowInsensitiveChecks.
+
+
+
+
+FlowInsensitiveChecks.checkTypeDeclaration
+------------------------------------------
+
+An abstract method cannot include a body
+
+A native method cannot include a body
+
+Method must include a body unless it is declared abstract or native
+
+
+
+FlowInsensitiveChecks.checkStmt
+-------------------------------
+
+Enclosing statement labelled '...' is not a while, do, or for statement
+Enclosing statement labelled '...' is not a switch, while, do or for statement
+
+No enclosing unlabelled while, do, or for statement
+No enclosing unlabelled switch, while, do, or for statement
+
+No enclosing while, do, or for statement labelled '...'
+No enclosing switch, while, do, or for statement labelled '...'
+
+Returns are not allowed in a static initializer
+
+This routine is not expected to return a value
+
+Invalid return type for this method
+
+This routine must return a value
+
+Cannot throw values of type ...
+
+Exception must be caught by an enclosing try or throws clause
+
+Non-constant value in switch label
+
+Case label value (...) not assignable to the switch expression type ...
+
+Duplicate case label ... in switch statement
+
+Duplicate default label in switch statement
+
+Label '...' already used in this scope
+
+Declared type of a catch formal parameter must be a subclass of Throwable
+
+
+FlowInsensitiveChecks.checkInit
+-------------------------------
+
+Unexpected array value in initializer
+
+
+FlowInsensitiveChecks.checkExpr
+-------------------------------
+
+Attempt to index an non-array value
+
+Array index is not an integer
+
+The type in a new expression must be a class
+
+Cannot create an instance of an abstract class
+
+Incompatible arguments to the ?: operator
+
+Non-reference type in instanceof operation
+
+Invalid instanceof operation: A value of type ... can never be an instance of ...
+
+Bad cast from ... to ...
+
+Argument of increment/decrement operation is not a location
+
+Ambiguous method invocation
+
+
+FlowInsensitiveChecks.checkObjectDesignator
+-------------------------------------------
+
+Keyword super cannot be used in a static context
+
+Can't use keyword super in an interface
+
+FlowInsensitiveChecks.checkBinaryExpr
+-------------------------------------
+
+Invalid types (... and ...) in equality comparison
+
+Left hand side of assignment operator is not a location
+
+Value of type ... cannot be assigned to location of type ...
+
+Incompatible types for assignment operation 
+
+
+FlowInsensitiveChecks.checkIntegral
+-----------------------------------
+Expected an integral type, got ...
+
+
+FlowInsensitiveChecks.checkNumeric
+----------------------------------
+Expected a numeric type, got ...
+
+
+FlowInsensitiveChecks.checkType
+-------------------------------
+Bad type ..., expected ...
+
+FlowInsensitiveChecks.reportLookupException
+-------------------------------
+
+No such ... in type ...
+
+Ambiguous ... in type ...
+
+No ... matching given argument types
+

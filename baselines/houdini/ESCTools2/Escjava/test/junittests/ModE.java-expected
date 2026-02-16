@@ -1,0 +1,55 @@
+ModE.java:37: Warning: Possible violation of modifies clause (Modifies)
+                ModE e = new ModE();  // WARNING
+                                 ^
+Associated declaration is "ModE.java", line 7, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "ModE.java", line 35, col 5:
+        //@ modifies \nothing;
+            ^
+ModE.java:38: Warning: Possible violation of modifies clause (Modifies)
+                e.me();  // WARNING
+                    ^
+Associated declaration is "ModE.java", line 21, col 14:
+        //@ modifies \everything;
+                     ^
+Associated declaration is "ModE.java", line 35, col 5:
+        //@ modifies \nothing;
+            ^
+ModE.java:39: Warning: Possible violation of modifies clause (Modifies)
+                e = new ModE(1,2,3);  // WARNING
+                            ^
+Associated declaration is "ModE.java", line 19, col 1:
+        public ModE(int i, int j, int k);
+        ^
+Associated declaration is "ModE.java", line 35, col 5:
+        //@ modifies \nothing;
+            ^
+ModE.java:40: Warning: Possible violation of modifies clause (Modifies)
+                e.md();  // WARNING
+                    ^
+Associated declaration is "ModE.java", line 30, col 1:
+        public void md();
+        ^
+Associated declaration is "ModE.java", line 35, col 5:
+        //@ modifies \nothing;
+            ^
+ModE.java:47: Warning: Possible violation of modifies clause (Modifies)
+                e = new ModE(5);  // WARNING
+                            ^
+Associated declaration is "ModE.java", line 10, col 14:
+        //@ modifies \not_specified;
+                     ^
+Associated declaration is "ModE.java", line 44, col 5:
+        //@ modifies \nothing;
+            ^
+ModE.java:48: Warning: Possible violation of modifies clause (Modifies)
+                e.mns();  // WARNING
+                     ^
+Associated declaration is "ModE.java", line 27, col 14:
+        //@ modifies \not_specified;
+                     ^
+Associated declaration is "ModE.java", line 44, col 5:
+        //@ modifies \nothing;
+            ^
+6 warnings

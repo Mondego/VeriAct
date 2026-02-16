@@ -1,0 +1,4 @@
+Access.java:27: Error: Cannot access this field
+    static long q = Top.A.a;              // error
+                          ^
+1 error

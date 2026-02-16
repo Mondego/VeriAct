@@ -1,0 +1,15 @@
+; === Axiom for maps added by Shaz
+(BG_PUSH
+ (FORALL (f x t) 
+	(PATS (MPAT (is f (map t)) (select f x)))
+	 (IMPLIES (is f (map t)) (is (select f x) t))))
+; === End of Shaz's addition
+
+
+; Fix suggested by Jim Saxe for the problem in DekkerLock where 
+; adding or removing asserts caused other asserts to break
+(BG_PUSH
+      (FORALL (a)
+        (PATS (boolNot a))
+        (OR (EQ a |@true|) (EQ (boolNot a) |@true|))))
+; end of fix

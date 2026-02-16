@@ -1,0 +1,148 @@
+ESC/Java version VERSION
+src|test|resources|UndeclaredInheritedException.java: Caution: Using given file as the .java file, even though it is not the java file for UndeclaredInheritedException on the classpath
+    [TIME]
+
+UndeclaredInheritedException ...
+  Prover started:TIME
+    [TIME]
+
+UndeclaredInheritedException: UndeclaredInheritedException() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException: q(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:8: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException: qx(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:16: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(o); // WARNING - because result is undefined with o ...
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException: q1(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredInheritedException: q1x(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredInheritedException: q3(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:38: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException: q3x(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:45: Warning: Possible assertion failure (Assert)
+    //@ assert x.m(oo); // WARNING - not sure oo is non-null
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException: q4(java.lang.Object) ...
+    [TIME]  passed
+
+UndeclaredInheritedException: q4x(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:65: Warning: Possible unexpected exception (Exception)
+}  // WARNING - an exception might be thrown
+^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredInheritedException.java", line 64, col 6.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException: rr(UndeclaredInheritedException$NEx) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:72: Warning: Possible assertion failure (Assert)
+        //@ assert false;
+            ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+UndeclaredInheritedException: rrx(UndeclaredInheritedException$Ex) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:87: Warning: Possible assertion failure (Assert)
+//@ assert false;  // WARNING
+    ^
+Execution trace information:
+    Routine call returned exceptionally in "src|test|resources|UndeclaredInheritedException.java", line 82, col 10.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredInheritedException$SNEx ...
+    [TIME]
+
+UndeclaredInheritedException$SNEx: SNEx() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException$SNEx: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:102: Warning: Possible violation of modifies clause (Modifies)
+      if (o == null) throw new NullPointerException();
+                                                   ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/NullPointerException.class":
+Associated declaration is "src|test|resources|UndeclaredInheritedException.java", line 94, col 4:
+    //@ public normal_behavior ...
+    ^
+Execution trace information:
+    Executed then branch in "src|test|resources|UndeclaredInheritedException.java", line 102, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredInheritedException$NEx ...
+    [TIME]
+
+UndeclaredInheritedException$NEx: NEx() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException$NEx: m(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+
+UndeclaredInheritedException$SEx ...
+    [TIME]
+
+UndeclaredInheritedException$SEx: SEx() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException$SEx: m(java.lang.Object) ...
+------------------------------------------------------------------------
+src|test|resources|UndeclaredInheritedException.java:126: Warning: Possible violation of modifies clause (Modifies)
+      if (o == null) throw new NullPointerException();
+                                                   ^
+Associated declaration is "/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar:java/lang/NullPointerException.class":
+Associated declaration is "src|test|resources|UndeclaredInheritedException.java", line 118, col 4:
+    //@ public normal_behavior ...
+    ^
+Execution trace information:
+    Executed then branch in "src|test|resources|UndeclaredInheritedException.java", line 126, col 21.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+UndeclaredInheritedException$Ex ...
+    [TIME]
+
+UndeclaredInheritedException$Ex: Ex() ...
+    [TIME]  passed immediately
+
+UndeclaredInheritedException$Ex: m(java.lang.Object) ...
+    [TIME]  passed immediately
+  [TIME total]
+1 caution
+9 warnings

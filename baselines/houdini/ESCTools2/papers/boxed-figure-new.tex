@@ -1,0 +1,113 @@
+%% boxed-figure-new.tex
+%
+% formatting boxed displays
+
+%% some parameters
+\newlength{\BFIGURESKIP}
+\setlength{\BFIGURESKIP}{3mm}
+\newlength{\BFIGURELINEHEIGHT}
+\setlength{\BFIGURELINEHEIGHT}{0.3pt}
+
+%% Use the following for a line at the top of a figure,
+%% it is raised by \BFIGURESKIP
+%% The \par at the end seems to be needed for postscript figures that follow.
+\newcommand{\BTOPFIGURELINE}{%
+{\rule[\BFIGURESKIP]{\columnwidth}{\BFIGURELINEHEIGHT}}\par%
+}
+
+%% A line, with not raised
+\newcommand{\BFIGURELINE}{
+{\rule{\columnwidth}{\BFIGURELINEHEIGHT}}
+% \begin{flushleft}\rule{\columnwidth}{\BFIGURELINEHEIGHT}\end{flushleft}%
+}
+
+%% regular figures, the width of the current column of text
+\newenvironment{BFIGURE}{
+\begin{figure}
+\BFIGURELINE
+}{%
+\par\vskip-\parskip
+\BFIGURELINE%
+\end{figure}
+}
+
+%% regular figures, the width of two column of text, at the top of the page
+\newenvironment{BFIGUREDB}{
+\begin{figure*}[t!]
+}{%
+\par\vskip-\parskip
+\BFULLFIGURELINE%
+\end{figure*}
+}
+
+%% figures on a page by themselves
+\newenvironment{BFIGUREP}{
+\begin{figure}[p!]
+\BFIGURELINE
+}{%
+\par\vskip-\parskip
+\BFIGURELINE%
+\end{figure}
+}
+
+%% figures at the top of the page
+\newenvironment{BFIGURET}{
+\begin{figure}[t!]
+\BFIGURELINE
+}{%
+\par\vskip-\parskip
+\BFIGURELINE%
+\end{figure}
+}
+
+%% figures at the bottom of the page
+\newenvironment{BFIGUREB}{
+\begin{figure}[b!]
+\BTOPFIGURELINE
+}{%
+\par\vskip-\parskip
+\BFIGURELINE%
+\end{figure}
+}
+
+%% A line, with not raised
+\newcommand{\BFULLFIGURELINE}{
+{\rule{\textwidth}{\BFIGURELINEHEIGHT}}
+% \begin{flushleft}\rule{\textwidth}{\BFIGURELINEHEIGHT}\end{flushleft}%
+}
+
+%% full page figures, the width of the whole page
+\newenvironment{BFIGURE*}{
+\begin{figure*}
+\BFULLFIGURELINE
+}{%
+\par\vskip-\parskip
+\BFULLFIGURELINE%
+\end{figure*}
+}
+
+%% full page figures, on a page by themselves
+\newenvironment{BFIGUREP*}{
+\begin{figure*}[p!]
+\BFULLFIGURELINE
+}{%
+\par\vskip-\parskip
+\BFULLFIGURELINE%
+\end{figure*}
+}
+
+%% full page figures, at the top of a page
+\newenvironment{BFIGURET*}{
+\begin{figure*}[t!]
+\BFULLFIGURELINE
+}{%
+\par\vskip-\parskip
+\BFULLFIGURELINE%
+\end{figure*}
+}
+
+%% another way to do horizontal lines
+\newcommand{\UNSPACEFORBOX}{\vspace{-\BFIGURESKIP}}
+\newcommand{\HLINE}{\UNSPACEFORBOX\BFIGURELINE\UNSPACEFORBOX}
+
+%% end of boxed-figure-new.tex

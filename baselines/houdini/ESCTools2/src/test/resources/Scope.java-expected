@@ -1,0 +1,45 @@
+ESC/Java version VERSION
+src|test|resources|Scope.java: Caution: Using given file as the .java file, even though it is not the java file for Scope on the classpath
+    [TIME]
+
+Scope ...
+src|test|resources|Scope.java:26: Caution: Variable dupj might not have been initialized
+        static public int dupj; 
+                          ^
+src|test|resources|Scope.java:29: Caution: Variable dupmm might not have been initialized
+        public int dupmm;
+                   ^
+src|test|resources|Scope.java:3: Error: Another field named 'k' already exists in this type
+//@     model int k; // ERROR - duplicates a java field
+                  ^
+src|test|resources|Scope.java:9: Associated declaration: 
+        public int k; // ERROR - duplicates a jml model field
+                   ^
+src|test|resources|Scope.java:12: Error: Another field named 'i' already exists in this type
+        ghost public int i; // ERROR - duplicates a java field
+                         ^
+src|test|resources|Scope.java:5: Associated declaration: 
+        public int i; // ERROR - duplicates a jml ghost field
+                   ^
+src|test|resources|Scope.java:18: Error: Ambiguous field for type Scope
+        //@ ghost public int z = dup; // ERROR - dup is in two jml par ...
+                                 ^
+src|test|resources|Scope.java:19: Error: Ambiguous field for type Scope
+        public int zz = dupj; // ERROR - dupj is in two java parents
+                        ^
+src|test|resources|Scope.java:21: Error: Ambiguous field for type Scope
+        //@ ghost public int zzzz = dupm; // ERROR - is in a java and  ...
+                                    ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+ScopeI ...
+  [TIME total]
+
+ScopeII ...
+  [TIME total]
+
+ScopeS ...
+  [TIME total]
+4 cautions
+5 errors

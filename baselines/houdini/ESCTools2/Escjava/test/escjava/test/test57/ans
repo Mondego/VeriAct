@@ -1,0 +1,77 @@
+DttfsaDoesntEvenParse0.java:2: Fatal error: Expected a Name, got ')'
+  //@ invariant \dttfsa(); // fails (too few arguments)
+                        ^
+1 error
+DttfsaDoesntEvenParse1.java:2: Fatal error: Unexpected token ')', expected ','
+  //@ invariant \dttfsa(int); // fails (too few arguments)
+                           ^
+1 error
+DttfsaDoesntEvenParse2.java:3: Fatal error: Can't find type named "x"
+  //@ invariant \dttfsa(x, x); // fails (expecting type)
+                        ^
+1 error
+DttfsaDoesntEvenParse3.java:3: Fatal error: Can't find type named "UndeclaredType"
+  //@ invariant \dttfsa(UndeclaredType[], x); // fails (expecting type ...
+                        ^
+1 error
+DttfsaTypecheck.java:4: Error: The second argument to \dttfsa must be a String literal
+  //@ invariant \dttfsa(int, x); // fails (expecting String literal)
+                             ^
+DttfsaTypecheck.java:4: Error: Cannot convert int to boolean
+  //@ invariant \dttfsa(int, x); // fails (expecting String literal)
+                ^
+DttfsaTypecheck.java:5: Error: The second argument to \dttfsa must be a String literal
+  //@ invariant \dttfsa(Object[], x); // fails (expecting String liter ...
+                                  ^
+DttfsaTypecheck.java:5: Error: Cannot convert java.lang.Object[] to boolean
+  //@ invariant \dttfsa(Object[], x); // fails (expecting String liter ...
+                ^
+DttfsaTypecheck.java:6: Error: The function \dttfsa requires exactly 3 arguments when the second argument is "identity"
+  //@ invariant \dttfsa(int, "identity"); // fails (expecting 3 args)
+                ^
+DttfsaTypecheck.java:6: Error: Cannot convert int to boolean
+  //@ invariant \dttfsa(int, "identity"); // fails (expecting 3 args)
+                ^
+DttfsaTypecheck.java:7: Error: The function \dttfsa requires exactly 3 arguments when the second argument is "identity"
+  //@ invariant \dttfsa(int, "identity", x, x); // fails (expecting 3  ...
+                ^
+DttfsaTypecheck.java:7: Error: Cannot convert int to boolean
+  //@ invariant \dttfsa(int, "identity", x, x); // fails (expecting 3  ...
+                ^
+DttfsaTypecheck.java:9: Error: Cannot convert int to boolean
+  //@ invariant \dttfsa(int, "f", x); // fails (expecting boolean)
+                ^
+DttfsaTypecheck.java:10: Error: Cannot convert void to boolean
+  //@ invariant \dttfsa(void, "f", x); // fails (expecting boolean)
+                ^
+DttfsaTypecheck.java:11: Error: Cannot convert int to boolean
+  //@ invariant \dttfsa(int, "identity", x); // fails (expecting boole ...
+                ^
+DttfsaTypecheck.java:18: Error: Undefined variable 'y'
+  //@ invariant \dttfsa(boolean, "f", x, y);  // fails (doesn't know y ...
+                                         ^
+Caution: Turning off extended static checking due to type error(s)
+1 caution
+12 errors
+Dttfsa.java:5: Warning: Possible assertion failure (Assert)
+    //@ assert (boolean)\dttfsa(boolean, "dude", x-1, x+1);
+        ^
+Dttfsa.java:21: Warning: Possible assertion failure (Assert)
+    //@ assert \dttfsa(boolean, "is", x, \dttfsa(\TYPE, "T_double"));
+        ^
+Dttfsa.java:31: Warning: Possible assertion failure (Assert)
+    //@ assert !\dttfsa(boolean, "<", x-1, x+1);  // fails
+        ^
+Dttfsa.java:37: Warning: Possible assertion failure (Assert)
+    //@ assert \dttfsa(boolean, ">", x-1, x+1);  // fails
+        ^
+Dttfsa.java:47: Warning: Possible assertion failure (Assert)
+    //@ assert (boolean)!\dttfsa(boolean, "identity", b); // fails
+        ^
+Dttfsa.java:53: Warning: Possible assertion failure (Assert)
+    //@ assert !(boolean)\dttfsa(boolean, "identity", b); // fails
+        ^
+Dttfsa.java:59: Warning: Possible assertion failure (Assert)
+    //@ assert (boolean)\dttfsa(boolean, "identity", !b); // fails
+        ^
+7 warnings

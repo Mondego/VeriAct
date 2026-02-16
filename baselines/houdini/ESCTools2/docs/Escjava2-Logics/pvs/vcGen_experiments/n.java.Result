@@ -1,0 +1,27 @@
+testTheorem.1 :  
+
+{-1}  (y_6!1 = 0)
+[-2]  elems_pre!1 = elems
+[-3]  state_pre!1 = state!1
+  |-------
+
+Rule? (postpone)
+Postponing testTheorem.1.
+
+testTheorem.3 :  
+
+[-1]  elems_pre!1 = elems
+[-2]  state_pre!1 = state!1
+  |-------
+{1}   java_lang_Throwable__stackTrace(state!1, brokenObj_1!2) =
+       getStackTrace__state(state!1, brokenObj_1!2)
+
+Rule? (postpone)
+Postponing testTheorem.3.
+
+testTheorem.4 :  
+
+{-1}  (y_6!1 = 0)
+[-2]  elems_pre!1 = elems
+[-3]  state_pre!1 = state!1
+  |-------

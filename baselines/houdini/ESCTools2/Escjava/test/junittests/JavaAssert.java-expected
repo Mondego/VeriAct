@@ -1,0 +1,93 @@
+ESC/Java version VERSION
+    [TIME]
+
+JavaAssert ...
+  Prover started:TIME
+    [TIME]
+
+JavaAssert: nothing() ...
+    [TIME]  passed
+
+JavaAssert: trivial() ...
+------------------------------------------------------------------------
+JavaAssert.java:35: Warning: Possible assertion failure (Assert)
+        assert false;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: constant_boolean_expression() ...
+------------------------------------------------------------------------
+JavaAssert.java:41: Warning: Possible assertion failure (Assert)
+        assert true == false;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: assert_matches_precondition(int) ...
+    [TIME]  passed
+
+JavaAssert: assert_weaker_than_precondition(int) ...
+    [TIME]  passed
+
+JavaAssert: assert_stronger_than_precondition(int) ...
+------------------------------------------------------------------------
+JavaAssert.java:60: Warning: Possible assertion failure (Assert)
+        assert p >= 1;
+        ^
+------------------------------------------------------------------------
+JavaAssert.java:61: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "JavaAssert.java", line 58, col 8:
+    //@ ensures false;
+        ^
+Execution trace information:
+    Executed implicit return in "JavaAssert.java", line 61, col 4.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: constant_arithmetic(int, int) ...
+    [TIME]  passed
+
+JavaAssert: constant_arithmetic_dual(int, int) ...
+------------------------------------------------------------------------
+JavaAssert.java:75: Warning: Possible assertion failure (Assert)
+        assert p + q == 11;
+        ^
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: non_trivial_arithmetic(int, int) ...
+------------------------------------------------------------------------
+JavaAssert.java:86: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "JavaAssert.java", line 82, col 8:
+    //@ ensures 0 <= \result && \result <= 1000*1000;
+        ^
+Execution trace information:
+    Executed return in "JavaAssert.java", line 85, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: non_trivial_arithmetic_overflow(int, int) ...
+------------------------------------------------------------------------
+JavaAssert.java:97: Warning: Postcondition possibly not established (Post)
+    }
+    ^
+Associated declaration is "JavaAssert.java", line 93, col 8:
+    //@ ensures false;
+        ^
+Execution trace information:
+    Executed return in "JavaAssert.java", line 96, col 8.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+JavaAssert: JavaAssert() ...
+    [TIME]  passed
+  [TIME total]
+7 warnings

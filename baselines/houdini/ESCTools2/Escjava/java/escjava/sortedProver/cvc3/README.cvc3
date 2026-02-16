@@ -1,0 +1,79 @@
+This is the integration of cvc3 into the sortedProver framework.
+
+It 'works' for all cases for which the sorted version of simplify works,
+i.e. a syntactically correct verification condition is created and passed
+to the solver.
+
+Cvc3 is almost always as precise as simplify, i.e. it returns the same answer
+(valid, unknown), and (mostly) the same counter examples. It is slightly slower
+overall, mostly on invalid cases because it gives up later than simplify.
+
+Currently, cvc3 is basically using simplify's background predicate translated
+into a sorted version, where only the built-in theories for Int, Real, and
+Array are used.
+
+Evaluation was performed on EscJava's test suite:
+Escjava/test/escjava/test/
+
+
+Installation
+------------
+
+Currently a development version of Cvc3 is needed,
+the next release (after 1.5) should work as well:
+http://www.cs.nyu.edu/acsys/cvc3/download.html
+
+Cvc3 is used as a java library by ESCJava, so it has to be built accordingly
+as explained in the Cvc3 README. In short, this means building Cvc3 with:
+
+./configure --enable-java --enable-dynamic --with-java-home=<path to jdk>
+make
+
+where jdk 1.6 is recommended, and >= 1.5 required.
+
+This builds the libraries
+  libcvc3.so*, in lib
+and
+  libcvc3jni.so*, libcvc3.jar in java/lib
+
+
+These libraries have to be installed in /usr/local/lib to be found by ESCTools,
+or, alternatively, in the ESCTools configuration file Makefile.defs
+the variable CVC3_LIB_PATH has to be modified to point to them.
+
+Likewise, in release-files/escj the variable CVC3_LIB might need to be modified
+to point to libcvc3.jar.
+
+LD_LIBRARY_PATH might have to set to point to the .so libraries.
+
+
+Flags
+-----
+
+Like all provers in the sorted vc framework, cvc3 is called with:
+
+  escj -svcg cvc3:<flag>=<value> <java file>
+
+
+Cvc3 accepts the following flags:
+
+- TimeLimit (Default: 1)
+
+A soft timeout after which cvc3 tries to terminate soon (with the answer
+unknown).
+
+
+- CounterExamples (Default: 1)
+
+The maximum number of counterexample to search for.
+
+
+- ManualTriggers (Default: True)
+
+Cvc3 uses manual triggers (mostly the same as simplify).
+
+
+- DumpExt (Default: "")
+
+Instead of running Cvc3 on a problem, just dump the problem in cvc3's input
+format to the given file.

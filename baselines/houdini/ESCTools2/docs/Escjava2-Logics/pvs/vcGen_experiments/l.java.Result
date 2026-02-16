@@ -1,0 +1,14 @@
+[-1]  objectState_pre_5_35!1 =
+       asField(asField(asField(objectState_5_35!1,
+                               T_org_jmlspecs_lang_JMLDataGroup!1),
+                       T_org_jmlspecs_lang_JMLDataGroup!1),
+               T_org_jmlspecs_lang_JMLDataGroup!1)
+[-2]  objectState_5_35!1 =
+       asField(objectState_5_35!1, T_org_jmlspecs_lang_JMLDataGroup!1)
+[-3]  theInteger_pre_40_33!1 =
+       asField(asField(asField(theInteger_40_33!1, T_int), T_int), T_int)
+[-4]  theInteger_40_33!1 = asField(theInteger_40_33!1, T_int)
+[-5]  elems_pre!1 = elems
+[-6]  state_pre!1 = state!1
+[-7]  (x_6!1 = java_null)
+  |-------

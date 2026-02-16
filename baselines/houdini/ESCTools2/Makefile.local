@@ -1,0 +1,88 @@
+# -*- mode: Makefile -*-
+# This file is part of the 2003 Revision of the ESC Tools
+# Author: David R. Cok
+
+# This file is meant to be included by Makefiles.
+# It contains variable definitions that are local to 
+# a particular environment or user.
+# Each definition is surrounded by ifndef/endif 
+# or defined with ?= so that
+# the variables can be defined as environment variables
+# in the shell, preempting these assignments, if the user so desires.
+
+# Each variable is 'export'ed so that it applies to submakes.
+
+##### You must have values for ESCTOOLS_ROOT and SIMPLIFY defined somehow,
+##### either in the environment, on the Make command line or in a Makefile.local
+##### Other variables have reasonable defaults.
+
+## This must be the directory containing the various ESC tools, 
+## For example, it must contain this file (Makefile.local), 
+## the top-level Makefile, and the directories Javafe, EscJava, (among others)
+export ESCTOOLS_ROOT ?= /home/max/Documents/JMLGPT/ESCTools2
+
+## This defines the version of Simplify to be used (the executables are
+## platform dependent).  See the selection in 
+## ${ESCTOOLS_ROOT}/Escjava/release/master/bin and set the variable to the 
+## name of, not the path to, the most recent version for the platform you are 
+## on.  If there is not an appropriate binary you will not be able to do static
+## checking (but you can check files for syntactic errors); new binaries
+## require new builds of Simplify (see Simplify/README.txt).
+export SIMPLIFY ?= Simplify-1.5.4.linux
+
+## Define the location of the source files for all JDKs installed.
+## These are only used in tests in which the Javafe lexer/parser is
+## exercised by running it on all the JDK sources, if they are
+## available.  The JDK self-typecheck rules also look for the
+## jar files associated with each release (e.g., classes.jar, rt.jar,
+## and ui.jar) in a directory called "jars" under each of the following
+## directories.  If you do not have these jars, you will see some
+## additional typechecking error (type not found) because Sun does
+## not ship the source code to all classes upon which their source
+## depends.
+export JDK_SOURCE_DIR    = /usr/local/Java/src
+export JDK_PRE14_SOURCES = ${JDK_SOURCE_DIR}/jdk-1.0 ${JDK_SOURCE_DIR}/jdk-1.1 \
+                           ${JDK_SOURCE_DIR}/jdk-1.2 ${JDK_SOURCE_DIR}/jdk-1.3
+export JDK_14_SOURCES    = ${JDK_SOURCE_DIR}/jdk-1.4
+
+# The current sources, if any
+export JDK_SOURCES       = ${JDK_SOURCE_DIR}/jdk-1.4  
+
+## Define the location of the class files for the JDK.
+## This can be a classpath of multiple locations (e.g. on MacOSX), but
+## may be simply the rt.jar file.
+## Typically the java tools are prebuilt knowing the location of the system
+## class files, but you can set this variable if you need to alter the
+## set of files used.
+###export JDK_BINARIES ?= ${JAVA_HOME}/jre/lib/rt.jar
+export JDK_BINARIES ?= 
+
+## If you have a JML development directory structure on your machine,
+## you may set this variable to its root.  I.e., this directory
+## contains the directories "bin", "bin-for-developers", etc.
+#export JML_ROOT = /Users/cok/JML/JML2
+
+## Define the location of the junit.jar file.  (This can alternatively
+## be the location of the junit class files.)  This is only needed to
+## run some of the tests, which use JUnit.  A version of JUnit is also
+## supplied as part of the ESCTools distribution.
+export JUNIT_LIB ?= ${ESCTOOLS_ROOT}/Utils/junit.jar
+
+## Define the location of the ant.jar file. (This can alternatively
+## be the location of the Ant class files.)  This is only needed to
+## build the ESC/Java2 Ant task.
+export ANT_LIB ?= ${ESCTOOLS_ROOT}/Utils/ant.jar
+
+## Other optional definitions
+
+## Name of the executable to run java programs (must be on the PATH)
+#export JAVA ?= java
+
+## Name of the executable to compile java programs (must be on the PATH)
+#export JAVAC ?= javac
+
+## Name of the executable to generate javadoc html (must be on the PATH)
+#export JAVADOC ?= javadoc
+
+## Defines paths necessary for CVC3
+export CVC3_LIB_PATH ?= ${HOME}/local/lib/cvc3

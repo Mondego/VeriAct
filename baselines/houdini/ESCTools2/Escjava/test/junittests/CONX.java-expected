@@ -1,0 +1,20 @@
+CONX.java:18: Error: There is no assignable clause allowing this method call
+                Object o = new CONX(0); // WARNING
+                                   ^
+CONX.java:40: Associated declaration: 
+        //@ modifies i;
+                     ^
+CONX.java:16: Associated declaration: 
+        //@ modifies \nothing;
+            ^
+CONX.java:28: Warning: Possible violation of modifies clause (Modifies)
+                Object oo = new CONX(o); // WARNING
+                                    ^
+Associated declaration is "CONX.java", line 48, col 14:
+        //@ modifies CONX.*;
+                     ^
+Associated declaration is "CONX.java", line 26, col 5:
+        //@ modifies \nothing;
+            ^
+1 warning
+1 error

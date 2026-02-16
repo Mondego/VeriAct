@@ -1,0 +1,8 @@
+
+public class W {
+
+	//@ ghost int i = 0;
+
+	public int j = 0;
+	public int k;
+}

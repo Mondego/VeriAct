@@ -1,0 +1,146 @@
+ESC/Java version VERSION
+    [TIME]
+
+Constraint ...
+  Prover started:TIME
+    [TIME]
+
+Constraint: m() ...
+    [TIME]  passed
+
+Constraint: mm() ...
+------------------------------------------------------------------------
+Constraint.java:15: Warning: Possible violation of object constraint at exit (Constraint)
+        } // ERROR
+        ^
+Associated declaration is "Constraint.java", line 7, col 5:
+        //@ constraint i == \old(i);
+            ^
+Execution trace information:
+    Executed implicit return in "Constraint.java", line 15, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+Constraint: Constraint() ...
+    [TIME]  passed
+  [TIME total]
+
+ConstraintA ...
+    [TIME]
+
+ConstraintA: ConstraintA() ...
+    [TIME]  passed immediately
+
+ConstraintA: m() ...
+    [TIME]  passed
+
+ConstraintA: mm() ...
+------------------------------------------------------------------------
+Constraint.java:39: Warning: Possible assertion failure (Assert)
+                //@ assert o.j != 6; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+ConstraintB ...
+    [TIME]
+
+ConstraintB: m() ...
+    [TIME]  passed immediately
+
+ConstraintB: ConstraintB() ...
+    [TIME]  passed
+  [TIME total]
+
+ConstraintSA ...
+    [TIME]
+
+ConstraintSA: ConstraintSA() ...
+    [TIME]  passed immediately
+
+ConstraintSA: m() ...
+    [TIME]  passed
+
+ConstraintSA: mm() ...
+------------------------------------------------------------------------
+Constraint.java:72: Warning: Possible assertion failure (Assert)
+                //@ assert o.sj != 6; // ERROR
+                    ^
+------------------------------------------------------------------------
+    [TIME]  failed
+  [TIME total]
+
+ConstraintC ...
+    [TIME]
+
+ConstraintC: sm() ...
+    [TIME]  passed immediately
+
+ConstraintC: sh() ...
+    [TIME]  passed immediately
+
+ConstraintC: sz() ...
+------------------------------------------------------------------------
+Constraint.java:94: Warning: Possible assertion failure (Assert)
+                //@ assert sj == 2; // ERROR - sh is helper
+                    ^
+Execution trace information:
+    Executed call in "Constraint.java", line 93, col 2.
+    Executed implicit return in "Constraint.java", line 86, col 19.
+    Returned from inlined call at "Constraint.java", line 93, col 2.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ConstraintC: ConstraintC() ...
+    [TIME]  passed
+  [TIME total]
+
+ConstraintR ...
+    [TIME]
+
+ConstraintR: ConstraintR() ...
+    [TIME]  passed
+  [TIME total]
+
+ConstraintI ...
+    [TIME]
+  [TIME total]
+
+ConstraintX ...
+    [TIME]
+
+ConstraintX: m() ...
+------------------------------------------------------------------------
+Constraint.java:116: Warning: Possible violation of object constraint at exit (Constraint)
+        } // ERROR - fails ConstraintI
+        ^
+Associated declaration is "Constraint.java", line 108, col 5:
+        //@ constraint !(this instanceof ConstraintX);
+            ^
+Execution trace information:
+    Executed implicit return in "Constraint.java", line 116, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ConstraintX: mm() ...
+------------------------------------------------------------------------
+Constraint.java:120: Warning: Possible violation of object constraint at exit (Constraint)
+        } // ERROR - fails ConstraintR
+        ^
+Associated declaration is "Constraint.java", line 102, col 5:
+        //@ constraint k == \old(k) + 3;
+            ^
+Execution trace information:
+    Executed implicit return in "Constraint.java", line 120, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ConstraintX: ConstraintX() ...
+    [TIME]  passed
+  [TIME total]
+6 warnings

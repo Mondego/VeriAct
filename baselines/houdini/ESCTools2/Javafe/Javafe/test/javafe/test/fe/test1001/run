@@ -1,0 +1,8 @@
+#!/bin/sh
+
+## Generates all flow insensitive type errors and recoverable parser errors
+
+for f in *.java; do
+   echo "==== ${f}: ===="
+   ${TOOL} $f
+done

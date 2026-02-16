@@ -1,0 +1,33 @@
+ESC/Java version VERSION
+src|test|resources|PureCheck.java:30: Caution: Conditional assignable clauses are no longer supported and are ignored
+        //@ modifies j if m()+nn() == 0;
+                       ^
+src|test|resources|PureCheck.java: Caution: Using given file as the .java file, even though it is not the java file for PureCheck on the classpath
+src|test|resources|PureCheck.java:40: Error: Unexpected pragma in a code_contract section
+        //@ diverges m() + n() > 0;
+            ^
+    [TIME]
+
+PureCheck ...
+src|test|resources|PureCheck.java:35: Error: Exception type in signals clause must be listed in either a corresponding signals_only clause or the method's throws list
+        //@ signals (Exception e) m() + n() > 0;
+                     ^
+src|test|resources|PureCheck.java:30: Associated declaration: 
+        //@ modifies j if m()+nn() == 0;
+            ^
+Caution: Turning off extended static checking due to type error(s)
+  [TIME total] (aborted)
+
+A ...
+  [TIME total]
+
+B ...
+  [TIME total]
+
+C ...
+  [TIME total]
+
+D ...
+  [TIME total]
+3 cautions
+2 errors

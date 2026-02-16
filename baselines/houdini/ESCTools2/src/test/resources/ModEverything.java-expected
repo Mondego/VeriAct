@@ -1,0 +1,44 @@
+ESC/Java version VERSION
+src|test|resources|ModEverything.java: Caution: Using given file as the .java file, even though it is not the java file for ModEverything on the classpath
+    [TIME]
+
+ModEverything ...
+  Prover started:TIME
+    [TIME]
+
+ModEverything: ModEverything() ...
+    [TIME]  passed immediately
+
+ModEverything: m(int) ...
+------------------------------------------------------------------------
+src|test|resources|ModEverything.java:57: Warning: Postcondition possibly not established (Post)
+        }
+        ^
+Associated declaration is "src|test|resources|ModEverything.java", line 31, col 5:
+        //@ ensures a.z == 47; // FAILS
+            ^
+Execution trace information:
+    Executed implicit return in "src|test|resources|ModEverything.java", line 57, col 1.
+
+------------------------------------------------------------------------
+    [TIME]  failed
+
+ModEverything: mm() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+ModEverythingS ...
+    [TIME]
+
+ModEverythingS: ModEverythingS() ...
+    [TIME]  passed
+  [TIME total]
+
+ModEverythingA ...
+    [TIME]
+
+ModEverythingA: ModEverythingA() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
+1 warning

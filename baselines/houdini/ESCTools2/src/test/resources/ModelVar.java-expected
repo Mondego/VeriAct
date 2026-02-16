@@ -1,0 +1,34 @@
+ESC/Java version VERSION
+src|test|resources|ModelVar.java: Caution: Using given file as the .java file, even though it is not the java file for ModelVar on the classpath
+    [TIME]
+
+ModelVar ...
+  Prover started:TIME
+    [TIME]
+
+ModelVar: sm() ...
+    [TIME]  passed
+
+ModelVar: m() ...
+    [TIME]  passed
+
+ModelVar: mm() ...
+    [TIME]  passed
+
+ModelVar: m2() ...
+    [TIME]  passed
+
+ModelVar: m2a() ...
+    [TIME]  passed
+
+ModelVar: ModelVar() ...
+    [TIME]  passed immediately
+  [TIME total]
+
+Other ...
+    [TIME]
+
+Other: Other() ...
+    [TIME]  passed
+  [TIME total]
+1 caution
