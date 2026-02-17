@@ -24,7 +24,7 @@ class SpecGen:
         self.verbose = verbose
         self.logger = logger
 
-    def _validate_openjml(self, code_with_spec, classname):
+    def _verify_with_openjml(self, code_with_spec, classname):
         if self.verbose:
             self.logger.debug(f"[{classname}] Validating with OpenJML...")
 
@@ -313,7 +313,7 @@ class SpecGenWorker:
                 # logger.write(current_code + "\n")
                 logger.info(f"[{classname}] {current_code}")
                 # add OpenJML invokation
-                err_info = self.specgen._validate_openjml(current_code, classname)
+                err_info = self.specgen._verify_with_openjml(current_code, classname)
                 _verifier_calls_count += 1
                 if self.verbose:
                     logger.debug(f"[{classname}] {err_info}")
@@ -381,7 +381,7 @@ class SpecGenWorker:
                     logger.debug(f"[{classname}] {current_code}")
                 logger.debug(current_code + "\n")
                 # add OpenJML invokation
-                err_info = self.specgen._validate_openjml(current_code, classname)
+                err_info = self.specgen._verify_with_openjml(current_code, classname)
                 _verifier_calls_count += 1
                 if self.verbose:
                     logger.debug(f"[{classname}] {err_info}")
