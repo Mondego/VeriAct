@@ -37,7 +37,7 @@ class Houdini:
         else:
             return _code
 
-    def validate_openjml(self, code_with_spec, classname):
+    def _verify_with_openjml(self, code_with_spec, classname):
         if self.verbose:
             self.logger.debug(f"[{classname}] Validating with OpenJML...")
 
@@ -66,7 +66,7 @@ class Houdini:
             self.logger.error(f"[{classname}] Error running OpenJML: {e}")
             return f"Error: {str(e)}"
 
-    def gen_annotation(self, code, classname):
+    def _gen_annotation(self, code, classname):
 
         tmp_filename = os.path.join(self.output_dir, "tmp", f"{classname}.java")
         write_to_file(code, tmp_filename)
@@ -100,7 +100,7 @@ class Houdini:
             self.logger.error(f"[{classname}] Error running OpenJML: {e}")
             return f"Error: {str(e)}"
 
-    def read_annotations_instr(self):
+    def _read_annotations_instr(self):
 
         annotations_path = os.path.join(
             self.output_dir, "tmp", "houdini_output", "log", "annotations.instr"
@@ -135,7 +135,7 @@ class Houdini:
                 res_list.append(tmp_dict)
         return res_list
 
-    def merge_annotation_into_code(self, annotation_list, code):
+    def _merge_annotation_into_code(self, annotation_list, code):
         code_list = code.split("\n")
         res_code_list = []
         i, j = 0, 0
@@ -167,7 +167,7 @@ class Houdini:
             j = j + 1
         return res_code_list
 
-    def extract_lineno_from_err_info(self, err_info):
+    def _extract_lineno_from_err_info(self, err_info):
         temp_list = []
         err_list = []
         err_info_list = err_info.split("\n")
@@ -187,9 +187,9 @@ class Houdini:
         self.logger.info(
             f"Generating annotations for {self.class_name} in thread {self.output_dir}"
         )
-        self.gen_annotation(self.code, self.class_name)
-        annotation_list = self.read_annotations_instr()
-        merged_list = self.merge_annotation_into_code(annotation_list, self.code)
+        self._gen_annotation(self.code, self.class_name)
+        annotation_list = self._read_annotations_instr()
+        merged_list = self._merge_annotation_into_code(annotation_list, self.code)
         err_info = "anything"
         merged_code = ""
         _verifier_calls_count = 0
@@ -207,14 +207,14 @@ class Houdini:
                 f"Writing merged code for {self.class_name} in thread {self.output_dir}"
             )
             self.logger.debug(merged_code + "\n")
-            err_info = self.validate_openjml(merged_code, self.class_name)
+            err_info = self._verify_with_openjml(merged_code, self.class_name)
             _verifier_calls_count = _verifier_calls_count + 1
             self.logger.debug(f"Error info: {err_info}")
             if err_info == "":
                 break
             else:
                 flag = False
-                refuted_lineno_list = self.extract_lineno_from_err_info(err_info)
+                refuted_lineno_list = self._extract_lineno_from_err_info(err_info)
                 for lineno in refuted_lineno_list:
                     if merged_list[lineno - 1]["is_annotation"] == True:
                         merged_list.pop(lineno - 1)
@@ -291,57 +291,6 @@ class HoudiniWorker:
         try:
 
             _results = houdini.run()
-
-            # # Annotation generation and merging
-            # _logger.info(f"Generating annotations for {class_name} in thread {_thread_id}")
-            # try:
-            #     houdini.gen_annotation(code, class_name)
-            #     annotation_list = houdini.read_annotations_instr()
-            #     merged_list = houdini.merge_annotation_into_code(annotation_list, code)
-            #     err_info = "anything"
-            #     merged_code = ""
-            #     _verifier_calls_count = 0
-
-            #     # Main loop of houdini algorithm
-            #     max_iterations = (
-            #         1000  # Add hardcoded max iterations to avoid `while True` infinite loop
-            #     )
-            #     iteration_count = 0
-            #     while iteration_count < max_iterations:
-            #         merged_code = ""
-            #         for line in merged_list:
-            #             merged_code = merged_code + line["content"] + "\n"
-            #         _logger.info(
-            #             f"Writing merged code for {class_name} in thread {_thread_id}"
-            #         )
-            #         _logger.debug(merged_code + "\n")
-            #         err_info = houdini.validate_openjml(merged_code, class_name)
-            #         _verifier_calls_count = _verifier_calls_count + 1
-            #         _logger.debug(f"Error info: {err_info}")
-            #         if err_info == "":
-            #             break
-            #         else:
-            #             flag = False
-            #             refuted_lineno_list = houdini.extract_lineno_from_err_info(err_info)
-            #             for lineno in refuted_lineno_list:
-            #                 if merged_list[lineno - 1]["is_annotation"] == True:
-            #                     merged_list.pop(lineno - 1)
-            #                     flag = True
-            #                     break
-            #             if not flag:
-            #                 break
-            #         iteration_count += 1
-
-            #     if iteration_count >= max_iterations:
-            #         _logger.warning(
-            #             f"Max iterations ({max_iterations}) reached for {class_name}"
-            #         )
-
-            #     # end of main loop, output results
-            #     _logger.info(f"Merged code for {class_name} in thread {_thread_id}:")
-            #     _logger.debug(merged_code)
-
-            #     status = "success" if err_info == "" else "failure"
 
             return {
                 "id": task["id"],

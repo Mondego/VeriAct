@@ -101,7 +101,7 @@ class Daikon:
             self.logger.error(f"Command failed with error: {e} at {self.run_id}")
             return False
 
-    def _verify_openjml(self, code_with_spec, classname):
+    def _verify_with_openjml(self, code_with_spec, classname):
         if self.verbose:
             self.logger.info(f"[{classname}] Validating with OpenJML...")
 
@@ -226,10 +226,10 @@ class DaikonWorker:
                 )
             )
 
-            jml_error_info = daikon._verify_openjml(
+            jml_error_info = daikon._verify_with_openjml(
                 code_with_jmlspec, task["class_name"]
             )
-            esc_error_info = daikon._verify_openjml(
+            esc_error_info = daikon._verify_with_openjml(
                 code_with_escspec, task["class_name"]
             )
 
