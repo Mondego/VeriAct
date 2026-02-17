@@ -6,7 +6,13 @@ import subprocess
 import threading
 import time
 from typing import List
-from baselines.utils.file_utility import load_json, read_from_file, write_to_file
+from baselines.utils.file_utility import (
+    load_json,
+    read_from_file,
+    write_to_file,
+    dump_json,
+    dump_jsonl,
+)
 from baselines.utils.logger import create_logger
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -126,16 +132,16 @@ class Daikon:
     def _prepare_task_environment(self):
         try:
             write_to_file(
-                os.path.join(self.out_dir, f"{self.class_name}.java"), self.code
+                self.code, os.path.join(self.out_dir, f"{self.class_name}.java")
             )
             write_to_file(
-                os.path.join(self.out_dir, f"{self.class_name}Test.java"),
                 self.test_code,
+                os.path.join(self.out_dir, f"{self.class_name}Test.java"),
             )
             for index in range(0, len(self.test_inputs)):
                 write_to_file(
-                    os.path.join(self.out_dir, f"{index}.txt"),
                     self.test_inputs[index]["input"],
+                    os.path.join(self.out_dir, f"{index}.txt"),
                 )
 
             _script_path = os.path.join(self._BASE_DIR, "daikon")
@@ -262,18 +268,7 @@ class DaikonRunner:
         self.threads = threads
         self.verbose = verbose
 
-    def _save_results(self, results):
-        with open(
-            os.path.join(self.output, f"{self.name}_results_all.jsonl"), "w"
-        ) as f:
-            for result in results:
-                f.write(json.dumps(result) + "\n")
-
-        print(
-            f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
-        )
-
-    def _save_summary(self, duration, results):
+    def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
         successful = [r for r in results if r["status"] == "success"]
         failed = [r for r in results if r["status"] == "error"]
@@ -313,10 +308,13 @@ class DaikonRunner:
             ],
         }
 
-        with open(
-            os.path.join(self.output, f"{self.name}_results_summary.json"), "w"
-        ) as f:
-            json.dump(summary, f, indent=2)
+        dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
+        print(
+            f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
+        )
+
+        dump_json(summary, os.path.join(self.output, f"{self.name}_results_summary.json"))
+
         print(f"\nProcessing completed in {duration:.2f} seconds")
         print(
             f"Success rate: {len(successful)}/{self.input_length} ({len(successful)/self.input_length*100:.1f}%)"
@@ -379,5 +377,4 @@ class DaikonRunner:
         end_time = time.time()
         duration = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
-        self._save_results(results)
-        self._save_summary(duration, results)
+        self._save_results(duration, results)

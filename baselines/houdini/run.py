@@ -1,8 +1,7 @@
 import os
 import sys
 import argparse
-
-from houdini.houdini import HoudiniRunner
+from baselines.houdini.houdini_runner import HoudiniRunner
 
 
 def _retrive_input_arguments():
@@ -17,7 +16,7 @@ def _retrive_input_arguments():
         "--input",
         type=str,
         required=True,
-        help="Directory containing input Java files to process",
+        help="Dataset file paths (e.g, metadata.json)",
     )
     parser.add_argument(
         "--output",
@@ -40,8 +39,11 @@ def _retrive_input_arguments():
 
 
 def _validate_arguments(args):
-    if not os.path.isdir(args.input):
-        print(f"Error: Input path '{args.input}' is not a valid directory.")
+    if not args.name:
+        print("Error: Experiment name is required.")
+        sys.exit(1)
+    if not os.path.exists(args.input):
+        print(f"Error: Input path '{args.input}' does not exist.")
         sys.exit(1)
     if args.threads < 1:
         print("Error: Number of threads must be at least 1.")
@@ -54,14 +56,16 @@ def _validate_arguments(args):
 def main():
     args = _retrive_input_arguments()
     _validate_arguments(args)
+
     _hudini_worker = HoudiniRunner(
         name=args.name,
-        input_dir=args.input,
-        output_dir=args.output,
+        input=args.input,
+        output=args.output,
         openjml_timeout=args.openjml_timeout,
         threads=args.threads,
         verbose=args.verbose,
     )
+
     _hudini_worker.run_workers()
 
 

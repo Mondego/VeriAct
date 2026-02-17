@@ -3,21 +3,25 @@ import sys
 import json
 
 
-def write_to_file(file_name, content):
+def write_to_file(content, file_name):
     with open(file_name, "w") as file:
         file.write(content)
+
 
 def read_from_file(file_name):
     with open(file_name, "r") as file:
         return file.read()
-    
+
+
 def load_json(file):
     with open(file, "r") as j:
         return json.loads(j.read())
 
-def dump_json(file_name, data):
+
+def dump_json(data, file_name):
     with open(file_name, "w") as j:
         json.dump(data, j, indent=2)
+
 
 def load_jsonl(file):
     data = []
@@ -26,10 +30,11 @@ def load_jsonl(file):
             data.append(json.loads(line))
     return data
 
-def dump_jsonl(file_name, data):
+
+def dump_jsonl(data, file_name):
     with open(file_name, "w") as j:
-        for item in data: 
-            j.write(json.dumps(item)+"\n")
+        for item in data:
+            j.write(json.dumps(item) + "\n")
 
 
 def load_java_file_paths(directory):
