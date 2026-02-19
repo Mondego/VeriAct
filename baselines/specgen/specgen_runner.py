@@ -1,11 +1,10 @@
 import os
-from pathlib import Path
-from tabnanny import verbose
 import time
 import threading
 import subprocess
-import json
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from prompts import (
     FORMAT_REFINE_PROMPT,
     GenerationPrompt,
@@ -17,6 +16,7 @@ from baselines.utils.file_utility import (
     load_json,
     dump_json,
     dump_jsonl,
+    write_to_file,
 )
 
 
@@ -32,8 +32,8 @@ class SpecGen:
         logger,
         verbose=False,
     ):
-        self.model=model
-        self.temperature=temperature
+        self.model = model
+        self.temperature = temperature
         self.max_iterations = max_iterations
         self.output_dir = output_dir
         self.timeout = timeout
@@ -44,32 +44,46 @@ class SpecGen:
 
     def _verify_with_openjml(self, code_with_spec, classname):
         if self.verbose:
-            self.logger.debug(f"[{classname}] Validating with OpenJML...")
+            self.logger.info(f"[{classname}] Validating with OpenJML...")
 
         tmp_dir = os.path.join(self.output_dir, "tmp")
         Path(tmp_dir).mkdir(exist_ok=True)
 
-        tmp_filename = f"{tmp_dir}/{classname}.java"
-        with open(tmp_filename, "w") as tmp_file:
-            tmp_file.write(code_with_spec)
+        tmp_filename = os.path.join(tmp_dir, f"{classname}.java")
+        try:
+            write_to_file(code_with_spec, tmp_filename)
+            self.logger.debug(f"[{classname}] Wrote code to {tmp_filename}")
+        except Exception as e:
+            self.logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
+            raise
 
         cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
+        self.logger.debug(f"[{classname}] Running OpenJML verification command")
 
         try:
             result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=self.timeout
+                cmd, shell=True, capture_output=True, text=True, timeout=120
             )
             res = result.stdout + result.stderr
+            self.logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
+            if result.stdout:
+                self.logger.debug(
+                    f"[{classname}] OpenJML stdout: {result.stdout[:500]}"
+                )
+            if result.stderr:
+                self.logger.debug(
+                    f"[{classname}] OpenJML stderr: {result.stderr[:500]}"
+                )
             return res
         except subprocess.TimeoutExpired:
             self.logger.error(
-                f"[{classname}] OpenJML command timed out after {self.timeout} seconds"
+                f"[{classname}] OpenJML command timed out after 120 seconds"
             )
-            return f"Timeout: OpenJML verification exceeded time limit {self.timeout} seconds"
+            return "Timeout: OpenJML verification exceeded time limit"
         except Exception as e:
             self.logger.error(f"[{classname}] Error running OpenJML: {e}")
             return f"Error: {str(e)}"
-    
+
     def _parse_code_from_model_response(self, content):
         content = "a" + content
         extracted_str = content.split("```")[1]
@@ -212,7 +226,7 @@ class SpecGen:
             lineno_list.append(int(err[0].split(":")[1]))
         return lineno_list
 
-    def run(self, input_code , class_name):
+    def run(self, input_code, class_name):
         ### [Long function as it is from the Authors implementation, and refactoring may introduce bugs]]
 
         # Specification Generation Phase
@@ -221,22 +235,24 @@ class SpecGen:
         done_flag = False
         config = {}
         current_code = input_code
+        verified_flag = False
         err_info = ""
         err_types = []
+        timed_out = False  # Flag to track timeout
+        status = "unknown"  # Initial status
 
-        for i in range(1, self.max_iterations + 1):
-            if self.verbose:
-                self.logger.debug(f"[{class_name}] Iteration {i}")
+        for num_iter in range(1, self.max_iterations + 1):
+            self.logger.info(
+                f"[{class_name}] Starting iteration {num_iter}/{self.max_iterations}"
+            )
 
-            if i == 1:
-                # add config invokation
+            if num_iter == 1:
                 config = self.generation_prompt.create_generation_prompt_config(
-                    current_code,class_name, self.model, self.temperature
+                    current_code, class_name, self.model, self.temperature
                 )
                 if self.verbose:
                     self.logger.debug(self._config_to_str(config))
 
-                # add model invokation
                 ret = request_llm_engine(config)
                 if self.verbose:
                     self.logger.debug(ret.choices[0].message.content)
@@ -253,7 +269,6 @@ class SpecGen:
             else:
                 err_types = self.refinement_prompt.extract_err_type(err_info)
                 if len(err_types) != 0:
-                    # add config invokation
                     tmp_config = (
                         self.refinement_prompt.create_specialized_patcher_prompt_config(
                             current_code, err_info, self.model, self.temperature
@@ -261,7 +276,6 @@ class SpecGen:
                     )
                     if self.verbose:
                         self.logger.debug(self._config_to_str(tmp_config))
-                    # add model invokation
                     ret = request_llm_engine(tmp_config)
                     if self.verbose:
                         self.logger.debug(
@@ -287,7 +301,6 @@ class SpecGen:
                     if self.verbose:
                         self.logger.debug(refine_msg["content"])
 
-                    # add model invokation
                     ret = request_llm_engine(config)
                     if self.verbose:
                         self.logger.debug(
@@ -307,13 +320,18 @@ class SpecGen:
                     done_flag = True
                     break
 
-            # logger.write(current_code + "\n")
             self.logger.info(f"[{class_name}] {current_code}")
-            # add OpenJML invokation
+
             err_info = self._verify_with_openjml(current_code, class_name)
             _verifier_calls_count += 1
+
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {err_info}")
+
+            if "Timeout:" in err_info or "timeout" in err_info.lower():
+                timed_out = True
+                # break --- IGNORE ---
+
             err_types = self.refinement_prompt.extract_err_type(err_info)
             self.logger.debug(f"[{class_name}] {err_info}")
             if err_info == "" or done_flag:
@@ -332,10 +350,21 @@ class SpecGen:
                 ):
                     mutated_spec_list.append({"content": mutated_spec, "index": index})
 
-        # [FIX ME] Avoid infinite loop 
+        # Mutation loop with safety limit
+        mutation_iterations = 0
+        MAX_MUTATION_ITERATIONS = 1000  # Safety limit to avoid infinite loop
+
         while True:
             if err_info == "":
+                verified_flag = True
                 break
+            mutation_iterations += 1
+            if mutation_iterations >= MAX_MUTATION_ITERATIONS:
+                self.logger.warning(
+                    f"[{class_name}] Max mutation iterations ({MAX_MUTATION_ITERATIONS}) reached"
+                )
+                break
+
             if not self._is_invariant_or_postcondition(err_info):
                 self.logger.debug(
                     f"[{class_name}] Unexpected verification error. Aborted."
@@ -370,21 +399,41 @@ class SpecGen:
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {current_code}")
             self.logger.debug(current_code + "\n")
-            # add OpenJML invokation
             err_info = self._verify_with_openjml(current_code, class_name)
             _verifier_calls_count += 1
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {err_info}")
 
-        self.logger.info(
-            f"[{class_name}] Finished. Verifier invoked {_verifier_calls_count} times"
-        )
+        if verified_flag:
+            status = "verified"
+            timed_out = False  # Reset if eventually verified
+        elif timed_out:
+            status = "timed_out"
+        else:
+            status = "unverified"
+
+        if verified_flag:
+            self.logger.info(
+                f"[{class_name}] ✓ Successfully verified after {num_iter} iterations and {_verifier_calls_count} verifier calls"
+            )
+        else:
+            self.logger.warning(
+                f"[{class_name}] ✗ Max iterations ({self.max_iterations}) reached without verification. "
+                f"Final error: {err_info[:200]}..."
+            )
+
+        if self.verbose:
+            self.logger.info(
+                f"[{class_name}] Final result is:\n```\n{current_code}\n```\nVerifier called {_verifier_calls_count} times."
+            )
         return {
-            "status": "success",
+            "status": status,
             "class_name": class_name,
             "verifier_calls": _verifier_calls_count,
             "final_code": current_code,
             "final_error": err_info,
+            "verified": verified_flag,
+            "iterations": num_iter,
         }
 
 
@@ -403,9 +452,22 @@ class SpecGenWorker:
     def run_specgen(self, task: dict):
         class_name = task["class_name"]
         input_code = task["code"]
+        task_id = task["id"]
 
         thread_id = threading.current_thread().ident
-        logger, log_file = create_logger(class_name, thread_id, self.output_dir)
+        try:
+            logger, log_file = create_logger(class_name, thread_id, self.output_dir)
+        except Exception as e:
+            print(f"Failed to create logger for {class_name}: {e}")
+            return {
+                "id": task_id,
+                "status": "error",
+                "message": f"Logger creation failed: {str(e)}",
+                "class_name": class_name,
+                "log_file": "unknown",
+            }
+
+        logger.info(f"Starting SpecGen for {class_name} (task id: {task_id})")
 
         specgen = SpecGen(
             model=self.model,
@@ -419,11 +481,26 @@ class SpecGenWorker:
 
         try:
             _result = specgen.run(input_code, class_name)
+
+            if _result.get("verified", False):
+                verified_status = "✓ VERIFIED"
+            elif _result.get("timed_out", False):
+                verified_status = "⏱ TIMED OUT"
+            else:
+                verified_status = "✗ UNVERIFIED"
+
+            logger.info(
+                f"{verified_status} - Completed {class_name} with {_result['verifier_calls']} verifier calls "
+                f"in {_result['iterations']} iterations"
+            )
+
             return {
-                "id": task["id"],
-                "status": "success",
+                "id": task_id,
+                "status": _result["status"],
                 "class_name": class_name,
                 "verifier_calls": _result["verifier_calls"],
+                "iterations": _result["iterations"],
+                "verified": _result.get("verified", False),
                 "log_file": log_file,
                 "final_code": _result["final_code"],
                 "final_error": _result["final_error"],
@@ -431,8 +508,8 @@ class SpecGenWorker:
 
         except Exception as e:
             return {
-                "id": task["id"],
-                "status": "error",
+                "id": task_id,
+                "status": "unknown",
                 "message": str(e),
                 "class_name": class_name,
                 "log_file": log_file,
@@ -465,42 +542,70 @@ class SpecGenRunner:
 
     def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
-        successful = [r for r in results if r["status"] == "success"]
-        failed = [r for r in results if r["status"] == "error"]
+        verified = [r for r in results if r["status"] == "verified"]
+        unverified = [r for r in results if r["status"] == "unverified"]
+        timed_out = [r for r in results if r["status"] == "timed_out"]
+        unknown = [r for r in results if r["status"] == "unknown"]
 
-        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in successful)
-        avg_verifier_calls = total_verifier_calls / len(successful) if successful else 0
+        total_verifier_calls = sum(
+            r.get("verifier_calls", 0) for r in (verified + unverified + timed_out)
+        )
+        avg_verifier_calls = (
+            total_verifier_calls / len(verified + unverified + timed_out)
+            if (verified + unverified + timed_out)
+            else 0
+        )
 
         summary = {
             "total_files_processed": self.input_length,
-            "successful": len(successful),
-            "failed": len(failed),
-            "success_rate_percent": (
-                round(len(successful) / self.input_length * 100, 1)
+            "verified": len(verified),
+            "unverified": len(unverified),
+            "timed_out": len(timed_out),
+            "unknown": len(unknown),
+            "verification_rate_percent": (
+                round(len(verified) / self.input_length * 100, 1)
                 if self.input_length > 0
                 else 0
             ),
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
-            "average_verifier_calls_per_successful_case": round(avg_verifier_calls, 1),
+            "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
             "threads_used": self.threads,
-            "successful_cases": [
+            "verified_cases": [
                 {
                     "id": r["id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
                 }
-                for r in successful
+                for r in verified
             ],
-            "failed_cases": [
+            "unverified_cases": [
+                {
+                    "id": r["id"],
+                    "class_name": r["class_name"],
+                    "verifier_calls": r["verifier_calls"],
+                    "log_file": r["log_file"],
+                }
+                for r in unverified
+            ],
+            "timed_out_cases": [
+                {
+                    "id": r["id"],
+                    "class_name": r["class_name"],
+                    "verifier_calls": r["verifier_calls"],
+                    "log_file": r["log_file"],
+                }
+                for r in timed_out
+            ],
+            "unknown_cases": [
                 {
                     "id": r["id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
                 }
-                for r in failed
+                for r in unknown
             ],
         }
 
@@ -515,8 +620,15 @@ class SpecGenRunner:
 
         print(f"\nProcessing completed in {duration:.2f} seconds")
         print(
-            f"Success rate: {len(successful)}/{self.input_length} ({len(successful)/self.input_length*100:.1f}%)"
+            f"Verified: {len(verified)}/{self.input_length} ({len(verified)/self.input_length*100:.1f}%)"
         )
+        print(
+            f"Unverified: {len(unverified)}/{self.input_length} ({len(unverified)/self.input_length*100:.1f}%)"
+        )
+        print(
+            f"Timed out: {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)"
+        )
+        print(f"Unknown (errors): {len(unknown)}/{self.input_length}")
         print(
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )
@@ -557,21 +669,34 @@ class SpecGenRunner:
                     results.append(result)
                     completed_count += 1
 
-                    if result["status"] == "success":
+                    if result["status"] == "verified":
                         print(
-                            f"✓ [{completed_count}/{self.input_length}] {result['class_name']} - {result['verifier_calls']} verifier calls"
+                            f"✓ [{completed_count}/{self.input_length}] {result['class_name']} - VERIFIED - {result['verifier_calls']} verifier calls"
                         )
-                    else:
+                    elif result["status"] == "unverified":
                         print(
-                            f"✗ [{completed_count}/{self.input_length}] {task['id']} - Error: {result.get('message', 'Unknown error')}"
+                            f"✗ [{completed_count}/{self.input_length}] {result['class_name']} - UNVERIFIED - {result['verifier_calls']} verifier calls"
+                        )
+                    elif result["status"] == "timed_out":
+                        print(
+                            f"⏱ [{completed_count}/{self.input_length}] {result['class_name']} - TIMED OUT - {result['verifier_calls']} verifier calls"
+                        )
+                    else:  # error
+                        print(
+                            f"✗ [{completed_count}/{self.input_length}] {result['class_name']} - ERROR: {result.get('message', 'Unknown error')}"
                         )
 
                 except Exception as exc:
                     results.append(
-                        {"id": task["id"], "status": "error", "message": str(exc)}
+                        {
+                            "id": task["id"],
+                            "status": "unknown",
+                            "message": str(exc),
+                            "class_name": task.get("class_name", "unknown"),
+                        }
                     )
                     print(
-                        f"✗ [{completed_count}/{self.input_length}] {task['id']} - Exception: {exc}"
+                        f"✗ [{completed_count}/{self.input_length}] {task.get('class_name', task['id'])} - Exception: {exc}"
                     )
                     completed_count += 1
 
