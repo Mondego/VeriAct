@@ -1,7 +1,7 @@
 import os
 import random
-from utils import file2str
-from models import create_model_config
+from baselines.utils.file_utility import read_from_file
+from baselines.utils.models import create_model_config
 
 FORMAT_INIT_PROMPT = """
 Please generate JML specifications for the Java program given below.
@@ -51,18 +51,15 @@ class GenerationPrompt:
             current_dir, "prompts", "oracle_clean", classname, classname + ".java"
         )
 
-        # filename_oracle = importlib.resources.files("prompts").joinpath("oracle",classname, classname + ".java").read_text()
-        # filename_clean = importlib.resources.files("prompts").joinpath("oracle_clean",classname, classname + ".java").read_text()
-
         msg_request = {
             "role": "user",
             "content": FORMAT_GENERATION_PROMPT.format(
-                src_code=file2str(filename_clean)
+                src_code=read_from_file(filename_clean)
             ),
         }
         msg_reply = {
             "role": "assistant",
-            "content": "```\n{code}\n```".format(code=file2str(filename_oracle)),
+            "content": "```\n{code}\n```".format(code=read_from_file(filename_oracle)),
         }
         return [msg_request, msg_reply]
 
@@ -144,14 +141,10 @@ class RefinementPrompt:
     def read_refine_as_msg(self, dirname):
         current_dir = os.path.dirname(os.path.abspath(__file__))
         dirpath = os.path.join(current_dir, "prompts", "refine", dirname)
-        original_code = file2str(os.path.join(dirpath, "original"))
-        err_info = file2str(os.path.join(dirpath, "err_info"))
-        refined_code = file2str(os.path.join(dirpath, "refined"))
-
-        # dirpath = importlib.resources.files("prompts").joinpath("refine")
-        # original_code = dirpath.joinpath(dirname, "original").read_text()
-        # err_info = dirpath.joinpath(dirname, "err_info").read_text()
-        # refined_code = dirpath.joinpath(dirname, "refined").read_text()
+        original_code = read_from_file(os.path.join(dirpath, "original"))
+        err_info = read_from_file(os.path.join(dirpath, "err_info"))
+        refined_code = read_from_file(os.path.join(dirpath, "refined"))
+        
 
         msg_request = {
             "role": "user",

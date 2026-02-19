@@ -346,6 +346,7 @@ class HoudiniRunner:
             "threads_used": self.threads,
             "successful_cases": [
                 {
+                    "id": r["id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],

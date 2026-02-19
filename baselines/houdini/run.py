@@ -43,7 +43,7 @@ def _validate_arguments(args):
         print("Error: Experiment name is required.")
         sys.exit(1)
     if not os.path.exists(args.input):
-        print(f"Error: Input path '{args.input}' does not exist.")
+        print(f"Error: Input file '{args.input}' does not exist.")
         sys.exit(1)
     if args.threads < 1:
         print("Error: Number of threads must be at least 1.")

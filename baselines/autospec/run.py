@@ -1,14 +1,11 @@
 import os
 import sys
-import time
 import argparse
-from queue import Queue
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from autospec.autospec import AutoSpecRunner
+from baselines.autospec.autospec_runner import AutoSpecRunner
 
 
 def _retrive_input_arguments():
-    parser = argparse.ArgumentParser(description="Multi-threaded AutoSpec processor")
+    parser = argparse.ArgumentParser(description="Multi-threaded SpecGen processor")
     parser.add_argument(
         "--name",
         type=str,
@@ -19,13 +16,22 @@ def _retrive_input_arguments():
         "--input",
         type=str,
         required=True,
-        help="Directory containing input Java files to process",
+        help="Dataset file paths (e.g, metadata.json)",
     )
     parser.add_argument(
         "--output",
         type=str,
         required=True,
         help="Directory to save results (will be created if it doesn't exist)",
+    )
+    parser.add_argument(
+        "--openjml_timeout",
+        type=int,
+        default=300,
+        help="Timeout for OpenJML validation in seconds (default: 300)",
+    )
+    parser.add_argument(
+        "--threads", type=int, default=1, help="Number of worker threads (default: 1)"
     )
     parser.add_argument(
         "--model",
@@ -39,41 +45,47 @@ def _retrive_input_arguments():
         required=True,
         help="Temperature for the model (e.g., 0.7)",
     )
+
     parser.add_argument(
         "--max_iterations",
         type=int,
         default=10,
         help="Maximum iterations per input (default: 10)",
     )
-    parser.add_argument(
-        "--openjml_timeout",
-        type=int,
-        default=300,
-        help="Timeout for OpenJML validation in seconds (default: 300)",
-    )
-    parser.add_argument(
-        "--threads", type=int, default=1, help="Number of worker threads (default: 1)"
-    )
+
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 
     return parser.parse_args()
 
 
 def _validate_arguments(args):
-    if not os.path.isdir(args.input):
-        print(f"Error: Input path '{args.input}' is not a valid directory.")
+    if not args.name:
+        print("Error: Experiment name is required.")
+        sys.exit(1)
+    if not os.path.exists(args.input):
+        print(f"Error: Input file '{args.input}' does not exist.")
         sys.exit(1)
     if args.threads < 1:
         print("Error: Number of threads must be at least 1.")
         sys.exit(1)
-    if args.temperature < 0 or args.temperature > 1:
-        print("Error: Temperature must be between 0 and 1.")
+    if args.openjml_timeout < 0:
+        print("Error: OpenJML timeout must be a non-negative integer.")
+        sys.exit(1)
+    if args.temperature < 0 or args.temperature > 2:
+        print("Error: Temperature must be between 0 and 2.")
+        sys.exit(1)
+    if args.max_iterations < 1:
+        print("Error: Maximum iterations must be at least 1.")
+        sys.exit(1)
+    valid_models = ["gpt", "gemini", "claude", "vllm"]
+    model_prefixes = [model for model in valid_models if args.model.startswith(model)]
+    if not model_prefixes:
+        print(f"Error: Model must start with one of {valid_models}.")
         sys.exit(1)
 
 
-
 def main():
-   
+
     _args = _retrive_input_arguments()
     _validate_arguments(_args)
 
@@ -94,4 +106,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

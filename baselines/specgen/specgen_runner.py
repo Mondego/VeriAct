@@ -5,24 +5,42 @@ import time
 import threading
 import subprocess
 import json
-from models import request_llm_engine, token_limit_fitter
-from utils import file2str, load_java_file_paths, parse_code_from_reply
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from prompts import (
     FORMAT_REFINE_PROMPT,
     GenerationPrompt,
     RefinementPrompt,
 )
-from logger import create_logger
+from baselines.utils.logger import create_logger
+from baselines.utils.models import request_llm_engine
+from baselines.utils.file_utility import (
+    load_json,
+    dump_json,
+    dump_jsonl,
+)
 
 
 class SpecGen:
 
-    def __init__(self, output_dir, timeout, logger, verbose=False):
+    def __init__(
+        self,
+        model,
+        temperature,
+        max_iterations,
+        output_dir,
+        timeout,
+        logger,
+        verbose=False,
+    ):
+        self.model=model
+        self.temperature=temperature
+        self.max_iterations = max_iterations
         self.output_dir = output_dir
         self.timeout = timeout
         self.verbose = verbose
         self.logger = logger
+        self.generation_prompt = GenerationPrompt()
+        self.refinement_prompt = RefinementPrompt()
 
     def _verify_with_openjml(self, code_with_spec, classname):
         if self.verbose:
@@ -51,6 +69,16 @@ class SpecGen:
         except Exception as e:
             self.logger.error(f"[{classname}] Error running OpenJML: {e}")
             return f"Error: {str(e)}"
+    
+    def _parse_code_from_model_response(self, content):
+        content = "a" + content
+        extracted_str = content.split("```")[1]
+        extracted_str = (
+            extracted_str
+            if not extracted_str.startswith("java")
+            else extracted_str[len("java") :]
+        )
+        return extracted_str
 
     def _mutate_token_list_random(self, token_list, has_forall, dont_mutate_logical):
         res_list = []
@@ -169,12 +197,6 @@ class SpecGen:
             )
         return res
 
-    def _print_config(self, config):
-        print(self._config_to_str(config))
-
-    def _print_messages(self, message):
-        print("{r}:{c}".format(r=message["role"], c=message["content"]))
-
     def _extract_lineno_from_err_info(self, err_info):
         temp_list = []
         err_list = []
@@ -190,6 +212,181 @@ class SpecGen:
             lineno_list.append(int(err[0].split(":")[1]))
         return lineno_list
 
+    def run(self, input_code , class_name):
+        ### [Long function as it is from the Authors implementation, and refactoring may introduce bugs]]
+
+        # Specification Generation Phase
+        _verifier_calls_count = 0
+        self.logger.info(f"[{class_name}] Starting Generation Phase...")
+        done_flag = False
+        config = {}
+        current_code = input_code
+        err_info = ""
+        err_types = []
+
+        for i in range(1, self.max_iterations + 1):
+            if self.verbose:
+                self.logger.debug(f"[{class_name}] Iteration {i}")
+
+            if i == 1:
+                # add config invokation
+                config = self.generation_prompt.create_generation_prompt_config(
+                    current_code,class_name, self.model, self.temperature
+                )
+                if self.verbose:
+                    self.logger.debug(self._config_to_str(config))
+
+                # add model invokation
+                ret = request_llm_engine(config)
+                if self.verbose:
+                    self.logger.debug(ret.choices[0].message.content)
+                current_code = self._parse_code_from_model_response(
+                    ret.choices[0].message.content
+                )
+                current_code = current_code.strip()
+                config["messages"].append(
+                    {
+                        "role": "assistant",
+                        "content": f"```\n{current_code}\n```",
+                    }
+                )
+            else:
+                err_types = self.refinement_prompt.extract_err_type(err_info)
+                if len(err_types) != 0:
+                    # add config invokation
+                    tmp_config = (
+                        self.refinement_prompt.create_specialized_patcher_prompt_config(
+                            current_code, err_info, self.model, self.temperature
+                        )
+                    )
+                    if self.verbose:
+                        self.logger.debug(self._config_to_str(tmp_config))
+                    # add model invokation
+                    ret = request_llm_engine(tmp_config)
+                    if self.verbose:
+                        self.logger.debug(
+                            f"[{class_name}] assistant: {ret.choices[0].message.content}"
+                        )
+                    current_code = self._parse_code_from_model_response(
+                        ret.choices[0].message.content
+                    )
+                    current_code = current_code.strip()
+                    config["messages"][-1]["content"] = f"```\n{current_code}\n```"
+                elif (
+                    err_info.find("LoopInvariant") == -1
+                    and err_info.find("Postcondition") == -1
+                ):
+                    refine_msg = {
+                        "role": "user",
+                        "content": FORMAT_REFINE_PROMPT.format(err_info=err_info),
+                    }
+                    refine_msg["content"] += self.refinement_prompt.gen_extra_guidance(
+                        err_info
+                    )
+                    config["messages"].append(refine_msg)
+                    if self.verbose:
+                        self.logger.debug(refine_msg["content"])
+
+                    # add model invokation
+                    ret = request_llm_engine(config)
+                    if self.verbose:
+                        self.logger.debug(
+                            f"[{class_name}] assistant: {ret.choices[0].message.content}"
+                        )
+                    current_code = self._parse_code_from_model_response(
+                        ret.choices[0].message.content
+                    )
+                    current_code = current_code.strip()
+                    config["messages"].append(
+                        {
+                            "role": "assistant",
+                            "content": "```\n{code}\n```".format(code=current_code),
+                        }
+                    )
+                else:
+                    done_flag = True
+                    break
+
+            # logger.write(current_code + "\n")
+            self.logger.info(f"[{class_name}] {current_code}")
+            # add OpenJML invokation
+            err_info = self._verify_with_openjml(current_code, class_name)
+            _verifier_calls_count += 1
+            if self.verbose:
+                self.logger.debug(f"[{class_name}] {err_info}")
+            err_types = self.refinement_prompt.extract_err_type(err_info)
+            self.logger.debug(f"[{class_name}] {err_info}")
+            if err_info == "" or done_flag:
+                break
+
+        # Mutation Phase
+        self.logger.info(f"[{class_name}] Starting Mutation Phase...")
+        current_code_list = current_code.split("\n")
+        mutated_spec_list = []
+
+        # Generate mutated spec set
+        for index in range(len(current_code_list)):
+            if self._is_invariant_or_postcondition(current_code_list[index]):
+                for mutated_spec in self._spec_mutator_heuristic(
+                    current_code_list[index]
+                ):
+                    mutated_spec_list.append({"content": mutated_spec, "index": index})
+
+        # [FIX ME] Avoid infinite loop 
+        while True:
+            if err_info == "":
+                break
+            if not self._is_invariant_or_postcondition(err_info):
+                self.logger.debug(
+                    f"[{class_name}] Unexpected verification error. Aborted."
+                )
+                break
+
+            refuted_lineno_list = self._extract_lineno_from_err_info(err_info)
+            # replace each error spec with mutated spec
+            for lineno in refuted_lineno_list:
+                index = lineno - 1
+                if self._is_assert(current_code_list[index]):
+                    current_code_list[index] = " "
+                    continue
+                if not self._is_invariant_or_postcondition(current_code_list[index]):
+                    continue
+                # Find mutated spec with same lineno
+                found_flag = False
+                for item in mutated_spec_list:
+                    if item["index"] == index:
+                        # replace error spec with mutated spec
+                        current_code_list[index] = item["content"]
+                        mutated_spec_list.remove(item)
+                        found_flag = True
+                        break
+                if not found_flag:
+                    current_code_list[index] = " "
+
+            current_code = ""
+            for line in current_code_list:
+                current_code = current_code + line + "\n"
+
+            if self.verbose:
+                self.logger.debug(f"[{class_name}] {current_code}")
+            self.logger.debug(current_code + "\n")
+            # add OpenJML invokation
+            err_info = self._verify_with_openjml(current_code, class_name)
+            _verifier_calls_count += 1
+            if self.verbose:
+                self.logger.debug(f"[{class_name}] {err_info}")
+
+        self.logger.info(
+            f"[{class_name}] Finished. Verifier invoked {_verifier_calls_count} times"
+        )
+        return {
+            "status": "success",
+            "class_name": class_name,
+            "verifier_calls": _verifier_calls_count,
+            "final_code": current_code,
+            "final_error": err_info,
+        }
+
 
 class SpecGenWorker:
 
@@ -202,209 +399,43 @@ class SpecGenWorker:
         self.max_iterations = max_iterations
         self.verbose = verbose
         self.timeout = timeout
-        self.generation_prompt = GenerationPrompt()
-        self.refinement_prompt = RefinementPrompt()
 
-    def run_specgen(self, input_path):
+    def run_specgen(self, task: dict):
+        class_name = task["class_name"]
+        input_code = task["code"]
+
+        thread_id = threading.current_thread().ident
+        logger, log_file = create_logger(class_name, thread_id, self.output_dir)
+
+        specgen = SpecGen(
+            model=self.model,
+            temperature=self.temperature,
+            max_iterations=self.max_iterations,
+            output_dir=self.output_dir,
+            timeout=self.timeout,
+            logger=logger,
+            verbose=self.verbose,
+        )
+
         try:
-            classname = input_path.split("/")[-1].split(".")[0]
-            input_code = file2str(input_path)
-            thread_id = threading.current_thread().ident
-            logger, log_file = create_logger(classname, thread_id, self.output_dir)
-
-            self.specgen = SpecGen(
-                output_dir=self.output_dir,
-                timeout=self.timeout,
-                logger=logger,
-                verbose=self.verbose,
-            )
-
-            # Specification Generation Phase
-            _verifier_calls_count = 0
-            logger.info(f"[{classname}] Starting Generation Phase...")
-            done_flag = False
-            config = {}
-            current_code = input_code
-            err_info = ""
-            err_types = []
-
-            for i in range(1, self.max_iterations + 1):
-                if self.verbose:
-                    # print(f"[{classname}] Iteration {i}")
-                    logger.debug(f"[{classname}] Iteration {i}")
-
-                if i == 1:
-                    # add config invokation
-                    config = self.generation_prompt.create_generation_prompt_config(
-                        input_code, classname, self.model, self.temperature
-                    )
-                    if self.verbose:
-                        logger.debug(self.specgen._config_to_str(config))
-                        # self.specgen._print_config(config)
-
-                    # add model invokation
-                    ret = request_llm_engine(config)
-                    if self.verbose:
-                        logger.debug(ret.choices[0].message.content)
-                    current_code = parse_code_from_reply(ret.choices[0].message.content)
-                    current_code = current_code.strip()
-                    config["messages"].append(
-                        {
-                            "role": "assistant",
-                            "content": f"```\n{current_code}\n```",
-                        }
-                    )
-                else:
-                    err_types = self.refinement_prompt.extract_err_type(err_info)
-                    if len(err_types) != 0:
-                        # add config invokation
-                        tmp_config = self.refinement_prompt.create_specialized_patcher_prompt_config(
-                            current_code, err_info, self.model, self.temperature
-                        )
-                        if self.verbose:
-                            # self.specgen._print_config(tmp_config)
-                            logger.debug(self.specgen._config_to_str(tmp_config))
-                        # add model invokation
-                        ret = request_llm_engine(tmp_config)
-                        if self.verbose:
-                            logger.debug(
-                                f"[{classname}] assistant: {ret.choices[0].message.content}"
-                            )
-                        current_code = parse_code_from_reply(
-                            ret.choices[0].message.content
-                        )
-                        current_code = current_code.strip()
-                        config["messages"][-1]["content"] = f"```\n{current_code}\n```"
-                    elif (
-                        err_info.find("LoopInvariant") == -1
-                        and err_info.find("Postcondition") == -1
-                    ):
-                        refine_msg = {
-                            "role": "user",
-                            "content": FORMAT_REFINE_PROMPT.format(err_info=err_info),
-                        }
-                        refine_msg[
-                            "content"
-                        ] += self.refinement_prompt.gen_extra_guidance(err_info)
-                        config["messages"].append(refine_msg)
-                        if self.verbose:
-                            self.specgen._print_messages(refine_msg)
-                        token_limit_fitter(config, 3000)
-                        # add model invokation
-                        ret = request_llm_engine(config)
-                        if self.verbose:
-                            logger.debug(
-                                f"[{classname}] assistant: {ret.choices[0].message.content}"
-                            )
-                        current_code = parse_code_from_reply(
-                            ret.choices[0].message.content
-                        )
-                        current_code = current_code.strip()
-                        config["messages"].append(
-                            {
-                                "role": "assistant",
-                                "content": "```\n{code}\n```".format(code=current_code),
-                            }
-                        )
-                    else:
-                        done_flag = True
-                        break
-
-                # logger.write(current_code + "\n")
-                logger.info(f"[{classname}] {current_code}")
-                # add OpenJML invokation
-                err_info = self.specgen._verify_with_openjml(current_code, classname)
-                _verifier_calls_count += 1
-                if self.verbose:
-                    logger.debug(f"[{classname}] {err_info}")
-                err_types = self.refinement_prompt.extract_err_type(err_info)
-                logger.debug(f"[{classname}] {err_info}")
-                if err_info == "" or done_flag:
-                    break
-
-            # Mutation Phase
-            logger.info(f"[{classname}] Starting Mutation Phase...")
-            current_code_list = current_code.split("\n")
-            mutated_spec_list = []
-
-            # Generate mutated spec set
-            for index in range(len(current_code_list)):
-                if self.specgen._is_invariant_or_postcondition(
-                    current_code_list[index]
-                ):
-                    for mutated_spec in self.specgen._spec_mutator_heuristic(
-                        current_code_list[index]
-                    ):
-                        mutated_spec_list.append(
-                            {"content": mutated_spec, "index": index}
-                        )
-
-            while True:
-                if err_info == "":
-                    break
-                if not self.specgen._is_invariant_or_postcondition(err_info):
-                    logger.debug(
-                        f"[{classname}] Unexpected verification error. Aborted."
-                    )
-                    break
-
-                refuted_lineno_list = self.specgen._extract_lineno_from_err_info(
-                    err_info
-                )
-                # replace each error spec with mutated spec
-                for lineno in refuted_lineno_list:
-                    index = lineno - 1
-                    if self.specgen._is_assert(current_code_list[index]):
-                        current_code_list[index] = " "
-                        continue
-                    if not self.specgen._is_invariant_or_postcondition(
-                        current_code_list[index]
-                    ):
-                        continue
-                    # Find mutated spec with same lineno
-                    found_flag = False
-                    for item in mutated_spec_list:
-                        if item["index"] == index:
-                            # replace error spec with mutated spec
-                            current_code_list[index] = item["content"]
-                            mutated_spec_list.remove(item)
-                            found_flag = True
-                            break
-                    if not found_flag:
-                        current_code_list[index] = " "
-
-                current_code = ""
-                for line in current_code_list:
-                    current_code = current_code + line + "\n"
-
-                if self.verbose:
-                    logger.debug(f"[{classname}] {current_code}")
-                logger.debug(current_code + "\n")
-                # add OpenJML invokation
-                err_info = self.specgen._verify_with_openjml(current_code, classname)
-                _verifier_calls_count += 1
-                if self.verbose:
-                    logger.debug(f"[{classname}] {err_info}")
-
-            logger.info(f"[{classname}] Finished. Verifier invoked {_verifier_calls_count} times")
-
+            _result = specgen.run(input_code, class_name)
             return {
-                "path": input_path,
+                "id": task["id"],
                 "status": "success",
-                "classname": classname,
-                "verifier_calls": _verifier_calls_count,
+                "class_name": class_name,
+                "verifier_calls": _result["verifier_calls"],
                 "log_file": log_file,
-                "final_code": current_code,
-                "final_error": err_info,
+                "final_code": _result["final_code"],
+                "final_error": _result["final_error"],
             }
 
         except Exception as e:
             return {
-                "path": input_path,
+                "id": task["id"],
                 "status": "error",
                 "message": str(e),
-                "classname": classname if "classname" in locals() else "unknown",
-                "log_file": log_file if "log_file" in locals() else "unknown",
+                "class_name": class_name,
+                "log_file": log_file,
             }
 
 
@@ -432,18 +463,7 @@ class SpecGenRunner:
         self.threads = threads
         self.verbose = verbose
 
-    def _save_results(self, results):
-        with open(
-            os.path.join(self.output, f"{self.name}_results_all.jsonl"), "w"
-        ) as f:
-            for result in results:
-                f.write(json.dumps(result) + "\n")
-
-        print(
-            f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
-        )
-
-    def _save_summary(self, duration, results):
+    def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
         successful = [r for r in results if r["status"] == "success"]
         failed = [r for r in results if r["status"] == "error"]
@@ -466,7 +486,8 @@ class SpecGenRunner:
             "threads_used": self.threads,
             "successful_cases": [
                 {
-                    "classname": r["classname"],
+                    "id": r["id"],
+                    "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
                 }
@@ -474,19 +495,23 @@ class SpecGenRunner:
             ],
             "failed_cases": [
                 {
-                    "path": r["path"],
+                    "id": r["id"],
                     "message": r["message"],
-                    "classname": r.get("classname", "unknown"),
+                    "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
                 }
                 for r in failed
             ],
         }
 
-        with open(
-            os.path.join(self.output, f"{self.name}_results_summary.json"), "w"
-        ) as f:
-            json.dump(summary, f, indent=2)
+        dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
+        print(
+            f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
+        )
+
+        dump_json(
+            summary, os.path.join(self.output, f"{self.name}_results_summary.json")
+        )
 
         print(f"\nProcessing completed in {duration:.2f} seconds")
         print(
@@ -498,9 +523,9 @@ class SpecGenRunner:
 
     def run_workers(self):
 
-        input_paths = load_java_file_paths(self.input)
-        self.input_length = len(input_paths)
-        print(f"Found {self.input_length} input files to process")
+        _input_tasks = load_json(self.input)
+        self.input_length = len(_input_tasks)
+        print(f"Found {self.input_length} input tasks to process")
 
         output_dir = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
@@ -521,12 +546,12 @@ class SpecGenRunner:
         print(f"Starting processing with {self.threads} threads...")
 
         with ThreadPoolExecutor(max_workers=self.threads) as executor:
-            future_to_path = {
-                executor.submit(worker.run_specgen, path): path for path in input_paths
+            future_tasks = {
+                executor.submit(worker.run_specgen, task): task for task in _input_tasks
             }
 
-            for future in as_completed(future_to_path):
-                path = future_to_path[future]
+            for future in as_completed(future_tasks):
+                task = future_tasks[future]
                 try:
                     result = future.result()
                     results.append(result)
@@ -534,24 +559,23 @@ class SpecGenRunner:
 
                     if result["status"] == "success":
                         print(
-                            f"✓ [{completed_count}/{len(input_paths)}] {result['classname']} - {result['verifier_calls']} verifier calls"
+                            f"✓ [{completed_count}/{self.input_length}] {result['class_name']} - {result['verifier_calls']} verifier calls"
                         )
                     else:
                         print(
-                            f"✗ [{completed_count}/{len(input_paths)}] {path} - Error: {result.get('message', 'Unknown error')}"
+                            f"✗ [{completed_count}/{self.input_length}] {task['id']} - Error: {result.get('message', 'Unknown error')}"
                         )
 
                 except Exception as exc:
                     results.append(
-                        {"path": path, "status": "error", "message": str(exc)}
+                        {"id": task["id"], "status": "error", "message": str(exc)}
                     )
                     print(
-                        f"✗ [{completed_count}/{len(input_paths)}] {path} - Exception: {exc}"
+                        f"✗ [{completed_count}/{self.input_length}] {task['id']} - Exception: {exc}"
                     )
                     completed_count += 1
 
         end_time = time.time()
         duration = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
-        self._save_results(results)
-        self._save_summary(duration, results)
+        self._save_results(duration, results)

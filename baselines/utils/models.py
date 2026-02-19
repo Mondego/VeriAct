@@ -1,16 +1,7 @@
 import os
 import time
 from openai import OpenAI, RateLimitError, APIError, APIConnectionError, OpenAIError
-from utils import count_config_token
-import config
-
-
-def token_limit_fitter(_config, token_limit=4090):
-    res = _config
-    while count_config_token(res) > token_limit:
-        res["messages"] = res["messages"][3 : len(res["messages"])]
-        res["messages"].insert(0, _config["messages"][0])
-    return res
+import baselines.utils.config
 
 
 def create_model_config(messages, model, temperature):

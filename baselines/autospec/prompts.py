@@ -1,5 +1,5 @@
 import os
-from utils import read_file_as_str
+from baselines.utils.file_utility import read_from_file
 
 FORMAT_SYSTEM_MSG = """You are an JML specification generator for Java programs."""
 
@@ -48,7 +48,8 @@ FORMAT_REPLY_SPEC_MSG = """
 ```
 """
 
-def get_fewshot_context(type:str) -> list:
+
+def get_fewshot_context(type: str) -> list:
     if type == "loop":
         return get_fewshot_context_loop()
     elif type == "method":
@@ -60,79 +61,78 @@ def get_fewshot_context(type:str) -> list:
 
 
 def get_fewshot_context_field() -> list:
-    return [ {
-        "role": "system",
-        "content": FORMAT_SYSTEM_MSG
-    } ]
+    return [{"role": "system", "content": FORMAT_SYSTEM_MSG}]
+
 
 def get_fewshot_context_method() -> list:
-    res = [ {
-        "role": "system",
-        "content": FORMAT_SYSTEM_MSG
-    } ]
+    res = [{"role": "system", "content": FORMAT_SYSTEM_MSG}]
     for i in range(4):
-        index = str(i+1)
+        index = str(i + 1)
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        code_to_infill = read_file_as_str(current_dir + "/fewshots/{dir}/{num}/task".format(dir="method", num=index))
-        res.append({
-            "role": "user",
-            "content": FORMAT_REQUEST_METHOD_SPEC_MSG.format(code=code_to_infill)
-        })
-        spec_infilled = read_file_as_str(current_dir + "/fewshots/{dir}/{num}/ans".format(dir="method", num=index))
-        res.append({
-            "role": "assistant",
-            "content": FORMAT_REPLY_SPEC_MSG.format(code=spec_infilled)
-        })
+        code_to_infill = read_from_file(
+            current_dir + "/fewshots/{dir}/{num}/task".format(dir="method", num=index)
+        )
+        res.append(
+            {
+                "role": "user",
+                "content": FORMAT_REQUEST_METHOD_SPEC_MSG.format(code=code_to_infill),
+            }
+        )
+        spec_infilled = read_from_file(
+            current_dir + "/fewshots/{dir}/{num}/ans".format(dir="method", num=index)
+        )
+        res.append(
+            {
+                "role": "assistant",
+                "content": FORMAT_REPLY_SPEC_MSG.format(code=spec_infilled),
+            }
+        )
     return res
 
 
 def get_fewshot_context_loop() -> list:
-    res = [ {
-        "role": "system",
-        "content": FORMAT_SYSTEM_MSG
-    } ]
+    res = [{"role": "system", "content": FORMAT_SYSTEM_MSG}]
     for i in range(4):
-        index = str(i+1)
+        index = str(i + 1)
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        code_to_infill = read_file_as_str(current_dir + "/fewshots/{dir}/{num}/task".format(dir="loop", num=index))
-        res.append({
-            "role": "user",
-            "content": FORMAT_REQUEST_LOOP_SPEC_MSG.format(code=code_to_infill)
-        })
-        spec_infilled = read_file_as_str(current_dir + "/fewshots/{dir}/{num}/ans".format(dir="loop", num=index))
-        res.append({
-            "role": "assistant",
-            "content": FORMAT_REPLY_SPEC_MSG.format(code=spec_infilled)
-        })
+        code_to_infill = read_from_file(
+            current_dir + "/fewshots/{dir}/{num}/task".format(dir="loop", num=index)
+        )
+        res.append(
+            {
+                "role": "user",
+                "content": FORMAT_REQUEST_LOOP_SPEC_MSG.format(code=code_to_infill),
+            }
+        )
+        spec_infilled = read_from_file(
+            current_dir + "/fewshots/{dir}/{num}/ans".format(dir="loop", num=index)
+        )
+        res.append(
+            {
+                "role": "assistant",
+                "content": FORMAT_REPLY_SPEC_MSG.format(code=spec_infilled),
+            }
+        )
     return res
 
 
-def get_request_msg(code:str, type:str) -> dict:
+def get_request_msg(code: str, type: str) -> dict:
     if type == "loop":
         return {
             "role": "user",
-            "content": FORMAT_REQUEST_LOOP_SPEC_MSG.format(code=code)
+            "content": FORMAT_REQUEST_LOOP_SPEC_MSG.format(code=code),
         }
     elif type == "method":
         return {
             "role": "user",
-            "content": FORMAT_REQUEST_METHOD_SPEC_MSG.format(code=code)
+            "content": FORMAT_REQUEST_METHOD_SPEC_MSG.format(code=code),
         }
     elif type == "field":
         return {
             "role": "user",
-            "content": FORMAT_REQUEST_FIELD_SPEC_MSG.format(code=code)
+            "content": FORMAT_REQUEST_FIELD_SPEC_MSG.format(code=code),
         }
     else:
         assert False
-
-
-# [check] the input context  
-def context_to_str(context:list) -> str:
-    res = ""
-    for msg in context:
-        res = res + "{role}:{content}\n".format(role=msg["role"], content=msg["content"])
-        res = res + "==============================\n"
-    return res
