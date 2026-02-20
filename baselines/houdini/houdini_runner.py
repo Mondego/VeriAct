@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from baselines.utils.logger import create_logger
 from baselines.utils.file_utility import write_to_file, load_json, dump_json, dump_jsonl
-
+from baselines.utils.verifier import verify_with_openjml
 
 class Houdini:
 
@@ -28,7 +28,6 @@ class Houdini:
         self.timeout = timeout
         self.logger = logger
         self.verbose = verbose
-        self.logger = logger
 
     def _extract_blank_prefix(self, _code):
         string_stripped = _code.strip()
@@ -36,35 +35,6 @@ class Houdini:
             return _code.split(string_stripped)[0]
         else:
             return _code
-
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.debug(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.output_dir, "tmp")
-        if not os.path.exists(tmp_dir):
-            os.makedirs(tmp_dir, exist_ok=True)
-
-        tmp_filename = f"{tmp_dir}/{classname}.java"
-        with open(tmp_filename, "w") as tmp_file:
-            tmp_file.write(code_with_spec)
-
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=self.timeout
-            )
-            res = result.stdout + result.stderr
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.warning(
-                f"[{classname}] OpenJML command timed out after {self.timeout} seconds"
-            )
-            return f"Timeout: OpenJML verification exceeded time limit {self.timeout} seconds"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
 
     def _gen_annotation(self, code, classname):
 
@@ -207,7 +177,7 @@ class Houdini:
                 f"Writing merged code for {self.class_name} in thread {self.output_dir}"
             )
             self.logger.debug(merged_code + "\n")
-            err_info = self._verify_with_openjml(merged_code, self.class_name)
+            err_info = verify_with_openjml(merged_code, self.class_name, self.timeout, self.output_dir, self.logger)
             _verifier_calls_count = _verifier_calls_count + 1
             self.logger.debug(f"Error info: {err_info}")
             if err_info == "":

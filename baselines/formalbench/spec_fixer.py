@@ -1,6 +1,5 @@
 import os
 import re
-import subprocess
 import threading
 import time
 from pathlib import Path
@@ -13,9 +12,9 @@ from baselines.utils.models import create_model_config, request_llm_engine
 from baselines.utils.file_utility import (
     load_json,
     dump_json,
-    dump_jsonl,
-    write_to_file,
+    dump_jsonl
 )
+from baselines.utils.verifier import verify_with_openjml
 
 
 FIX_SYS_MESSAGE = (
@@ -69,52 +68,7 @@ class SpecFixer:
         self.timeout = timeout
         self.logger = logger
         self.verbose = verbose
-
-    # ------------------------------------------------------------------
-    # Verification
-    # ------------------------------------------------------------------
-
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.info(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.output_dir, "tmp")
-        Path(tmp_dir).mkdir(exist_ok=True)
-
-        tmp_filename = os.path.join(tmp_dir, f"{classname}.java")
-        try:
-            write_to_file(code_with_spec, tmp_filename)
-            self.logger.debug(f"[{classname}] Wrote code to {tmp_filename}")
-        except Exception as e:
-            self.logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
-            raise
-
-        cmd = (
-            f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet "
-            f"--nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-        )
-        self.logger.debug(f"[{classname}] Running OpenJML verification command")
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=120
-            )
-            res = result.stdout + result.stderr
-            self.logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
-            if result.stdout:
-                self.logger.debug(f"[{classname}] OpenJML stdout: {result.stdout[:500]}")
-            if result.stderr:
-                self.logger.debug(f"[{classname}] OpenJML stderr: {result.stderr[:500]}")
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.error(
-                f"[{classname}] OpenJML command timed out after 120 seconds"
-            )
-            return "Timeout: OpenJML verification exceeded time limit"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
-
+    
     # ------------------------------------------------------------------
     # Utilities
     # ------------------------------------------------------------------
@@ -282,7 +236,7 @@ class SpecFixer:
 
             curr_spec = new_spec
             self.logger.info(f"[{class_name}] Verifying fixed spec...")
-            err_info = self._verify_with_openjml(curr_spec, class_name)
+            err_info = verify_with_openjml(curr_spec, class_name, self.timeout, self.output_dir, self.logger)
             verifier_calls += 1
 
             if self.verbose:

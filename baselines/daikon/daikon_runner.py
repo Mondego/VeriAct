@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 import shutil
@@ -6,6 +5,7 @@ import subprocess
 import threading
 import time
 from typing import List
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from baselines.utils.file_utility import (
     load_json,
     read_from_file,
@@ -14,7 +14,7 @@ from baselines.utils.file_utility import (
     dump_jsonl,
 )
 from baselines.utils.logger import create_logger
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from baselines.utils.verifier import verify_with_openjml
 
 
 class Daikon:
@@ -101,34 +101,6 @@ class Daikon:
             self.logger.error(f"Command failed with error: {e} at {self.run_id}")
             return False
 
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.info(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.out_dir, "tmp")
-        Path(tmp_dir).mkdir(exist_ok=True)
-
-        tmp_filename = f"{tmp_dir}/{classname}.java"
-        with open(tmp_filename, "w") as tmp_file:
-            tmp_file.write(code_with_spec)
-
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=self.timeout
-            )
-            res = result.stdout + result.stderr
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.error(
-                f"[{classname}] OpenJML command timed out after {self.timeout} seconds"
-            )
-            return "Timeout: OpenJML verification exceeded time limit"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
-
     def _prepare_task_environment(self):
         try:
             write_to_file(
@@ -168,6 +140,12 @@ class Daikon:
         self.logger.info(f"Daikon execution completed successfully for {self.run_id}")
         os.chdir(self._BASE_DIR)  # change back to base directory after running daikon
 
+        # code_with_escspec = read_from_file(os.path.join(self.out_dir, f"{self.class_name}.java-escannotated"))
+        # code_with_jmlspec = read_from_file(os.path.join(self.out_dir, f"{self.class_name}.java-jmlannotated"))
+        # jml_error_info = verify_with_openjml(code_with_jmlspec, self.class_name, self.timeout, self.out_dir, self.logger)
+        # esc_error_info = verify_with_openjml(code_with_escspec, self.class_name, self.timeout, self.out_dir, self.logger)
+        # self.logger.info(f"Daikon run completed for task {self.run_id}")
+
 
 class DaikonWorker:
 
@@ -183,26 +161,32 @@ class DaikonWorker:
 
     def run_daikon(self, task: dict):
 
+        class_name = task["class_name"]
+        input_code = task["code"]
+        task_id = task["id"]
+        test_code= task["test_code"]
+        test_inputs = task["test_inputs"]
+
+
         _BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         _thread_id = threading.current_thread().ident
-        _logger, _log_file = create_logger(task["id"], _thread_id, self.out_dir)
-        self._logger = _logger
-        _logger.info(f"Starting Daikon for {task['id']} (Thread ID: {_thread_id})")
+        logger, log_file = create_logger(task_id, _thread_id, self.out_dir)
+        logger.info(f"Starting Daikon for {task_id} (Thread ID: {_thread_id})")
 
         _thread_daikon_artifacts = os.path.join(
-            self.out_dir, f"{task['id']}_{_thread_id}"
+            self.out_dir, f"{task_id}_{_thread_id}"
         )
         Path.mkdir(_thread_daikon_artifacts, parents=True, exist_ok=True)
 
         daikon = Daikon(
-            run_id=f"{task['id']}_{_thread_id}",
-            code=task["code"],
-            test_code=task["test_code"],
-            test_inputs=task["test_inputs"],
-            class_name=task["class_name"],
+            run_id=f"{task_id}_{_thread_id}",
+            code=input_code,
+            test_code=test_code,
+            test_inputs=test_inputs,
+            class_name=class_name,
             out_dir=_thread_daikon_artifacts,
             timeout=self.timeout,
-            logger=_logger,
+            logger=logger,
             verbose=self.verbose,
         )
 
@@ -211,50 +195,46 @@ class DaikonWorker:
 
         try:
             daikon.run()
-            _logger.info(f"Daikon run completed for task {task['id']}")
+            logger.info(f"Daikon run completed for task {task_id}")
             # [READ] output from thread specific directory and return necessary info for summary
             # {class_name}.java-escannotated for ESC, {class_name}.java-jmlannotated for JML
 
             code_with_escspec = read_from_file(
                 os.path.join(
-                    _thread_daikon_artifacts, f"{task['class_name']}.java-escannotated"
+                    _thread_daikon_artifacts, f"{class_name}.java-escannotated"
                 )
             )
             code_with_jmlspec = read_from_file(
                 os.path.join(
-                    _thread_daikon_artifacts, f"{task['class_name']}.java-jmlannotated"
+                    _thread_daikon_artifacts, f"{class_name}.java-jmlannotated"
                 )
             )
 
-            jml_error_info = daikon._verify_with_openjml(
-                code_with_jmlspec, task["class_name"]
-            )
-            esc_error_info = daikon._verify_with_openjml(
-                code_with_escspec, task["class_name"]
-            )
+            jml_error_info = verify_with_openjml(code_with_jmlspec, class_name, self.timeout, self.out_dir, logger)
+            esc_error_info = verify_with_openjml(code_with_escspec, class_name, self.timeout, self.out_dir, logger)
 
             return {
-                "id": task["id"],
+                "id": task_id,
                 "status": "success",
-                "class_name": task["class_name"],
+                "class_name": class_name,
                 "verifier_calls": 0,  # placeholder for now, will be updated after parsing the annotated code
-                "log_file": _log_file,
+                "log_file": log_file,
                 "annotated_code": code_with_jmlspec,
                 "final_error": jml_error_info if jml_error_info else esc_error_info,
             }
 
         except Exception as e:
-            _logger.error(f"Error processing {task['id']}: {e}")
+            logger.error(f"Error processing {task_id}: {e}")
             return {
-                "id": task["id"],
+                "id": task_id,
                 "status": "error",
                 "message": str(e),
-                "class_name": task["class_name"] if "class_name" in task else "unknown",
-                "log_file": _log_file if "log_file" in locals() else "unknown",
+                "class_name": class_name,
+                "log_file": log_file,
             }
 
         finally:
-            _logger.info(f"Finished Daikon for {task['id']} (Thread ID: {_thread_id})")
+            logger.info(f"Finished Daikon for {task_id} (Thread ID: {_thread_id})")
             os.chdir(_BASE_DIR)  # change back to base directory after processing
 
 

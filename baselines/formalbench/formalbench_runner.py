@@ -16,7 +16,7 @@ from baselines.utils.file_utility import (
     write_to_file,
 )
 from baselines.formalbench.example import JavaExample
-
+from baselines.utils.verifier import verify_with_openjml
 
 VALID_PROMPT_TYPES = ["zero_shot", "zs_cot", "two_shot", "fs_cot", "fs_ltm"]
 
@@ -53,43 +53,6 @@ class FormalBench:
             self.example_spec1 = JavaExample.EXAMPLE_SPEC1
             self.example_spec2 = JavaExample.EXAMPLE_SPEC2
 
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.info(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.output_dir, "tmp")
-        Path(tmp_dir).mkdir(exist_ok=True)
-
-        tmp_filename = os.path.join(tmp_dir, f"{classname}.java")
-        try:
-            write_to_file(code_with_spec, tmp_filename)
-            self.logger.debug(f"[{classname}] Wrote code to {tmp_filename}")
-        except Exception as e:
-            self.logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
-            raise
-
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-        self.logger.debug(f"[{classname}] Running OpenJML verification command")
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=120
-            )
-            res = result.stdout + result.stderr
-            self.logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
-            if result.stdout:
-                self.logger.debug(f"[{classname}] OpenJML stdout: {result.stdout[:500]}")
-            if result.stderr:
-                self.logger.debug(f"[{classname}] OpenJML stderr: {result.stderr[:500]}")
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.error(
-                f"[{classname}] OpenJML command timed out after 120 seconds"
-            )
-            return "Timeout: OpenJML verification exceeded time limit"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
 
     def _contains_annotations(self, java_code):
         lines = java_code.splitlines()
@@ -195,7 +158,7 @@ class FormalBench:
             }
 
         self.logger.info(f"[{class_name}] Verifying with OpenJML...")
-        err_info = self._verify_with_openjml(spec, class_name)
+        err_info = verify_with_openjml(spec, class_name, self.timeout, self.output_dir, self.logger)
         verifier_calls += 1
 
         if self.verbose:

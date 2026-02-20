@@ -10,6 +10,7 @@ from baselines.autospec.prompts import get_fewshot_context, get_request_msg
 from baselines.utils.logger import create_logger
 from baselines.utils.file_utility import dump_json, dump_jsonl, load_json, write_to_file
 from baselines.utils.models import create_model_config, request_llm_engine
+from baselines.utils.verifier import verify_with_openjml, validate_with_openjml 
 
 
 class AutoSpec:
@@ -45,92 +46,6 @@ class AutoSpec:
             self.logger.error(f"LLM request failed: {e}", exc_info=True)
             raise
 
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.info(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.output_dir, "tmp")
-        Path(tmp_dir).mkdir(exist_ok=True)
-
-        tmp_filename = os.path.join(tmp_dir, f"{classname}.java")
-        try:
-            write_to_file(code_with_spec, tmp_filename)
-            self.logger.debug(f"[{classname}] Wrote code to {tmp_filename}")
-        except Exception as e:
-            self.logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
-            raise
-
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-        self.logger.debug(f"[{classname}] Running OpenJML verification command")
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=120
-            )
-            res = result.stdout + result.stderr
-            self.logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
-            if result.stdout:
-                self.logger.debug(
-                    f"[{classname}] OpenJML stdout: {result.stdout[:500]}"
-                )
-            if result.stderr:
-                self.logger.debug(
-                    f"[{classname}] OpenJML stderr: {result.stderr[:500]}"
-                )
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.error(
-                f"[{classname}] OpenJML command timed out after 120 seconds"
-            )
-            return "Timeout: OpenJML verification exceeded time limit"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
-
-    def _validate_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.info(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.output_dir, "tmp")
-        Path(tmp_dir).mkdir(exist_ok=True)
-
-        tmp_filename = os.path.join(tmp_dir, f"{classname}.java")
-        try:
-            write_to_file(code_with_spec, tmp_filename)
-            self.logger.debug(f"[{classname}] Wrote code to {tmp_filename}")
-        except Exception as e:
-            self.logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
-            raise
-
-        # [FIX ME] For validation this command will change
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-        self.logger.debug(f"[{classname}] Running OpenJML verification command")
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=120
-            )
-            res = result.stdout + result.stderr
-            self.logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
-            if result.stdout:
-                self.logger.debug(
-                    f"[{classname}] OpenJML stdout: {result.stdout[:500]}"
-                )
-            if result.stderr:
-                self.logger.debug(
-                    f"[{classname}] OpenJML stderr: {result.stderr[:500]}"
-                )
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.error(
-                f"[{classname}] OpenJML command timed out after 120 seconds"
-            )
-            return "Timeout: OpenJML verification exceeded time limit"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
-    
-
     def _filter_validated_specs(
         self, specs: str, code: str, classname: str, lineno: int
     ) -> str:
@@ -143,10 +58,11 @@ class AutoSpec:
         instrumented_code = self._instrument_spec_into_code(
             code, [{"content": specs, "lineno": lineno}], unique=False
         )
-        err_info = self._validate_with_openjml(instrumented_code, classname)
+        # [Note] Only Syntax validation, no verification
+        err_info = validate_with_openjml(instrumented_code, classname, self.timeout, self.output_dir, self.logger)
         if self.verbose:
             self.logger.info(
-                f"[{classname}] Validation result:\n{err_info}\n==============================\n"
+                f"[{classname}] Validation result:\n{err_info}\n"
             )
         err_lineno_list = self._extract_lineno_from_err_info(err_info)
         self.logger.debug(f"[{classname}] Error lines detected: {err_lineno_list}")
@@ -169,7 +85,7 @@ class AutoSpec:
         )
         if self.verbose:
             self.logger.info(
-                f"[{classname}] The remaining specs on this point are:\n```\n{res}```\n===\n"
+                f"[{classname}] The remaining specs on this point are:\n```\n{res}```\n"
             )
         return res
 
@@ -208,7 +124,7 @@ class AutoSpec:
             reply_msg = self._request_models(context)
         if self.verbose:
             self.logger.info(
-                f"[{classname}] Received LLM response for line {lineno}\n==============================\n"
+                f"[{classname}] Received LLM response for line {lineno}\n"
             )
         reply_content = reply_msg.choices[0].message.content.replace("```java", "```")
         if reply_content.strip().startswith("//@"):
@@ -430,13 +346,13 @@ class AutoSpec:
             current_code = self._instrument_spec_into_code(current_code, specs_list)
             if self.verbose:
                 self.logger.info(
-                    f"Result of iteration {num_iter} is:\n{current_code}\n==============================\n"
+                    f"Result of iteration {num_iter} is:\n{current_code}\n"
                 )
-            err_info = self._verify_with_openjml(current_code, class_name)
+            err_info = verify_with_openjml(current_code, class_name, self.timeout, self.logger, self.output_dir)
             _verifier_calls_count += 1
             if self.verbose:
                 self.logger.info(
-                    f"[{class_name}] OpenJML verification result for iteration {num_iter}:\n{err_info}\n==============================\n"
+                    f"[{class_name}] OpenJML verification result for iteration {num_iter}:\n{err_info}\n"
                 )
             if "Timeout:" in err_info or "timeout" in err_info.lower():  # timeout
                 timed_out = True

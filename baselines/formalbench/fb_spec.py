@@ -10,6 +10,7 @@ from baselines.formalbench.prompts import build_messages
 from baselines.utils.logger import create_logger
 from baselines.utils.models import create_model_config, request_llm_engine
 from baselines.utils.file_utility import load_json, dump_json, dump_jsonl
+from baselines.utils.verifier import verify_with_openjml
 
 
 class FBSpec:
@@ -143,11 +144,8 @@ class FBSpec:
 
             curr_spec = new_spec
 
-            # ----------------------------------------------------------
-            # Verification
-            # ----------------------------------------------------------
             self.logger.info(f"[{class_name}] Iter {num_iter}: verifying...")
-            curr_err = self._generator._verify_with_openjml(curr_spec, class_name)
+            curr_err = verify_with_openjml(curr_spec, class_name, self.timeout, self.output_dir, self.logger)
             verifier_calls += 1
             if in_gen:
                 gen_verifier_calls += 1
