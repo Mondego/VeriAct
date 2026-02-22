@@ -1,7 +1,6 @@
 import os
 import time
 import threading
-import subprocess
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -17,7 +16,6 @@ from baselines.utils.file_utility import (
     load_json,
     dump_json,
     dump_jsonl,
-    write_to_file,
 )
 
 
@@ -32,6 +30,7 @@ class SpecGen:
         timeout,
         logger,
         verbose=False,
+        prompt_type="zero_shot",
     ):
         self.model = model
         self.temperature = temperature
@@ -40,9 +39,9 @@ class SpecGen:
         self.timeout = timeout
         self.verbose = verbose
         self.logger = logger
-        self.generation_prompt = GenerationPrompt()
+        self.prompt_type = prompt_type
+        self.generation_prompt = GenerationPrompt(self.prompt_type)
         self.refinement_prompt = RefinementPrompt()
-
 
     def _parse_code_from_model_response(self, content):
         content = "a" + content
@@ -282,7 +281,9 @@ class SpecGen:
 
             self.logger.info(f"[{class_name}] {current_code}")
 
-            err_info = verify_with_openjml(current_code, class_name, self.timeout, self.logger, self.output_dir)
+            err_info = verify_with_openjml(
+                current_code, class_name, self.timeout, self.output_dir, self.logger
+            )
             _verifier_calls_count += 1
 
             if self.verbose:
@@ -359,7 +360,9 @@ class SpecGen:
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {current_code}")
             self.logger.debug(current_code + "\n")
-            err_info = verify_with_openjml(current_code, class_name, self.timeout, self.logger, self.output_dir)
+            err_info = verify_with_openjml(
+                current_code, class_name, self.timeout, self.logger, self.output_dir
+            )
             _verifier_calls_count += 1
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {err_info}")
@@ -400,7 +403,14 @@ class SpecGen:
 class SpecGenWorker:
 
     def __init__(
-        self, output_dir, model, temperature, max_iterations, timeout, verbose=False
+        self,
+        output_dir,
+        model,
+        temperature,
+        max_iterations,
+        timeout,
+        verbose=False,
+        prompt_type="zero_shot",
     ):
         self.output_dir = output_dir
         self.model = model
@@ -408,6 +418,7 @@ class SpecGenWorker:
         self.max_iterations = max_iterations
         self.verbose = verbose
         self.timeout = timeout
+        self.prompt_type = prompt_type
 
     def run_specgen(self, task: dict):
         class_name = task["class_name"]
@@ -437,6 +448,7 @@ class SpecGenWorker:
             timeout=self.timeout,
             logger=logger,
             verbose=self.verbose,
+            prompt_type=self.prompt_type,
         )
 
         try:
@@ -458,6 +470,7 @@ class SpecGenWorker:
                 "id": task_id,
                 "status": _result["status"],
                 "class_name": class_name,
+                "prompt_type": self.prompt_type,
                 "verifier_calls": _result["verifier_calls"],
                 "iterations": _result["iterations"],
                 "verified": _result.get("verified", False),
@@ -469,6 +482,7 @@ class SpecGenWorker:
         except Exception as e:
             return {
                 "id": task_id,
+                "prompt_type": self.prompt_type,
                 "status": "unknown",
                 "message": str(e),
                 "class_name": class_name,
@@ -489,6 +503,7 @@ class SpecGenRunner:
         openjml_timeout,
         threads,
         verbose,
+        prompt_type,
     ):
         self.name = name
         self.input = input
@@ -499,6 +514,7 @@ class SpecGenRunner:
         self.openjml_timeout = openjml_timeout
         self.threads = threads
         self.verbose = verbose
+        self.prompt_type = prompt_type
 
     def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
@@ -609,6 +625,7 @@ class SpecGenRunner:
             max_iterations=self.max_iterations,
             timeout=self.openjml_timeout,
             verbose=self.verbose,
+            prompt_type=self.prompt_type,
         )
 
         start_time = time.time()

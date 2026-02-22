@@ -1,6 +1,10 @@
 import os
 from baselines.utils.file_utility import read_from_file
 
+
+VALID_PROMPT_TYPES = ["zero_shot", "two_shot", "four_shot"]
+
+
 FORMAT_SYSTEM_MSG = """You are an JML specification generator for Java programs."""
 
 FORMAT_REQUEST_METHOD_SPEC_MSG = """
@@ -49,24 +53,31 @@ FORMAT_REPLY_SPEC_MSG = """
 """
 
 
-def get_fewshot_context(type: str) -> list:
+def get_fewshot_context(type: str, prompt_type: str) -> list:
+
+    shot_count = 0
+    if prompt_type == "two_shot":
+        shot_count = 2
+    elif prompt_type == "four_shot":
+        shot_count = 4
+
     if type == "loop":
-        return get_fewshot_context_loop()
+        return get_fewshot_context_loop(shot_count)
     elif type == "method":
-        return get_fewshot_context_method()
+        return get_fewshot_context_method(shot_count)
     elif type == "field":
-        return get_fewshot_context_field()
+        return get_fewshot_context_field(shot_count)
     else:
         assert False
 
 
-def get_fewshot_context_field() -> list:
+def get_fewshot_context_field(shot_count: int) -> list:
     return [{"role": "system", "content": FORMAT_SYSTEM_MSG}]
 
 
-def get_fewshot_context_method() -> list:
+def get_fewshot_context_method(shot_count: int) -> list:
     res = [{"role": "system", "content": FORMAT_SYSTEM_MSG}]
-    for i in range(4):
+    for i in range(shot_count):
         index = str(i + 1)
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -92,9 +103,9 @@ def get_fewshot_context_method() -> list:
     return res
 
 
-def get_fewshot_context_loop() -> list:
+def get_fewshot_context_loop(shot_count: int) -> list:
     res = [{"role": "system", "content": FORMAT_SYSTEM_MSG}]
-    for i in range(4):
+    for i in range(shot_count):
         index = str(i + 1)
         current_dir = os.path.dirname(os.path.abspath(__file__))
         code_to_infill = read_from_file(

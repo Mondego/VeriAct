@@ -10,7 +10,7 @@ from baselines.autospec.prompts import get_fewshot_context, get_request_msg
 from baselines.utils.logger import create_logger
 from baselines.utils.file_utility import dump_json, dump_jsonl, load_json, write_to_file
 from baselines.utils.models import create_model_config, request_llm_engine
-from baselines.utils.verifier import verify_with_openjml, validate_with_openjml 
+from baselines.utils.verifier import verify_with_openjml, validate_with_openjml
 
 
 class AutoSpec:
@@ -24,6 +24,7 @@ class AutoSpec:
         timeout,
         logger,
         verbose=False,
+        prompt_type="zero_shot",
     ):
         self.output_dir = output_dir
         self.model = model
@@ -32,6 +33,7 @@ class AutoSpec:
         self.timeout = timeout
         self.logger = logger
         self.verbose = verbose
+        self.prompt_type = prompt_type
 
     def _request_models(self, messages):
         config = create_model_config(messages, self.model, self.temperature)
@@ -59,11 +61,11 @@ class AutoSpec:
             code, [{"content": specs, "lineno": lineno}], unique=False
         )
         # [Note] Only Syntax validation, no verification
-        err_info = validate_with_openjml(instrumented_code, classname, self.timeout, self.output_dir, self.logger)
+        err_info = validate_with_openjml(
+            instrumented_code, classname, self.timeout, self.output_dir, self.logger
+        )
         if self.verbose:
-            self.logger.info(
-                f"[{classname}] Validation result:\n{err_info}\n"
-            )
+            self.logger.info(f"[{classname}] Validation result:\n{err_info}\n")
         err_lineno_list = self._extract_lineno_from_err_info(err_info)
         self.logger.debug(f"[{classname}] Error lines detected: {err_lineno_list}")
 
@@ -108,7 +110,7 @@ class AutoSpec:
                     + "// >>>INFILL<<<\n"
                 )
             code_for_request = code_for_request + line + "\n"
-        context = get_fewshot_context(type)
+        context = get_fewshot_context(type,self.prompt_type)
         request_msg = get_request_msg(code_for_request, type)
         if self.verbose:
             self.logger.info(
@@ -123,9 +125,7 @@ class AutoSpec:
         else:
             reply_msg = self._request_models(context)
         if self.verbose:
-            self.logger.info(
-                f"[{classname}] Received LLM response for line {lineno}\n"
-            )
+            self.logger.info(f"[{classname}] Received LLM response for line {lineno}\n")
         reply_content = reply_msg.choices[0].message.content.replace("```java", "```")
         if reply_content.strip().startswith("//@"):
             reply_content = "```\n" + reply_content.strip() + "\n```"
@@ -348,7 +348,9 @@ class AutoSpec:
                 self.logger.info(
                     f"Result of iteration {num_iter} is:\n{current_code}\n"
                 )
-            err_info = verify_with_openjml(current_code, class_name, self.timeout, self.logger, self.output_dir)
+            err_info = verify_with_openjml(
+                current_code, class_name, self.timeout, self.output_dir, self.logger
+            )
             _verifier_calls_count += 1
             if self.verbose:
                 self.logger.info(
@@ -401,7 +403,14 @@ class AutoSpec:
 class AutoSpecWorker:
 
     def __init__(
-        self, output_dir, model, temperature, max_iterations, timeout, verbose=False
+        self,
+        output_dir,
+        model,
+        temperature,
+        max_iterations,
+        timeout,
+        verbose=False,
+        prompt_type="zero_shot",
     ):
         self.output_dir = output_dir
         self.model = model
@@ -409,6 +418,7 @@ class AutoSpecWorker:
         self.max_iterations = max_iterations
         self.verbose = verbose
         self.timeout = timeout
+        self.prompt_type = prompt_type
 
     def run_autospec(self, task: dict):
 
@@ -432,7 +442,7 @@ class AutoSpecWorker:
 
         logger.info(f"Starting AutoSpec for {classname} (task id: {task_id})")
 
-        self.autospec = AutoSpec(
+        autospec = AutoSpec(
             model=self.model,
             temperature=self.temperature,
             max_iterations=self.max_iterations,
@@ -440,10 +450,10 @@ class AutoSpecWorker:
             timeout=self.timeout,
             logger=logger,
             verbose=self.verbose,
+            prompt_type=self.prompt_type,
         )
         try:
-            _result = self.autospec.run(input_code, classname)
-            
+            _result = autospec.run(input_code, classname)
 
             if _result.get("verified", False):
                 verified_status = "✓ VERIFIED"
@@ -461,6 +471,7 @@ class AutoSpecWorker:
                 "id": task_id,
                 "status": _result["status"],
                 "class_name": classname,
+                "prompt_type": self.prompt_type,
                 "verifier_calls": _result["verifier_calls"],
                 "iterations": _result["iterations"],
                 "verified": _result.get("verified", False),
@@ -473,6 +484,7 @@ class AutoSpecWorker:
             logger.error(f"Error processing {classname}: {e}", exc_info=True)
             return {
                 "id": task_id,
+                "prompt_type": self.prompt_type,
                 "status": "unknown",
                 "message": str(e),
                 "class_name": classname,
@@ -493,6 +505,7 @@ class AutoSpecRunner:
         openjml_timeout,
         threads,
         verbose,
+        prompt_type,
     ):
         self.name = name
         self.input = input
@@ -503,6 +516,7 @@ class AutoSpecRunner:
         self.openjml_timeout = openjml_timeout
         self.threads = threads
         self.verbose = verbose
+        self.prompt_type = prompt_type
 
     def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
@@ -612,6 +626,7 @@ class AutoSpecRunner:
             max_iterations=self.max_iterations,
             timeout=self.openjml_timeout,
             verbose=self.verbose,
+            prompt_type=self.prompt_type,
         )
 
         start_time = time.time()

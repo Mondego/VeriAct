@@ -1,6 +1,8 @@
 import os
 import sys
 import argparse
+
+from baselines.specgen.prompts import VALID_PROMPT_TYPES
 from baselines.specgen.specgen_runner import SpecGenRunner
 
 
@@ -45,7 +47,14 @@ def _retrive_input_arguments():
         required=True,
         help="Temperature for the model (e.g., 0.7)",
     )
-
+    parser.add_argument(
+        "--prompt_type",
+        type=str,
+        default="zero_shot",
+        choices=VALID_PROMPT_TYPES,
+        help=f"Prompt strategy to use. One of: {VALID_PROMPT_TYPES} (default: zero_shot)",
+    )
+    
     parser.add_argument(
         "--max_iterations",
         type=int,
@@ -95,6 +104,7 @@ def main():
         model=_args.model,
         temperature=_args.temperature,
         max_iterations=_args.max_iterations,
+        prompt_type=_args.prompt_type,
         openjml_timeout=_args.openjml_timeout,
         threads=_args.threads,
         verbose=_args.verbose,

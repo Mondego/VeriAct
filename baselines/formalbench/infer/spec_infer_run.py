@@ -1,12 +1,11 @@
 import os
 import sys
 import argparse
-from baselines.formalbench.fb_spec import FBSpecRunner
-from baselines.formalbench.formalbench_runner import VALID_PROMPT_TYPES
+from baselines.formalbench.infer.spec_infer import FormalBenchRunner, VALID_PROMPT_TYPES
 
 
 def _retrieve_input_arguments():
-    parser = argparse.ArgumentParser(description="Multi-threaded FBSpec processor")
+    parser = argparse.ArgumentParser(description="Multi-threaded FormalBench processor")
     parser.add_argument(
         "--name",
         type=str,
@@ -45,12 +44,6 @@ def _retrieve_input_arguments():
         help=f"Prompt strategy to use. One of: {VALID_PROMPT_TYPES} (default: zero_shot)",
     )
     parser.add_argument(
-        "--max_iters",
-        type=int,
-        default=5,
-        help="Total iteration budget across generation and repair (default: 5)",
-    )
-    parser.add_argument(
         "--openjml_timeout",
         type=int,
         default=300,
@@ -80,9 +73,6 @@ def _validate_arguments(args):
     if args.threads < 1:
         print("Error: Number of threads must be at least 1.")
         sys.exit(1)
-    if args.max_iters < 1:
-        print("Error: max_iters must be at least 1.")
-        sys.exit(1)
     if args.openjml_timeout < 0:
         print("Error: OpenJML timeout must be a non-negative integer.")
         sys.exit(1)
@@ -99,14 +89,13 @@ def main():
     _args = _retrieve_input_arguments()
     _validate_arguments(_args)
 
-    _runner = FBSpecRunner(
+    _runner = FormalBenchRunner(
         name=_args.name,
         input=_args.input,
         output=_args.output,
         model=_args.model,
         temperature=_args.temperature,
         prompt_type=_args.prompt_type,
-        max_iters=_args.max_iters,
         openjml_timeout=_args.openjml_timeout,
         threads=_args.threads,
         verbose=_args.verbose,

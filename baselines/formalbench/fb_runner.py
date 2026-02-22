@@ -4,8 +4,8 @@ import time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from baselines.formalbench.formalbench_runner import FormalBench, VALID_PROMPT_TYPES
-from baselines.formalbench.spec_fixer import SpecFixer
+from baselines.formalbench.infer.spec_infer import FormalBench, VALID_PROMPT_TYPES
+from baselines.formalbench.fixer.spec_fixer import SpecFixer
 from baselines.formalbench.prompts import build_messages
 from baselines.utils.logger import create_logger
 from baselines.utils.models import create_model_config, request_llm_engine

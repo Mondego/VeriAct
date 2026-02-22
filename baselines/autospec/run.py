@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 from baselines.autospec.autospec_runner import AutoSpecRunner
-
+from baselines.autospec.prompts import VALID_PROMPT_TYPES
 
 def _retrive_input_arguments():
     parser = argparse.ArgumentParser(description="Multi-threaded SpecGen processor")
@@ -44,6 +44,13 @@ def _retrive_input_arguments():
         type=float,
         required=True,
         help="Temperature for the model (e.g., 0.7)",
+    )
+    parser.add_argument(
+        "--prompt_type",
+        type=str,
+        default="zero_shot",
+        choices=VALID_PROMPT_TYPES,
+        help=f"Prompt strategy to use. One of: {VALID_PROMPT_TYPES} (default: zero_shot)",
     )
 
     parser.add_argument(
@@ -96,6 +103,7 @@ def main():
         model=_args.model,
         temperature=_args.temperature,
         max_iterations=_args.max_iterations,
+        prompt_type=_args.prompt_type,
         openjml_timeout=_args.openjml_timeout,
         threads=_args.threads,
         verbose=_args.verbose,
