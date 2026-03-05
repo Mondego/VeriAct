@@ -3,6 +3,11 @@ import random
 from baselines.utils.file_utility import read_from_file
 from baselines.utils.models import create_model_config
 
+
+
+VALID_PROMPT_TYPES = ["zero_shot", "two_shot", "four_shot"]
+
+
 FORMAT_INIT_PROMPT = """
 Please generate JML specifications for the Java program given below.
 ```
@@ -39,6 +44,9 @@ Please refine the specifications, so that it can pass the verification.
 
 
 class GenerationPrompt:
+
+    def __init__(self, prompt_type="zero_shot"):
+        self.prompt_type = prompt_type
 
     def read_oracle_as_msg(self, classname):
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -100,7 +108,13 @@ class GenerationPrompt:
             "TransposeMatrix",
         ]
 
-        prompt_list = self.randomly_select_prompt(oracle_list, 4, class_name)
+        shot_count = 0
+        if self.prompt_type == "two_shot":
+            shot_count = 2
+        elif self.prompt_type == "four_shot":
+            shot_count = 4
+
+        prompt_list = self.randomly_select_prompt(oracle_list, shot_count, class_name)
         # prompt_list = self.manually_select_prompt()
 
         for prompted_oracle in prompt_list:

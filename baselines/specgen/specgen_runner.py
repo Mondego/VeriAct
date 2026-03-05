@@ -1,7 +1,6 @@
 import os
 import time
 import threading
-import subprocess
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -12,11 +11,11 @@ from prompts import (
 )
 from baselines.utils.logger import create_logger
 from baselines.utils.models import request_llm_engine
+from baselines.utils.verifier import verify_with_openjml
 from baselines.utils.file_utility import (
     load_json,
     dump_json,
     dump_jsonl,
-    write_to_file,
 )
 
 
@@ -31,6 +30,7 @@ class SpecGen:
         timeout,
         logger,
         verbose=False,
+        prompt_type="zero_shot",
     ):
         self.model = model
         self.temperature = temperature
@@ -39,50 +39,9 @@ class SpecGen:
         self.timeout = timeout
         self.verbose = verbose
         self.logger = logger
-        self.generation_prompt = GenerationPrompt()
+        self.prompt_type = prompt_type
+        self.generation_prompt = GenerationPrompt(self.prompt_type)
         self.refinement_prompt = RefinementPrompt()
-
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.info(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.output_dir, "tmp")
-        Path(tmp_dir).mkdir(exist_ok=True)
-
-        tmp_filename = os.path.join(tmp_dir, f"{classname}.java")
-        try:
-            write_to_file(code_with_spec, tmp_filename)
-            self.logger.debug(f"[{classname}] Wrote code to {tmp_filename}")
-        except Exception as e:
-            self.logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
-            raise
-
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-        self.logger.debug(f"[{classname}] Running OpenJML verification command")
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=120
-            )
-            res = result.stdout + result.stderr
-            self.logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
-            if result.stdout:
-                self.logger.debug(
-                    f"[{classname}] OpenJML stdout: {result.stdout[:500]}"
-                )
-            if result.stderr:
-                self.logger.debug(
-                    f"[{classname}] OpenJML stderr: {result.stderr[:500]}"
-                )
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.error(
-                f"[{classname}] OpenJML command timed out after 120 seconds"
-            )
-            return "Timeout: OpenJML verification exceeded time limit"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
 
     def _parse_code_from_model_response(self, content):
         content = "a" + content
@@ -322,7 +281,9 @@ class SpecGen:
 
             self.logger.info(f"[{class_name}] {current_code}")
 
-            err_info = self._verify_with_openjml(current_code, class_name)
+            err_info = verify_with_openjml(
+                current_code, class_name, self.timeout, self.output_dir, self.logger
+            )
             _verifier_calls_count += 1
 
             if self.verbose:
@@ -399,7 +360,9 @@ class SpecGen:
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {current_code}")
             self.logger.debug(current_code + "\n")
-            err_info = self._verify_with_openjml(current_code, class_name)
+            err_info = verify_with_openjml(
+                current_code, class_name, self.timeout, self.logger, self.output_dir
+            )
             _verifier_calls_count += 1
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {err_info}")
@@ -440,7 +403,14 @@ class SpecGen:
 class SpecGenWorker:
 
     def __init__(
-        self, output_dir, model, temperature, max_iterations, timeout, verbose=False
+        self,
+        output_dir,
+        model,
+        temperature,
+        max_iterations,
+        timeout,
+        verbose=False,
+        prompt_type="zero_shot",
     ):
         self.output_dir = output_dir
         self.model = model
@@ -448,6 +418,7 @@ class SpecGenWorker:
         self.max_iterations = max_iterations
         self.verbose = verbose
         self.timeout = timeout
+        self.prompt_type = prompt_type
 
     def run_specgen(self, task: dict):
         class_name = task["class_name"]
@@ -477,6 +448,7 @@ class SpecGenWorker:
             timeout=self.timeout,
             logger=logger,
             verbose=self.verbose,
+            prompt_type=self.prompt_type,
         )
 
         try:
@@ -498,6 +470,7 @@ class SpecGenWorker:
                 "id": task_id,
                 "status": _result["status"],
                 "class_name": class_name,
+                "prompt_type": self.prompt_type,
                 "verifier_calls": _result["verifier_calls"],
                 "iterations": _result["iterations"],
                 "verified": _result.get("verified", False),
@@ -509,6 +482,7 @@ class SpecGenWorker:
         except Exception as e:
             return {
                 "id": task_id,
+                "prompt_type": self.prompt_type,
                 "status": "unknown",
                 "message": str(e),
                 "class_name": class_name,
@@ -529,6 +503,7 @@ class SpecGenRunner:
         openjml_timeout,
         threads,
         verbose,
+        prompt_type,
     ):
         self.name = name
         self.input = input
@@ -539,6 +514,7 @@ class SpecGenRunner:
         self.openjml_timeout = openjml_timeout
         self.threads = threads
         self.verbose = verbose
+        self.prompt_type = prompt_type
 
     def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
@@ -649,6 +625,7 @@ class SpecGenRunner:
             max_iterations=self.max_iterations,
             timeout=self.openjml_timeout,
             verbose=self.verbose,
+            prompt_type=self.prompt_type,
         )
 
         start_time = time.time()

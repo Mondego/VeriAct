@@ -1,4 +1,3 @@
-import json
 import os
 from pathlib import Path
 import shutil
@@ -6,6 +5,7 @@ import subprocess
 import threading
 import time
 from typing import List
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from baselines.utils.file_utility import (
     load_json,
     read_from_file,
@@ -14,7 +14,7 @@ from baselines.utils.file_utility import (
     dump_jsonl,
 )
 from baselines.utils.logger import create_logger
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from baselines.utils.verifier import verify_with_openjml
 
 
 class Daikon:
@@ -101,34 +101,6 @@ class Daikon:
             self.logger.error(f"Command failed with error: {e} at {self.run_id}")
             return False
 
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.info(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.out_dir, "tmp")
-        Path(tmp_dir).mkdir(exist_ok=True)
-
-        tmp_filename = f"{tmp_dir}/{classname}.java"
-        with open(tmp_filename, "w") as tmp_file:
-            tmp_file.write(code_with_spec)
-
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=self.timeout
-            )
-            res = result.stdout + result.stderr
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.error(
-                f"[{classname}] OpenJML command timed out after {self.timeout} seconds"
-            )
-            return "Timeout: OpenJML verification exceeded time limit"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
-
     def _prepare_task_environment(self):
         try:
             write_to_file(
@@ -168,6 +140,40 @@ class Daikon:
         self.logger.info(f"Daikon execution completed successfully for {self.run_id}")
         os.chdir(self._BASE_DIR)  # change back to base directory after running daikon
 
+        code_with_escspec = read_from_file(
+            os.path.join(self.out_dir, f"{self.class_name}.java-escannotated")
+        )
+        code_with_jmlspec = read_from_file(
+            os.path.join(self.out_dir, f"{self.class_name}.java-jmlannotated")
+        )
+        jml_error_info = verify_with_openjml(
+            code_with_jmlspec, self.class_name, self.timeout, self.out_dir, self.logger
+        )
+        esc_error_info = verify_with_openjml(
+            code_with_escspec, self.class_name, self.timeout, self.out_dir, self.logger
+        )
+        self.logger.info(f"Daikon run completed for task {self.run_id}")
+
+        final_error = jml_error_info if jml_error_info else esc_error_info
+        timed_out = "Timeout:" in final_error or "timeout" in final_error.lower()
+        verified_flag = final_error.strip() == ""
+
+        if verified_flag:
+            status = "verified"
+            timed_out = False
+        elif timed_out:
+            status = "timed_out"
+        else:
+            status = "unverified"
+
+        return {
+            "status": status,
+            "annotated_code": code_with_jmlspec,
+            "verified": verified_flag,
+            "timed_out": timed_out,
+            "final_error": final_error,
+        }
+
 
 class DaikonWorker:
 
@@ -183,78 +189,69 @@ class DaikonWorker:
 
     def run_daikon(self, task: dict):
 
+        class_name = task["class_name"]
+        input_code = task["code"]
+        task_id = task["id"]
+        test_code = task["test_code"]
+        test_inputs = task["test_inputs"]
+
         _BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         _thread_id = threading.current_thread().ident
-        _logger, _log_file = create_logger(task["id"], _thread_id, self.out_dir)
-        self._logger = _logger
-        _logger.info(f"Starting Daikon for {task['id']} (Thread ID: {_thread_id})")
+        logger, log_file = create_logger(task_id, _thread_id, self.out_dir)
+        logger.info(f"Starting Daikon for {task_id} (Thread ID: {_thread_id})")
 
-        _thread_daikon_artifacts = os.path.join(
-            self.out_dir, f"{task['id']}_{_thread_id}"
-        )
+        _thread_daikon_artifacts = os.path.join(self.out_dir, f"{task_id}_{_thread_id}")
         Path.mkdir(_thread_daikon_artifacts, parents=True, exist_ok=True)
 
         daikon = Daikon(
-            run_id=f"{task['id']}_{_thread_id}",
-            code=task["code"],
-            test_code=task["test_code"],
-            test_inputs=task["test_inputs"],
-            class_name=task["class_name"],
+            run_id=f"{task_id}_{_thread_id}",
+            code=input_code,
+            test_code=test_code,
+            test_inputs=test_inputs,
+            class_name=class_name,
             out_dir=_thread_daikon_artifacts,
             timeout=self.timeout,
-            logger=_logger,
+            logger=logger,
             verbose=self.verbose,
         )
 
-        jml_error_info = ""
-        esc_error_info = ""
-
         try:
-            daikon.run()
-            _logger.info(f"Daikon run completed for task {task['id']}")
-            # [READ] output from thread specific directory and return necessary info for summary
-            # {class_name}.java-escannotated for ESC, {class_name}.java-jmlannotated for JML
+            _result = daikon.run()
 
-            code_with_escspec = read_from_file(
-                os.path.join(
-                    _thread_daikon_artifacts, f"{task['class_name']}.java-escannotated"
-                )
-            )
-            code_with_jmlspec = read_from_file(
-                os.path.join(
-                    _thread_daikon_artifacts, f"{task['class_name']}.java-jmlannotated"
-                )
-            )
+            if _result.get("verified", False):
+                verified_status = "✓ VERIFIED"
+            elif _result.get("timed_out", False):
+                verified_status = "⏱ TIMED OUT"
+            else:
+                verified_status = "✗ UNVERIFIED"
 
-            jml_error_info = daikon._verify_with_openjml(
-                code_with_jmlspec, task["class_name"]
-            )
-            esc_error_info = daikon._verify_with_openjml(
-                code_with_escspec, task["class_name"]
+            logger.info(
+                f"{verified_status} - Completed {class_name} with 2 verifier calls"
             )
 
             return {
-                "id": task["id"],
-                "status": "success",
-                "class_name": task["class_name"],
-                "verifier_calls": 0,  # placeholder for now, will be updated after parsing the annotated code
-                "log_file": _log_file,
-                "annotated_code": code_with_jmlspec,
-                "final_error": jml_error_info if jml_error_info else esc_error_info,
+                "id": task_id,
+                "status": _result["status"],
+                "class_name": class_name,
+                "verifier_calls": 2,
+                "log_file": log_file,
+                "annotated_code": _result["annotated_code"],
+                "verified": _result.get("verified", False),
+                "final_error": _result.get("final_error", ""),
             }
 
         except Exception as e:
-            _logger.error(f"Error processing {task['id']}: {e}")
+            logger.error(f"Error processing {task_id}: {e}", exc_info=True)
             return {
-                "id": task["id"],
-                "status": "error",
+                "id": task_id,
+                "status": "unknown",
                 "message": str(e),
-                "class_name": task["class_name"] if "class_name" in task else "unknown",
-                "log_file": _log_file if "log_file" in locals() else "unknown",
+                "class_name": class_name,
+                "log_file": log_file,
             }
 
         finally:
-            _logger.info(f"Finished Daikon for {task['id']} (Thread ID: {_thread_id})")
+            logger.info(f"Finished Daikon for {task_id} (Thread ID: {_thread_id})")
             os.chdir(_BASE_DIR)  # change back to base directory after processing
 
 
@@ -270,42 +267,70 @@ class DaikonRunner:
 
     def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
-        successful = [r for r in results if r["status"] == "success"]
-        failed = [r for r in results if r["status"] == "error"]
+        verified = [r for r in results if r["status"] == "verified"]
+        unverified = [r for r in results if r["status"] == "unverified"]
+        timed_out = [r for r in results if r["status"] == "timed_out"]
+        unknown = [r for r in results if r["status"] == "unknown"]
 
-        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in successful)
-        avg_verifier_calls = total_verifier_calls / len(successful) if successful else 0
+        total_verifier_calls = sum(
+            r.get("verifier_calls", 0) for r in (verified + unverified + timed_out)
+        )
+        avg_verifier_calls = (
+            total_verifier_calls / len(verified + unverified + timed_out)
+            if (verified + unverified + timed_out)
+            else 0
+        )
 
         summary = {
             "total_files_processed": self.input_length,
-            "successful": len(successful),
-            "failed": len(failed),
-            "success_rate_percent": (
-                round(len(successful) / self.input_length * 100, 1)
+            "verified": len(verified),
+            "unverified": len(unverified),
+            "timed_out": len(timed_out),
+            "unknown": len(unknown),
+            "verification_rate_percent": (
+                round(len(verified) / self.input_length * 100, 1)
                 if self.input_length > 0
                 else 0
             ),
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
-            "average_verifier_calls_per_successful_case": round(avg_verifier_calls, 1),
+            "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
             "threads_used": self.threads,
-            "successful_cases": [
+            "verified_cases": [
                 {
                     "id": r["id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
                 }
-                for r in successful
+                for r in verified
             ],
-            "failed_cases": [
+            "unverified_cases": [
+                {
+                    "id": r["id"],
+                    "class_name": r["class_name"],
+                    "verifier_calls": r["verifier_calls"],
+                    "log_file": r["log_file"],
+                }
+                for r in unverified
+            ],
+            "timed_out_cases": [
+                {
+                    "id": r["id"],
+                    "class_name": r["class_name"],
+                    "verifier_calls": r["verifier_calls"],
+                    "log_file": r["log_file"],
+                }
+                for r in timed_out
+            ],
+            "unknown_cases": [
                 {
                     "id": r["id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
                 }
-                for r in failed
+                for r in unknown
             ],
         }
 
@@ -314,12 +339,21 @@ class DaikonRunner:
             f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
         )
 
-        dump_json(summary, os.path.join(self.output, f"{self.name}_results_summary.json"))
+        dump_json(
+            summary, os.path.join(self.output, f"{self.name}_results_summary.json")
+        )
 
         print(f"\nProcessing completed in {duration:.2f} seconds")
         print(
-            f"Success rate: {len(successful)}/{self.input_length} ({len(successful)/self.input_length*100:.1f}%)"
+            f"Verified: {len(verified)}/{self.input_length} ({len(verified)/self.input_length*100:.1f}%)"
         )
+        print(
+            f"Unverified: {len(unverified)}/{self.input_length} ({len(unverified)/self.input_length*100:.1f}%)"
+        )
+        print(
+            f"Timed out: {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)"
+        )
+        print(f"Unknown (errors): {len(unknown)}/{self.input_length}")
         print(
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )
@@ -357,18 +391,31 @@ class DaikonRunner:
                     results.append(result)
                     completed_count += 1
 
-                    if result["status"] == "success":
+                    if result["status"] == "verified":
                         print(
-                            f"✓ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - {result['verifier_calls']} verifier calls"
+                            f"✓ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - VERIFIED - {result['verifier_calls']} verifier calls"
                         )
-                    else:
+                    elif result["status"] == "unverified":
                         print(
-                            f"✗ [{completed_count}/{len(_input_tasks)}] {task['id']} - Error: {result.get('message', 'Unknown error')}"
+                            f"✗ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - UNVERIFIED - {result['verifier_calls']} verifier calls"
+                        )
+                    elif result["status"] == "timed_out":
+                        print(
+                            f"⏱ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - TIMED OUT - {result['verifier_calls']} verifier calls"
+                        )
+                    else:  # unknown
+                        print(
+                            f"✗ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - ERROR: {result.get('message', 'Unknown error')}"
                         )
 
                 except Exception as exc:
                     results.append(
-                        {"id": task["id"], "status": "error", "message": str(exc)}
+                        {
+                            "id": task["id"],
+                            "status": "unknown",
+                            "message": str(exc),
+                            "class_name": task.get("class_name", "unknown"),
+                        }
                     )
                     print(
                         f"✗ [{completed_count}/{len(_input_tasks)}] {task['id']} - Exception: {exc}"

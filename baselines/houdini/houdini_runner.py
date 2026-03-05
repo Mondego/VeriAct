@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from baselines.utils.logger import create_logger
 from baselines.utils.file_utility import write_to_file, load_json, dump_json, dump_jsonl
-
+from baselines.utils.verifier import verify_with_openjml
 
 class Houdini:
 
@@ -28,7 +28,6 @@ class Houdini:
         self.timeout = timeout
         self.logger = logger
         self.verbose = verbose
-        self.logger = logger
 
     def _extract_blank_prefix(self, _code):
         string_stripped = _code.strip()
@@ -36,35 +35,6 @@ class Houdini:
             return _code.split(string_stripped)[0]
         else:
             return _code
-
-    def _verify_with_openjml(self, code_with_spec, classname):
-        if self.verbose:
-            self.logger.debug(f"[{classname}] Validating with OpenJML...")
-
-        tmp_dir = os.path.join(self.output_dir, "tmp")
-        if not os.path.exists(tmp_dir):
-            os.makedirs(tmp_dir, exist_ok=True)
-
-        tmp_filename = f"{tmp_dir}/{classname}.java"
-        with open(tmp_filename, "w") as tmp_file:
-            tmp_file.write(code_with_spec)
-
-        cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
-
-        try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=self.timeout
-            )
-            res = result.stdout + result.stderr
-            return res
-        except subprocess.TimeoutExpired:
-            self.logger.warning(
-                f"[{classname}] OpenJML command timed out after {self.timeout} seconds"
-            )
-            return f"Timeout: OpenJML verification exceeded time limit {self.timeout} seconds"
-        except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
 
     def _gen_annotation(self, code, classname):
 
@@ -207,7 +177,7 @@ class Houdini:
                 f"Writing merged code for {self.class_name} in thread {self.output_dir}"
             )
             self.logger.debug(merged_code + "\n")
-            err_info = self._verify_with_openjml(merged_code, self.class_name)
+            err_info = verify_with_openjml(merged_code, self.class_name, self.timeout, self.output_dir, self.logger)
             _verifier_calls_count = _verifier_calls_count + 1
             self.logger.debug(f"Error info: {err_info}")
             if err_info == "":
@@ -235,12 +205,24 @@ class Houdini:
         )
         self.logger.debug(merged_code)
 
-        status = "success" if err_info == "" else "failure"
+        timed_out = "Timeout:" in err_info or "timeout" in err_info.lower()
+        verified_flag = err_info.strip() == ""
+
+        if verified_flag:
+            status = "verified"
+            timed_out = False
+        elif timed_out:
+            status = "timed_out"
+        else:
+            status = "unverified"
+
         return {
+            "status": status,
             "annotated_code": merged_code,
+            "verified": verified_flag,
+            "timed_out": timed_out,
             "final_error": err_info,
             "verifier_calls": _verifier_calls_count,
-            "status": status,
         }
 
 
@@ -290,23 +272,35 @@ class HoudiniWorker:
 
         try:
 
-            _results = houdini.run()
+            _result = houdini.run()
+
+            if _result.get("verified", False):
+                verified_status = "✓ VERIFIED"
+            elif _result.get("timed_out", False):
+                verified_status = "⏱ TIMED OUT"
+            else:
+                verified_status = "✗ UNVERIFIED"
+
+            _logger.info(
+                f"{verified_status} - Completed {class_name} with {_result['verifier_calls']} verifier calls"
+            )
 
             return {
                 "id": task["id"],
-                "status": _results["status"],
+                "status": _result["status"],
                 "class_name": class_name,
-                "verifier_calls": _results["verifier_calls"],
+                "verifier_calls": _result["verifier_calls"],
                 "log_file": _log_file,
-                "annotated_code": _results["annotated_code"],
-                "final_error": _results["final_error"],
+                "annotated_code": _result["annotated_code"],
+                "verified": _result.get("verified", False),
+                "final_error": _result["final_error"],
             }
 
         except Exception as e:
-            _logger.error(f"[{class_name}] Error during Houdini execution: {e}")
+            _logger.error(f"[{class_name}] Error during Houdini execution: {e}", exc_info=True)
             return {
                 "id": task["id"],
-                "status": "error",
+                "status": "unknown",
                 "message": str(e),
                 "class_name": class_name,
                 "log_file": _log_file,
@@ -325,42 +319,70 @@ class HoudiniRunner:
 
     def _save_results(self, duration, results):
         """Save summary statistics to a JSON file"""
-        successful = [r for r in results if r["status"] == "success"]
-        failed = [r for r in results if r["status"] == "error"]
+        verified = [r for r in results if r["status"] == "verified"]
+        unverified = [r for r in results if r["status"] == "unverified"]
+        timed_out = [r for r in results if r["status"] == "timed_out"]
+        unknown = [r for r in results if r["status"] == "unknown"]
 
-        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in successful)
-        avg_verifier_calls = total_verifier_calls / len(successful) if successful else 0
+        total_verifier_calls = sum(
+            r.get("verifier_calls", 0) for r in (verified + unverified + timed_out)
+        )
+        avg_verifier_calls = (
+            total_verifier_calls / len(verified + unverified + timed_out)
+            if (verified + unverified + timed_out)
+            else 0
+        )
 
         summary = {
             "total_files_processed": self.input_length,
-            "successful": len(successful),
-            "failed": len(failed),
-            "success_rate_percent": (
-                round(len(successful) / self.input_length * 100, 1)
+            "verified": len(verified),
+            "unverified": len(unverified),
+            "timed_out": len(timed_out),
+            "unknown": len(unknown),
+            "verification_rate_percent": (
+                round(len(verified) / self.input_length * 100, 1)
                 if self.input_length > 0
                 else 0
             ),
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
-            "average_verifier_calls_per_successful_case": round(avg_verifier_calls, 1),
+            "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
             "threads_used": self.threads,
-            "successful_cases": [
+            "verified_cases": [
                 {
                     "id": r["id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
                 }
-                for r in successful
+                for r in verified
             ],
-            "failed_cases": [
+            "unverified_cases": [
+                {
+                    "id": r["id"],
+                    "class_name": r["class_name"],
+                    "verifier_calls": r["verifier_calls"],
+                    "log_file": r["log_file"],
+                }
+                for r in unverified
+            ],
+            "timed_out_cases": [
+                {
+                    "id": r["id"],
+                    "class_name": r["class_name"],
+                    "verifier_calls": r["verifier_calls"],
+                    "log_file": r["log_file"],
+                }
+                for r in timed_out
+            ],
+            "unknown_cases": [
                 {
                     "id": r["id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
                 }
-                for r in failed
+                for r in unknown
             ],
         }
 
@@ -376,8 +398,15 @@ class HoudiniRunner:
 
         print(f"\nProcessing completed in {duration:.2f} seconds")
         print(
-            f"Success rate: {len(successful)}/{self.input_length} ({len(successful)/self.input_length*100:.1f}%)"
+            f"Verified: {len(verified)}/{self.input_length} ({len(verified)/self.input_length*100:.1f}%)"
         )
+        print(
+            f"Unverified: {len(unverified)}/{self.input_length} ({len(unverified)/self.input_length*100:.1f}%)"
+        )
+        print(
+            f"Timed out: {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)"
+        )
+        print(f"Unknown (errors): {len(unknown)}/{self.input_length}")
         print(
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )
@@ -414,18 +443,31 @@ class HoudiniRunner:
                     results.append(result)
                     completed_count += 1
 
-                    if result["status"] == "success":
+                    if result["status"] == "verified":
                         print(
-                            f"✓ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - {result['verifier_calls']} verifier calls"
+                            f"✓ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - VERIFIED - {result['verifier_calls']} verifier calls"
                         )
-                    else:
+                    elif result["status"] == "unverified":
                         print(
-                            f"✗ [{completed_count}/{len(_input_tasks)}] {task['id']} - Error: {result.get('message', 'Unknown error')}"
+                            f"✗ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - UNVERIFIED - {result['verifier_calls']} verifier calls"
+                        )
+                    elif result["status"] == "timed_out":
+                        print(
+                            f"⏱ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - TIMED OUT - {result['verifier_calls']} verifier calls"
+                        )
+                    else:  # unknown
+                        print(
+                            f"✗ [{completed_count}/{len(_input_tasks)}] {result['class_name']} - ERROR: {result.get('message', 'Unknown error')}"
                         )
 
                 except Exception as exc:
                     results.append(
-                        {"id": task["id"], "status": "error", "message": str(exc)}
+                        {
+                            "id": task["id"],
+                            "status": "unknown",
+                            "message": str(exc),
+                            "class_name": task.get("class_name", "unknown"),
+                        }
                     )
                     print(
                         f"✗ [{completed_count}/{len(_input_tasks)}] {task['id']} - Exception: {exc}"

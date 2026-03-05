@@ -1,15 +1,23 @@
 import json
 import logging
 import os
-from time import time
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
+
+
+_SKIP_ATTRS = frozenset([
+    "name", "msg", "args", "created", "filename", "funcName",
+    "levelname", "levelno", "lineno", "module", "msecs", "message",
+    "pathname", "process", "processName", "relativeCreated",
+    "thread", "threadName", "exc_info", "exc_text", "stack_info",
+    "taskName",
+])
 
 
 class JsonFormatter(logging.Formatter):
     def format(self, record):
         log_data = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "level": record.levelname,
             "thread_id": record.thread,
             "thread_name": record.threadName,
@@ -24,29 +32,7 @@ class JsonFormatter(logging.Formatter):
             log_data["exception"] = self.formatException(record.exc_info)
 
         for key, value in record.__dict__.items():
-            if key not in [
-                "name",
-                "msg",
-                "args",
-                "created",
-                "filename",
-                "funcName",
-                "levelname",
-                "levelno",
-                "lineno",
-                "module",
-                "msecs",
-                "message",
-                "pathname",
-                "process",
-                "processName",
-                "relativeCreated",
-                "thread",
-                "threadName",
-                "exc_info",
-                "exc_text",
-                "stack_info",
-            ]:
+            if key not in _SKIP_ATTRS:
                 log_data[key] = value
 
         return json.dumps(log_data)
@@ -64,34 +50,12 @@ class ConsoleFormatter(logging.Formatter):
         }
         reset = "\033[0m"
 
-        timestamp = datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.fromtimestamp(record.created, tz=timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         color = colors.get(record.levelname, "")
 
         extras = []
         for key, value in record.__dict__.items():
-            if key not in [
-                "name",
-                "msg",
-                "args",
-                "created",
-                "filename",
-                "funcName",
-                "levelname",
-                "levelno",
-                "lineno",
-                "module",
-                "msecs",
-                "message",
-                "pathname",
-                "process",
-                "processName",
-                "relativeCreated",
-                "thread",
-                "threadName",
-                "exc_info",
-                "exc_text",
-                "stack_info",
-            ]:
+            if key not in _SKIP_ATTRS:
                 extras.append(f"{key}={value}")
 
         extra_str = f" [{', '.join(extras)}]" if extras else ""
