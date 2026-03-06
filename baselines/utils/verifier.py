@@ -1,10 +1,17 @@
 import os
+import logging
 import subprocess
 from pathlib import Path
 from baselines.utils.file_utility import write_to_file
 
 
-def verify_with_openjml(code_with_spec, classname, _timeout, output_dir, logger):
+def verify_with_openjml(
+    code_with_spec: str,
+    classname: str,
+    _timeout: int,
+    output_dir: str,
+    logger: logging.Logger,
+) -> str:
     logger.info(f"[{classname}] Validating with OpenJML...")
     tmp_dir = os.path.join(output_dir, "tmp")
     Path(tmp_dir).mkdir(exist_ok=True)
@@ -38,7 +45,13 @@ def verify_with_openjml(code_with_spec, classname, _timeout, output_dir, logger)
         logger.error(f"[{classname}] Error running OpenJML: {e}")
         return f"Error: {str(e)}"
 
-def validate_with_openjml(code_with_spec, classname, _timeout, output_dir, logger):
+def validate_with_openjml(
+    code_with_spec: str,
+    classname: str,
+    _timeout: int,
+    output_dir: str,
+    logger: logging.Logger,
+) -> str:
     logger.info(f"[{classname}] Validating with OpenJML...")
     tmp_dir = os.path.join(output_dir, "tmp")
     Path(tmp_dir).mkdir(exist_ok=True)

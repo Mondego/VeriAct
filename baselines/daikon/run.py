@@ -4,7 +4,7 @@ import argparse
 from baselines.daikon.daikon_runner import DaikonRunner
 
 
-def _retrive_input_arguments():
+def _retrieve_input_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Multi-threaded Daikon processor")
     parser.add_argument(
         "--name",
@@ -38,7 +38,7 @@ def _retrive_input_arguments():
     return parser.parse_args()
 
 
-def _validate_arguments(args):
+def _validate_arguments(args: argparse.Namespace) -> None:
     if not args.name:
         print("Error: Experiment name is required.")
         sys.exit(1)
@@ -53,8 +53,8 @@ def _validate_arguments(args):
         sys.exit(1)
 
 
-def main():
-    args = _retrive_input_arguments()
+def main() -> None:
+    args = _retrieve_input_arguments()
     _validate_arguments(args)
     _daikon_worker = DaikonRunner(
         name=args.name,

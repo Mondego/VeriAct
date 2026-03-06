@@ -1,10 +1,12 @@
 import os
 import sys
 import argparse
+
 from baselines.autospec.autospec_runner import AutoSpecRunner
 from baselines.autospec.prompts import VALID_PROMPT_TYPES
 
-def _retrive_input_arguments():
+
+def _retrieve_input_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Multi-threaded SpecGen processor")
     parser.add_argument(
         "--name",
@@ -65,7 +67,7 @@ def _retrive_input_arguments():
     return parser.parse_args()
 
 
-def _validate_arguments(args):
+def _validate_arguments(args: argparse.Namespace) -> None:
     if not args.name:
         print("Error: Experiment name is required.")
         sys.exit(1)
@@ -91,9 +93,9 @@ def _validate_arguments(args):
         sys.exit(1)
 
 
-def main():
+def main() -> None:
 
-    _args = _retrive_input_arguments()
+    _args = _retrieve_input_arguments()
     _validate_arguments(_args)
 
     _autospec_runner = AutoSpecRunner(

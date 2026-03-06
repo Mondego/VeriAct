@@ -4,7 +4,7 @@ import argparse
 from baselines.houdini.houdini_runner import HoudiniRunner
 
 
-def _retrive_input_arguments():
+def _retrieve_input_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Multi-threaded Houdini processor")
     parser.add_argument(
         "--name",
@@ -38,7 +38,7 @@ def _retrive_input_arguments():
     return parser.parse_args()
 
 
-def _validate_arguments(args):
+def _validate_arguments(args: argparse.Namespace) -> None:
     if not args.name:
         print("Error: Experiment name is required.")
         sys.exit(1)
@@ -53,11 +53,11 @@ def _validate_arguments(args):
         sys.exit(1)
 
 
-def main():
-    args = _retrive_input_arguments()
+def main() -> None:
+    args = _retrieve_input_arguments()
     _validate_arguments(args)
 
-    _hudini_worker = HoudiniRunner(
+    _houdini_runner = HoudiniRunner(
         name=args.name,
         input=args.input,
         output=args.output,
@@ -66,7 +66,7 @@ def main():
         verbose=args.verbose,
     )
 
-    _hudini_worker.run_workers()
+    _houdini_runner.run_workers()
 
 
 if __name__ == "__main__":

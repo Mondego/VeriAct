@@ -1,8 +1,11 @@
 import os
+import logging
 import threading
 import time
+from dataclasses import dataclass, field
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, Optional, TypedDict
 
 from baselines.formalbench.infer.spec_infer import FormalBench, VALID_PROMPT_TYPES
 from baselines.formalbench.fixer.spec_fixer import SpecFixer
@@ -11,6 +14,78 @@ from baselines.utils.logger import create_logger
 from baselines.utils.models import create_model_config, request_llm_engine
 from baselines.utils.file_utility import load_json, dump_json, dump_jsonl
 from baselines.utils.verifier import verify_with_openjml
+
+
+@dataclass
+class TestCase:
+    input: str
+    output: str
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> "TestCase":
+        return cls(input=data["input"], output=data["output"])
+
+
+@dataclass
+class Task:
+    id: str
+    code: str
+    class_name: str
+    test_name: str
+    javadoc: str
+    catagory: str
+    test_code: str = ""
+    test_inputs: list[TestCase] = field(default_factory=list)
+    generated_test_cases: list[TestCase] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "Task":
+        return cls(
+            id=data["id"],
+            code=data["code"],
+            class_name=data["class_name"],
+            test_name=data["test_name"],
+            javadoc=data["javadoc"],
+            catagory=data["catagory"],
+            test_code=data.get("test_code", ""),
+            test_inputs=[TestCase.from_dict(tc) for tc in data.get("test_inputs", [])],
+            generated_test_cases=[
+                TestCase.from_dict(tc) for tc in data.get("generated_test_cases", [])
+            ],
+        )
+
+
+class FBSpecResult(TypedDict):
+    status: str
+    class_name: str
+    verifier_calls: int
+    gen_phase_verifier_calls: int
+    fix_phase_verifier_calls: int
+    fix_iterations: int
+    iterations: int
+    final_code: str | None
+    final_error: str
+    verified: bool
+
+
+class _WorkerResultRequired(TypedDict):
+    id: str
+    status: str
+    class_name: str
+
+
+class WorkerResult(_WorkerResultRequired, total=False):
+    verifier_calls: int
+    gen_phase_verifier_calls: int
+    fix_phase_verifier_calls: int
+    fix_iterations: int
+    iterations: int
+    verified: bool
+    log_file: str
+    prompt_type: str
+    final_code: str | None
+    final_error: str
+    message: str
 
 
 class FBSpec:
@@ -29,15 +104,15 @@ class FBSpec:
 
     def __init__(
         self,
-        model,
-        temperature,
-        prompt_type,
-        max_iters,
-        output_dir,
-        timeout,
-        logger,
-        verbose=False,
-    ):
+        model: str,
+        temperature: float,
+        prompt_type: str,
+        max_iters: int,
+        output_dir: str,
+        timeout: int,
+        logger: logging.Logger,
+        verbose: bool = False,
+    ) -> None:
         self.model = model
         self.temperature = temperature
         self.prompt_type = prompt_type
@@ -69,18 +144,20 @@ class FBSpec:
             verbose=verbose,
         )
 
-    def run(self, input_code, class_name):
-        curr_spec = None        # None  →  still need a valid generation
-        curr_err = None
-        fix_history = []        # growing conversation history for fix turns
-        verifier_calls = 0
-        gen_verifier_calls = 0
-        fix_verifier_calls = 0
-        status = "unverified"
-        num_iter = 0
+    def run(self, input_code: str, class_name: str) -> FBSpecResult:
+        curr_spec: str | None = None  # None  →  still need a valid generation
+        curr_err: str | None = None
+        fix_history: list[dict[str, Any]] = (
+            []
+        )  # growing conversation history for fix turns
+        verifier_calls: int = 0
+        gen_verifier_calls: int = 0
+        fix_verifier_calls: int = 0
+        status: str = "unverified"
+        num_iter: int = 0
 
         for num_iter in range(1, self.max_iters + 1):
-            in_gen = curr_spec is None
+            in_gen: bool = curr_spec is None
 
             # ----------------------------------------------------------
             # LLM call
@@ -89,7 +166,7 @@ class FBSpec:
                 self.logger.info(
                     f"[{class_name}] Iter {num_iter}/{self.max_iters}: generating..."
                 )
-                messages = build_messages(
+                messages: list[dict[str, Any]] = build_messages(
                     prompt_type=self.prompt_type,
                     model=self.model,
                     code=input_code,
@@ -107,7 +184,9 @@ class FBSpec:
                     curr_spec, curr_err, error_info, fix_history
                 )
 
-            config = create_model_config(messages, self.model, self.temperature)
+            config: dict[str, Any] = create_model_config(
+                messages, self.model, self.temperature
+            )
             ret = request_llm_engine(config)
 
             if ret is None:
@@ -117,11 +196,11 @@ class FBSpec:
                 status = "unknown"
                 break
 
-            raw = ret.choices[0].message.content
+            raw: str = ret.choices[0].message.content
             if self.verbose:
                 self.logger.debug(f"[{class_name}] LLM response: {raw[:500]}")
 
-            new_spec = self._generator._parse_spec_from_response(raw)
+            new_spec: str | None = self._generator._parse_spec_from_response(raw)
 
             # ----------------------------------------------------------
             # Validate parsed spec — retry same phase on bad output
@@ -145,7 +224,9 @@ class FBSpec:
             curr_spec = new_spec
 
             self.logger.info(f"[{class_name}] Iter {num_iter}: verifying...")
-            curr_err = verify_with_openjml(curr_spec, class_name, self.timeout, self.output_dir, self.logger)
+            curr_err = verify_with_openjml(
+                curr_spec, class_name, self.timeout, self.output_dir, self.logger
+            )
             verifier_calls += 1
             if in_gen:
                 gen_verifier_calls += 1
@@ -184,52 +265,69 @@ class FBSpec:
             status = "unverified"
 
         # fix_iterations = number of fix-phase LLM calls made
-        fix_iters = len(fix_history) // 2
+        fix_iters: int = len(fix_history) // 2
 
-        return {
-            "status": status,
-            "class_name": class_name,
-            "verifier_calls": verifier_calls,
-            "gen_phase_verifier_calls": gen_verifier_calls,
-            "fix_phase_verifier_calls": fix_verifier_calls,
-            "fix_iterations": fix_iters,
-            "iterations": num_iter,
-            "final_code": curr_spec,
-            "final_error": curr_err or "",
-            "verified": status == "verified",
-        }
+        return FBSpecResult(
+            status=status,
+            class_name=class_name,
+            verifier_calls=verifier_calls,
+            gen_phase_verifier_calls=gen_verifier_calls,
+            fix_phase_verifier_calls=fix_verifier_calls,
+            fix_iterations=fix_iters,
+            iterations=num_iter,
+            final_code=curr_spec,
+            final_error=curr_err or "",
+            verified=status == "verified",
+        )
 
 
-class FBSpecWorker:
+class FBSpecRunner:
 
     def __init__(
-        self, output_dir, model, temperature, prompt_type, max_iters, timeout, verbose=False
-    ):
-        self.output_dir = output_dir
+        self,
+        name: str,
+        input: str,
+        output: str,
+        model: str,
+        temperature: float,
+        prompt_type: str,
+        max_iters: int,
+        openjml_timeout: int,
+        threads: int,
+        verbose: bool,
+    ) -> None:
+        self.name = name
+        self.input_path: str = input
+        self.output = output
         self.model = model
         self.temperature = temperature
         self.prompt_type = prompt_type
         self.max_iters = max_iters
-        self.timeout = timeout
+        self.openjml_timeout = openjml_timeout
+        self.threads = threads
         self.verbose = verbose
+        self.input_length: int = 0
 
-    def run_fb_spec(self, task: dict):
-        class_name = task["class_name"]
-        input_code = task["code"]
-        task_id = task["id"]
+    def _run_fb_spec(self, task: Task) -> WorkerResult:
+        class_name: str = task.class_name
+        input_code: str = task.code
+        task_id: str = task.id
 
-        thread_id = threading.current_thread().ident
+        output_dir: str = os.path.abspath(self.output)
+        thread_id: Optional[int] = threading.current_thread().ident
+        log_file: str = "unknown"
         try:
-            logger, log_file = create_logger(class_name, thread_id, self.output_dir)
+            logger, log_file = create_logger(task_id, thread_id, output_dir)
         except Exception as e:
-            print(f"Failed to create logger for {class_name}: {e}")
-            return {
-                "id": task_id,
-                "status": "error",
-                "message": f"Logger creation failed: {str(e)}",
-                "class_name": class_name,
-                "log_file": "unknown",
-            }
+            print(f"Failed to create logger for {task_id}: {e}")
+            return WorkerResult(
+                id=task_id,
+                status="error",
+                message=f"Logger creation failed: {str(e)}",
+                class_name=class_name,
+                log_file="unknown",
+                prompt_type=self.prompt_type,
+            )
 
         logger.info(f"Starting FBSpec for {class_name} (task id: {task_id})")
 
@@ -238,8 +336,8 @@ class FBSpecWorker:
             temperature=self.temperature,
             prompt_type=self.prompt_type,
             max_iters=self.max_iters,
-            output_dir=self.output_dir,
-            timeout=self.timeout,
+            output_dir=output_dir,
+            timeout=self.openjml_timeout,
             logger=logger,
             verbose=self.verbose,
         )
@@ -260,59 +358,34 @@ class FBSpecWorker:
                     f"{_result['verifier_calls']} total verifier call(s)"
                 )
 
-            return {
-                "id": task_id,
-                "status": _result["status"],
-                "class_name": class_name,
-                "verifier_calls": _result["verifier_calls"],
-                "gen_phase_verifier_calls": _result["gen_phase_verifier_calls"],
-                "fix_phase_verifier_calls": _result["fix_phase_verifier_calls"],
-                "fix_iterations": _result["fix_iterations"],
-                "iterations": _result["iterations"],
-                "verified": _result["verified"],
-                "log_file": log_file,
-                "final_code": _result["final_code"],
-                "final_error": _result["final_error"],
-            }
+            return WorkerResult(
+                id=task_id,
+                status=_result["status"],
+                class_name=class_name,
+                verifier_calls=_result["verifier_calls"],
+                gen_phase_verifier_calls=_result["gen_phase_verifier_calls"],
+                fix_phase_verifier_calls=_result["fix_phase_verifier_calls"],
+                fix_iterations=_result["fix_iterations"],
+                iterations=_result["iterations"],
+                verified=_result["verified"],
+                log_file=log_file,
+                prompt_type=self.prompt_type,
+                final_code=_result["final_code"],
+                final_error=_result["final_error"],
+            )
 
         except Exception as e:
             logger.error(f"[{class_name}] Unexpected error: {e}", exc_info=True)
-            return {
-                "id": task_id,
-                "status": "unknown",
-                "message": str(e),
-                "class_name": class_name,
-                "log_file": log_file,
-            }
+            return WorkerResult(
+                id=task_id,
+                status="unknown",
+                message=str(e),
+                class_name=class_name,
+                log_file=log_file,
+                prompt_type=self.prompt_type,
+            )
 
-
-class FBSpecRunner:
-
-    def __init__(
-        self,
-        name,
-        input,
-        output,
-        model,
-        temperature,
-        prompt_type,
-        max_iters,
-        openjml_timeout,
-        threads,
-        verbose,
-    ):
-        self.name = name
-        self.input = input
-        self.output = output
-        self.model = model
-        self.temperature = temperature
-        self.prompt_type = prompt_type
-        self.max_iters = max_iters
-        self.openjml_timeout = openjml_timeout
-        self.threads = threads
-        self.verbose = verbose
-
-    def _save_results(self, duration, results):
+    def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
         verified = [r for r in results if r["status"] == "verified"]
         unverified = [r for r in results if r["status"] == "unverified"]
         timed_out = [r for r in results if r["status"] == "timed_out"]
@@ -326,8 +399,10 @@ class FBSpecRunner:
         verified_in_fix = [r for r in verified if r.get("fix_iterations", 0) > 0]
 
         counted = verified + unverified + timed_out
-        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in counted)
-        avg_verifier_calls = total_verifier_calls / len(counted) if counted else 0
+        total_verifier_calls: int = sum(r.get("verifier_calls", 0) for r in counted)
+        avg_verifier_calls: float = (
+            total_verifier_calls / len(counted) if counted else 0
+        )
 
         summary = {
             "total_files_processed": self.input_length,
@@ -393,49 +468,52 @@ class FBSpecRunner:
         }
 
         dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
-        print(f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}")
+        print(
+            f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
+        )
 
-        dump_json(summary, os.path.join(self.output, f"{self.name}_results_summary.json"))
+        dump_json(
+            summary, os.path.join(self.output, f"{self.name}_results_summary.json")
+        )
 
         print(f"\nProcessing completed in {duration:.2f} seconds")
-        print(f"Verified:          {len(verified)}/{self.input_length} ({len(verified)/self.input_length*100:.1f}%)")
+        print(
+            f"Verified:          {len(verified)}/{self.input_length} ({len(verified)/self.input_length*100:.1f}%)"
+        )
         print(f"  - in gen phase:  {len(verified_in_gen)}/{self.input_length}")
         print(f"  - in fix phase:  {len(verified_in_fix)}/{self.input_length}")
-        print(f"Unverified:        {len(unverified)}/{self.input_length} ({len(unverified)/self.input_length*100:.1f}%)")
-        print(f"Timed out:         {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)")
+        print(
+            f"Unverified:        {len(unverified)}/{self.input_length} ({len(unverified)/self.input_length*100:.1f}%)"
+        )
+        print(
+            f"Timed out:         {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)"
+        )
         print(f"Invalid JML:       {len(invalid_jml)}/{self.input_length}")
         print(f"Empty spec:        {len(empty_spec)}/{self.input_length}")
         print(f"Unknown:           {len(unknown)}/{self.input_length}")
-        print(f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}")
+        print(
+            f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
+        )
 
-    def run_workers(self):
-        _input_tasks = load_json(self.input)
+    def run_workers(self) -> None:
+        _input_tasks: list[Task] = [
+            Task.from_dict(t) for t in load_json(self.input_path)
+        ]
         self.input_length = len(_input_tasks)
         print(f"Found {self.input_length} input tasks to process")
 
-        output_dir = os.path.abspath(self.output)
+        output_dir: str = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-        worker = FBSpecWorker(
-            output_dir=output_dir,
-            model=self.model,
-            temperature=self.temperature,
-            prompt_type=self.prompt_type,
-            max_iters=self.max_iters,
-            timeout=self.openjml_timeout,
-            verbose=self.verbose,
-        )
-
-        start_time = time.time()
-        results = []
-        completed_count = 0
+        start_time: float = time.time()
+        results: list[WorkerResult] = []
+        completed_count: int = 0
 
         print(f"Starting processing with {self.threads} thread(s)...")
 
         with ThreadPoolExecutor(max_workers=self.threads) as executor:
             future_tasks = {
-                executor.submit(worker.run_fb_spec, task): task
-                for task in _input_tasks
+                executor.submit(self._run_fb_spec, task): task for task in _input_tasks
             }
 
             for future in as_completed(future_tasks):
@@ -445,9 +523,9 @@ class FBSpecRunner:
                     results.append(result)
                     completed_count += 1
 
-                    status = result["status"]
-                    name = result["class_name"]
-                    prefix = f"[{completed_count}/{self.input_length}]"
+                    status: str = result["status"]
+                    name: str = result["class_name"]
+                    prefix: str = f"[{completed_count}/{self.input_length}]"
 
                     if status == "verified":
                         phase = "gen" if result.get("fix_iterations", 0) == 0 else "fix"
@@ -469,21 +547,26 @@ class FBSpecRunner:
                     elif status == "empty_spec":
                         print(f"[EMPTY SPEC]  {prefix} {name}")
                     else:
-                        print(f"[ERROR]       {prefix} {name} - {result.get('message', 'unknown error')}")
+                        print(
+                            f"[ERROR]       {prefix} {name} - {result.get('message', 'unknown error')}"
+                        )
 
                 except Exception as exc:
                     results.append(
-                        {
-                            "id": task["id"],
-                            "status": "unknown",
-                            "message": str(exc),
-                            "class_name": task.get("class_name", "unknown"),
-                        }
+                        WorkerResult(
+                            id=task.id,
+                            status="unknown",
+                            message=str(exc),
+                            class_name=task.class_name,
+                            prompt_type=self.prompt_type,
+                        )
                     )
                     completed_count += 1
-                    print(f"[ERROR]       [{completed_count}/{self.input_length}] {task.get('class_name', task['id'])} - {exc}")
+                    print(
+                        f"[ERROR]       [{completed_count}/{self.input_length}] {task.class_name} - {exc}"
+                    )
 
-        end_time = time.time()
-        duration = end_time - start_time
+        end_time: float = time.time()
+        duration: float = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
         self._save_results(duration, results)

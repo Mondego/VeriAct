@@ -1,7 +1,8 @@
 import json
+from typing import Any
 
 
-def write_to_file(content, file_name):
+def write_to_file(content: str, file_name: str) -> None:
     try:
         with open(file_name, "w") as file:
             file.write(content)
@@ -11,7 +12,7 @@ def write_to_file(content, file_name):
         raise Exception(f"Unexpected error writing to {file_name}: {e}")
 
 
-def read_from_file(file_name):
+def read_from_file(file_name: str) -> str:
     try:
         with open(file_name, "r") as file:
             return file.read()
@@ -23,7 +24,7 @@ def read_from_file(file_name):
         raise Exception(f"Unexpected error reading from {file_name}: {e}")
 
 
-def load_json(file):
+def load_json(file: str) -> Any:
     try:
         with open(file, "r") as j:
             return json.loads(j.read())
@@ -35,7 +36,7 @@ def load_json(file):
         raise Exception(f"Unexpected error loading JSON from {file}: {e}")
 
 
-def dump_json(data, file_name):
+def dump_json(data: Any, file_name: str) -> None:
     try:
         with open(file_name, "w") as j:
             json.dump(data, j, indent=2)
@@ -47,7 +48,7 @@ def dump_json(data, file_name):
         raise Exception(f"Unexpected error dumping JSON to {file_name}: {e}")
 
 
-def load_jsonl(file):
+def load_jsonl(file: str) -> list[Any]:
     data = []
     try:
         with open(file, "r") as j:
@@ -70,7 +71,7 @@ def load_jsonl(file):
         raise Exception(f"Unexpected error loading JSONL from {file}: {e}")
 
 
-def dump_jsonl(data, file_name):
+def dump_jsonl(data: list[Any], file_name: str) -> None:
     try:
         with open(file_name, "w") as j:
             for idx, item in enumerate(data):

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "specsyns"
 version = "0.0.1"
-description = "specsyns: Specification Synthesis from Program Invariants"
+description = "Spec-Syns: Specification Synthesis from Program Invariants"
 authors = [{ name = "MRHMisu", email = "mdrh@uci.edu" }]
 
 readme = "README.md"
