@@ -1,17 +1,25 @@
 import os
 import time
+import logging
 import threading
 from pathlib import Path
+from dataclasses import dataclass, field
+from typing import Any, Optional, TypedDict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from prompts import (
+
+from baselines.specgen.prompts import (
     FORMAT_REFINE_PROMPT,
     GenerationPrompt,
     RefinementPrompt,
 )
 from baselines.utils.logger import create_logger
-from baselines.utils.models import request_llm_engine
 from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.models import (
+    request_llm_engine,
+    reset_token_usage,
+    get_token_usage,
+)
 from baselines.utils.file_utility import (
     load_json,
     dump_json,
@@ -19,19 +27,95 @@ from baselines.utils.file_utility import (
 )
 
 
+@dataclass
+class TestCase:
+    input: str
+    output: str
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> "TestCase":
+        return cls(input=data["input"], output=data["output"])
+
+
+@dataclass
+class Task:
+    task_id: str
+    code: str
+    class_name: str
+    test_name: str
+    javadoc: str
+    category: str
+    test_code: str = ""
+    test_inputs: list[TestCase] = field(default_factory=list)
+    generated_test_cases: list[TestCase] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "Task":
+        return cls(
+            task_id=data["task_id"],
+            code=data["code"],
+            class_name=data["class_name"],
+            test_name=data["test_name"],
+            javadoc=data["javadoc"],
+            category=data["category"],
+            test_code=data.get("test_code", ""),
+            test_inputs=[TestCase.from_dict(tc) for tc in data.get("test_inputs", [])],
+            generated_test_cases=[
+                TestCase.from_dict(tc) for tc in data.get("generated_test_cases", [])
+            ],
+        )
+
+
+@dataclass
+class MutatedSpec:
+    content: str
+    index: int
+
+
+class SpecGenResult(TypedDict):
+    status: str
+    class_name: str
+    verifier_calls: int
+    final_code: str
+    final_error: str
+    verified: bool
+    iterations: int
+    input_tokens: int
+    output_tokens: int
+
+
+class _WorkerResultRequired(TypedDict):
+    task_id: str
+    status: str
+    class_name: str
+
+
+class WorkerResult(_WorkerResultRequired, total=False):
+    config: dict[str, Any]
+    verifier_calls: int
+    iterations: int
+    verified: bool
+    log_file: str
+    final_code: str
+    final_error: str
+    message: str
+    input_tokens: int
+    output_tokens: int
+
+
 class SpecGen:
 
     def __init__(
         self,
-        model,
-        temperature,
-        max_iterations,
-        output_dir,
-        timeout,
-        logger,
-        verbose=False,
-        prompt_type="zero_shot",
-    ):
+        model: str,
+        temperature: float,
+        max_iterations: int,
+        output_dir: str,
+        timeout: int,
+        logger: logging.Logger,
+        verbose: bool = False,
+        prompt_type: str = "zero_shot",
+    ) -> None:
         self.model = model
         self.temperature = temperature
         self.max_iterations = max_iterations
@@ -43,7 +127,7 @@ class SpecGen:
         self.generation_prompt = GenerationPrompt(self.prompt_type)
         self.refinement_prompt = RefinementPrompt()
 
-    def _parse_code_from_model_response(self, content):
+    def _parse_code_from_model_response(self, content: str) -> str:
         content = "a" + content
         extracted_str = content.split("```")[1]
         extracted_str = (
@@ -53,9 +137,11 @@ class SpecGen:
         )
         return extracted_str
 
-    def _mutate_token_list_random(self, token_list, has_forall, dont_mutate_logical):
-        res_list = []
-        token_variant_list = []
+    def _mutate_token_list_random(
+        self, token_list: list[str], has_forall: bool, dont_mutate_logical: bool
+    ) -> list[list[str]]:
+        res_list: list[list[str]] = []
+        token_variant_list: list[str] = []
         if len(token_list) == 0:
             return [[""]]
         if token_list[0].find("\\forall") != -1 or token_list[0].find("\\exists") != -1:
@@ -91,22 +177,21 @@ class SpecGen:
                 res_list.append(tmp_list)
         return res_list
 
-    def _spec_mutator_random(self, line):
-        res_list = []
+    def _spec_mutator_random(self, line: str) -> list[str]:
+        res_list: list[str] = []
         has_forall = line.find("forall") != -1 or line.find("exists") != -1
         res_token_list_list = self._mutate_token_list_random(
             line.split(" "), has_forall, True
         )
         for token_list in res_token_list_list:
-            tmp_str = ""
-            for token in token_list:
-                tmp_str = tmp_str + token + " "
-            res_list.append(tmp_str)
+            res_list.append(" ".join(token_list) + " ")
         return res_list
 
-    def _mutate_token_list_prior(self, token_list, current_index):
-        res_list = []
-        token_variant_list = []
+    def _mutate_token_list_prior(
+        self, token_list: list[str], current_index: int
+    ) -> list[list[str]]:
+        res_list: list[list[str]] = []
+        token_variant_list: list[str] = []
         if current_index >= len(token_list):
             return [[""]]
         if token_list[current_index] == "<=":
@@ -126,16 +211,13 @@ class SpecGen:
                 res_list.append(tmp_list)
         return res_list
 
-    def _spec_mutator_heuristic(self, line):
-        res_list = []
+    def _spec_mutator_heuristic(self, line: str) -> list[str]:
+        res_list: list[str] = []
         has_forall = line.find("forall") != -1 or line.find("exists") != -1
         token_list = line.split(" ")
         res_token_list_list = self._mutate_token_list_prior(token_list, 0)
-        for token_list in res_token_list_list:
-            tmp_str = ""
-            for token in token_list:
-                tmp_str = tmp_str + token + " "
-            res_list.append(tmp_str)
+        for tokens in res_token_list_list:
+            res_list.append(" ".join(tokens) + " ")
 
         res_list_random = self._spec_mutator_random(line)
         res_list_random_filtered = []
@@ -150,7 +232,7 @@ class SpecGen:
         res_list.extend(res_list_random_filtered)
         return res_list
 
-    def _is_invariant_or_postcondition(self, line):
+    def _is_invariant_or_postcondition(self, line: str) -> bool:
         return line.find("@") != -1 and (
             line.find("invariant") != -1
             or line.find("maintaining") != -1
@@ -159,10 +241,10 @@ class SpecGen:
             or line.find("increases") != -1
         )
 
-    def _is_assert(self, line):
+    def _is_assert(self, line: str) -> bool:
         return line.find("@") != -1 and line.find("assert") != -1
 
-    def _config_to_str(self, config):
+    def _config_to_str(self, config: dict[str, Any]) -> str:
         res = ""
         for message in config["messages"]:
             res += "{role}: {content}\n".format(
@@ -170,9 +252,9 @@ class SpecGen:
             )
         return res
 
-    def _extract_lineno_from_err_info(self, err_info):
-        temp_list = []
-        err_list = []
+    def _extract_lineno_from_err_info(self, err_info: str) -> list[int]:
+        temp_list: list[str] = []
+        err_list: list[list[str]] = []
         err_info_list = err_info.split("\n")
         for line in err_info_list:
             if line.strip() == "^":
@@ -180,26 +262,27 @@ class SpecGen:
                 temp_list = []
             else:
                 temp_list.append(line)
-        lineno_list = []
+        lineno_list: list[int] = []
         for err in err_list:
             lineno_list.append(int(err[0].split(":")[1]))
         return lineno_list
 
-    def run(self, input_code, class_name):
+    def run(self, input_code: str, class_name: str) -> SpecGenResult:
         ### [Long function as it is from the Authors implementation, and refactoring may introduce bugs]]
 
         # Specification Generation Phase
-        _verifier_calls_count = 0
+        _verifier_calls_count: int = 0
         self.logger.info(f"[{class_name}] Starting Generation Phase...")
-        done_flag = False
-        config = {}
-        current_code = input_code
-        verified_flag = False
-        err_info = ""
-        err_types = []
-        timed_out = False  # Flag to track timeout
-        status = "unknown"  # Initial status
+        done_flag: bool = False
+        config: dict[str, Any] = {}
+        current_code: str = input_code
+        verified_flag: bool = False
+        err_info: str = ""
+        err_types: list[str] = []
+        timed_out: bool = False  # Flag to track timeout
+        status: str = "unknown"  # Initial status
 
+        num_iter: int = 0
         for num_iter in range(1, self.max_iterations + 1):
             self.logger.info(
                 f"[{class_name}] Starting iteration {num_iter}/{self.max_iterations}"
@@ -293,15 +376,14 @@ class SpecGen:
                 timed_out = True
                 # break --- IGNORE ---
 
-            err_types = self.refinement_prompt.extract_err_type(err_info)
             self.logger.debug(f"[{class_name}] {err_info}")
             if err_info == "" or done_flag:
                 break
 
         # Mutation Phase
         self.logger.info(f"[{class_name}] Starting Mutation Phase...")
-        current_code_list = current_code.split("\n")
-        mutated_spec_list = []
+        current_code_list: list[str] = current_code.split("\n")
+        mutated_spec_list: list[MutatedSpec] = []
 
         # Generate mutated spec set
         for index in range(len(current_code_list)):
@@ -309,11 +391,13 @@ class SpecGen:
                 for mutated_spec in self._spec_mutator_heuristic(
                     current_code_list[index]
                 ):
-                    mutated_spec_list.append({"content": mutated_spec, "index": index})
+                    mutated_spec_list.append(
+                        MutatedSpec(content=mutated_spec, index=index)
+                    )
 
         # Mutation loop with safety limit
-        mutation_iterations = 0
-        MAX_MUTATION_ITERATIONS = 1000  # Safety limit to avoid infinite loop
+        mutation_iterations: int = 0
+        MAX_MUTATION_ITERATIONS: int = 1000  # Safety limit to avoid infinite loop
 
         while True:
             if err_info == "":
@@ -344,9 +428,9 @@ class SpecGen:
                 # Find mutated spec with same lineno
                 found_flag = False
                 for item in mutated_spec_list:
-                    if item["index"] == index:
+                    if item.index == index:
                         # replace error spec with mutated spec
-                        current_code_list[index] = item["content"]
+                        current_code_list[index] = item.content
                         mutated_spec_list.remove(item)
                         found_flag = True
                         break
@@ -361,7 +445,7 @@ class SpecGen:
                 self.logger.debug(f"[{class_name}] {current_code}")
             self.logger.debug(current_code + "\n")
             err_info = verify_with_openjml(
-                current_code, class_name, self.timeout, self.logger, self.output_dir
+                current_code, class_name, self.timeout, self.output_dir, self.logger
             )
             _verifier_calls_count += 1
             if self.verbose:
@@ -389,63 +473,88 @@ class SpecGen:
             self.logger.info(
                 f"[{class_name}] Final result is:\n```\n{current_code}\n```\nVerifier called {_verifier_calls_count} times."
             )
-        return {
-            "status": status,
-            "class_name": class_name,
-            "verifier_calls": _verifier_calls_count,
-            "final_code": current_code,
-            "final_error": err_info,
-            "verified": verified_flag,
-            "iterations": num_iter,
-        }
+        _input_tokens, _output_tokens = get_token_usage()
+        return SpecGenResult(
+            status=status,
+            class_name=class_name,
+            verifier_calls=_verifier_calls_count,
+            final_code=current_code,
+            final_error=err_info,
+            verified=verified_flag,
+            iterations=num_iter,
+            input_tokens=_input_tokens,
+            output_tokens=_output_tokens,
+        )
 
 
-class SpecGenWorker:
+class SpecGenRunner:
 
     def __init__(
         self,
-        output_dir,
-        model,
-        temperature,
-        max_iterations,
-        timeout,
-        verbose=False,
-        prompt_type="zero_shot",
-    ):
-        self.output_dir = output_dir
+        name: str,
+        input: str,
+        output: str,
+        model: str,
+        temperature: float,
+        max_iterations: int,
+        openjml_timeout: int,
+        threads: int,
+        verbose: bool,
+        prompt_type: str,
+    ) -> None:
+        self.name = name
+        self.input_path: str = input
+        self.output = output
         self.model = model
         self.temperature = temperature
         self.max_iterations = max_iterations
+        self.openjml_timeout = openjml_timeout
+        self.threads = threads
         self.verbose = verbose
-        self.timeout = timeout
         self.prompt_type = prompt_type
+        self.input_length: int = 0
 
-    def run_specgen(self, task: dict):
-        class_name = task["class_name"]
-        input_code = task["code"]
-        task_id = task["id"]
+    def _run_specgen(self, task: Task) -> WorkerResult:
+        class_name: str = task.class_name
+        input_code: str = task.code
+        task_id: str = task.task_id
+        output_dir: str = os.path.abspath(self.output)
+        run_config: dict[str, Any] = {
+            "prompt_type": self.prompt_type,
+            "model": self.model,
+            "temperature": self.temperature,
+            "max_iterations": self.max_iterations,
+        }
 
-        thread_id = threading.current_thread().ident
+        _thread_id: Optional[int] = threading.current_thread().ident
+        log_file: str = "unknown"
         try:
-            logger, log_file = create_logger(class_name, thread_id, self.output_dir)
+            logger, log_file = create_logger(task_id, _thread_id, output_dir)
         except Exception as e:
-            print(f"Failed to create logger for {class_name}: {e}")
-            return {
-                "id": task_id,
-                "status": "error",
-                "message": f"Logger creation failed: {str(e)}",
-                "class_name": class_name,
-                "log_file": "unknown",
-            }
+            print(f"Failed to create logger for {task_id}: {e}")
+            return WorkerResult(
+                task_id=task_id,
+                status="error",
+                message=f"Logger creation failed: {str(e)}",
+                class_name=class_name,
+                config=run_config,
+                log_file="unknown",
+            )
 
+        reset_token_usage()
         logger.info(f"Starting SpecGen for {class_name} (task id: {task_id})")
+
+        _thread_specgen_artifacts: str = os.path.join(
+            output_dir, f"{task_id}.Thread_{_thread_id}"
+        )
+        Path(_thread_specgen_artifacts).mkdir(parents=True, exist_ok=True)
 
         specgen = SpecGen(
             model=self.model,
             temperature=self.temperature,
             max_iterations=self.max_iterations,
-            output_dir=self.output_dir,
-            timeout=self.timeout,
+            output_dir=_thread_specgen_artifacts,
+            timeout=self.openjml_timeout,
             logger=logger,
             verbose=self.verbose,
             prompt_type=self.prompt_type,
@@ -463,74 +572,47 @@ class SpecGenWorker:
 
             logger.info(
                 f"{verified_status} - Completed {class_name} with {_result['verifier_calls']} verifier calls "
-                f"in {_result['iterations']} iterations"
+                f"in {_result['iterations']} iterations "
+                f"(tokens: {_result['input_tokens']} in / {_result['output_tokens']} out)"
             )
 
-            return {
-                "id": task_id,
-                "status": _result["status"],
-                "class_name": class_name,
-                "prompt_type": self.prompt_type,
-                "verifier_calls": _result["verifier_calls"],
-                "iterations": _result["iterations"],
-                "verified": _result.get("verified", False),
-                "log_file": log_file,
-                "final_code": _result["final_code"],
-                "final_error": _result["final_error"],
-            }
+            return WorkerResult(
+                task_id=task_id,
+                status=_result["status"],
+                class_name=class_name,
+                config=run_config,
+                verifier_calls=_result["verifier_calls"],
+                iterations=_result["iterations"],
+                verified=_result.get("verified", False),
+                log_file=log_file,
+                final_code=_result["final_code"],
+                final_error=_result["final_error"],
+                input_tokens=_result["input_tokens"],
+                output_tokens=_result["output_tokens"],
+            )
 
         except Exception as e:
-            return {
-                "id": task_id,
-                "prompt_type": self.prompt_type,
-                "status": "unknown",
-                "message": str(e),
-                "class_name": class_name,
-                "log_file": log_file,
-            }
+            return WorkerResult(
+                task_id=task_id,
+                status="unknown",
+                message=str(e),
+                class_name=class_name,
+                config=run_config,
+                log_file=log_file,
+            )
 
-
-class SpecGenRunner:
-
-    def __init__(
-        self,
-        name,
-        input,
-        output,
-        model,
-        temperature,
-        max_iterations,
-        openjml_timeout,
-        threads,
-        verbose,
-        prompt_type,
-    ):
-        self.name = name
-        self.input = input
-        self.output = output
-        self.model = model
-        self.temperature = temperature
-        self.max_iterations = max_iterations
-        self.openjml_timeout = openjml_timeout
-        self.threads = threads
-        self.verbose = verbose
-        self.prompt_type = prompt_type
-
-    def _save_results(self, duration, results):
+    def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
         """Save summary statistics to a JSON file"""
         verified = [r for r in results if r["status"] == "verified"]
         unverified = [r for r in results if r["status"] == "unverified"]
         timed_out = [r for r in results if r["status"] == "timed_out"]
         unknown = [r for r in results if r["status"] == "unknown"]
 
-        total_verifier_calls = sum(
-            r.get("verifier_calls", 0) for r in (verified + unverified + timed_out)
-        )
-        avg_verifier_calls = (
-            total_verifier_calls / len(verified + unverified + timed_out)
-            if (verified + unverified + timed_out)
-            else 0
-        )
+        completed = verified + unverified + timed_out
+        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in completed)
+        avg_verifier_calls = total_verifier_calls / len(completed) if completed else 0
+        total_input_tokens = sum(r.get("input_tokens", 0) for r in completed)
+        total_output_tokens = sum(r.get("output_tokens", 0) for r in completed)
 
         summary = {
             "total_files_processed": self.input_length,
@@ -546,10 +628,13 @@ class SpecGenRunner:
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
             "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
+            "total_input_tokens": total_input_tokens,
+            "total_output_tokens": total_output_tokens,
+            "total_tokens": total_input_tokens + total_output_tokens,
             "threads_used": self.threads,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -558,7 +643,7 @@ class SpecGenRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -567,7 +652,7 @@ class SpecGenRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -576,7 +661,7 @@ class SpecGenRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -606,37 +691,32 @@ class SpecGenRunner:
         )
         print(f"Unknown (errors): {len(unknown)}/{self.input_length}")
         print(
+            f"Total tokens used: {total_input_tokens} input / {total_output_tokens} output ({total_input_tokens + total_output_tokens} total)"
+        )
+        print(
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )
 
-    def run_workers(self):
+    def run_workers(self) -> None:
 
-        _input_tasks = load_json(self.input)
+        _input_tasks: list[Task] = [
+            Task.from_dict(t) for t in load_json(self.input_path)
+        ]
         self.input_length = len(_input_tasks)
         print(f"Found {self.input_length} input tasks to process")
 
-        output_dir = os.path.abspath(self.output)
+        output_dir: str = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-        worker = SpecGenWorker(
-            output_dir=output_dir,
-            model=self.model,
-            temperature=self.temperature,
-            max_iterations=self.max_iterations,
-            timeout=self.openjml_timeout,
-            verbose=self.verbose,
-            prompt_type=self.prompt_type,
-        )
-
-        start_time = time.time()
-        results = []
-        completed_count = 0
+        start_time: float = time.time()
+        results: list[WorkerResult] = []
+        completed_count: int = 0
 
         print(f"Starting processing with {self.threads} threads...")
 
         with ThreadPoolExecutor(max_workers=self.threads) as executor:
             future_tasks = {
-                executor.submit(worker.run_specgen, task): task for task in _input_tasks
+                executor.submit(self._run_specgen, task): task for task in _input_tasks
             }
 
             for future in as_completed(future_tasks):
@@ -665,19 +745,19 @@ class SpecGenRunner:
 
                 except Exception as exc:
                     results.append(
-                        {
-                            "id": task["id"],
-                            "status": "unknown",
-                            "message": str(exc),
-                            "class_name": task.get("class_name", "unknown"),
-                        }
+                        WorkerResult(
+                            task_id=task.task_id,
+                            status="unknown",
+                            message=str(exc),
+                            class_name=task.class_name,
+                        )
                     )
                     print(
-                        f"✗ [{completed_count}/{self.input_length}] {task.get('class_name', task['id'])} - Exception: {exc}"
+                        f"✗ [{completed_count}/{self.input_length}] {task.class_name} - Exception: {exc}"
                     )
                     completed_count += 1
 
-        end_time = time.time()
-        duration = end_time - start_time
+        end_time: float = time.time()
+        duration: float = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
         self._save_results(duration, results)

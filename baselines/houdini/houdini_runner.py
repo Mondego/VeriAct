@@ -1,26 +1,106 @@
 import os
 import time
+import logging
 import threading
 import subprocess
+
 from pathlib import Path
+from dataclasses import dataclass, field
+from typing import Any, Optional, TypedDict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from baselines.utils.logger import create_logger
-from baselines.utils.file_utility import write_to_file, load_json, dump_json, dump_jsonl
 from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.file_utility import write_to_file, load_json, dump_json, dump_jsonl
+
+
+@dataclass
+class TestCase:
+    input: str
+    output: str
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> "TestCase":
+        return cls(input=data["input"], output=data["output"])
+
+
+@dataclass
+class Task:
+    task_id: str
+    code: str
+    class_name: str
+    test_name: str
+    javadoc: str
+    category: str
+    test_code: str = ""
+    test_inputs: list[TestCase] = field(default_factory=list)
+    generated_test_cases: list[TestCase] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "Task":
+        return cls(
+            task_id=data["task_id"],
+            code=data["code"],
+            class_name=data["class_name"],
+            test_name=data["test_name"],
+            javadoc=data["javadoc"],
+            category=data["category"],
+            test_code=data.get("test_code", ""),
+            test_inputs=[TestCase.from_dict(tc) for tc in data.get("test_inputs", [])],
+            generated_test_cases=[
+                TestCase.from_dict(tc) for tc in data.get("generated_test_cases", [])
+            ],
+        )
+
+
+@dataclass
+class Annotation:
+    lineno: int
+    content: str
+
+
+@dataclass
+class MergedLine:
+    is_annotation: bool
+    content: str
+
+
+class HoudiniResult(TypedDict):
+    status: str
+    annotated_code: str
+    verified: bool
+    timed_out: bool
+    final_error: str
+    verifier_calls: int
+
+
+class _WorkerResultRequired(TypedDict):
+    task_id: str
+    status: str
+    class_name: str
+
+
+class WorkerResult(_WorkerResultRequired, total=False):
+    verifier_calls: int
+    log_file: str
+    annotated_code: str
+    verified: bool
+    final_error: str
+    message: str
+
 
 class Houdini:
 
     def __init__(
         self,
-        code,
-        class_name,
-        esc_tool_path,
-        output_dir,
-        timeout,
-        logger,
-        verbose=False,
-    ):
+        code: str,
+        class_name: str,
+        esc_tool_path: str,
+        output_dir: str,
+        timeout: int,
+        logger: logging.Logger,
+        verbose: bool = False,
+    ) -> None:
         self.code = code
         self.class_name = class_name
         self.esc_tool_path = esc_tool_path
@@ -29,20 +109,20 @@ class Houdini:
         self.logger = logger
         self.verbose = verbose
 
-    def _extract_blank_prefix(self, _code):
+    def _extract_blank_prefix(self, _code: str) -> str:
         string_stripped = _code.strip()
         if len(string_stripped) > 0:
             return _code.split(string_stripped)[0]
         else:
             return _code
 
-    def _gen_annotation(self, code, classname):
+    def _gen_annotation(self, code: str, classname: str) -> str:
 
         tmp_filename = os.path.join(self.output_dir, "tmp", f"{classname}.java")
         write_to_file(code, tmp_filename)
 
         outdir = os.path.join(self.output_dir, "tmp", "houdini_output")
-        Path.mkdir(outdir, parents=True, exist_ok=True)
+        Path(outdir).mkdir(parents=True, exist_ok=True)
 
         cmd = (
             self.esc_tool_path
@@ -70,7 +150,7 @@ class Houdini:
             self.logger.error(f"[{classname}] Error running OpenJML: {e}")
             return f"Error: {str(e)}"
 
-    def _read_annotations_instr(self):
+    def _read_annotations_instr(self) -> list[Annotation]:
 
         annotations_path = os.path.join(
             self.output_dir, "tmp", "houdini_output", "log", "annotations.instr"
@@ -80,7 +160,7 @@ class Houdini:
             self.logger.error("Error: Failed to generate candidate annotation set\n")
             return []
 
-        res_list = []
+        res_list: list[Annotation] = []
         with open(annotations_path, "r") as f:
             for line in f.readlines():
                 line = line.strip()
@@ -101,45 +181,48 @@ class Houdini:
                     or content.find("requires false;") != -1
                 ):
                     continue
-                tmp_dict = {"lineno": lineno, "content": content}
-                res_list.append(tmp_dict)
+                res_list.append(Annotation(lineno=lineno, content=content))
         return res_list
 
-    def _merge_annotation_into_code(self, annotation_list, code):
+    def _merge_annotation_into_code(
+        self, annotation_list: list[Annotation], code: str
+    ) -> list[MergedLine]:
         code_list = code.split("\n")
-        res_code_list = []
+        res_code_list: list[MergedLine] = []
         i, j = 0, 0
         while i < len(annotation_list) and j < len(code_list):
-            if annotation_list[i]["lineno"] <= j + 1:
+            if annotation_list[i].lineno <= j + 1:
                 res_code_list.append(
-                    {
-                        "is_annotation": True,
-                        "content": self._extract_blank_prefix(code_list[j])
+                    MergedLine(
+                        is_annotation=True,
+                        content=self._extract_blank_prefix(code_list[j])
                         + "//@ "
-                        + annotation_list[i]["content"],
-                    }
+                        + annotation_list[i].content,
+                    )
                 )
                 i = i + 1
             else:
-                res_code_list.append({"is_annotation": False, "content": code_list[j]})
+                res_code_list.append(
+                    MergedLine(is_annotation=False, content=code_list[j])
+                )
                 j = j + 1
         while i < len(annotation_list):
             res_code_list.append(
-                {
-                    "is_annotation": True,
-                    "content": self._extract_blank_prefix(code_list[j])
-                    + annotation_list[i]["content"],
-                }
+                MergedLine(
+                    is_annotation=True,
+                    content=self._extract_blank_prefix(code_list[j])
+                    + annotation_list[i].content,
+                )
             )
             i = i + 1
         while j < len(code_list):
-            res_code_list.append({"is_annotation": False, "content": code_list[j]})
+            res_code_list.append(MergedLine(is_annotation=False, content=code_list[j]))
             j = j + 1
         return res_code_list
 
-    def _extract_lineno_from_err_info(self, err_info):
-        temp_list = []
-        err_list = []
+    def _extract_lineno_from_err_info(self, err_info: str) -> list[int]:
+        temp_list: list[str] = []
+        err_list: list[list[str]] = []
         err_info_list = err_info.split("\n")
         for line in err_info_list:
             if line.strip() == "^":
@@ -147,46 +230,50 @@ class Houdini:
                 temp_list = []
             else:
                 temp_list.append(line)
-        lineno_list = []
+        lineno_list: list[int] = []
         for err in err_list:
             lineno_list.append(int(err[0].split(":")[1]))
         return lineno_list
 
-    def run(self):
+    def run(self) -> HoudiniResult:
         # Annotation generation and merging
         self.logger.info(
             f"Generating annotations for {self.class_name} in thread {self.output_dir}"
         )
         self._gen_annotation(self.code, self.class_name)
-        annotation_list = self._read_annotations_instr()
-        merged_list = self._merge_annotation_into_code(annotation_list, self.code)
-        err_info = "anything"
-        merged_code = ""
-        _verifier_calls_count = 0
+        annotation_list: list[Annotation] = self._read_annotations_instr()
+        merged_list: list[MergedLine] = self._merge_annotation_into_code(
+            annotation_list, self.code
+        )
+        err_info: str = "anything"
+        merged_code: str = ""
+        _verifier_calls_count: int = 0
 
         # Main loop of houdini algorithm
-        max_iterations = (
+        max_iterations: int = (
             1000  # Add hardcoded max iterations to avoid `while True` infinite loop
         )
-        iteration_count = 0
+        iteration_count: int = 0
         while iteration_count < max_iterations:
             merged_code = ""
             for line in merged_list:
-                merged_code = merged_code + line["content"] + "\n"
+                merged_code = merged_code + line.content + "\n"
             self.logger.info(
                 f"Writing merged code for {self.class_name} in thread {self.output_dir}"
             )
             self.logger.debug(merged_code + "\n")
-            err_info = verify_with_openjml(merged_code, self.class_name, self.timeout, self.output_dir, self.logger)
+            err_info = verify_with_openjml(
+                merged_code, self.class_name, self.timeout, self.output_dir, self.logger
+            )
             _verifier_calls_count = _verifier_calls_count + 1
             self.logger.debug(f"Error info: {err_info}")
             if err_info == "":
                 break
             else:
-                flag = False
+                flag: bool = False
                 refuted_lineno_list = self._extract_lineno_from_err_info(err_info)
                 for lineno in refuted_lineno_list:
-                    if merged_list[lineno - 1]["is_annotation"] == True:
+                    if merged_list[lineno - 1].is_annotation == True:
                         merged_list.pop(lineno - 1)
                         flag = True
                         break
@@ -205,8 +292,8 @@ class Houdini:
         )
         self.logger.debug(merged_code)
 
-        timed_out = "Timeout:" in err_info or "timeout" in err_info.lower()
-        verified_flag = err_info.strip() == ""
+        timed_out: bool = "Timeout:" in err_info or "timeout" in err_info.lower()
+        verified_flag: bool = err_info.strip() == ""
 
         if verified_flag:
             status = "verified"
@@ -216,62 +303,85 @@ class Houdini:
         else:
             status = "unverified"
 
-        return {
-            "status": status,
-            "annotated_code": merged_code,
-            "verified": verified_flag,
-            "timed_out": timed_out,
-            "final_error": err_info,
-            "verifier_calls": _verifier_calls_count,
-        }
+        return HoudiniResult(
+            status=status,
+            annotated_code=merged_code,
+            verified=verified_flag,
+            timed_out=timed_out,
+            final_error=err_info,
+            verifier_calls=_verifier_calls_count,
+        )
 
 
-class HoudiniWorker:
+class HoudiniRunner:
 
-    def __init__(self, output, timeout, verbose=False):
+    def __init__(
+        self,
+        name: str,
+        input: str,
+        output: str,
+        openjml_timeout: int,
+        threads: int,
+        verbose: bool = False,
+    ) -> None:
+        self.name = name
+        self.input_path: str = input
         self.output = output
-        self.timeout = timeout
+        self.openjml_timeout = openjml_timeout
+        self.threads = threads
         self.verbose = verbose
-        self.esc_tool_path = os.path.join(
+        self.input_length: int = 0
+        self.esc_tool_path: str = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "ESCTools2",  # Hardcoded path to ESCTools2, will be modified to be configurable if needed
         )
 
-    def run_houdini(self, task: dict):
+    def _run_houdini(self, task: Task) -> WorkerResult:
+        class_name: str = task.class_name
+        code: str = task.code
+        task_id: str = task.task_id
 
-        class_name = task["class_name"]
-        code = task["code"]
+        output_dir: str = os.path.abspath(self.output)
+        _thread_id: Optional[int] = threading.current_thread().ident
+        log_file: str = "unknown"
+        try:
+            _logger, log_file = create_logger(task_id, _thread_id, output_dir)
+        except Exception as e:
+            print(f"Failed to create logger for {task_id}: {e}")
+            return WorkerResult(
+                task_id=task_id,
+                status="error",
+                message=f"Logger creation failed: {str(e)}",
+                class_name=class_name,
+                log_file="unknown",
+            )
 
-        _thread_id = threading.current_thread().ident
-        _logger, _log_file = create_logger(class_name, _thread_id, self.output)
+        _logger.info(f"Starting Houdini for {task_id} (Thread ID: {_thread_id})")
 
-        _logger.info(f"Starting Houdini for {class_name} (Thread ID: {_thread_id})")
-
-        _thread_output = os.path.join(
-            self.output, f"{class_name}_{_thread_id}"
+        _thread_output: str = os.path.join(
+            output_dir, f"{task_id}.Thread_{_thread_id}"
         )  # thread specific output directory
-        Path.mkdir(_thread_output, parents=True, exist_ok=True)
-        _thread_houdini_logs = os.path.join(
+        Path(_thread_output).mkdir(parents=True, exist_ok=True)
+        _thread_houdini_logs: str = os.path.join(
             _thread_output, "houdini_logs"
         )  # thread specific houdini logs directory
-        Path.mkdir(_thread_houdini_logs, parents=True, exist_ok=True)
-        _thread_tmp_dir = os.path.join(
+        Path(_thread_houdini_logs).mkdir(parents=True, exist_ok=True)
+        _thread_tmp_dir: str = os.path.join(
             _thread_output, "tmp"
         )  # thread specific tmp directory for houdini intermediate files
-        Path.mkdir(_thread_tmp_dir, parents=True, exist_ok=True)
+        Path(_thread_tmp_dir).mkdir(parents=True, exist_ok=True)
 
         houdini = Houdini(
             code=code,
             class_name=class_name,
             esc_tool_path=self.esc_tool_path,
             output_dir=_thread_output,  # adding thread specific subdirectory for output
-            timeout=self.timeout,
+            timeout=self.openjml_timeout,
             logger=_logger,  # pass the logger to Houdini instance
             verbose=self.verbose,
         )
 
         try:
-
             _result = houdini.run()
 
             if _result.get("verified", False):
@@ -285,39 +395,30 @@ class HoudiniWorker:
                 f"{verified_status} - Completed {class_name} with {_result['verifier_calls']} verifier calls"
             )
 
-            return {
-                "id": task["id"],
-                "status": _result["status"],
-                "class_name": class_name,
-                "verifier_calls": _result["verifier_calls"],
-                "log_file": _log_file,
-                "annotated_code": _result["annotated_code"],
-                "verified": _result.get("verified", False),
-                "final_error": _result["final_error"],
-            }
+            return WorkerResult(
+                task_id=task_id,
+                status=_result["status"],
+                class_name=class_name,
+                verifier_calls=_result["verifier_calls"],
+                log_file=log_file,
+                annotated_code=_result["annotated_code"],
+                verified=_result.get("verified", False),
+                final_error=_result["final_error"],
+            )
 
         except Exception as e:
-            _logger.error(f"[{class_name}] Error during Houdini execution: {e}", exc_info=True)
-            return {
-                "id": task["id"],
-                "status": "unknown",
-                "message": str(e),
-                "class_name": class_name,
-                "log_file": _log_file,
-            }
+            _logger.error(
+                f"[{class_name}] Error during Houdini execution: {e}", exc_info=True
+            )
+            return WorkerResult(
+                task_id=task_id,
+                status="unknown",
+                message=str(e),
+                class_name=class_name,
+                log_file=log_file,
+            )
 
-
-class HoudiniRunner:
-
-    def __init__(self, name, input, output, openjml_timeout, threads, verbose=False):
-        self.name = name
-        self.input = input
-        self.output = output
-        self.openjml_timeout = openjml_timeout
-        self.threads = threads
-        self.verbose = verbose
-
-    def _save_results(self, duration, results):
+    def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
         """Save summary statistics to a JSON file"""
         verified = [r for r in results if r["status"] == "verified"]
         unverified = [r for r in results if r["status"] == "unverified"]
@@ -350,7 +451,7 @@ class HoudiniRunner:
             "threads_used": self.threads,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -359,7 +460,7 @@ class HoudiniRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -368,7 +469,7 @@ class HoudiniRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -377,7 +478,7 @@ class HoudiniRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -411,30 +512,26 @@ class HoudiniRunner:
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )
 
-    def run_workers(self):
+    def run_workers(self) -> None:
 
-        _input_tasks = load_json(self.input)
+        _input_tasks: list[Task] = [
+            Task.from_dict(t) for t in load_json(self.input_path)
+        ]
         self.input_length = len(_input_tasks)
         print(f"Found {self.input_length} input files to process")
 
-        output_dir = os.path.abspath(self.output)
+        output_dir: str = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-        worker = HoudiniWorker(
-            output=output_dir,
-            timeout=self.openjml_timeout,
-            verbose=self.verbose,
-        )
-
-        start_time = time.time()
-        results = []
-        completed_count = 0
+        start_time: float = time.time()
+        results: list[WorkerResult] = []
+        completed_count: int = 0
 
         print(f"Starting processing with {self.threads} threads...")
 
         with ThreadPoolExecutor(max_workers=self.threads) as executor:
             future_to_path = {
-                executor.submit(worker.run_houdini, task): task for task in _input_tasks
+                executor.submit(self._run_houdini, task): task for task in _input_tasks
             }
             for future in as_completed(future_to_path):
                 task = future_to_path[future]
@@ -462,19 +559,19 @@ class HoudiniRunner:
 
                 except Exception as exc:
                     results.append(
-                        {
-                            "id": task["id"],
-                            "status": "unknown",
-                            "message": str(exc),
-                            "class_name": task.get("class_name", "unknown"),
-                        }
+                        WorkerResult(
+                            task_id=task.task_id,
+                            status="unknown",
+                            message=str(exc),
+                            class_name=task.class_name,
+                        )
                     )
                     print(
-                        f"✗ [{completed_count}/{len(_input_tasks)}] {task['id']} - Exception: {exc}"
+                        f"✗ [{completed_count}/{len(_input_tasks)}] {task.task_id} - Exception: {exc}"
                     )
                     completed_count += 1
 
-        end_time = time.time()
-        duration = end_time - start_time
+        end_time: float = time.time()
+        duration: float = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
         self._save_results(duration, results)

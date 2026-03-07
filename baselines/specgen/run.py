@@ -1,12 +1,14 @@
 import os
 import sys
 import argparse
+from pathlib import Path
+from datetime import datetime
 
 from baselines.specgen.prompts import VALID_PROMPT_TYPES
 from baselines.specgen.specgen_runner import SpecGenRunner
 
 
-def _retrive_input_arguments():
+def _retrieve_input_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Multi-threaded SpecGen processor")
     parser.add_argument(
         "--name",
@@ -54,7 +56,7 @@ def _retrive_input_arguments():
         choices=VALID_PROMPT_TYPES,
         help=f"Prompt strategy to use. One of: {VALID_PROMPT_TYPES} (default: zero_shot)",
     )
-    
+
     parser.add_argument(
         "--max_iterations",
         type=int,
@@ -67,7 +69,7 @@ def _retrive_input_arguments():
     return parser.parse_args()
 
 
-def _validate_arguments(args):
+def _validate_arguments(args: argparse.Namespace) -> None:
     if not args.name:
         print("Error: Experiment name is required.")
         sys.exit(1)
@@ -93,14 +95,25 @@ def _validate_arguments(args):
         sys.exit(1)
 
 
-def main():
-    _args = _retrive_input_arguments()
+def _prepare_run_environment(args: argparse.Namespace) -> str:
+    approach_name = "specgen"
+    date_str = datetime.now().strftime("%Y_%m_%d_%H_%M")
+    model_safe = args.model.replace("/", "_")
+    output_dir = os.path.join(args.output, f"{approach_name}_{model_safe}_{date_str}")
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    return output_dir
+
+
+def main() -> None:
+    _args = _retrieve_input_arguments()
     _validate_arguments(_args)
+
+    _output = _prepare_run_environment(_args)
 
     _specgen_runner = SpecGenRunner(
         name=_args.name,
         input=_args.input,
-        output=_args.output,
+        output=_output,
         model=_args.model,
         temperature=_args.temperature,
         max_iterations=_args.max_iterations,

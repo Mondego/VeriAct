@@ -1,91 +1,138 @@
+"""Unified LLM client supporting multiple providers via OpenAI-compatible APIs."""
+
 import os
 import time
-from openai import OpenAI, RateLimitError, APIError, APIConnectionError, OpenAIError
-import baselines.utils.config
+import threading
+
+from openai import APIConnectionError, APIError, OpenAI, OpenAIError, RateLimitError
+
+import baselines.utils.config  # noqa: F401 (loads .env)
+
+# ---------------------------------------------------------------------------
+# Provider registry: prefix → (base_url, env_var_for_api_key)
+#   - base_url=None means use the default OpenAI endpoint
+#   - api_key value of None means read from the env var
+# ---------------------------------------------------------------------------
+_PROVIDERS: dict[str, dict] = {
+    "gpt": {
+        "base_url": None,
+        "api_key_env": "OPENAI_API_KEY",
+    },
+    "o1": {
+        "base_url": None,
+        "api_key_env": "OPENAI_API_KEY",
+    },
+    "o3": {
+        "base_url": None,
+        "api_key_env": "OPENAI_API_KEY",
+    },
+    "vllm": {
+        "base_url": "http://localhost:8000/v1",
+        "api_key_env": None,
+        "api_key_literal": "spec",
+    },
+    "deepseek": {
+        "base_url": "https://api.deepseek.com",
+        "api_key_env": "DEEPSEEK_API_KEY",
+    },
+    "gemini": {
+        "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+        "api_key_env": "GOOGLE_API_KEY",
+    },
+    "claude": {
+        "base_url": "https://api.anthropic.com/v1/",
+        "api_key_env": "ANTHROPIC_API_KEY",
+    },
+    "mistral": {
+        "base_url": "https://api.mistral.ai/v1",
+        "api_key_env": "MISTRAL_API_KEY",
+    },
+}
+
+MAX_RETRIES = 5
+
+# Thread-local token accumulator — each worker thread tracks its own totals
+_token_usage = threading.local()
 
 
-def create_model_config(messages, model, temperature):
-    if model.startswith("gpt"):
-        return create_chatgpt_config(messages, model, temperature)
-    elif model.startswith("vllm"):
-        return create_vllm_config(messages, model, temperature)
-    # will add more models in the future
+def reset_token_usage() -> None:
+    """Reset token counters for the current thread. Call at the start of each task."""
+    _token_usage.input_tokens = 0
+    _token_usage.output_tokens = 0
 
 
-def request_llm_engine(_config):
-    if _config["model"].startswith("gpt"):
-        return request_openai_engine(_config)
-    elif _config["model"].startswith("vllm"):
-        return request_vllm_engine(_config)
-    # will add more models in the future
+def get_token_usage() -> tuple[int, int]:
+    """Return (input_tokens, output_tokens) accumulated for the current thread."""
+    return (
+        getattr(_token_usage, "input_tokens", 0),
+        getattr(_token_usage, "output_tokens", 0),
+    )
 
 
-def create_chatgpt_config(messages, model, temperature):
-    _config = {"model": model, "temperature": temperature, "messages": []}
-    _config["messages"] = messages
-    return _config
+# ---------------------------------------------------------------------------
+# Public API  (unchanged — all existing callers keep working)
+# ---------------------------------------------------------------------------
+def create_model_config(messages: list[dict], model: str, temperature: float) -> dict:
+    """Build a provider-agnostic config dict."""
+    _resolve_provider(model)  # fail fast if unsupported
+    return {"model": model, "temperature": temperature, "messages": messages}
 
 
-def request_openai_engine(_config):
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-    max_retries = 5
-    for attempt in range(max_retries):
+def request_llm_engine(_config: dict):
+    """Send a chat completion request to the appropriate provider."""
+    provider = _resolve_provider(_config["model"])
+    client = _build_client(provider)
+    return _request_with_retries(client, _config)
+
+
+# ---------------------------------------------------------------------------
+# Internal helpers
+# ---------------------------------------------------------------------------
+def _resolve_provider(model: str) -> dict:
+    """Return the provider config for *model*, or raise ValueError."""
+    for prefix, provider in _PROVIDERS.items():
+        if model.startswith(prefix):
+            return provider
+    raise ValueError(
+        f"Unsupported model: {model!r}. "
+        f"Supported prefixes: {list(_PROVIDERS.keys())}"
+    )
+
+
+def _build_client(provider: dict) -> OpenAI:
+    """Instantiate an OpenAI client configured for *provider*."""
+    api_key = provider.get("api_key_literal") or os.getenv(
+        provider.get("api_key_env", ""), ""
+    )
+    kwargs: dict = {"api_key": api_key}
+    if provider["base_url"] is not None:
+        kwargs["base_url"] = provider["base_url"]
+    return OpenAI(**kwargs)
+
+
+def _request_with_retries(client: OpenAI, _config: dict):
+    """Execute a chat completion with retries on transient errors."""
+    for attempt in range(MAX_RETRIES):
         try:
-            ret = client.chat.completions.create(**_config)
-            return ret
+            response = client.chat.completions.create(**_config)
+            if response.usage:
+                _token_usage.input_tokens = getattr(_token_usage, "input_tokens", 0) + response.usage.prompt_tokens
+                _token_usage.output_tokens = getattr(_token_usage, "output_tokens", 0) + response.usage.completion_tokens
+            return response
         except APIError as e:
             print(f"API error: {e}")
             if e.code == "invalid_request_error":
-                break  # Don't retry invalid requests
+                break
         except RateLimitError as e:
-            print("Rate limit exceeded. Waiting...")
-            print(e)
+            print(f"Rate limit exceeded. Waiting... {e}")
             time.sleep(5)
-        except APIConnectionError as e:
+        except APIConnectionError:
             print("API connection error. Waiting...")
             time.sleep(5)
         except OpenAIError as e:
             print(f"Unknown error on attempt {attempt + 1}: {e}")
-            if attempt < max_retries - 1:
+            if attempt < MAX_RETRIES - 1:
                 time.sleep(1)
             else:
-                raise e
-    return None
-
-
-def create_vllm_config(messages, model, temperature):
-    """
-    Create a configuration for vLLM API request using OpenAI SDK.
-    """
-    _config = {"model": model, "temperature": temperature, "messages": []}
-    _config["messages"] = messages
-    return _config
-
-
-def request_vllm_engine(_config):
-    vllm_base_url = "http://localhost:8000/v1"
-    client = OpenAI(base_url=vllm_base_url, api_key="spec")
-
-    max_retries = 5
-    for attempt in range(max_retries):
-        try:
-            ret = client.chat.completions.create(**_config)
-            return ret
-        except APIError as e:
-            print(f"API error: {e}")
-            if e.code == "invalid_request_error":
-                break  # Don't retry invalid requests
-        except RateLimitError as e:
-            print("Rate limit exceeded. Waiting...")
-            print(e)
-            time.sleep(5)
-        except APIConnectionError as e:
-            print("API connection error. Waiting...")
-            time.sleep(5)
-        except OpenAIError as e:
-            print(f"Unknown error on attempt {attempt + 1}: {e}")
-            if attempt < max_retries - 1:
-                time.sleep(1)
-            else:
-                raise e
+                raise
     return None

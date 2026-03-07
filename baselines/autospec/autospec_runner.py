@@ -1,31 +1,120 @@
 import os
 import time
-import threading
-import subprocess
-from pathlib import Path
-
+import logging
 import javalang
+import threading
+from pathlib import Path
+from dataclasses import dataclass, field
+from typing import Any, Optional, TypedDict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from baselines.autospec.prompts import get_fewshot_context, get_request_msg
+
 from baselines.utils.logger import create_logger
-from baselines.utils.file_utility import dump_json, dump_jsonl, load_json, write_to_file
-from baselines.utils.models import create_model_config, request_llm_engine
+from baselines.utils.file_utility import dump_json, dump_jsonl, load_json
 from baselines.utils.verifier import verify_with_openjml, validate_with_openjml
+from baselines.autospec.prompts import get_fewshot_context, get_request_msg
+from baselines.utils.models import (
+    create_model_config,
+    request_llm_engine,
+    reset_token_usage,
+    get_token_usage,
+)
+
+
+@dataclass
+class TestCase:
+    input: str
+    output: str
+
+    @classmethod
+    def from_dict(cls, data: dict[str, str]) -> "TestCase":
+        return cls(input=data["input"], output=data["output"])
+
+
+@dataclass
+class Task:
+    task_id: str
+    code: str
+    class_name: str
+    test_name: str
+    javadoc: str
+    category: str
+    test_code: str = ""
+    test_inputs: list[TestCase] = field(default_factory=list)
+    generated_test_cases: list[TestCase] = field(default_factory=list)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "Task":
+        return cls(
+            task_id=data["task_id"],
+            code=data["code"],
+            class_name=data["class_name"],
+            test_name=data["test_name"],
+            javadoc=data["javadoc"],
+            category=data["category"],
+            test_code=data.get("test_code", ""),
+            test_inputs=[TestCase.from_dict(tc) for tc in data.get("test_inputs", [])],
+            generated_test_cases=[
+                TestCase.from_dict(tc) for tc in data.get("generated_test_cases", [])
+            ],
+        )
+
+
+@dataclass
+class InfillPoint:
+    lineno: int
+    spec_type: str
+
+
+@dataclass
+class SpecEntry:
+    content: str
+    lineno: int
+
+
+class AutoSpecResult(TypedDict):
+    status: str
+    class_name: str
+    verifier_calls: int
+    final_code: str
+    final_error: str
+    verified: bool
+    iterations: int
+    input_tokens: int
+    output_tokens: int
+
+
+class _WorkerResultRequired(TypedDict):
+    task_id: str
+    status: str
+    class_name: str
+
+
+class WorkerResult(_WorkerResultRequired, total=False):
+    config: dict[str, Any]
+    verifier_calls: int
+    iterations: int
+    verified: bool
+    log_file: str
+    final_code: str
+    final_error: str
+    message: str
+    input_tokens: int
+    output_tokens: int
 
 
 class AutoSpec:
 
     def __init__(
         self,
-        model,
-        temperature,
-        max_iterations,
-        output_dir,
-        timeout,
-        logger,
-        verbose=False,
-        prompt_type="zero_shot",
-    ):
+        model: str,
+        temperature: float,
+        max_iterations: int,
+        output_dir: str,
+        timeout: int,
+        logger: logging.Logger,
+        verbose: bool = False,
+        prompt_type: str = "zero_shot",
+    ) -> None:
         self.output_dir = output_dir
         self.model = model
         self.temperature = temperature
@@ -35,7 +124,7 @@ class AutoSpec:
         self.verbose = verbose
         self.prompt_type = prompt_type
 
-    def _request_models(self, messages):
+    def _request_models(self, messages: list[dict[str, Any]]) -> Any:
         config = create_model_config(messages, self.model, self.temperature)
         self.logger.debug(
             f"Requesting LLM with model={self.model}, temperature={self.temperature}"
@@ -58,7 +147,7 @@ class AutoSpec:
         self.logger.debug(f"[{classname}] Input specs:\n{specs}")
 
         instrumented_code = self._instrument_spec_into_code(
-            code, [{"content": specs, "lineno": lineno}], unique=False
+            code, [SpecEntry(content=specs, lineno=lineno)], unique=False
         )
         # [Note] Only Syntax validation, no verification
         err_info = validate_with_openjml(
@@ -91,7 +180,7 @@ class AutoSpec:
             )
         return res
 
-    def _extract_blank_prefix(self, string):
+    def _extract_blank_prefix(self, string: str) -> str:
         string_stripped = string.strip()
         if len(string_stripped) > 0:
             return string.split(string_stripped)[0]
@@ -99,7 +188,7 @@ class AutoSpec:
             return string
 
     def _request_llm_for_spec_on_single_point(
-        self, code: str, classname: str, lineno: int, type: str
+        self, code: str, classname: str, lineno: int, spec_type: str
     ) -> str:
         code_for_request = ""
         for index, line in enumerate(code.split("\n")):
@@ -110,14 +199,14 @@ class AutoSpec:
                     + "// >>>INFILL<<<\n"
                 )
             code_for_request = code_for_request + line + "\n"
-        context = get_fewshot_context(type,self.prompt_type)
-        request_msg = get_request_msg(code_for_request, type)
+        context = get_fewshot_context(spec_type, self.prompt_type)
+        request_msg = get_request_msg(code_for_request, spec_type)
         if self.verbose:
             self.logger.info(
-                f"[{classname}] Requesting LLM for specs on line {lineno} of type {type}..."
+                f"[{classname}] Requesting LLM for specs on line {lineno} of type {spec_type}..."
             )
         context.append(request_msg)
-        if type == "field":
+        if spec_type == "field":
             self.logger.debug(
                 f"[{classname}] Using default spec for field at line {lineno}"
             )
@@ -150,8 +239,8 @@ class AutoSpec:
         )
         return final_result
 
-    def _obtain_infill_points(self, code: str) -> list:
-        res = []
+    def _obtain_infill_points(self, code: str) -> list[InfillPoint]:
+        res: list[InfillPoint] = []
         try:
             tree = javalang.parse.parse(code)
         except Exception as e:
@@ -161,28 +250,28 @@ class AutoSpec:
 
         for path, node in tree:
             if isinstance(node, javalang.tree.MethodDeclaration):
-                res.append({"lineno": node.position[0], "type": "method"})
+                res.append(InfillPoint(lineno=node.position[0], spec_type="method"))
             elif isinstance(node, javalang.tree.FieldDeclaration):
-                res.append({"lineno": node.position[0], "type": "field"})
+                res.append(InfillPoint(lineno=node.position[0], spec_type="field"))
             elif isinstance(node, javalang.tree.WhileStatement) or isinstance(
                 node, javalang.tree.ForStatement
             ):
-                res.append({"lineno": node.position[0], "type": "loop"})
+                res.append(InfillPoint(lineno=node.position[0], spec_type="loop"))
         return res
 
     def _instrument_spec_into_code(
-        self, code: str, specs_list: list, unique: bool = True
+        self, code: str, specs_list: list[SpecEntry], unique: bool = True
     ) -> str:
         res = ""
         code_list = code.split("\n")
-        tmp_spec_set = set()
+        tmp_spec_set: set[str] = set()
         for index, line in enumerate(code_list):
             if self._is_spec(line):
                 tmp_spec_set.add(line.strip())
             for spec in specs_list:
-                if index + 1 != spec["lineno"]:
+                if index + 1 != spec.lineno:
                     continue
-                for line_of_spec in spec["content"].split("\n"):
+                for line_of_spec in spec.content.split("\n"):
                     if line_of_spec.strip() == "" or (
                         unique and self._is_in_set(line_of_spec.strip(), tmp_spec_set)
                     ):
@@ -193,14 +282,14 @@ class AutoSpec:
             res = res + line + "\n"
         return res
 
-    def _is_in_set(self, e, s: set) -> bool:
+    def _is_in_set(self, e: str, s: set[str]) -> bool:
         tmp_set = s
         old_len = len(tmp_set)
         tmp_set.add(e)
         return len(tmp_set) == old_len
 
-    def _extract_lineno_from_err_info(self, err_info: str) -> list:
-        lineno_list = []
+    def _extract_lineno_from_err_info(self, err_info: str) -> list[int]:
+        lineno_list: list[int] = []
         for line in err_info.split("\n"):
             if (
                 line.find("/tmp/") != -1
@@ -213,7 +302,7 @@ class AutoSpec:
                     continue
         return lineno_list
 
-    def _is_spec(self, line):
+    def _is_spec(self, line: str) -> bool:
         return line.find("@") != -1 and (
             line.find("maintaining") != -1
             or line.find("loop_invariant") != -1
@@ -222,7 +311,6 @@ class AutoSpec:
             or line.find("decreases") != -1
             or line.find("invariant") != -1
             or line.find("spec_public") != -1
-            or line.find("invariant") != -1
         )
 
     def _remove_errornous_and_redundant_spec(
@@ -230,7 +318,7 @@ class AutoSpec:
     ) -> str:
         res = ""
         err_lineno_list = self._extract_lineno_from_err_info(err_info)
-        tmp_spec_set = set()
+        tmp_spec_set: set[str] = set()
         for index, line in enumerate(code_with_spec.split("\n")):
             if self._is_spec(line) and (
                 index + 1 in err_lineno_list or line.strip() in tmp_spec_set
@@ -243,38 +331,19 @@ class AutoSpec:
                 tmp_spec_set.clear()
         return res
 
-    def _instrument_spec_into_code(
-        self, code: str, specs_list: list, unique: bool = True
-    ) -> str:
-        res = ""
-        code_list = code.split("\n")
-        tmp_spec_set = set()
-        for index, line in enumerate(code_list):
-            if self._is_spec(line):
-                tmp_spec_set.add(line.strip())
-            for spec in specs_list:
-                if index + 1 != spec["lineno"]:
-                    continue
-                for line_of_spec in spec["content"].split("\n"):
-                    if line_of_spec.strip() == "" or (
-                        unique and self._is_in_set(line_of_spec.strip(), tmp_spec_set)
-                    ):
-                        continue
-                    res = res + self._extract_blank_prefix(line) + line_of_spec + "\n"
-            if not self._is_spec(line) and line.strip() != "":
-                tmp_spec_set.clear()
-            res = res + line + "\n"
-        return res
+    def run(self, code: str, class_name: str) -> AutoSpecResult | str:
 
-    def run(self, code, class_name):
-
-        _verifier_calls_count = 0
-        current_code = code.strip()
-        verified_flag = False
-        num_iter = 0
-        err_info = ""
-        timed_out = False  # Flag to track if a timeout occurred during verification
-        status = "unknown"  # haven't tried verification yet, or got an unexpected error during the process
+        _verifier_calls_count: int = 0
+        current_code: str = code.strip()
+        verified_flag: bool = False
+        num_iter: int = 0
+        err_info: str = ""
+        timed_out: bool = (
+            False  # Flag to track if a timeout occurred during verification
+        )
+        status: str = (
+            "unknown"  # haven't tried verification yet, or got an unexpected error during the process
+        )
 
         while num_iter < self.max_iterations and not verified_flag:
             self.logger.info(
@@ -296,13 +365,13 @@ class AutoSpec:
                     f"[{class_name}] Code that caused syntax error:\n{current_code}"
                 )
                 return "Syntax error in input code or generated code!"
-            specs_list = []
+            specs_list: list[SpecEntry] = []
             for point in infill_points_list:
                 """
                 # Find if the point is already infilled
                 found_flag = False
                 for spec in specs_list:
-                    if spec["lineno"] == point["lineno"]:
+                    if spec.lineno == point.lineno:
                         found_flag = True
                 # If is, skip this point
                 if found_flag:
@@ -311,11 +380,11 @@ class AutoSpec:
                 # Query the LLM for specs on this point
                 try:
                     specs_generated = self._request_llm_for_spec_on_single_point(
-                        current_code, class_name, point["lineno"], point["type"]
+                        current_code, class_name, point.lineno, point.spec_type
                     )
                 except Exception as e:
                     self.logger.error(
-                        f"[{class_name}] Failed to generate specs for line {point['lineno']}: {e}",
+                        f"[{class_name}] Failed to generate specs for line {point.lineno}: {e}",
                         exc_info=True,
                     )
                     specs_generated = ""
@@ -324,24 +393,24 @@ class AutoSpec:
                 if specs_generated:
                     try:
                         specs_generated = self._filter_validated_specs(
-                            specs_generated, current_code, class_name, point["lineno"]
+                            specs_generated, current_code, class_name, point.lineno
                         )
                         _verifier_calls_count += 1
                     except Exception as e:
                         self.logger.error(
-                            f"[{class_name}] Failed to filter specs for line {point['lineno']}: {e}",
+                            f"[{class_name}] Failed to filter specs for line {point.lineno}: {e}",
                             exc_info=True,
                         )
                         specs_generated = ""
                 else:
                     self.logger.debug(
-                        f"[{class_name}] No specs generated for line {point['lineno']}"
+                        f"[{class_name}] No specs generated for line {point.lineno}"
                     )
 
                 specs_list.append(
-                    {"content": specs_generated, "lineno": point["lineno"]}
+                    SpecEntry(content=specs_generated, lineno=point.lineno)
                 )
-            specs_list = sorted(specs_list, key=lambda x: x["lineno"])
+            specs_list = sorted(specs_list, key=lambda x: x.lineno)
             # Verify the correctness of all generated code
             current_code = self._instrument_spec_into_code(current_code, specs_list)
             if self.verbose:
@@ -389,65 +458,88 @@ class AutoSpec:
             self.logger.info(
                 f"[{class_name}] Final result is:\n```\n{current_code}\n```\nVerifier called {_verifier_calls_count} times."
             )
-        return {
-            "status": status,
-            "class_name": class_name,
-            "verifier_calls": _verifier_calls_count,
-            "final_code": current_code,
-            "final_error": err_info,
-            "verified": verified_flag,
-            "iterations": num_iter,
-        }
+        _input_tokens, _output_tokens = get_token_usage()
+        return AutoSpecResult(
+            status=status,
+            class_name=class_name,
+            verifier_calls=_verifier_calls_count,
+            final_code=current_code,
+            final_error=err_info,
+            verified=verified_flag,
+            iterations=num_iter,
+            input_tokens=_input_tokens,
+            output_tokens=_output_tokens,
+        )
 
 
-class AutoSpecWorker:
+class AutoSpecRunner:
 
     def __init__(
         self,
-        output_dir,
-        model,
-        temperature,
-        max_iterations,
-        timeout,
-        verbose=False,
-        prompt_type="zero_shot",
-    ):
-        self.output_dir = output_dir
+        name: str,
+        input: str,
+        output: str,
+        model: str,
+        temperature: float,
+        max_iterations: int,
+        openjml_timeout: int,
+        threads: int,
+        verbose: bool,
+        prompt_type: str,
+    ) -> None:
+        self.name = name
+        self.input_path: str = input
+        self.output = output
         self.model = model
         self.temperature = temperature
         self.max_iterations = max_iterations
+        self.openjml_timeout = openjml_timeout
+        self.threads = threads
         self.verbose = verbose
-        self.timeout = timeout
         self.prompt_type = prompt_type
+        self.input_length: int = 0
 
-    def run_autospec(self, task: dict):
+    def _run_autospec(self, task: Task) -> WorkerResult:
+        classname: str = task.class_name
+        input_code: str = task.code
+        task_id: str = task.task_id
+        output_dir: str = os.path.abspath(self.output)
+        run_config: dict[str, Any] = {
+            "prompt_type": self.prompt_type,
+            "model": self.model,
+            "temperature": self.temperature,
+            "max_iterations": self.max_iterations,
+        }
 
-        classname = task["class_name"]
-        input_code = task["code"]
-        task_id = task["id"]
-
-        thread_id = threading.current_thread().ident
-
+        _thread_id: Optional[int] = threading.current_thread().ident
+        log_file: str = "unknown"
         try:
-            logger, log_file = create_logger(classname, thread_id, self.output_dir)
+            logger, log_file = create_logger(task_id, _thread_id, output_dir)
         except Exception as e:
-            print(f"Failed to create logger for {classname}: {e}")
-            return {
-                "id": task_id,
-                "status": "error",
-                "message": f"Logger creation failed: {str(e)}",
-                "class_name": classname,
-                "log_file": "unknown",
-            }
+            print(f"Failed to create logger for {task_id}: {e}")
+            return WorkerResult(
+                task_id=task_id,
+                status="error",
+                message=f"Logger creation failed: {str(e)}",
+                class_name=classname,
+                config=run_config,
+                log_file="unknown",
+            )
 
-        logger.info(f"Starting AutoSpec for {classname} (task id: {task_id})")
+        reset_token_usage()
+        logger.info(f"Starting AutoSpec for {task_id} (task id: {task_id})")
+
+        _thread_autospec_artifacts: str = os.path.join(
+            output_dir, f"{task_id}.Thread_{_thread_id}"
+        )
+        Path(_thread_autospec_artifacts).mkdir(parents=True, exist_ok=True)
 
         autospec = AutoSpec(
             model=self.model,
             temperature=self.temperature,
             max_iterations=self.max_iterations,
-            output_dir=self.output_dir,
-            timeout=self.timeout,
+            output_dir=_thread_autospec_artifacts,
+            timeout=self.openjml_timeout,
             logger=logger,
             verbose=self.verbose,
             prompt_type=self.prompt_type,
@@ -464,75 +556,48 @@ class AutoSpecWorker:
 
             logger.info(
                 f"{verified_status} - Completed {classname} with {_result['verifier_calls']} verifier calls "
-                f"in {_result['iterations']} iterations"
+                f"in {_result['iterations']} iterations "
+                f"(tokens: {_result['input_tokens']} in / {_result['output_tokens']} out)"
             )
 
-            return {
-                "id": task_id,
-                "status": _result["status"],
-                "class_name": classname,
-                "prompt_type": self.prompt_type,
-                "verifier_calls": _result["verifier_calls"],
-                "iterations": _result["iterations"],
-                "verified": _result.get("verified", False),
-                "log_file": log_file,
-                "final_code": _result["final_code"],
-                "final_error": _result["final_error"],
-            }
+            return WorkerResult(
+                task_id=task_id,
+                status=_result["status"],
+                class_name=classname,
+                config=run_config,
+                verifier_calls=_result["verifier_calls"],
+                iterations=_result["iterations"],
+                verified=_result.get("verified", False),
+                log_file=log_file,
+                final_code=_result["final_code"],
+                final_error=_result["final_error"],
+                input_tokens=_result["input_tokens"],
+                output_tokens=_result["output_tokens"],
+            )
 
         except Exception as e:
             logger.error(f"Error processing {classname}: {e}", exc_info=True)
-            return {
-                "id": task_id,
-                "prompt_type": self.prompt_type,
-                "status": "unknown",
-                "message": str(e),
-                "class_name": classname,
-                "log_file": log_file,
-            }
+            return WorkerResult(
+                task_id=task_id,
+                status="unknown",
+                message=str(e),
+                class_name=classname,
+                config=run_config,
+                log_file=log_file,
+            )
 
-
-class AutoSpecRunner:
-
-    def __init__(
-        self,
-        name,
-        input,
-        output,
-        model,
-        temperature,
-        max_iterations,
-        openjml_timeout,
-        threads,
-        verbose,
-        prompt_type,
-    ):
-        self.name = name
-        self.input = input
-        self.output = output
-        self.model = model
-        self.temperature = temperature
-        self.max_iterations = max_iterations
-        self.openjml_timeout = openjml_timeout
-        self.threads = threads
-        self.verbose = verbose
-        self.prompt_type = prompt_type
-
-    def _save_results(self, duration, results):
+    def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
         """Save summary statistics to a JSON file"""
         verified = [r for r in results if r["status"] == "verified"]
         unverified = [r for r in results if r["status"] == "unverified"]
         timed_out = [r for r in results if r["status"] == "timed_out"]
         unknown = [r for r in results if r["status"] == "unknown"]
 
-        total_verifier_calls = sum(
-            r.get("verifier_calls", 0) for r in (verified + unverified + timed_out)
-        )
-        avg_verifier_calls = (
-            total_verifier_calls / len(verified + unverified + timed_out)
-            if (verified + unverified + timed_out)
-            else 0
-        )
+        completed = verified + unverified + timed_out
+        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in completed)
+        avg_verifier_calls = total_verifier_calls / len(completed) if completed else 0
+        total_input_tokens = sum(r.get("input_tokens", 0) for r in completed)
+        total_output_tokens = sum(r.get("output_tokens", 0) for r in completed)
 
         summary = {
             "total_files_processed": self.input_length,
@@ -548,10 +613,13 @@ class AutoSpecRunner:
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
             "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
+            "total_input_tokens": total_input_tokens,
+            "total_output_tokens": total_output_tokens,
+            "total_tokens": total_input_tokens + total_output_tokens,
             "threads_used": self.threads,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -560,7 +628,7 @@ class AutoSpecRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -569,7 +637,7 @@ class AutoSpecRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -578,7 +646,7 @@ class AutoSpecRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -598,6 +666,9 @@ class AutoSpecRunner:
             f"Timed out: {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)"
         )
         print(f"Unknown (errors): {len(unknown)}/{self.input_length}")
+        print(
+            f"Total tokens used: {total_input_tokens} input / {total_output_tokens} output ({total_input_tokens + total_output_tokens} total)"
+        )
 
         dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
         print(
@@ -610,35 +681,26 @@ class AutoSpecRunner:
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )
 
-    def run_workers(self):
+    def run_workers(self) -> None:
 
-        _input_tasks = load_json(self.input)
+        _input_tasks: list[Task] = [
+            Task.from_dict(t) for t in load_json(self.input_path)
+        ]
         self.input_length = len(_input_tasks)
         print(f"Found {self.input_length} input tasks to process")
 
-        output_dir = os.path.abspath(self.output)
+        output_dir: str = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
-        worker = AutoSpecWorker(
-            output_dir=output_dir,
-            model=self.model,
-            temperature=self.temperature,
-            max_iterations=self.max_iterations,
-            timeout=self.openjml_timeout,
-            verbose=self.verbose,
-            prompt_type=self.prompt_type,
-        )
-
-        start_time = time.time()
-        results = []
-        completed_count = 0
+        start_time: float = time.time()
+        results: list[WorkerResult] = []
+        completed_count: int = 0
 
         print(f"Starting processing with {self.threads} threads...")
 
         with ThreadPoolExecutor(max_workers=self.threads) as executor:
             future_tasks = {
-                executor.submit(worker.run_autospec, task): task
-                for task in _input_tasks
+                executor.submit(self._run_autospec, task): task for task in _input_tasks
             }
 
             for future in as_completed(future_tasks):
@@ -662,19 +724,24 @@ class AutoSpecRunner:
                         )
                     else:  # error
                         print(
-                            f"✗ [{completed_count}/{self.input_length}] {task['id']} - ERROR: {result.get('message', 'Unknown error')}"
+                            f"✗ [{completed_count}/{self.input_length}] {task.class_name} - ERROR: {result.get('message', 'Unknown error')}"
                         )
 
                 except Exception as exc:
                     results.append(
-                        {"id": task["id"], "status": "unknown", "message": str(exc)}
+                        WorkerResult(
+                            task_id=task.task_id,
+                            status="unknown",
+                            message=str(exc),
+                            class_name=task.class_name,
+                        )
                     )
                     print(
-                        f"✗ [{completed_count}/{self.input_length}] {task['id']} - Exception: {exc}"
+                        f"✗ [{completed_count}/{self.input_length}] {task.class_name} - Exception: {exc}"
                     )
                     completed_count += 1
 
-        end_time = time.time()
-        duration = end_time - start_time
+        end_time: float = time.time()
+        duration: float = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
         self._save_results(duration, results)

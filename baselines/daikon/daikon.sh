@@ -1,14 +1,18 @@
 #!/bin/bash
 
-if [ $# -ne 2 ]; then
-  echo "Usage: $0 <class_name> <integer> "
+if [ $# -ne 3 ]; then
+  echo "Usage: $0 <class_name> <test_class_name> <integer> "
   exit 1
 fi
 
 
 class_name=$1 
-test_class_name="${class_name}Test"
-numberOfTest=$2
+test_class_name=$2
+numberOfTest=$3
+
+echo "Class Name: $class_name"
+echo "Test Class Name: $test_class_name"
+echo "Number of Test: $numberOfTest"
 
 echo $numberOfTest
 
@@ -18,12 +22,15 @@ echo "Step-1: Done"
 
 
 echo "Step-3-a: Run the program under the control of the Chicory front"
+echo "Generate comparability information and trace file for test: 0"
+
+# generate only once and reuse the decls-DynComp file for all the test cases
+java -cp .:$DAIKONDIR/daikon.jar daikon.DynComp --decl-file=Test_0.decls-DynComp $test_class_name < 0.txt
+
 counter=0
-while [ $counter -lt $numberOfTest ]; do
-  echo "Generate comparability information and trace file for test: $counter"
-  java -cp .:$DAIKONDIR/daikon.jar daikon.DynComp --decl-file=Test_$counter.decls-DynComp $test_class_name < $counter.txt
+while [ $counter -lt $numberOfTest ]; do 
   echo $counter
-  java -cp .:$DAIKONDIR/daikon.jar daikon.Chicory --dtrace-file=Test_$counter.dtrace.gz --comparability-file=Test_$counter.decls-DynComp $test_class_name <$counter.txt
+  java -cp .:$DAIKONDIR/daikon.jar daikon.Chicory --dtrace-file=Test_$counter.dtrace.gz --comparability-file=Test_0.decls-DynComp $test_class_name < $counter.txt
   ((counter++))
 done
 echo "Step-3-a: Done"
@@ -44,5 +51,5 @@ java -cp .:$DAIKONDIR/daikon.jar daikon.tools.jtb.Annotate --no_reflection --for
 echo "Step-5: Done"
 
 echo "Step-6: Clean up the intermediate files."
-rm -f *.txt *.class *.decls-DynComp *.dtrace.gz
+rm -f *.txt *.class *.dtrace.gz
 echo "Step-6: Done"
