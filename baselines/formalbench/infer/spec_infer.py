@@ -3,9 +3,10 @@ import logging
 from typing import TypedDict
 
 from baselines.formalbench.prompts import build_messages
-from baselines.utils.models import create_model_config, request_llm_engine
 from baselines.formalbench.example import JavaExample
 from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.models import create_model_config, request_llm_engine
+
 
 VALID_PROMPT_TYPES = ["zero_shot", "zs_cot", "two_shot", "fs_cot", "fs_ltm"]
 
@@ -99,7 +100,9 @@ class FormalBench:
         err_info: str = ""
         spec: str | None = None
 
-        self.logger.info(f"[{class_name}] Generating specifications (prompt_type={self.prompt_type})...")
+        self.logger.info(
+            f"[{class_name}] Generating specifications (prompt_type={self.prompt_type})..."
+        )
 
         messages = build_messages(
             prompt_type=self.prompt_type,
@@ -147,7 +150,9 @@ class FormalBench:
             )
 
         if not self._contains_annotations(spec):
-            self.logger.warning(f"[{class_name}] No JML annotations detected in response")
+            self.logger.warning(
+                f"[{class_name}] No JML annotations detected in response"
+            )
             return FBInferResult(
                 status="invalid_jml",
                 class_name=class_name,
@@ -160,7 +165,9 @@ class FormalBench:
             )
 
         self.logger.info(f"[{class_name}] Verifying with OpenJML...")
-        err_info = verify_with_openjml(spec, class_name, self.timeout, self.output_dir, self.logger)
+        err_info = verify_with_openjml(
+            spec, class_name, self.timeout, self.output_dir, self.logger
+        )
         verifier_calls += 1
 
         if self.verbose:

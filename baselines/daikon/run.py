@@ -1,6 +1,8 @@
 import os
 import sys
 import argparse
+from pathlib import Path
+from datetime import datetime
 from baselines.daikon.daikon_runner import DaikonRunner
 
 
@@ -53,13 +55,24 @@ def _validate_arguments(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def _prepare_run_environment(args: argparse.Namespace) -> str:
+    approach_name = "daikon"
+    date_str = datetime.now().strftime("%Y_%m_%d_%H_%M")
+    output_dir = os.path.join(args.output, f"{approach_name}_{date_str}")
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    return output_dir
+
+
 def main() -> None:
     args = _retrieve_input_arguments()
     _validate_arguments(args)
+
+    _output_dir = _prepare_run_environment(args)
+
     _daikon_worker = DaikonRunner(
         name=args.name,
         input=args.input,
-        output=args.output,
+        output=_output_dir,
         timeout=args.openjml_timeout,
         threads=args.threads,
         verbose=args.verbose,

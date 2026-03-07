@@ -1,13 +1,14 @@
 import os
-import logging
-import shutil
-import subprocess
-import threading
 import time
-from dataclasses import dataclass, field
+import shutil
+import logging
+import threading
+import subprocess
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
 from typing import Any, Optional, TypedDict
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 from baselines.utils.file_utility import (
     load_json,
@@ -32,7 +33,7 @@ class TestCase:
 
 @dataclass
 class Task:
-    id: str
+    task_id: str
     code: str
     class_name: str
     test_name: str
@@ -45,7 +46,7 @@ class Task:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Task":
         return cls(
-            id=data["id"],
+            task_id=data["task_id"],
             code=data["code"],
             class_name=data["class_name"],
             test_name=data["test_name"],
@@ -68,7 +69,7 @@ class DaikonResult(TypedDict):
 
 
 class _WorkerResultRequired(TypedDict):
-    id: str
+    task_id: str
     status: str
     class_name: str
 
@@ -198,11 +199,30 @@ class Daikon:
         self.logger.info(f"Daikon execution completed successfully for {self.run_id}")
         os.chdir(self._BASE_DIR)  # change back to base directory after running daikon
 
-        code_with_escspec: str = read_from_file(
-            os.path.join(self.out_dir, f"{self.class_name}.java-escannotated")
+        escspec_path = os.path.join(
+            self.out_dir, f"{self.class_name}.java-escannotated"
         )
-        code_with_jmlspec: str = read_from_file(
-            os.path.join(self.out_dir, f"{self.class_name}.java-jmlannotated")
+        jmlspec_path = os.path.join(
+            self.out_dir, f"{self.class_name}.java-jmlannotated"
+        )
+
+        if not os.path.exists(escspec_path) and not os.path.exists(jmlspec_path):
+            self.logger.error(
+                f"Daikon produced no annotated output files for {self.run_id}"
+            )
+            return DaikonResult(
+                status="unverified",
+                annotated_code="",
+                verified=False,
+                timed_out=False,
+                final_error="Daikon produced no annotated output files.",
+            )
+
+        code_with_escspec: str = (
+            read_from_file(escspec_path) if os.path.exists(escspec_path) else ""
+        )
+        code_with_jmlspec: str = (
+            read_from_file(jmlspec_path) if os.path.exists(jmlspec_path) else ""
         )
         jml_error_info: str = verify_with_openjml(
             code_with_jmlspec, self.class_name, self.timeout, self.out_dir, self.logger
@@ -255,7 +275,7 @@ class DaikonRunner:
     def _run_daikon(self, task: Task) -> WorkerResult:
         class_name: str = task.class_name
         input_code: str = task.code
-        task_id: str = task.id
+        task_id: str = task.task_id
         test_code: str = task.test_code
         test_inputs: list[TestCase] = task.test_inputs
 
@@ -268,7 +288,7 @@ class DaikonRunner:
         except Exception as e:
             print(f"Failed to create logger for {task_id}: {e}")
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="error",
                 message=f"Logger creation failed: {str(e)}",
                 class_name=class_name,
@@ -309,7 +329,7 @@ class DaikonRunner:
             )
 
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status=_result["status"],
                 class_name=class_name,
                 verifier_calls=2,
@@ -322,7 +342,7 @@ class DaikonRunner:
         except Exception as e:
             logger.error(f"Error processing {task_id}: {e}", exc_info=True)
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="unknown",
                 message=str(e),
                 class_name=class_name,
@@ -366,7 +386,7 @@ class DaikonRunner:
             "threads_used": self.threads,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -375,7 +395,7 @@ class DaikonRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -384,7 +404,7 @@ class DaikonRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -393,7 +413,7 @@ class DaikonRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -475,14 +495,14 @@ class DaikonRunner:
                 except Exception as exc:
                     results.append(
                         WorkerResult(
-                            id=task.id,
+                            task_id=task.task_id,
                             status="unknown",
                             message=str(exc),
                             class_name=task.class_name,
                         )
                     )
                     print(
-                        f"✗ [{completed_count}/{len(_input_tasks)}] {task.id} - Exception: {exc}"
+                        f"✗ [{completed_count}/{len(_input_tasks)}] {task.task_id} - Exception: {exc}"
                     )
                     completed_count += 1
 

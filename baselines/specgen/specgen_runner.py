@@ -2,10 +2,11 @@ import os
 import time
 import logging
 import threading
-from dataclasses import dataclass, field
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
 from typing import Any, Optional, TypedDict
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 from baselines.specgen.prompts import (
     FORMAT_REFINE_PROMPT,
@@ -34,7 +35,7 @@ class TestCase:
 
 @dataclass
 class Task:
-    id: str
+    task_id: str
     code: str
     class_name: str
     test_name: str
@@ -47,7 +48,7 @@ class Task:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Task":
         return cls(
-            id=data["id"],
+            task_id=data["task_id"],
             code=data["code"],
             class_name=data["class_name"],
             test_name=data["test_name"],
@@ -78,13 +79,13 @@ class SpecGenResult(TypedDict):
 
 
 class _WorkerResultRequired(TypedDict):
-    id: str
+    task_id: str
     status: str
     class_name: str
 
 
 class WorkerResult(_WorkerResultRequired, total=False):
-    prompt_type: str
+    config: dict[str, Any]
     verifier_calls: int
     iterations: int
     verified: bool
@@ -382,7 +383,9 @@ class SpecGen:
                 for mutated_spec in self._spec_mutator_heuristic(
                     current_code_list[index]
                 ):
-                    mutated_spec_list.append(MutatedSpec(content=mutated_spec, index=index))
+                    mutated_spec_list.append(
+                        MutatedSpec(content=mutated_spec, index=index)
+                    )
 
         # Mutation loop with safety limit
         mutation_iterations: int = 0
@@ -434,7 +437,7 @@ class SpecGen:
                 self.logger.debug(f"[{class_name}] {current_code}")
             self.logger.debug(current_code + "\n")
             err_info = verify_with_openjml(
-                current_code, class_name, self.timeout, self.output_dir,self.logger 
+                current_code, class_name, self.timeout, self.output_dir, self.logger
             )
             _verifier_calls_count += 1
             if self.verbose:
@@ -503,30 +506,42 @@ class SpecGenRunner:
     def _run_specgen(self, task: Task) -> WorkerResult:
         class_name: str = task.class_name
         input_code: str = task.code
-        task_id: str = task.id
+        task_id: str = task.task_id
         output_dir: str = os.path.abspath(self.output)
+        run_config: dict[str, Any] = {
+            "prompt_type": self.prompt_type,
+            "model": self.model,
+            "temperature": self.temperature,
+            "max_iterations": self.max_iterations,
+        }
 
-        thread_id: Optional[int] = threading.current_thread().ident
+        _thread_id: Optional[int] = threading.current_thread().ident
         log_file: str = "unknown"
         try:
-            logger, log_file = create_logger(task_id, thread_id, output_dir)
+            logger, log_file = create_logger(task_id, _thread_id, output_dir)
         except Exception as e:
             print(f"Failed to create logger for {task_id}: {e}")
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="error",
                 message=f"Logger creation failed: {str(e)}",
                 class_name=class_name,
+                config=run_config,
                 log_file="unknown",
             )
 
         logger.info(f"Starting SpecGen for {class_name} (task id: {task_id})")
 
+        _thread_specgen_artifacts: str = os.path.join(
+            output_dir, f"{task_id}.Thread_{_thread_id}"
+        )
+        Path(_thread_specgen_artifacts).mkdir(parents=True, exist_ok=True)
+
         specgen = SpecGen(
             model=self.model,
             temperature=self.temperature,
             max_iterations=self.max_iterations,
-            output_dir=output_dir,
+            output_dir=_thread_specgen_artifacts,
             timeout=self.openjml_timeout,
             logger=logger,
             verbose=self.verbose,
@@ -549,10 +564,10 @@ class SpecGenRunner:
             )
 
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status=_result["status"],
                 class_name=class_name,
-                prompt_type=self.prompt_type,
+                config=run_config,
                 verifier_calls=_result["verifier_calls"],
                 iterations=_result["iterations"],
                 verified=_result.get("verified", False),
@@ -563,11 +578,11 @@ class SpecGenRunner:
 
         except Exception as e:
             return WorkerResult(
-                id=task_id,
-                prompt_type=self.prompt_type,
+                task_id=task_id,
                 status="unknown",
                 message=str(e),
                 class_name=class_name,
+                config=run_config,
                 log_file=log_file,
             )
 
@@ -604,7 +619,7 @@ class SpecGenRunner:
             "threads_used": self.threads,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -613,7 +628,7 @@ class SpecGenRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -622,7 +637,7 @@ class SpecGenRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -631,7 +646,7 @@ class SpecGenRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -713,7 +728,7 @@ class SpecGenRunner:
                 except Exception as exc:
                     results.append(
                         WorkerResult(
-                            id=task.id,
+                            task_id=task.task_id,
                             status="unknown",
                             message=str(exc),
                             class_name=task.class_name,

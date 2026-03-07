@@ -1,16 +1,17 @@
 import os
-import logging
-import subprocess
-import threading
 import time
-from dataclasses import dataclass, field
+import logging
+import threading
+import subprocess
+
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
 from typing import Any, Optional, TypedDict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from baselines.utils.logger import create_logger
-from baselines.utils.file_utility import write_to_file, load_json, dump_json, dump_jsonl
 from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.file_utility import write_to_file, load_json, dump_json, dump_jsonl
 
 
 @dataclass
@@ -25,7 +26,7 @@ class TestCase:
 
 @dataclass
 class Task:
-    id: str
+    task_id: str
     code: str
     class_name: str
     test_name: str
@@ -38,7 +39,7 @@ class Task:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Task":
         return cls(
-            id=data["id"],
+            task_id=data["task_id"],
             code=data["code"],
             class_name=data["class_name"],
             test_name=data["test_name"],
@@ -74,7 +75,7 @@ class HoudiniResult(TypedDict):
 
 
 class _WorkerResultRequired(TypedDict):
-    id: str
+    task_id: str
     status: str
     class_name: str
 
@@ -338,7 +339,7 @@ class HoudiniRunner:
     def _run_houdini(self, task: Task) -> WorkerResult:
         class_name: str = task.class_name
         code: str = task.code
-        task_id: str = task.id
+        task_id: str = task.task_id
 
         output_dir: str = os.path.abspath(self.output)
         _thread_id: Optional[int] = threading.current_thread().ident
@@ -348,7 +349,7 @@ class HoudiniRunner:
         except Exception as e:
             print(f"Failed to create logger for {task_id}: {e}")
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="error",
                 message=f"Logger creation failed: {str(e)}",
                 class_name=class_name,
@@ -358,7 +359,7 @@ class HoudiniRunner:
         _logger.info(f"Starting Houdini for {task_id} (Thread ID: {_thread_id})")
 
         _thread_output: str = os.path.join(
-            output_dir, f"{task_id}.Thread-{_thread_id}"
+            output_dir, f"{task_id}.Thread_{_thread_id}"
         )  # thread specific output directory
         Path(_thread_output).mkdir(parents=True, exist_ok=True)
         _thread_houdini_logs: str = os.path.join(
@@ -395,7 +396,7 @@ class HoudiniRunner:
             )
 
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status=_result["status"],
                 class_name=class_name,
                 verifier_calls=_result["verifier_calls"],
@@ -410,7 +411,7 @@ class HoudiniRunner:
                 f"[{class_name}] Error during Houdini execution: {e}", exc_info=True
             )
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="unknown",
                 message=str(e),
                 class_name=class_name,
@@ -450,7 +451,7 @@ class HoudiniRunner:
             "threads_used": self.threads,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -459,7 +460,7 @@ class HoudiniRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -468,7 +469,7 @@ class HoudiniRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -477,7 +478,7 @@ class HoudiniRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -559,14 +560,14 @@ class HoudiniRunner:
                 except Exception as exc:
                     results.append(
                         WorkerResult(
-                            id=task.id,
+                            task_id=task.task_id,
                             status="unknown",
                             message=str(exc),
                             class_name=task.class_name,
                         )
                     )
                     print(
-                        f"✗ [{completed_count}/{len(_input_tasks)}] {task.id} - Exception: {exc}"
+                        f"✗ [{completed_count}/{len(_input_tasks)}] {task.task_id} - Exception: {exc}"
                     )
                     completed_count += 1
 

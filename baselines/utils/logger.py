@@ -77,12 +77,12 @@ def create_logger(
     logs_dir = os.path.join(output_dir, "logs")
     Path(logs_dir).mkdir(exist_ok=True)
     
-    logger_name = f"{name}.Thread-{thread_id}"
+    logger_name = f"{name}.Thread_{thread_id}"
     logger = logging.getLogger(logger_name)
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
 
-    log_file = f"{logs_dir}/{name}.Thread-{thread_id}.jsonl"
+    log_file = f"{logs_dir}/{name}.Thread_{thread_id}.jsonl"
     file_handler = logging.FileHandler(log_file, mode="w")
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(JsonFormatter())

@@ -1,18 +1,18 @@
 import os
 import time
 import logging
-import threading
-from dataclasses import dataclass, field
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any, Optional, TypedDict
-
 import javalang
-from baselines.autospec.prompts import get_fewshot_context, get_request_msg
+import threading
+from pathlib import Path
+from dataclasses import dataclass, field
+from typing import Any, Optional, TypedDict
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from baselines.utils.logger import create_logger
-from baselines.utils.file_utility import dump_json, dump_jsonl, load_json, write_to_file
+from baselines.utils.file_utility import dump_json, dump_jsonl, load_json
 from baselines.utils.models import create_model_config, request_llm_engine
 from baselines.utils.verifier import verify_with_openjml, validate_with_openjml
+from baselines.autospec.prompts import get_fewshot_context, get_request_msg
 
 
 @dataclass
@@ -27,7 +27,7 @@ class TestCase:
 
 @dataclass
 class Task:
-    id: str
+    task_id: str
     code: str
     class_name: str
     test_name: str
@@ -40,7 +40,7 @@ class Task:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Task":
         return cls(
-            id=data["id"],
+            task_id=data["task_id"],
             code=data["code"],
             class_name=data["class_name"],
             test_name=data["test_name"],
@@ -77,13 +77,13 @@ class AutoSpecResult(TypedDict):
 
 
 class _WorkerResultRequired(TypedDict):
-    id: str
+    task_id: str
     status: str
     class_name: str
 
 
 class WorkerResult(_WorkerResultRequired, total=False):
-    prompt_type: str
+    config: dict[str, Any]
     verifier_calls: int
     iterations: int
     verified: bool
@@ -490,30 +490,42 @@ class AutoSpecRunner:
     def _run_autospec(self, task: Task) -> WorkerResult:
         classname: str = task.class_name
         input_code: str = task.code
-        task_id: str = task.id
+        task_id: str = task.task_id
         output_dir: str = os.path.abspath(self.output)
+        run_config: dict[str, Any] = {
+            "prompt_type": self.prompt_type,
+            "model": self.model,
+            "temperature": self.temperature,
+            "max_iterations": self.max_iterations,
+        }
 
-        thread_id: Optional[int] = threading.current_thread().ident
+        _thread_id: Optional[int] = threading.current_thread().ident
         log_file: str = "unknown"
         try:
-            logger, log_file = create_logger(task_id, thread_id, output_dir)
+            logger, log_file = create_logger(task_id, _thread_id, output_dir)
         except Exception as e:
             print(f"Failed to create logger for {task_id}: {e}")
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="error",
                 message=f"Logger creation failed: {str(e)}",
                 class_name=classname,
+                config=run_config,
                 log_file="unknown",
             )
 
         logger.info(f"Starting AutoSpec for {task_id} (task id: {task_id})")
 
+        _thread_autospec_artifacts: str = os.path.join(
+            output_dir, f"{task_id}.Thread_{_thread_id}"
+        )
+        Path(_thread_autospec_artifacts).mkdir(parents=True, exist_ok=True)
+
         autospec = AutoSpec(
             model=self.model,
             temperature=self.temperature,
             max_iterations=self.max_iterations,
-            output_dir=output_dir,
+            output_dir=_thread_autospec_artifacts,
             timeout=self.openjml_timeout,
             logger=logger,
             verbose=self.verbose,
@@ -535,10 +547,10 @@ class AutoSpecRunner:
             )
 
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status=_result["status"],
                 class_name=classname,
-                prompt_type=self.prompt_type,
+                config=run_config,
                 verifier_calls=_result["verifier_calls"],
                 iterations=_result["iterations"],
                 verified=_result.get("verified", False),
@@ -550,11 +562,11 @@ class AutoSpecRunner:
         except Exception as e:
             logger.error(f"Error processing {classname}: {e}", exc_info=True)
             return WorkerResult(
-                id=task_id,
-                prompt_type=self.prompt_type,
+                task_id=task_id,
                 status="unknown",
                 message=str(e),
                 class_name=classname,
+                config=run_config,
                 log_file=log_file,
             )
 
@@ -591,7 +603,7 @@ class AutoSpecRunner:
             "threads_used": self.threads,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -600,7 +612,7 @@ class AutoSpecRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -609,7 +621,7 @@ class AutoSpecRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -618,7 +630,7 @@ class AutoSpecRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r["message"],
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -699,7 +711,7 @@ class AutoSpecRunner:
                 except Exception as exc:
                     results.append(
                         WorkerResult(
-                            id=task.id,
+                            task_id=task.task_id,
                             status="unknown",
                             message=str(exc),
                             class_name=task.class_name,

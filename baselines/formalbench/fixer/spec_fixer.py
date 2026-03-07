@@ -2,10 +2,11 @@ import re
 import logging
 from typing import Any, TypedDict
 
-from baselines.formalbench.failure_analysis import extract_errors, classify_failures
-from baselines.formalbench.example import _GUIDANCE
-from baselines.utils.models import create_model_config, request_llm_engine
 from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.models import create_model_config, request_llm_engine
+
+from baselines.formalbench.example import _GUIDANCE
+from baselines.formalbench.failure_analysis import extract_errors, classify_failures
 
 
 FIX_SYS_MESSAGE = (

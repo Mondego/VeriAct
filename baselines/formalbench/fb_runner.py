@@ -2,18 +2,19 @@ import os
 import logging
 import threading
 import time
-from dataclasses import dataclass, field
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
 from typing import Any, Optional, TypedDict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from baselines.formalbench.infer.spec_infer import FormalBench, VALID_PROMPT_TYPES
-from baselines.formalbench.fixer.spec_fixer import SpecFixer
-from baselines.formalbench.prompts import build_messages
 from baselines.utils.logger import create_logger
-from baselines.utils.models import create_model_config, request_llm_engine
-from baselines.utils.file_utility import load_json, dump_json, dump_jsonl
 from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.file_utility import load_json, dump_json, dump_jsonl
+from baselines.utils.models import create_model_config, request_llm_engine
+
+from baselines.formalbench.prompts import build_messages
+from baselines.formalbench.fixer.spec_fixer import SpecFixer
+from baselines.formalbench.infer.spec_infer import FormalBench, VALID_PROMPT_TYPES
 
 
 @dataclass
@@ -28,7 +29,7 @@ class TestCase:
 
 @dataclass
 class Task:
-    id: str
+    task_id: str
     code: str
     class_name: str
     test_name: str
@@ -41,7 +42,7 @@ class Task:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Task":
         return cls(
-            id=data["id"],
+            task_id=data["task_id"],
             code=data["code"],
             class_name=data["class_name"],
             test_name=data["test_name"],
@@ -69,12 +70,13 @@ class FBSpecResult(TypedDict):
 
 
 class _WorkerResultRequired(TypedDict):
-    id: str
+    task_id: str
     status: str
     class_name: str
 
 
 class WorkerResult(_WorkerResultRequired, total=False):
+    config: dict[str, Any]
     verifier_calls: int
     gen_phase_verifier_calls: int
     fix_phase_verifier_calls: int
@@ -82,7 +84,6 @@ class WorkerResult(_WorkerResultRequired, total=False):
     iterations: int
     verified: bool
     log_file: str
-    prompt_type: str
     final_code: str | None
     final_error: str
     message: str
@@ -311,32 +312,43 @@ class FBSpecRunner:
     def _run_fb_spec(self, task: Task) -> WorkerResult:
         class_name: str = task.class_name
         input_code: str = task.code
-        task_id: str = task.id
+        task_id: str = task.task_id
 
         output_dir: str = os.path.abspath(self.output)
-        thread_id: Optional[int] = threading.current_thread().ident
+        run_config: dict[str, Any] = {
+            "prompt_type": self.prompt_type,
+            "model": self.model,
+            "temperature": self.temperature,
+            "max_iterations": self.max_iters,
+        }
+        _thread_id: Optional[int] = threading.current_thread().ident
         log_file: str = "unknown"
         try:
-            logger, log_file = create_logger(task_id, thread_id, output_dir)
+            logger, log_file = create_logger(task_id, _thread_id, output_dir)
         except Exception as e:
             print(f"Failed to create logger for {task_id}: {e}")
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="error",
                 message=f"Logger creation failed: {str(e)}",
                 class_name=class_name,
+                config=run_config,
                 log_file="unknown",
-                prompt_type=self.prompt_type,
             )
 
         logger.info(f"Starting FBSpec for {class_name} (task id: {task_id})")
+
+        _thread_fb_artifacts: str = os.path.join(
+            output_dir, f"{task_id}.Thread_{_thread_id}"
+        )
+        Path(_thread_fb_artifacts).mkdir(parents=True, exist_ok=True)
 
         fb_spec = FBSpec(
             model=self.model,
             temperature=self.temperature,
             prompt_type=self.prompt_type,
             max_iters=self.max_iters,
-            output_dir=output_dir,
+            output_dir=_thread_fb_artifacts,
             timeout=self.openjml_timeout,
             logger=logger,
             verbose=self.verbose,
@@ -359,9 +371,10 @@ class FBSpecRunner:
                 )
 
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status=_result["status"],
                 class_name=class_name,
+                config=run_config,
                 verifier_calls=_result["verifier_calls"],
                 gen_phase_verifier_calls=_result["gen_phase_verifier_calls"],
                 fix_phase_verifier_calls=_result["fix_phase_verifier_calls"],
@@ -369,7 +382,6 @@ class FBSpecRunner:
                 iterations=_result["iterations"],
                 verified=_result["verified"],
                 log_file=log_file,
-                prompt_type=self.prompt_type,
                 final_code=_result["final_code"],
                 final_error=_result["final_error"],
             )
@@ -377,12 +389,12 @@ class FBSpecRunner:
         except Exception as e:
             logger.error(f"[{class_name}] Unexpected error: {e}", exc_info=True)
             return WorkerResult(
-                id=task_id,
+                task_id=task_id,
                 status="unknown",
                 message=str(e),
                 class_name=class_name,
+                config=run_config,
                 log_file=log_file,
-                prompt_type=self.prompt_type,
             )
 
     def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
@@ -427,7 +439,7 @@ class FBSpecRunner:
             "max_iters": self.max_iters,
             "verified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "gen_phase_verifier_calls": r["gen_phase_verifier_calls"],
@@ -439,7 +451,7 @@ class FBSpecRunner:
             ],
             "unverified_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "fix_iterations": r["fix_iterations"],
@@ -449,7 +461,7 @@ class FBSpecRunner:
             ],
             "timed_out_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "class_name": r["class_name"],
                     "verifier_calls": r["verifier_calls"],
                     "log_file": r["log_file"],
@@ -458,7 +470,7 @@ class FBSpecRunner:
             ],
             "unknown_cases": [
                 {
-                    "id": r["id"],
+                    "task_id": r["task_id"],
                     "message": r.get("message", ""),
                     "class_name": r.get("class_name", "unknown"),
                     "log_file": r.get("log_file", "unknown"),
@@ -554,11 +566,10 @@ class FBSpecRunner:
                 except Exception as exc:
                     results.append(
                         WorkerResult(
-                            id=task.id,
+                            task_id=task.task_id,
                             status="unknown",
                             message=str(exc),
                             class_name=task.class_name,
-                            prompt_type=self.prompt_type,
                         )
                     )
                     completed_count += 1

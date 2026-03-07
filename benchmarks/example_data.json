@@ -1,6 +1,6 @@
 [
   {
-    "id": "SGB_LinearSearch",
+    "task_id": "SGB_LinearSearch",
     "code": "public class Solution {\n\n  public static int solve(int search, int array[]) {\n    int location = -1;\n    int c;\n\n    for (c = 0; c < array.length; c++) {\n      if (array[c] == search) {\n        location = c;\n        break;\n      }\n    }\n    if (c == array.length) {\n      location = -1;\n    }\n    return location;\n  }\n}",
     "test_code": "import java.util.*;\n\npublic class Test {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int n0 = Integer.parseInt(scanner.nextLine().trim());\n        int[] p0 = new int[n0];\n        if (n0 > 0) {\n            String[] parts0 = scanner.nextLine().trim().split(\"\\\\s+\");\n            for (int i0 = 0; i0 < n0; i0++) p0[i0] = Integer.parseInt(parts0[i0]);\n        }\n        int p1 = Integer.parseInt(scanner.nextLine().trim());\n        int result = Solution.solve(p1, p0);\n        System.out.println(result);\n    }\n}\n",
     "test_inputs": [
