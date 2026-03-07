@@ -2,6 +2,7 @@
 
 import os
 import time
+import threading
 
 from openai import APIConnectionError, APIError, OpenAI, OpenAIError, RateLimitError
 
@@ -50,6 +51,23 @@ _PROVIDERS: dict[str, dict] = {
 
 MAX_RETRIES = 5
 
+# Thread-local token accumulator — each worker thread tracks its own totals
+_token_usage = threading.local()
+
+
+def reset_token_usage() -> None:
+    """Reset token counters for the current thread. Call at the start of each task."""
+    _token_usage.input_tokens = 0
+    _token_usage.output_tokens = 0
+
+
+def get_token_usage() -> tuple[int, int]:
+    """Return (input_tokens, output_tokens) accumulated for the current thread."""
+    return (
+        getattr(_token_usage, "input_tokens", 0),
+        getattr(_token_usage, "output_tokens", 0),
+    )
+
 
 # ---------------------------------------------------------------------------
 # Public API  (unchanged — all existing callers keep working)
@@ -96,7 +114,11 @@ def _request_with_retries(client: OpenAI, _config: dict):
     """Execute a chat completion with retries on transient errors."""
     for attempt in range(MAX_RETRIES):
         try:
-            return client.chat.completions.create(**_config)
+            response = client.chat.completions.create(**_config)
+            if response.usage:
+                _token_usage.input_tokens = getattr(_token_usage, "input_tokens", 0) + response.usage.prompt_tokens
+                _token_usage.output_tokens = getattr(_token_usage, "output_tokens", 0) + response.usage.completion_tokens
+            return response
         except APIError as e:
             print(f"API error: {e}")
             if e.code == "invalid_request_error":

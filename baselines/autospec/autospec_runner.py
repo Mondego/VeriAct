@@ -10,9 +10,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from baselines.utils.logger import create_logger
 from baselines.utils.file_utility import dump_json, dump_jsonl, load_json
-from baselines.utils.models import create_model_config, request_llm_engine
 from baselines.utils.verifier import verify_with_openjml, validate_with_openjml
 from baselines.autospec.prompts import get_fewshot_context, get_request_msg
+from baselines.utils.models import (
+    create_model_config,
+    request_llm_engine,
+    reset_token_usage,
+    get_token_usage,
+)
 
 
 @dataclass
@@ -74,6 +79,8 @@ class AutoSpecResult(TypedDict):
     final_error: str
     verified: bool
     iterations: int
+    input_tokens: int
+    output_tokens: int
 
 
 class _WorkerResultRequired(TypedDict):
@@ -91,6 +98,8 @@ class WorkerResult(_WorkerResultRequired, total=False):
     final_code: str
     final_error: str
     message: str
+    input_tokens: int
+    output_tokens: int
 
 
 class AutoSpec:
@@ -449,6 +458,7 @@ class AutoSpec:
             self.logger.info(
                 f"[{class_name}] Final result is:\n```\n{current_code}\n```\nVerifier called {_verifier_calls_count} times."
             )
+        _input_tokens, _output_tokens = get_token_usage()
         return AutoSpecResult(
             status=status,
             class_name=class_name,
@@ -457,6 +467,8 @@ class AutoSpec:
             final_error=err_info,
             verified=verified_flag,
             iterations=num_iter,
+            input_tokens=_input_tokens,
+            output_tokens=_output_tokens,
         )
 
 
@@ -514,6 +526,7 @@ class AutoSpecRunner:
                 log_file="unknown",
             )
 
+        reset_token_usage()
         logger.info(f"Starting AutoSpec for {task_id} (task id: {task_id})")
 
         _thread_autospec_artifacts: str = os.path.join(
@@ -543,7 +556,8 @@ class AutoSpecRunner:
 
             logger.info(
                 f"{verified_status} - Completed {classname} with {_result['verifier_calls']} verifier calls "
-                f"in {_result['iterations']} iterations"
+                f"in {_result['iterations']} iterations "
+                f"(tokens: {_result['input_tokens']} in / {_result['output_tokens']} out)"
             )
 
             return WorkerResult(
@@ -557,6 +571,8 @@ class AutoSpecRunner:
                 log_file=log_file,
                 final_code=_result["final_code"],
                 final_error=_result["final_error"],
+                input_tokens=_result["input_tokens"],
+                output_tokens=_result["output_tokens"],
             )
 
         except Exception as e:
@@ -577,14 +593,11 @@ class AutoSpecRunner:
         timed_out = [r for r in results if r["status"] == "timed_out"]
         unknown = [r for r in results if r["status"] == "unknown"]
 
-        total_verifier_calls = sum(
-            r.get("verifier_calls", 0) for r in (verified + unverified + timed_out)
-        )
-        avg_verifier_calls = (
-            total_verifier_calls / len(verified + unverified + timed_out)
-            if (verified + unverified + timed_out)
-            else 0
-        )
+        completed = verified + unverified + timed_out
+        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in completed)
+        avg_verifier_calls = total_verifier_calls / len(completed) if completed else 0
+        total_input_tokens = sum(r.get("input_tokens", 0) for r in completed)
+        total_output_tokens = sum(r.get("output_tokens", 0) for r in completed)
 
         summary = {
             "total_files_processed": self.input_length,
@@ -600,6 +613,9 @@ class AutoSpecRunner:
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
             "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
+            "total_input_tokens": total_input_tokens,
+            "total_output_tokens": total_output_tokens,
+            "total_tokens": total_input_tokens + total_output_tokens,
             "threads_used": self.threads,
             "verified_cases": [
                 {
@@ -650,6 +666,9 @@ class AutoSpecRunner:
             f"Timed out: {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)"
         )
         print(f"Unknown (errors): {len(unknown)}/{self.input_length}")
+        print(
+            f"Total tokens used: {total_input_tokens} input / {total_output_tokens} output ({total_input_tokens + total_output_tokens} total)"
+        )
 
         dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
         print(

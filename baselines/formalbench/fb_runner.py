@@ -7,14 +7,19 @@ from dataclasses import dataclass, field
 from typing import Any, Optional, TypedDict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from baselines.utils.logger import create_logger
-from baselines.utils.verifier import verify_with_openjml
-from baselines.utils.file_utility import load_json, dump_json, dump_jsonl
-from baselines.utils.models import create_model_config, request_llm_engine
-
 from baselines.formalbench.prompts import build_messages
 from baselines.formalbench.fixer.spec_fixer import SpecFixer
 from baselines.formalbench.infer.spec_infer import FormalBench, VALID_PROMPT_TYPES
+
+from baselines.utils.logger import create_logger
+from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.file_utility import load_json, dump_json, dump_jsonl
+from baselines.utils.models import (
+    create_model_config,
+    request_llm_engine,
+    reset_token_usage,
+    get_token_usage,
+)
 
 
 @dataclass
@@ -67,6 +72,8 @@ class FBSpecResult(TypedDict):
     final_code: str | None
     final_error: str
     verified: bool
+    input_tokens: int
+    output_tokens: int
 
 
 class _WorkerResultRequired(TypedDict):
@@ -87,6 +94,8 @@ class WorkerResult(_WorkerResultRequired, total=False):
     final_code: str | None
     final_error: str
     message: str
+    input_tokens: int
+    output_tokens: int
 
 
 class FBSpec:
@@ -267,6 +276,7 @@ class FBSpec:
 
         # fix_iterations = number of fix-phase LLM calls made
         fix_iters: int = len(fix_history) // 2
+        _input_tokens, _output_tokens = get_token_usage()
 
         return FBSpecResult(
             status=status,
@@ -279,6 +289,8 @@ class FBSpec:
             final_code=curr_spec,
             final_error=curr_err or "",
             verified=status == "verified",
+            input_tokens=_input_tokens,
+            output_tokens=_output_tokens,
         )
 
 
@@ -336,6 +348,7 @@ class FBSpecRunner:
                 log_file="unknown",
             )
 
+        reset_token_usage()
         logger.info(f"Starting FBSpec for {class_name} (task id: {task_id})")
 
         _thread_fb_artifacts: str = os.path.join(
@@ -384,6 +397,8 @@ class FBSpecRunner:
                 log_file=log_file,
                 final_code=_result["final_code"],
                 final_error=_result["final_error"],
+                input_tokens=_result["input_tokens"],
+                output_tokens=_result["output_tokens"],
             )
 
         except Exception as e:
@@ -415,6 +430,8 @@ class FBSpecRunner:
         avg_verifier_calls: float = (
             total_verifier_calls / len(counted) if counted else 0
         )
+        total_input_tokens: int = sum(r.get("input_tokens", 0) for r in counted)
+        total_output_tokens: int = sum(r.get("output_tokens", 0) for r in counted)
 
         summary = {
             "total_files_processed": self.input_length,
@@ -434,6 +451,9 @@ class FBSpecRunner:
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
             "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
+            "total_input_tokens": total_input_tokens,
+            "total_output_tokens": total_output_tokens,
+            "total_tokens": total_input_tokens + total_output_tokens,
             "threads_used": self.threads,
             "prompt_type": self.prompt_type,
             "max_iters": self.max_iters,
@@ -503,6 +523,9 @@ class FBSpecRunner:
         print(f"Invalid JML:       {len(invalid_jml)}/{self.input_length}")
         print(f"Empty spec:        {len(empty_spec)}/{self.input_length}")
         print(f"Unknown:           {len(unknown)}/{self.input_length}")
+        print(
+            f"Total tokens used: {total_input_tokens} input / {total_output_tokens} output ({total_input_tokens + total_output_tokens} total)"
+        )
         print(
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )

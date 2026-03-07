@@ -14,8 +14,12 @@ from baselines.specgen.prompts import (
     RefinementPrompt,
 )
 from baselines.utils.logger import create_logger
-from baselines.utils.models import request_llm_engine
 from baselines.utils.verifier import verify_with_openjml
+from baselines.utils.models import (
+    request_llm_engine,
+    reset_token_usage,
+    get_token_usage,
+)
 from baselines.utils.file_utility import (
     load_json,
     dump_json,
@@ -76,6 +80,8 @@ class SpecGenResult(TypedDict):
     final_error: str
     verified: bool
     iterations: int
+    input_tokens: int
+    output_tokens: int
 
 
 class _WorkerResultRequired(TypedDict):
@@ -93,6 +99,8 @@ class WorkerResult(_WorkerResultRequired, total=False):
     final_code: str
     final_error: str
     message: str
+    input_tokens: int
+    output_tokens: int
 
 
 class SpecGen:
@@ -465,6 +473,7 @@ class SpecGen:
             self.logger.info(
                 f"[{class_name}] Final result is:\n```\n{current_code}\n```\nVerifier called {_verifier_calls_count} times."
             )
+        _input_tokens, _output_tokens = get_token_usage()
         return SpecGenResult(
             status=status,
             class_name=class_name,
@@ -473,6 +482,8 @@ class SpecGen:
             final_error=err_info,
             verified=verified_flag,
             iterations=num_iter,
+            input_tokens=_input_tokens,
+            output_tokens=_output_tokens,
         )
 
 
@@ -530,6 +541,7 @@ class SpecGenRunner:
                 log_file="unknown",
             )
 
+        reset_token_usage()
         logger.info(f"Starting SpecGen for {class_name} (task id: {task_id})")
 
         _thread_specgen_artifacts: str = os.path.join(
@@ -560,7 +572,8 @@ class SpecGenRunner:
 
             logger.info(
                 f"{verified_status} - Completed {class_name} with {_result['verifier_calls']} verifier calls "
-                f"in {_result['iterations']} iterations"
+                f"in {_result['iterations']} iterations "
+                f"(tokens: {_result['input_tokens']} in / {_result['output_tokens']} out)"
             )
 
             return WorkerResult(
@@ -574,6 +587,8 @@ class SpecGenRunner:
                 log_file=log_file,
                 final_code=_result["final_code"],
                 final_error=_result["final_error"],
+                input_tokens=_result["input_tokens"],
+                output_tokens=_result["output_tokens"],
             )
 
         except Exception as e:
@@ -593,14 +608,11 @@ class SpecGenRunner:
         timed_out = [r for r in results if r["status"] == "timed_out"]
         unknown = [r for r in results if r["status"] == "unknown"]
 
-        total_verifier_calls = sum(
-            r.get("verifier_calls", 0) for r in (verified + unverified + timed_out)
-        )
-        avg_verifier_calls = (
-            total_verifier_calls / len(verified + unverified + timed_out)
-            if (verified + unverified + timed_out)
-            else 0
-        )
+        completed = verified + unverified + timed_out
+        total_verifier_calls = sum(r.get("verifier_calls", 0) for r in completed)
+        avg_verifier_calls = total_verifier_calls / len(completed) if completed else 0
+        total_input_tokens = sum(r.get("input_tokens", 0) for r in completed)
+        total_output_tokens = sum(r.get("output_tokens", 0) for r in completed)
 
         summary = {
             "total_files_processed": self.input_length,
@@ -616,6 +628,9 @@ class SpecGenRunner:
             "total_processing_time_seconds": round(duration, 2),
             "total_verifier_calls": total_verifier_calls,
             "average_verifier_calls_per_case": round(avg_verifier_calls, 1),
+            "total_input_tokens": total_input_tokens,
+            "total_output_tokens": total_output_tokens,
+            "total_tokens": total_input_tokens + total_output_tokens,
             "threads_used": self.threads,
             "verified_cases": [
                 {
@@ -675,6 +690,9 @@ class SpecGenRunner:
             f"Timed out: {len(timed_out)}/{self.input_length} ({len(timed_out)/self.input_length*100:.1f}%)"
         )
         print(f"Unknown (errors): {len(unknown)}/{self.input_length}")
+        print(
+            f"Total tokens used: {total_input_tokens} input / {total_output_tokens} output ({total_input_tokens + total_output_tokens} total)"
+        )
         print(
             f"Summary saved to: {os.path.join(self.output, f'{self.name}_results_summary.json')}"
         )
