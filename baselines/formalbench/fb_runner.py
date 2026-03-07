@@ -39,7 +39,7 @@ class Task:
     class_name: str
     test_name: str
     javadoc: str
-    catagory: str
+    category: str
     test_code: str = ""
     test_inputs: list[TestCase] = field(default_factory=list)
     generated_test_cases: list[TestCase] = field(default_factory=list)
@@ -52,7 +52,7 @@ class Task:
             class_name=data["class_name"],
             test_name=data["test_name"],
             javadoc=data["javadoc"],
-            catagory=data["catagory"],
+            category=data["category"],
             test_code=data.get("test_code", ""),
             test_inputs=[TestCase.from_dict(tc) for tc in data.get("test_inputs", [])],
             generated_test_cases=[

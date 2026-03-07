@@ -68,7 +68,8 @@ def validate_with_openjml(
         raise
 
     # [FIX ME] For validation this command will change
-    cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
+    # cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
+    cmd = f"openjml --check {tmp_filename}"
     logger.debug(f"[{classname}] Running OpenJML verification command")
 
     try:
