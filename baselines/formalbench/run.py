@@ -100,13 +100,9 @@ def _validate_arguments(args: argparse.Namespace) -> None:
 
 def _prepare_run_environment(args: argparse.Namespace) -> str:
     approach_name = "formalbench"
-    date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    date_str = datetime.now().strftime("%Y_%m_%d_%H_%M")
     model_safe = args.model.replace("/", "_")
-    prompt_type = args.prompt_type
-    _name = args.name.replace(" ", "_")
-    output_dir = os.path.join(
-        args.output, f"{approach_name}_{_name}_{model_safe}_{prompt_type}_{date_str}"
-    )
+    output_dir = os.path.join(args.output, f"{approach_name}_{model_safe}_{date_str}")
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     return output_dir
 
