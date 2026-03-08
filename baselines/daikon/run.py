@@ -33,6 +33,12 @@ def _retrieve_input_arguments() -> argparse.Namespace:
         help="Timeout for OpenJML validation in seconds (default: 300)",
     )
     parser.add_argument(
+        "--daikon_timeout",
+        type=int,
+        default=600,
+        help="Timeout for the full Daikon pipeline per task in seconds (default: 600)",
+    )
+    parser.add_argument(
         "--threads", type=int, default=1, help="Number of worker threads (default: 1)"
     )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
@@ -53,12 +59,16 @@ def _validate_arguments(args: argparse.Namespace) -> None:
     if args.openjml_timeout < 0:
         print("Error: OpenJML timeout must be a non-negative integer.")
         sys.exit(1)
+    if args.daikon_timeout < 0:
+        print("Error: Daikon timeout must be a non-negative integer.")
+        sys.exit(1)
 
 
 def _prepare_run_environment(args: argparse.Namespace) -> str:
     approach_name = "daikon"
     date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_dir = os.path.join(args.output, f"{approach_name}_{date_str}")
+    _name = args.name.replace(" ", "_")
+    output_dir = os.path.join(args.output, f"{approach_name}_{_name}_{date_str}")
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     return output_dir
 
@@ -73,7 +83,8 @@ def main() -> None:
         name=args.name,
         input=args.input,
         output=_output_dir,
-        timeout=args.openjml_timeout,
+        openjml_timeout=args.openjml_timeout,
+        daikon_timeout=args.daikon_timeout,
         threads=args.threads,
         verbose=args.verbose,
     )

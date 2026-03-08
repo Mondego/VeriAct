@@ -1,5 +1,6 @@
 import os
 import time
+import signal
 import shutil
 import logging
 import threading
@@ -39,6 +40,7 @@ class Task:
     test_name: str
     javadoc: str
     category: str
+    origin_id: str
     test_code: str = ""
     test_inputs: list[TestCase] = field(default_factory=list)
     generated_test_cases: list[TestCase] = field(default_factory=list)
@@ -52,6 +54,7 @@ class Task:
             test_name=data["test_name"],
             javadoc=data["javadoc"],
             category=data["category"],
+            origin_id=data["origin_id"],
             test_code=data.get("test_code", ""),
             test_inputs=[TestCase.from_dict(tc) for tc in data.get("test_inputs", [])],
             generated_test_cases=[
@@ -94,7 +97,8 @@ class Daikon:
         class_name: str,
         test_name: str,
         out_dir: str,
-        timeout: int,
+        openjml_timeout: int,
+        daikon_timeout: int,
         logger: logging.Logger,
         verbose: bool = False,
     ) -> None:
@@ -105,14 +109,15 @@ class Daikon:
         self.class_name = class_name
         self.test_name = test_name
         self.out_dir = out_dir
-        self.timeout = timeout
+        self.openjml_timeout = openjml_timeout
+        self.daikon_timeout = daikon_timeout
         self.verbose = verbose
         self.logger = logger
         self._BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     def _run_command_in_popen(
         self, _command: list[str] | str, _wait_time: Optional[float] = None
-    ) -> bool:
+    ) -> int:
         process = subprocess.Popen(
             _command,
             stdout=subprocess.PIPE,
@@ -120,9 +125,25 @@ class Daikon:
             text=True,
             bufsize=1,
             shell=isinstance(_command, str),
+            start_new_session=True,  # own process group so killpg reaches Java children
         )
 
-        start_time: float = time.time()
+        timed_out_flag: list[bool] = [False]
+
+        def _kill_group() -> None:
+            timed_out_flag[0] = True
+            self.logger.info(
+                f"Timeout reached. Killing process group for {self.run_id}..."
+            )
+            try:
+                os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+            except ProcessLookupError:
+                pass  # process already finished
+
+        timer: Optional[threading.Timer] = None
+        if _wait_time is not None:
+            timer = threading.Timer(_wait_time, _kill_group)
+            timer.start()
 
         try:
             for line in process.stdout:
@@ -130,30 +151,27 @@ class Daikon:
                     self.logger.info(line.strip())
                 else:
                     print(line, end="")
-                if _wait_time is not None and (time.time() - start_time) > _wait_time:
-                    self.logger.info(
-                        f" Timeout reached. Terminating process... for {self.run_id}"
-                    )
-                    process.terminate()
-                    break
 
-            process.wait(timeout=5)
-
-        except subprocess.TimeoutExpired:
-            self.logger.warning(
-                f"Process did not terminate gracefully. Killing process for {self.run_id}..."
-            )
-            process.kill()
-            return False
+            process.wait()
 
         except KeyboardInterrupt:
             self.logger.info(
-                f"Interrupted by user. Killing process for {self.run_id}..."
+                f"Interrupted by user. Killing process group for {self.run_id}..."
             )
-            process.kill()
-            return False
+            try:
+                os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+            return -1
 
-        return process.returncode == 0
+        finally:
+            if timer is not None:
+                timer.cancel()
+
+        if timed_out_flag[0]:
+            return -9  # killed by Python-side timer (SIGKILL)
+
+        return process.returncode
 
     def _prepare_task_environment(self) -> None:
         try:
@@ -174,7 +192,7 @@ class Daikon:
             shutil.copy(os.path.join(_script_path, "daikon.sh"), self.out_dir)
             shutil.copy(os.path.join(_script_path, "inv_config.config"), self.out_dir)
             self._run_command_in_popen(
-                ["chmod", "+x", os.path.join(_script_path, "daikon.sh")], self.timeout
+                ["chmod", "+x", os.path.join(_script_path, "daikon.sh")]
             )
 
         except Exception as e:
@@ -189,13 +207,33 @@ class Daikon:
             "./daikon.sh",
             self.class_name,
             self.test_name,
-            str(test_count),
+            str(test_count)
         ]
         self.logger.info(f"Running Daikon with command: {command} for {self.run_id}")
-        success: bool = self._run_command_in_popen(command, self.timeout * 2)
-        if not success:
-            self.logger.error(f"Daikon process failed or timed out for {self.run_id}")
-            raise RuntimeError("Daikon execution failed or timed out")
+        exit_code: int = self._run_command_in_popen(command, self.daikon_timeout)
+        if exit_code != 0:
+            # Map shell exit codes to statuses
+            _exit_messages: dict[int, tuple[str, str]] = {
+                3:  ("timed_out",  "DynComp timed out (exit 3)"),
+                -9: ("timed_out",  "Daikon pipeline killed by Python-side timeout"),
+                -1: ("timed_out",  "Daikon pipeline interrupted"),
+                2:  ("unverified", "Compilation failed (exit 2)"),
+                4:  ("unverified", "Chicory trace generation failed (exit 4)"),
+                5:  ("unverified", "Daikon inference failed (exit 5)"),
+                6:  ("unverified", "JML annotation failed (exit 6)"),
+                7:  ("unverified", "ESC annotation failed (exit 7)"),
+            }
+            _status, _msg = _exit_messages.get(
+                exit_code, ("unverified", f"Daikon execution failed (exit code {exit_code})")
+            )
+            self.logger.error(f"[{self.run_id}] {_msg}")
+            return DaikonResult(
+                status=_status,
+                annotated_code="",
+                verified=False,
+                timed_out=_status == "timed_out",
+                final_error=_msg,
+            )
         self.logger.info(f"Daikon execution completed successfully for {self.run_id}")
         os.chdir(self._BASE_DIR)  # change back to base directory after running daikon
 
@@ -225,29 +263,38 @@ class Daikon:
             read_from_file(jmlspec_path) if os.path.exists(jmlspec_path) else ""
         )
         jml_error_info: str = verify_with_openjml(
-            code_with_jmlspec, self.class_name, self.timeout, self.out_dir, self.logger
+            code_with_jmlspec,
+            self.class_name,
+            self.openjml_timeout,
+            self.out_dir,
+            self.logger,
         )
         esc_error_info: str = verify_with_openjml(
-            code_with_escspec, self.class_name, self.timeout, self.out_dir, self.logger
+            code_with_escspec,
+            self.class_name,
+            self.openjml_timeout,
+            self.out_dir,
+            self.logger,
         )
         self.logger.info(f"Daikon run completed for task {self.run_id}")
 
         final_error: str = jml_error_info if jml_error_info else esc_error_info
-        timed_out: bool = "Timeout:" in final_error or "timeout" in final_error.lower()
-        verified_flag: bool = final_error.strip() == ""
 
-        if verified_flag:
+        # OpenJML timeout counts as timed_out, not unverified
+        if "Timeout:" in final_error or "timeout" in final_error.lower():
+            status = "timed_out"
+            timed_out = True
+        elif final_error.strip() == "":
             status = "verified"
             timed_out = False
-        elif timed_out:
-            status = "timed_out"
         else:
             status = "unverified"
+            timed_out = False
 
         return DaikonResult(
             status=status,
             annotated_code=code_with_jmlspec,
-            verified=verified_flag,
+            verified=status == "verified",
             timed_out=timed_out,
             final_error=final_error,
         )
@@ -260,14 +307,16 @@ class DaikonRunner:
         name: str,
         input: str,
         output: str,
-        timeout: int,
+        openjml_timeout: int,
+        daikon_timeout: int,
         threads: int,
         verbose: bool = False,
     ) -> None:
         self.name = name
         self.input_path: str = input
         self.output = output
-        self.timeout = timeout
+        self.openjml_timeout = openjml_timeout
+        self.daikon_timeout = daikon_timeout
         self.threads = threads
         self.verbose = verbose
         self.input_length: int = 0
@@ -309,7 +358,8 @@ class DaikonRunner:
             class_name=class_name,
             test_name=task.test_name,
             out_dir=_thread_daikon_artifacts,
-            timeout=self.timeout,
+            openjml_timeout=self.openjml_timeout,
+            daikon_timeout=self.daikon_timeout,
             logger=logger,
             verbose=self.verbose,
         )

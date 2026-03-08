@@ -13,9 +13,6 @@ def verify_with_openjml(
     logger: logging.Logger,
 ) -> str:
     logger.info(f"[{classname}] Validating with OpenJML...")
-    # tmp_dir = os.path.join(output_dir, "tmp")
-    # Path(tmp_dir).mkdir(exist_ok=True)
-
     tmp_filename = os.path.join(output_dir, f"{classname}.java")
     try:
         write_to_file(code_with_spec, tmp_filename)
@@ -56,8 +53,6 @@ def validate_with_openjml(
     logger: logging.Logger,
 ) -> str:
     logger.info(f"[{classname}] Validating with OpenJML...")
-    # tmp_dir = os.path.join(output_dir, "tmp")
-    # Path(tmp_dir).mkdir(exist_ok=True)
 
     tmp_filename = os.path.join(output_dir, f"{classname}.java")
     try:
@@ -67,8 +62,7 @@ def validate_with_openjml(
         logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
         raise
 
-    # [FIX ME] For validation this command will change
-    # cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
+    # [CHECK] Only JML syntax and type checking, without full verification
     cmd = f"openjml --check {tmp_filename}"
     logger.debug(f"[{classname}] Running OpenJML verification command")
 

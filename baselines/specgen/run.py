@@ -100,8 +100,9 @@ def _prepare_run_environment(args: argparse.Namespace) -> str:
     date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
     model_safe = args.model.replace("/", "_")
     prompt_type = args.prompt_type
+    _name = args.name.replace(" ", "_")
     output_dir = os.path.join(
-        args.output, f"{approach_name}_{model_safe}_{prompt_type}_{date_str}"
+        args.output, f"{approach_name}_{_name}_{model_safe}_{prompt_type}_{date_str}"
     )
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     return output_dir

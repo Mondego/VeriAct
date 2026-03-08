@@ -32,6 +32,7 @@ class Task:
     test_name: str
     javadoc: str
     category: str
+    origin_id: str
     test_code: str = ""
     test_inputs: list[TestCase] = field(default_factory=list)
     generated_test_cases: list[TestCase] = field(default_factory=list)
@@ -45,6 +46,7 @@ class Task:
             test_name=data["test_name"],
             javadoc=data["javadoc"],
             category=data["category"],
+            origin_id=data["origin_id"],
             test_code=data.get("test_code", ""),
             test_inputs=[TestCase.from_dict(tc) for tc in data.get("test_inputs", [])],
             generated_test_cases=[
@@ -267,7 +269,11 @@ class Houdini:
             )
             _verifier_calls_count = _verifier_calls_count + 1
             self.logger.debug(f"Error info: {err_info}")
-            if err_info == "":
+            if (
+                err_info == ""
+                or "Timeout:" in err_info
+                or "timeout" in err_info.lower()
+            ):
                 break
             else:
                 flag: bool = False
