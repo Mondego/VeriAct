@@ -58,9 +58,8 @@ def _validate_arguments(args: argparse.Namespace) -> None:
 
 def _prepare_run_environment(args: argparse.Namespace) -> str:
     approach_name = "houdini"
-    date_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-    _name = args.name.replace(" ", "_")
-    output_dir = os.path.join(args.output, f"{approach_name}_{_name}_{date_str}")
+    date_str = datetime.now().strftime("%Y_%m_%d_%H_%M")
+    output_dir = os.path.join(args.output, f"{approach_name}_{date_str}")
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     return output_dir
 
