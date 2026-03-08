@@ -167,6 +167,10 @@ class Daikon:
         finally:
             if timer is not None:
                 timer.cancel()
+            try:
+                os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+            except ProcessLookupError:
+                pass
 
         if timed_out_flag[0]:
             return -9  # killed by Python-side timer (SIGKILL)

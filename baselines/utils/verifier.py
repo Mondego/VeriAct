@@ -1,4 +1,6 @@
 import os
+import signal
+import shlex
 import logging
 import subprocess
 from pathlib import Path
@@ -21,28 +23,34 @@ def verify_with_openjml(
         logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
         raise
 
-    cmd = f"openjml --esc --esc-max-warnings 1 --arithmetic-failure=quiet --nonnull-by-default --quiet -nowarn --prover=cvc4 {tmp_filename}"
+    cmd = ["openjml", "--esc", "--esc-max-warnings", "1", "--arithmetic-failure=quiet",
+           "--nonnull-by-default", "--quiet", "-nowarn", "--prover=cvc4", tmp_filename]
     logger.debug(f"[{classname}] Running OpenJML verification command")
 
+    proc = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True, preexec_fn=os.setsid,
+    )
     try:
-        result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, timeout=_timeout
-        )
-        res = result.stdout + result.stderr
-        logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
-        if result.stdout:
-            logger.debug(f"[{classname}] OpenJML stdout: {result.stdout[:500]}")
-        if result.stderr:
-            logger.debug(f"[{classname}] OpenJML stderr: {result.stderr[:500]}")
+        stdout, stderr = proc.communicate(timeout=_timeout)
+        res = stdout + stderr
+        logger.debug(f"[{classname}] OpenJML return code: {proc.returncode}")
+        if stdout:
+            logger.debug(f"[{classname}] OpenJML stdout: {stdout[:500]}")
+        if stderr:
+            logger.debug(f"[{classname}] OpenJML stderr: {stderr[:500]}")
         return res
     except subprocess.TimeoutExpired:
-        logger.error(
-            f"[{classname}] OpenJML command timed out after {_timeout} seconds"
-        )
+        logger.error(f"[{classname}] OpenJML command timed out after {_timeout} seconds")
         return "Timeout: OpenJML verification exceeded time limit"
     except Exception as e:
         logger.error(f"[{classname}] Error running OpenJML: {e}")
         return f"Error: {str(e)}"
+    finally:
+        try:
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        except ProcessLookupError:
+            pass
 
 
 def validate_with_openjml(
@@ -63,25 +71,30 @@ def validate_with_openjml(
         raise
 
     # [CHECK] Only JML syntax and type checking, without full verification
-    cmd = f"openjml --check {tmp_filename}"
+    cmd = ["openjml", "--check", tmp_filename]
     logger.debug(f"[{classname}] Running OpenJML verification command")
 
+    proc = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        text=True, preexec_fn=os.setsid,
+    )
     try:
-        result = subprocess.run(
-            cmd, shell=True, capture_output=True, text=True, timeout=_timeout
-        )
-        res = result.stdout + result.stderr
-        logger.debug(f"[{classname}] OpenJML return code: {result.returncode}")
-        if result.stdout:
-            logger.debug(f"[{classname}] OpenJML stdout: {result.stdout[:500]}")
-        if result.stderr:
-            logger.debug(f"[{classname}] OpenJML stderr: {result.stderr[:500]}")
+        stdout, stderr = proc.communicate(timeout=_timeout)
+        res = stdout + stderr
+        logger.debug(f"[{classname}] OpenJML return code: {proc.returncode}")
+        if stdout:
+            logger.debug(f"[{classname}] OpenJML stdout: {stdout[:500]}")
+        if stderr:
+            logger.debug(f"[{classname}] OpenJML stderr: {stderr[:500]}")
         return res
     except subprocess.TimeoutExpired:
-        logger.error(
-            f"[{classname}] OpenJML command timed out after {_timeout} seconds"
-        )
+        logger.error(f"[{classname}] OpenJML command timed out after {_timeout} seconds")
         return "Timeout: OpenJML verification exceeded time limit"
     except Exception as e:
         logger.error(f"[{classname}] Error running OpenJML: {e}")
         return f"Error: {str(e)}"
+    finally:
+        try:
+            os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+        except ProcessLookupError:
+            pass
