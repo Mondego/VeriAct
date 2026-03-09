@@ -92,10 +92,14 @@ def _validate_arguments(args: argparse.Namespace) -> None:
     if args.temperature < 0 or args.temperature > 2:
         print("Error: Temperature must be between 0 and 2.")
         sys.exit(1)
-    valid_prefixes = ["gpt", "vllm"]
-    if not any(args.model.startswith(p) for p in valid_prefixes):
-        print(f"Error: Model must start with one of {valid_prefixes}.")
+    valid_models = ["gpt", "gemini", "claude", "vllm"]
+    model_prefixes = [model for model in valid_models if args.model.startswith(model)]
+    if not model_prefixes:
+        print(f"Error: Model must start with one of {valid_models}.")
         sys.exit(1)
+    if args.prompt_type not in VALID_PROMPT_TYPES:
+        print(f"Error: Prompt type must be one of {VALID_PROMPT_TYPES}.")
+    sys.exit(1)
 
 
 def _prepare_run_environment(args: argparse.Namespace) -> str:

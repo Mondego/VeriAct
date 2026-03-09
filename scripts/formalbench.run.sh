@@ -1,11 +1,11 @@
 python -m baselines.formalbench.run \
-    --name sgb_run \
-    --input /home/mdrh/code/specsyns/benchmarks/specgenbench/sgb.json \
-    --output /home/mdrh/experiments/output \
+    --name fb_run \
+    --input /home/mdrh/code/specsyns/benchmarks/formalbench/fb.json \
+    --output /home/mdrh/experiments/output/fb \
     --openjml_timeout 300 \
     --threads 4 \
     --verbose \
-    --model gpt-4o \
+    --model gpt-4o-2024-08-06 \
     --temperature 0.7 \
     --prompt_type zero_shot \
     --max_iterations 10
