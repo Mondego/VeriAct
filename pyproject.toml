@@ -11,14 +11,7 @@ authors = [{ name = "MRHMisu", email = "mdrh@uci.edu" }]
 readme = "README.md"
 requires-python = ">=3.10"
 
-dependencies = [
-  "openai",
-  "dotenv",
-  "tiktoken",
-  "pyyaml",
-  "pytest",
-  "ruff",
-]
+dependencies = ["openai", "dotenv", "javalang", "pyyaml", "pytest", "ruff"]
 
 [tool.setuptools.packages.find]
 include = ["specsyns*", "baselines*", "config*"]
