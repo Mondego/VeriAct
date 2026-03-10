@@ -65,6 +65,11 @@ def _retrieve_input_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
+    parser.add_argument(
+        "--simplify",
+        action="store_true",
+        help="After successful verification, remove redundant specs to produce a minimal annotation",
+    )
 
     return parser.parse_args()
 
@@ -128,6 +133,7 @@ def main() -> None:
         openjml_timeout=_args.openjml_timeout,
         threads=_args.threads,
         verbose=_args.verbose,
+        simplify=_args.simplify,
     )
 
     _autospec_runner.run_workers()

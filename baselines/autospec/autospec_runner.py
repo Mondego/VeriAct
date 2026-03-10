@@ -116,6 +116,7 @@ class AutoSpec:
         logger: logging.Logger,
         verbose: bool = False,
         prompt_type: str = "zero_shot",
+        simplify: bool = False,
     ) -> None:
         self.output_dir = output_dir
         self.model = model
@@ -125,6 +126,7 @@ class AutoSpec:
         self.logger = logger
         self.verbose = verbose
         self.prompt_type = prompt_type
+        self.simplify = simplify
 
     def _request_models(self, messages: list[dict[str, Any]]) -> Any:
         config = create_model_config(messages, self.model, self.temperature)
@@ -164,6 +166,14 @@ class AutoSpec:
             return specs
         err_lineno_list = self._extract_lineno_from_err_info(err_info)
         self.logger.debug(f"[{classname}] Error lines detected: {err_lineno_list}")
+
+        if not err_lineno_list:
+            self.logger.warning(
+                f"[{classname}] Validation failed at line {lineno} but no error lines could be "
+                f"parsed from output. Dropping all specs to avoid passing bad specs through."
+            )
+            self.logger.debug(f"[{classname}] Unparseable validation error:\n{err_info}")
+            return ""
 
         res = ""
         filtered_count = 0
@@ -217,9 +227,8 @@ class AutoSpec:
             self.logger.debug(
                 f"[{classname}] Using default spec for field at line {lineno}"
             )
-            reply_msg = {"role": "assistant", "content": "```\n//@ spec_public\n```"}
-        else:
-            reply_msg = self._request_models(context)
+            return "//@ spec_public"
+        reply_msg = self._request_models(context)
         if self.verbose:
             self.logger.info(f"[{classname}] Received LLM response for line {lineno}\n")
         reply_content = reply_msg.choices[0].message.content.replace("```java", "```")
@@ -339,6 +348,64 @@ class AutoSpec:
                 tmp_spec_set.clear()
         return res
 
+    def _remove_spec_line(self, code: str, spec_line: str) -> str:
+        """Remove the first occurrence of spec_line (matched by exact content) from code."""
+        lines = code.split("\n")
+        removed = False
+        result = []
+        for line in lines:
+            if not removed and line == spec_line:
+                removed = True
+                continue
+            result.append(line)
+        return "\n".join(result)
+
+    def _simplify_specs(
+        self, code: str, class_name: str, verifier_calls: int
+    ) -> tuple[str, int]:
+        """
+        Remove spec lines one-by-one and re-verify after each removal.
+        A spec is redundant if the assertion still holds without it.
+        Returns the minimal annotated code and the updated verifier call count.
+        """
+        spec_lines = [line for line in code.split("\n") if self._is_spec(line)]
+        self.logger.info(
+            f"[{class_name}] Simplification: trying to remove {len(spec_lines)} spec lines"
+        )
+        current_code = code
+        removed_count = 0
+
+        for spec_line in spec_lines:
+            if spec_line not in current_code:
+                # Already removed as a side-effect of a previous removal
+                continue
+            candidate = self._remove_spec_line(current_code, spec_line)
+            err_info, returncode = verify_with_openjml(
+                candidate, class_name, self.timeout, self.output_dir, self.logger
+            )
+            verifier_calls += 1
+            if "Timeout:" in err_info or "timeout" in err_info.lower():
+                self.logger.debug(
+                    f"[{class_name}] Timeout while testing removal of: {spec_line.strip()} — keeping"
+                )
+                continue
+            if returncode == 0:
+                current_code = candidate
+                removed_count += 1
+                self.logger.debug(
+                    f"[{class_name}] Removed redundant spec: {spec_line.strip()}"
+                )
+            else:
+                self.logger.debug(
+                    f"[{class_name}] Kept necessary spec: {spec_line.strip()}"
+                )
+
+        self.logger.info(
+            f"[{class_name}] Simplification done: removed {removed_count}/{len(spec_lines)} redundant specs"
+            f" ({verifier_calls} total verifier calls so far)"
+        )
+        return current_code, verifier_calls
+
     def run(self, code: str, class_name: str) -> AutoSpecResult | str:
 
         _verifier_calls_count: int = 0
@@ -442,6 +509,10 @@ class AutoSpec:
 
             if returncode == 0:  # verified
                 verified_flag = True
+                if self.simplify:
+                    current_code, _verifier_calls_count = self._simplify_specs(
+                        current_code, class_name, _verifier_calls_count
+                    )
             else:
                 current_code = self._remove_errornous_and_redundant_spec(
                     current_code, err_info
@@ -497,6 +568,7 @@ class AutoSpecRunner:
         threads: int,
         verbose: bool,
         prompt_type: str,
+        simplify: bool = False,
     ) -> None:
         self.name = name
         self.input_path: str = input
@@ -508,6 +580,7 @@ class AutoSpecRunner:
         self.threads = threads
         self.verbose = verbose
         self.prompt_type = prompt_type
+        self.simplify = simplify
         self.input_length: int = 0
 
     def _run_autospec(self, task: Task) -> WorkerResult:
@@ -520,6 +593,7 @@ class AutoSpecRunner:
             "model": self.model,
             "temperature": self.temperature,
             "max_iterations": self.max_iterations,
+            "simplify": self.simplify,
         }
 
         _thread_id: Optional[int] = threading.current_thread().ident
@@ -554,6 +628,7 @@ class AutoSpecRunner:
             logger=logger,
             verbose=self.verbose,
             prompt_type=self.prompt_type,
+            simplify=self.simplify,
         )
         try:
             _result = autospec.run(input_code, classname)
