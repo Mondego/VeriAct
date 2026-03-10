@@ -264,13 +264,13 @@ class Houdini:
                 f"Writing merged code for {self.class_name} in thread {self.output_dir}"
             )
             self.logger.debug(merged_code + "\n")
-            err_info = verify_with_openjml(
+            err_info, returncode = verify_with_openjml(
                 merged_code, self.class_name, self.timeout, self.output_dir, self.logger
             )
             _verifier_calls_count = _verifier_calls_count + 1
             self.logger.debug(f"Error info: {err_info}")
             if (
-                err_info == ""
+                returncode == 0
                 or "Timeout:" in err_info
                 or "timeout" in err_info.lower()
             ):
@@ -299,7 +299,7 @@ class Houdini:
         self.logger.debug(merged_code)
 
         timed_out: bool = "Timeout:" in err_info or "timeout" in err_info.lower()
-        verified_flag: bool = err_info.strip() == ""
+        verified_flag: bool = returncode == 0
 
         if verified_flag:
             status = "verified"

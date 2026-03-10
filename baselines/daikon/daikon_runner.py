@@ -211,24 +211,25 @@ class Daikon:
             "./daikon.sh",
             self.class_name,
             self.test_name,
-            str(test_count)
+            str(test_count),
         ]
         self.logger.info(f"Running Daikon with command: {command} for {self.run_id}")
         exit_code: int = self._run_command_in_popen(command, self.daikon_timeout)
         if exit_code != 0:
             # Map shell exit codes to statuses
             _exit_messages: dict[int, tuple[str, str]] = {
-                3:  ("timed_out",  "DynComp timed out (exit 3)"),
-                -9: ("timed_out",  "Daikon pipeline killed by Python-side timeout"),
-                -1: ("timed_out",  "Daikon pipeline interrupted"),
-                2:  ("unverified", "Compilation failed (exit 2)"),
-                4:  ("unverified", "Chicory trace generation failed (exit 4)"),
-                5:  ("unverified", "Daikon inference failed (exit 5)"),
-                6:  ("unverified", "JML annotation failed (exit 6)"),
-                7:  ("unverified", "ESC annotation failed (exit 7)"),
+                3: ("timed_out", "DynComp timed out (exit 3)"),
+                -9: ("timed_out", "Daikon pipeline killed by Python-side timeout"),
+                -1: ("timed_out", "Daikon pipeline interrupted"),
+                2: ("unverified", "Compilation failed (exit 2)"),
+                4: ("unverified", "Chicory trace generation failed (exit 4)"),
+                5: ("unverified", "Daikon inference failed (exit 5)"),
+                6: ("unverified", "JML annotation failed (exit 6)"),
+                7: ("unverified", "ESC annotation failed (exit 7)"),
             }
             _status, _msg = _exit_messages.get(
-                exit_code, ("unverified", f"Daikon execution failed (exit code {exit_code})")
+                exit_code,
+                ("unverified", f"Daikon execution failed (exit code {exit_code})"),
             )
             self.logger.error(f"[{self.run_id}] {_msg}")
             return DaikonResult(
@@ -266,14 +267,14 @@ class Daikon:
         code_with_jmlspec: str = (
             read_from_file(jmlspec_path) if os.path.exists(jmlspec_path) else ""
         )
-        jml_error_info: str = verify_with_openjml(
+        jml_error_info, jml_returncode = verify_with_openjml(
             code_with_jmlspec,
             self.class_name,
             self.openjml_timeout,
             self.out_dir,
             self.logger,
         )
-        esc_error_info: str = verify_with_openjml(
+        esc_error_info, esc_returncode = verify_with_openjml(
             code_with_escspec,
             self.class_name,
             self.openjml_timeout,
@@ -288,7 +289,7 @@ class Daikon:
         if "Timeout:" in final_error or "timeout" in final_error.lower():
             status = "timed_out"
             timed_out = True
-        elif final_error.strip() == "":
+        elif esc_returncode == 0 or jml_returncode == 0:
             status = "verified"
             timed_out = False
         else:

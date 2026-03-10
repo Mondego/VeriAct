@@ -165,7 +165,7 @@ class FormalBench:
             )
 
         self.logger.info(f"[{class_name}] Verifying with OpenJML...")
-        err_info = verify_with_openjml(
+        err_info, returncode = verify_with_openjml(
             spec, class_name, self.timeout, self.output_dir, self.logger
         )
         verifier_calls += 1
@@ -175,7 +175,7 @@ class FormalBench:
 
         if "Timeout:" in err_info or "timeout" in err_info.lower():
             status = "timed_out"
-        elif err_info == "":
+        elif returncode == 0:
             status = "verified"
         else:
             status = "unverified"

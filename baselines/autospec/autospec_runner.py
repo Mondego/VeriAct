@@ -152,11 +152,16 @@ class AutoSpec:
             code, [SpecEntry(content=specs, lineno=lineno)], unique=False
         )
         # [Note] Only Syntax validation, no verification
-        err_info = validate_with_openjml(
+        err_info, returncode = validate_with_openjml(
             instrumented_code, classname, self.timeout, self.output_dir, self.logger
         )
         if self.verbose:
             self.logger.info(f"[{classname}] Validation result:\n{err_info}\n")
+        if returncode == 0:
+            self.logger.debug(
+                f"[{classname}] All specs at line {lineno} passed validation"
+            )
+            return specs
         err_lineno_list = self._extract_lineno_from_err_info(err_info)
         self.logger.debug(f"[{classname}] Error lines detected: {err_lineno_list}")
 
@@ -218,6 +223,7 @@ class AutoSpec:
         if self.verbose:
             self.logger.info(f"[{classname}] Received LLM response for line {lineno}\n")
         reply_content = reply_msg.choices[0].message.content.replace("```java", "```")
+        reply_content = reply_content.replace("```jml", "```") # Also replace jml code block markers if any, just in case
         if reply_content.strip().startswith("//@"):
             reply_content = "```\n" + reply_content.strip() + "\n```"
         tmp_list = reply_content.split("```")
@@ -294,7 +300,7 @@ class AutoSpec:
         lineno_list: list[int] = []
         for line in err_info.split("\n"):
             if (
-                line.find("/tmp/") != -1
+                line.find(self.output_dir) != -1
                 and line.find(".java") != -1
                 and line.find(":") != -1
             ):
@@ -419,7 +425,7 @@ class AutoSpec:
                 self.logger.info(
                     f"Result of iteration {num_iter} is:\n{current_code}\n"
                 )
-            err_info = verify_with_openjml(
+            err_info, returncode = verify_with_openjml(
                 current_code, class_name, self.timeout, self.output_dir, self.logger
             )
             _verifier_calls_count += 1
@@ -434,7 +440,7 @@ class AutoSpec:
                 )  # reset to original — at least the output is clean
                 break
 
-            if err_info.strip() == "":  # verified
+            if returncode == 0:  # verified
                 verified_flag = True
             else:
                 current_code = self._remove_errornous_and_redundant_spec(

@@ -23,13 +23,25 @@ def verify_with_openjml(
         logger.error(f"[{classname}] Failed to write file: {e}", exc_info=True)
         raise
 
-    cmd = ["openjml", "--esc", "--esc-max-warnings", "1", "--arithmetic-failure=quiet",
-           "--nonnull-by-default", "--quiet", "-nowarn", "--prover=cvc4", tmp_filename]
+    cmd = [
+        "openjml",
+        "--esc",
+        "--esc-max-warnings",
+        "1",
+        "--prover=cvc4",
+        "--nullable-by-default",
+        "--arithmetic-failure=quiet",
+        "-nowarn",
+        tmp_filename,
+    ]
     logger.debug(f"[{classname}] Running OpenJML verification command")
 
     proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        text=True, preexec_fn=os.setsid,
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        preexec_fn=os.setsid,
     )
     try:
         stdout, stderr = proc.communicate(timeout=_timeout)
@@ -39,13 +51,15 @@ def verify_with_openjml(
             logger.debug(f"[{classname}] OpenJML stdout: {stdout[:500]}")
         if stderr:
             logger.debug(f"[{classname}] OpenJML stderr: {stderr[:500]}")
-        return res
+        return res, proc.returncode
     except subprocess.TimeoutExpired:
-        logger.error(f"[{classname}] OpenJML command timed out after {_timeout} seconds")
-        return "Timeout: OpenJML verification exceeded time limit"
+        logger.error(
+            f"[{classname}] OpenJML command timed out after {_timeout} seconds"
+        )
+        return "Timeout: OpenJML verification exceeded time limit", 1
     except Exception as e:
         logger.error(f"[{classname}] Error running OpenJML: {e}")
-        return f"Error: {str(e)}"
+        return f"Error: {str(e)}", 1
     finally:
         try:
             os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
@@ -75,8 +89,11 @@ def validate_with_openjml(
     logger.debug(f"[{classname}] Running OpenJML verification command")
 
     proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        text=True, preexec_fn=os.setsid,
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        preexec_fn=os.setsid,
     )
     try:
         stdout, stderr = proc.communicate(timeout=_timeout)
@@ -86,13 +103,15 @@ def validate_with_openjml(
             logger.debug(f"[{classname}] OpenJML stdout: {stdout[:500]}")
         if stderr:
             logger.debug(f"[{classname}] OpenJML stderr: {stderr[:500]}")
-        return res
+        return res, proc.returncode
     except subprocess.TimeoutExpired:
-        logger.error(f"[{classname}] OpenJML command timed out after {_timeout} seconds")
-        return "Timeout: OpenJML verification exceeded time limit"
+        logger.error(
+            f"[{classname}] OpenJML command timed out after {_timeout} seconds"
+        )
+        return "Timeout: OpenJML verification exceeded time limit", 1
     except Exception as e:
         logger.error(f"[{classname}] Error running OpenJML: {e}")
-        return f"Error: {str(e)}"
+        return f"Error: {str(e)}", 1
     finally:
         try:
             os.killpg(os.getpgid(proc.pid), signal.SIGKILL)

@@ -236,7 +236,7 @@ class FBSpec:
             curr_spec = new_spec
 
             self.logger.info(f"[{class_name}] Iter {num_iter}: verifying...")
-            curr_err = verify_with_openjml(
+            curr_err, returncode = verify_with_openjml(
                 curr_spec, class_name, self.timeout, self.output_dir, self.logger
             )
             verifier_calls += 1
@@ -257,7 +257,7 @@ class FBSpec:
                 status = "timed_out"
                 break
 
-            if curr_err == "":
+            if returncode == 0:
                 self.logger.info(
                     f"[{class_name}] Verified at iter {num_iter} "
                     f"({verifier_calls} verifier call(s))"

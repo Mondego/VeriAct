@@ -280,6 +280,7 @@ class SpecGen:
         current_code: str = input_code
         verified_flag: bool = False
         err_info: str = ""
+        returncode: int = 1 # Initialize to non-zero to enter the loop
         err_types: list[str] = []
         timed_out: bool = False  # Flag to track timeout
         status: str = "unknown"  # Initial status
@@ -366,7 +367,7 @@ class SpecGen:
 
             self.logger.info(f"[{class_name}] {current_code}")
 
-            err_info = verify_with_openjml(
+            err_info, returncode = verify_with_openjml(
                 current_code, class_name, self.timeout, self.output_dir, self.logger
             )
             _verifier_calls_count += 1
@@ -379,7 +380,7 @@ class SpecGen:
                 break
 
             self.logger.debug(f"[{class_name}] {err_info}")
-            if err_info == "" or done_flag:
+            if returncode == 0 or done_flag:
                 break
 
         # Mutation Phase
@@ -399,10 +400,10 @@ class SpecGen:
 
         # Mutation loop with safety limit
         mutation_iterations: int = 0
-        MAX_MUTATION_ITERATIONS: int = 1000  # Safety limit to avoid infinite loop
+        MAX_MUTATION_ITERATIONS: int = self.max_iterations  # Safety limit to avoid infinite loop
 
         while True:
-            if err_info == "":
+            if returncode == 0:
                 verified_flag = True
                 break
             mutation_iterations += 1
@@ -446,7 +447,7 @@ class SpecGen:
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {current_code}")
             self.logger.debug(current_code + "\n")
-            err_info = verify_with_openjml(
+            err_info, returncode = verify_with_openjml(
                 current_code, class_name, self.timeout, self.output_dir, self.logger
             )
             _verifier_calls_count += 1

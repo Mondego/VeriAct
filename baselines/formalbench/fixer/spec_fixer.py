@@ -257,7 +257,7 @@ class SpecFixer:
 
             curr_spec = new_spec
             self.logger.info(f"[{class_name}] Verifying fixed spec...")
-            err_info = verify_with_openjml(
+            err_info, returncode = verify_with_openjml(
                 curr_spec, class_name, self.timeout, self.output_dir, self.logger
             )
             verifier_calls += 1
@@ -272,7 +272,7 @@ class SpecFixer:
                 status = "timed_out"
                 break
 
-            if err_info == "":
+            if returncode == 0:
                 self.logger.info(
                     f"[{class_name}] Verified after {num_iter} fix iteration(s) "
                     f"and {verifier_calls} verifier call(s)"
