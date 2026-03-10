@@ -399,15 +399,19 @@ class SpecGen:
                     )
 
         # Mutation loop with safety limit
+        # Upper bound: each iteration consumes at least one candidate or blanks a spec line
+        num_spec_lines: int = sum(
+            1 for line in current_code_list if self._is_invariant_or_postcondition(line)
+        )
+        MAX_MUTATION_ITERATIONS: int = len(mutated_spec_list) + num_spec_lines
         mutation_iterations: int = 0
-        MAX_MUTATION_ITERATIONS: int = self.max_iterations  # Safety limit to avoid infinite loop
 
         while True:
             if returncode == 0:
                 verified_flag = True
                 break
             mutation_iterations += 1
-            if mutation_iterations >= MAX_MUTATION_ITERATIONS:
+            if mutation_iterations > MAX_MUTATION_ITERATIONS:
                 self.logger.warning(
                     f"[{class_name}] Max mutation iterations ({MAX_MUTATION_ITERATIONS}) reached"
                 )
@@ -453,6 +457,10 @@ class SpecGen:
             _verifier_calls_count += 1
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {err_info}")
+
+            if "Timeout:" in err_info or "timeout" in err_info.lower():
+                timed_out = True
+                break
 
         if verified_flag:
             status = "verified"

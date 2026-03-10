@@ -29,7 +29,7 @@ def verify_with_openjml(
         "--esc-max-warnings",
         "1",
         "--prover=cvc4",
-        "--nullable-by-default",
+        "--nonnull-by-default",
         "--arithmetic-failure=quiet",
         "-nowarn",
         tmp_filename,
