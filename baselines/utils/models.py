@@ -28,8 +28,7 @@ _PROVIDERS: dict[str, dict] = {
     },
     "vllm": {
         "base_url": "http://localhost:8000/v1",
-        "api_key_env": None,
-        "api_key_literal": "spec",
+        "api_key_env": "VLLM_API_KEY",
     },
     "deepseek": {
         "base_url": "https://api.deepseek.com",
@@ -116,8 +115,14 @@ def _request_with_retries(client: OpenAI, _config: dict):
         try:
             response = client.chat.completions.create(**_config)
             if response.usage:
-                _token_usage.input_tokens = getattr(_token_usage, "input_tokens", 0) + response.usage.prompt_tokens
-                _token_usage.output_tokens = getattr(_token_usage, "output_tokens", 0) + response.usage.completion_tokens
+                _token_usage.input_tokens = (
+                    getattr(_token_usage, "input_tokens", 0)
+                    + response.usage.prompt_tokens
+                )
+                _token_usage.output_tokens = (
+                    getattr(_token_usage, "output_tokens", 0)
+                    + response.usage.completion_tokens
+                )
             return response
         except APIError as e:
             print(f"API error: {e}")
