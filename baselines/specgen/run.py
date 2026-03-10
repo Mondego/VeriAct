@@ -93,9 +93,6 @@ def _validate_arguments(args: argparse.Namespace) -> None:
     if not model_prefixes:
         print(f"Error: Model must start with one of {valid_models}.")
         sys.exit(1)
-    if args.prompt_type not in VALID_PROMPT_TYPES:
-        print(f"Error: Prompt type must be one of {VALID_PROMPT_TYPES}.")
-    sys.exit(1)
 
 
 def _prepare_run_environment(args: argparse.Namespace) -> str:

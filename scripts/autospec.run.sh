@@ -1,7 +1,7 @@
 python -m baselines.autospec.run \
-    --name fb_run \
-    --input /home/mdrh/code/specsyns/benchmarks/formalbench/fb.json \
-    --output /home/mdrh/experiments/exp-results/fb \
+    --name sgb_run \
+    --input /home/mdrh/code/specsyns/benchmarks/specgenbench/sgb.json \
+    --output /home/mdrh/experiments/exp-results \
     --openjml_timeout 300 \
     --threads 8 \
     --verbose \

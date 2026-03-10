@@ -1,11 +1,11 @@
 python -m baselines.specgen.run \
     --name fb_run \
     --input /home/mdrh/code/specsyns/benchmarks/formalbench/fb.json \
-    --output /home/mdrh/experiments/exp-results/fb \
+    --output /home/mdrh/experiments/exp-results/formalbench \
     --openjml_timeout 300 \
-    --threads 5 \
+    --threads 4 \
     --verbose \
-    --model gemini-2.5-flash \
+    --model gpt-4o-2024-08-06 \
     --temperature 0.7 \
-    --prompt_type zero_shot \
+    --prompt_type two_shot \
     --max_iterations 10
