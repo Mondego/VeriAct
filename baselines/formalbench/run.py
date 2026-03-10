@@ -99,7 +99,7 @@ def _validate_arguments(args: argparse.Namespace) -> None:
         sys.exit(1)
     if args.prompt_type not in VALID_PROMPT_TYPES:
         print(f"Error: Prompt type must be one of {VALID_PROMPT_TYPES}.")
-    sys.exit(1)
+        sys.exit(1)
 
 
 def _prepare_run_environment(args: argparse.Namespace) -> str:
