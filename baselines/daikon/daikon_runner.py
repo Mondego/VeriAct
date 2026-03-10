@@ -65,8 +65,10 @@ class Task:
 
 class DaikonResult(TypedDict):
     status: str
-    annotated_code: str
-    verified: bool
+    esc_annotated_code: str
+    jml_annotated_code: str
+    esc_verified: bool
+    jml_verified: bool
     timed_out: bool
     final_error: str
 
@@ -80,8 +82,10 @@ class _WorkerResultRequired(TypedDict):
 class WorkerResult(_WorkerResultRequired, total=False):
     verifier_calls: int
     log_file: str
-    annotated_code: str
-    verified: bool
+    esc_annotated_code: str
+    jml_annotated_code: str
+    esc_verified: bool
+    jml_verified: bool
     final_error: str
     message: str
 
@@ -234,8 +238,10 @@ class Daikon:
             self.logger.error(f"[{self.run_id}] {_msg}")
             return DaikonResult(
                 status=_status,
-                annotated_code="",
-                verified=False,
+                esc_annotated_code="",
+                jml_annotated_code="",
+                esc_verified=False,
+                jml_verified=False,
                 timed_out=_status == "timed_out",
                 final_error=_msg,
             )
@@ -255,8 +261,10 @@ class Daikon:
             )
             return DaikonResult(
                 status="unverified",
-                annotated_code="",
-                verified=False,
+                esc_annotated_code="",
+                jml_annotated_code="",
+                esc_verified=False,
+                jml_verified=False,
                 timed_out=False,
                 final_error="Daikon produced no annotated output files.",
             )
@@ -285,11 +293,14 @@ class Daikon:
 
         final_error: str = jml_error_info if jml_error_info else esc_error_info
 
+        esc_verified: bool = esc_returncode == 0
+        jml_verified: bool = jml_returncode == 0
+
         # OpenJML timeout counts as timed_out, not unverified
         if "Timeout:" in final_error or "timeout" in final_error.lower():
             status = "timed_out"
             timed_out = True
-        elif esc_returncode == 0 or jml_returncode == 0:
+        elif esc_verified or jml_verified:
             status = "verified"
             timed_out = False
         else:
@@ -298,8 +309,10 @@ class Daikon:
 
         return DaikonResult(
             status=status,
-            annotated_code=code_with_jmlspec,
-            verified=status == "verified",
+            esc_annotated_code=code_with_escspec,
+            jml_annotated_code=code_with_jmlspec,
+            esc_verified=esc_verified,
+            jml_verified=jml_verified,
             timed_out=timed_out,
             final_error=final_error,
         )
@@ -372,7 +385,7 @@ class DaikonRunner:
         try:
             _result = daikon.run()
 
-            if _result.get("verified", False):
+            if _result.get("esc_verified", False) or _result.get("jml_verified", False):
                 verified_status = "✓ VERIFIED"
             elif _result.get("timed_out", False):
                 verified_status = "⏱ TIMED OUT"
@@ -389,8 +402,10 @@ class DaikonRunner:
                 class_name=class_name,
                 verifier_calls=2,
                 log_file=log_file,
-                annotated_code=_result["annotated_code"],
-                verified=_result.get("verified", False),
+                esc_annotated_code=_result["esc_annotated_code"],
+                jml_annotated_code=_result["jml_annotated_code"],
+                esc_verified=_result.get("esc_verified", False),
+                jml_verified=_result.get("jml_verified", False),
                 final_error=_result.get("final_error", ""),
             )
 

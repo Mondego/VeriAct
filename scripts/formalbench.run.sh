@@ -8,4 +8,5 @@ python -m baselines.formalbench.run \
     --model gpt-4o \
     --temperature 0.7 \
     --prompt_type zero_shot \
-    --max_iterations 10
+    --max_iterations 10 \
+    --strict
