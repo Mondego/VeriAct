@@ -118,7 +118,7 @@ class Houdini:
         else:
             return _code
 
-    def _gen_annotation(self, code: str, classname: str) -> str:
+    def _generate_annotations(self, code: str, classname: str) -> None:
 
         tmp_filename = os.path.join(self.output_dir, "tmp", f"{classname}.java")
         write_to_file(code, tmp_filename)
@@ -126,31 +126,25 @@ class Houdini:
         outdir = os.path.join(self.output_dir, "tmp", "houdini_output")
         Path(outdir).mkdir(parents=True, exist_ok=True)
 
-        cmd = (
-            self.esc_tool_path
-            + "/Houdini/annotationGen -outdir "
-            + outdir
-            + " "
-            + tmp_filename
-            + " > "
-            + outdir
-            + "/tmp.log"
-        )
+        log_file = os.path.join(outdir, "tmp.log")
+        cmd = [
+            os.path.join(self.esc_tool_path, "Houdini", "annotationGen"),
+            "-outdir",
+            outdir,
+            tmp_filename,
+        ]
 
         try:
-            result = subprocess.run(
-                cmd, shell=True, capture_output=True, text=True, timeout=self.timeout
-            )
-            res = result.stdout + result.stderr
-            return res
+            with open(log_file, "w") as log_fh:
+                subprocess.run(
+                    cmd, stdout=log_fh, stderr=subprocess.STDOUT, timeout=self.timeout
+                )
         except subprocess.TimeoutExpired:
             self.logger.warning(
-                f"[{classname}] OpenJML command timed out after {self.timeout} seconds"
+                f"[{classname}] annotationGen timed out after {self.timeout} seconds"
             )
-            return f"Timeout: OpenJML verification exceeded time limit {self.timeout} seconds"
         except Exception as e:
-            self.logger.error(f"[{classname}] Error running OpenJML: {e}")
-            return f"Error: {str(e)}"
+            self.logger.error(f"[{classname}] Error running annotationGen: {e}")
 
     def _read_annotations_instr(self) -> list[Annotation]:
 
@@ -209,11 +203,11 @@ class Houdini:
                 )
                 j = j + 1
         while i < len(annotation_list):
+            prefix = self._extract_blank_prefix(code_list[-1]) if code_list else ""
             res_code_list.append(
                 MergedLine(
                     is_annotation=True,
-                    content=self._extract_blank_prefix(code_list[j])
-                    + annotation_list[i].content,
+                    content=prefix + annotation_list[i].content,
                 )
             )
             i = i + 1
@@ -234,7 +228,15 @@ class Houdini:
                 temp_list.append(line)
         lineno_list: list[int] = []
         for err in err_list:
-            lineno_list.append(int(err[0].split(":")[1]))
+            if not err:
+                continue
+            try:
+                lineno = int(err[0].split(":")[1])
+                lineno_list.append(lineno)
+            except (IndexError, ValueError):
+                self.logger.warning(
+                    f"[{self.class_name}] Could not parse line number from: {err[0]!r}"
+                )
         return lineno_list
 
     def run(self) -> HoudiniResult:
@@ -242,7 +244,7 @@ class Houdini:
         self.logger.info(
             f"Generating annotations for {self.class_name} in thread {self.output_dir}"
         )
-        self._gen_annotation(self.code, self.class_name)
+        self._generate_annotations(self.code, self.class_name)
         annotation_list: list[Annotation] = self._read_annotations_instr()
         merged_list: list[MergedLine] = self._merge_annotation_into_code(
             annotation_list, self.code
@@ -279,8 +281,14 @@ class Houdini:
                 flag: bool = False
                 refuted_lineno_list = self._extract_lineno_from_err_info(err_info)
                 for lineno in refuted_lineno_list:
-                    if merged_list[lineno - 1].is_annotation == True:
-                        merged_list.pop(lineno - 1)
+                    idx = lineno - 1
+                    if idx < 0 or idx >= len(merged_list):
+                        self.logger.warning(
+                            f"[{self.class_name}] Line number {lineno} out of bounds (merged_list size: {len(merged_list)})"
+                        )
+                        continue
+                    if merged_list[idx].is_annotation:
+                        merged_list.pop(idx)
                         flag = True
                         break
                 if not flag:
