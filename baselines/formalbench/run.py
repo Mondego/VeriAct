@@ -70,6 +70,12 @@ def _retrieve_input_arguments() -> argparse.Namespace:
         action="store_true",
         help="Enable verbose logging output",
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Use original FormalBench behavior: single-shot generation (no retry) "
+        "and break on empty/invalid fix specs",
+    )
     return parser.parse_args()
 
 
@@ -130,6 +136,7 @@ def main() -> None:
         openjml_timeout=_args.openjml_timeout,
         threads=_args.threads,
         verbose=_args.verbose,
+        strict_mode=_args.strict,
     )
     _runner.run_workers()
 

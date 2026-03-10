@@ -108,10 +108,12 @@ class FBSpec:
       - curr_spec is None  →  generation attempt
       - curr_spec is set   →  fix attempt (using error from last verification)
 
-    If a generation call returns an empty or invalid spec the loop retries
-    generation on the next iteration instead of stopping.  Once a valid spec
-    exists the loop switches to fixing and continues up to max_iters total
-    iterations.
+    Modes (controlled by ``strict_mode``):
+      - strict_mode=False (default, improved): retries generation on
+        empty/invalid output; continues past bad fix attempts.
+      - strict_mode=True  (original behaviour): single-shot generation
+        (empty/invalid → immediate failure); fix phase breaks on
+        empty/invalid spec.
     """
 
     def __init__(
@@ -124,6 +126,7 @@ class FBSpec:
         timeout: int,
         logger: logging.Logger,
         verbose: bool = False,
+        strict_mode: bool = False,
     ) -> None:
         self.model = model
         self.temperature = temperature
@@ -133,6 +136,7 @@ class FBSpec:
         self.timeout = timeout
         self.logger = logger
         self.verbose = verbose
+        self.strict_mode = strict_mode
 
         # Used for utility methods and example loading only — not called as
         # black-box runners here.
@@ -215,18 +219,39 @@ class FBSpec:
             new_spec: str | None = self._generator._parse_spec_from_response(raw)
 
             # ----------------------------------------------------------
-            # Validate parsed spec — retry same phase on bad output
+            # Validate parsed spec
             # ----------------------------------------------------------
             if not new_spec or not self._generator._contains_annotations(new_spec):
-                self.logger.warning(
-                    f"[{class_name}] Iter {num_iter}: empty or invalid spec — retrying..."
-                )
-                if not in_gen:
-                    # record the rejected fix attempt in history so the LLM
-                    # has context on the next iteration
-                    fix_history.append(messages[-1])
-                    fix_history.append({"role": "assistant", "content": raw})
-                continue
+                is_empty = not new_spec
+                fail_label = "empty" if is_empty else "invalid"
+
+                if self.strict_mode:
+                    # Original behavior: fail immediately on bad output
+                    if in_gen:
+                        self.logger.warning(
+                            f"[{class_name}] Iter {num_iter}: {fail_label} spec in gen phase — stopping (strict)"
+                        )
+                        status = "empty_spec" if is_empty else "invalid_jml"
+                        break
+                    else:
+                        self.logger.warning(
+                            f"[{class_name}] Iter {num_iter}: {fail_label} spec in fix phase — stopping (strict)"
+                        )
+                        fix_history.append(messages[-1])
+                        fix_history.append({"role": "assistant", "content": raw})
+                        status = "empty_spec" if is_empty else "invalid_jml"
+                        break
+                else:
+                    # Improved behavior: retry on bad output
+                    self.logger.warning(
+                        f"[{class_name}] Iter {num_iter}: {fail_label} spec — retrying..."
+                    )
+                    if not in_gen:
+                        # record the rejected fix attempt in history so the LLM
+                        # has context on the next iteration
+                        fix_history.append(messages[-1])
+                        fix_history.append({"role": "assistant", "content": raw})
+                    continue
 
             # valid spec — commit to history if in fix phase
             if not in_gen:
@@ -310,6 +335,7 @@ class FBSpecRunner:
         openjml_timeout: int,
         threads: int,
         verbose: bool,
+        strict_mode: bool = False,
     ) -> None:
         self.name = name
         self.input_path: str = input
@@ -321,6 +347,7 @@ class FBSpecRunner:
         self.openjml_timeout = openjml_timeout
         self.threads = threads
         self.verbose = verbose
+        self.strict_mode = strict_mode
         self.input_length: int = 0
 
     def _run_fb_spec(self, task: Task) -> WorkerResult:
@@ -367,6 +394,7 @@ class FBSpecRunner:
             timeout=self.openjml_timeout,
             logger=logger,
             verbose=self.verbose,
+            strict_mode=self.strict_mode,
         )
 
         try:
