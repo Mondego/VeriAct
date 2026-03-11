@@ -1,10 +1,8 @@
 #!/bin/bash
 
 ################################################################################
-# vLLM Server Launcher for Qwen2.5-Coder-7B-Instruct
-# 
+# vLLM Server Launcher for deepseek-ai/DeepSeek-R1-Distill-Qwen-32B
 # This script starts a vLLM OpenAI-compatible API server with optimal settings
-# for NVIDIA L4 GPU (24GB VRAM)
 ################################################################################
 
 set -e  # Exit on error
@@ -17,66 +15,28 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 ################################################################################
-# Allowed models
-################################################################################
-
-declare -A ALLOWED_MODELS=(
-    ["Qwen2.5-Coder:32B"]="code-specialized, non-reasoning"
-    ["Qwen3-Coder:30b"]="code-specialized, hybrid"
-    ["DeepSeek-R1:32B"]="reasoning"
-    ["Qwen3:32B"]="general instruct, non-reasoning"
-)
-
-validate_model() {
-    local model="$1"
-    if [[ -z "${ALLOWED_MODELS[$model]+_}" ]]; then
-        print_error "Unknown model: '$model'"
-        echo ""
-        echo "Allowed models:"
-        for key in "${!ALLOWED_MODELS[@]}"; do
-            echo "  $key  (${ALLOWED_MODELS[$key]})"
-        done
-        exit 1
-    fi
-}
-
-parse_args() {
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --model) MODEL_NAME="$2"; shift 2 ;;
-            *) print_error "Unknown argument: $1"; echo "Usage: $0 --model MODEL_NAME"; exit 1 ;;
-        esac
-    done
-    if [[ -z "${MODEL_NAME:-}" ]]; then
-        print_error "--model is required"
-        echo ""
-        echo "Allowed models:"
-        for key in "${!ALLOWED_MODELS[@]}"; do
-            echo "  $key  (${ALLOWED_MODELS[$key]})"
-        done
-        exit 1
-    fi
-    validate_model "$MODEL_NAME"
-}
-
-################################################################################
 # Configuration
 ################################################################################
 
-# Model name is set via --model argument (parsed in parse_args)
-MODEL_NAME=""
+# Model configuration
+MODEL_NAME="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
+#MODEL_NAME="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B-AWQ" # AQW
 
-MODEL_DTYPE="half"  # Options: half, float16, bfloat16, float32
+MODEL_DTYPE="bfloat16"  # Options: half, float16, bfloat16, float32
 
 # Server configuration
 HOST="0.0.0.0"
 PORT=8000
 API_KEY="specsyns"  # CHANGE THIS for production!
 
-# Performance tuning for L4 GPU (24GB)
-MAX_MODEL_LEN=16000           # Max sequence length (input + output)
+MAX_MODEL_LEN=32768           # Max sequence length (input + output)
 GPU_MEMORY_UTILIZATION=0.90  # Use 90% of GPU memory
-TENSOR_PARALLEL_SIZE=1       # Number of GPUs to use (1 for single L4)
+TENSOR_PARALLEL_SIZE=2       # Number of GPUs to use
+# Advanced options (usually don't need to change)
+MAX_NUM_SEQS=512            # Max number of sequences to process in parallel
+SWAP_SPACE=4                # CPU swap space in GB
+ENFORCE_EAGER=false         # Set to true to disable CUDA graphs (slower but more compatible)
+
 
 # Optional: Quantization (uncomment to use AWQ/GPTQ for better memory efficiency)
 # QUANTIZATION="awq"  # Options: awq, gptq, squeezellm, or leave empty for none
@@ -84,11 +44,6 @@ TENSOR_PARALLEL_SIZE=1       # Number of GPUs to use (1 for single L4)
 
 # Optional: Hugging Face token (only needed for gated models)
 # export HF_TOKEN="hf_your_token_here"
-
-# Advanced options (usually don't need to change)
-MAX_NUM_SEQS=256            # Max number of sequences to process in parallel
-SWAP_SPACE=4                # CPU swap space in GB
-ENFORCE_EAGER=false         # Set to true to disable CUDA graphs (slower but more compatible)
 
 ################################################################################
 # Functions
@@ -231,7 +186,7 @@ print_usage_instructions() {
   )
   
   response = client.chat.completions.create(
-      model="Qwen/Qwen2.5-Coder-7B-Instruct",
+      model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
       messages=[
           {"role": "user", "content": "Write a Python hello world"}
       ]
@@ -258,10 +213,7 @@ main() {
     clear
     print_header "vLLM Server Launcher"
     echo ""
-
-    # Parse and validate arguments
-    parse_args "$@"
-
+    
     # Run checks
     check_dependencies
     check_port
@@ -275,4 +227,4 @@ main() {
 }
 
 # Run main function
-main "$@"
+main
