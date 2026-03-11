@@ -21,8 +21,8 @@ VALID_MODEL_PREFIXES = [
     "o3",
     "gemini",
     "claude",
-    "vllm",
     "qwen",
+    "deepseek-ai",
     "deepseek",
     "codellama",
     "mistral",
@@ -42,14 +42,6 @@ _PROVIDERS: dict[str, dict] = {
         "base_url": None,
         "api_key_env": "OPENAI_API_KEY",
     },
-    "vllm": {
-        "base_url": "http://localhost:8000/v1",
-        "api_key_env": "VLLM_API_KEY",
-    },
-    "deepseek": {
-        "base_url": "https://api.deepseek.com",
-        "api_key_env": "DEEPSEEK_API_KEY",
-    },
     "gemini": {
         "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
         "api_key_env": "GOOGLE_API_KEY",
@@ -57,6 +49,18 @@ _PROVIDERS: dict[str, dict] = {
     "claude": {
         "base_url": "https://api.anthropic.com/v1/",
         "api_key_env": "ANTHROPIC_API_KEY",
+    },
+    "qwen": {
+        "base_url": "http://localhost:8000/v1",
+        "api_key_env": "VLLM_API_KEY",
+    },
+    "deepseek-ai": {
+        "base_url": "http://localhost:8000/v1",
+        "api_key_env": "VLLM_API_KEY",
+    },
+    "deepseek": {
+        "base_url": "https://api.deepseek.com",
+        "api_key_env": "DEEPSEEK_API_KEY",
     },
     "mistral": {
         "base_url": "https://api.mistral.ai/v1",
@@ -105,9 +109,9 @@ def request_llm_engine(_config: dict):
 # ---------------------------------------------------------------------------
 def _resolve_provider(model: str) -> dict:
     """Return the provider config for *model*, or raise ValueError."""
-    for prefix, provider in _PROVIDERS.items():
+    for prefix in sorted(_PROVIDERS, key=len, reverse=True):
         if model.lower().startswith(prefix):
-            return provider
+            return _PROVIDERS[prefix]
     raise ValueError(
         f"Unsupported model: {model!r}. "
         f"Supported prefixes: {list(_PROVIDERS.keys())}"
