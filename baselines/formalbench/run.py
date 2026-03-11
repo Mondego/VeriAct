@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 
 from baselines.formalbench.fb_runner import FBSpecRunner
+from baselines.utils.models import VALID_MODEL_PREFIXES
 from baselines.formalbench.infer.spec_infer import VALID_PROMPT_TYPES
 
 
@@ -32,7 +33,7 @@ def _retrieve_input_arguments() -> argparse.Namespace:
         "--model",
         type=str,
         required=True,
-        help="Model to use (e.g., gpt-4o, vllm/model-name)",
+        help="Model to use for One of: {VALID_MODEL_PREFIXES}",
     )
     parser.add_argument(
         "--temperature",
@@ -95,15 +96,17 @@ def _validate_arguments(args: argparse.Namespace) -> None:
     if args.openjml_timeout < 0:
         print("Error: OpenJML timeout must be a non-negative integer.")
         sys.exit(1)
-    if args.temperature < 0 or args.temperature > 2:
-        print("Error: Temperature must be between 0 and 2.")
-        sys.exit(1)
-    valid_models = ["gpt", "gemini", "claude", "vllm"]
-    if not any(args.model.startswith(p) for p in valid_models):
-        print(f"Error: Model must start with one of {valid_models}.")
+    model_prefixes = [
+        model for model in VALID_MODEL_PREFIXES if args.model.lower().startswith(model)
+    ]
+    if not model_prefixes:
+        print(f"Error: Model must start with one of {VALID_MODEL_PREFIXES}.")
         sys.exit(1)
     if args.prompt_type not in VALID_PROMPT_TYPES:
         print(f"Error: Prompt type must be one of {VALID_PROMPT_TYPES}.")
+        sys.exit(1)
+    if args.temperature < 0 or args.temperature > 2:
+        print("Error: Temperature must be between 0 and 2.")
         sys.exit(1)
 
 

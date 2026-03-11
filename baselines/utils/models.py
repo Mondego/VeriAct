@@ -13,6 +13,22 @@ import baselines.utils.config  # noqa: F401 (loads .env)
 #   - base_url=None means use the default OpenAI endpoint
 #   - api_key value of None means read from the env var
 # ---------------------------------------------------------------------------
+
+
+VALID_MODEL_PREFIXES = [
+    "gpt",
+    "o1",
+    "o3",
+    "gemini",
+    "claude",
+    "vllm",
+    "qwen",
+    "deepseek",
+    "codellama",
+    "mistral",
+]
+
+
 _PROVIDERS: dict[str, dict] = {
     "gpt": {
         "base_url": None,
@@ -90,7 +106,7 @@ def request_llm_engine(_config: dict):
 def _resolve_provider(model: str) -> dict:
     """Return the provider config for *model*, or raise ValueError."""
     for prefix, provider in _PROVIDERS.items():
-        if model.startswith(prefix):
+        if model.lower().startswith(prefix):
             return provider
     raise ValueError(
         f"Unsupported model: {model!r}. "
