@@ -1,2 +1,2 @@
-# specsyns: Specification Synthesis from Program Invariants
+# Specsyns: Specification Synthesis
 

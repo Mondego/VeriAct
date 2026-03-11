@@ -14,7 +14,7 @@ requires-python = ">=3.10"
 dependencies = [
   "openai",
   "dotenv",
-  "tiktoken",
+  "javalang",
   "pyyaml",
   "pytest",
   "ruff",
