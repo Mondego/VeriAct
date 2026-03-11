@@ -1,7 +1,7 @@
 python -m baselines.specgen.run \
     --name fb_run \
     --input /home/mdrh/code/specsyns/benchmarks/formalbench/fb.json \
-    --output /home/mdrh/experiments/exp-results/fb-dry \
+    --output /home/mdrh/experiments/results/ \
     --openjml_timeout 300 \
     --threads 24 \
     --verbose \

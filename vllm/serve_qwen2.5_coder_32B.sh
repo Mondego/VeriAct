@@ -32,6 +32,9 @@ API_KEY="specsyns"  # CHANGE THIS for production!
 MAX_MODEL_LEN=32768           # Max sequence length (input + output)
 GPU_MEMORY_UTILIZATION=0.90  # Use 90% of GPU memory
 TENSOR_PARALLEL_SIZE=2       # Number of GPUs to use
+CUDA_VISIBLE_DEVICES="6,7"   # Use nvidia-smi to check GPU usage and adjust accordingly (e.g., "0,1,2,3" for 4 GPUs)
+export CUDA_VISIBLE_DEVICES
+
 # Advanced options (usually don't need to change)
 MAX_NUM_SEQS=512            # Max number of sequences to process in parallel
 SWAP_SPACE=4                # CPU swap space in GB
