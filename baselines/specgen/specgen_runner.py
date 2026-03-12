@@ -280,7 +280,7 @@ class SpecGen:
         current_code: str = input_code
         verified_flag: bool = False
         err_info: str = ""
-        returncode: int = 1 # Initialize to non-zero to enter the loop
+        returncode: int = 1  # Initialize to non-zero to enter the loop
         err_types: list[str] = []
         timed_out: bool = False  # Flag to track timeout
         status: str = "unknown"  # Initial status
@@ -403,12 +403,23 @@ class SpecGen:
         num_spec_lines: int = sum(
             1 for line in current_code_list if self._is_invariant_or_postcondition(line)
         )
-        MAX_MUTATION_ITERATIONS: int = len(mutated_spec_list) + num_spec_lines
+        # MAX_MUTATION_ITERATIONS: int = len(mutated_spec_list) + num_spec_lines
+        MAX_MUTATION_ITERATIONS: int = (
+            100  # Absolute upper bound to prevent infinite verifier calls
+        )
         mutation_iterations: int = 0
 
         while True:
             if returncode == 0:
                 verified_flag = True
+                break
+            if not mutated_spec_list and all(
+                not self._is_invariant_or_postcondition(line)
+                for line in current_code_list
+            ):
+                self.logger.debug(
+                    f"[{class_name}] Mutation pool exhausted and no spec lines remain. Aborting."
+                )
                 break
             mutation_iterations += 1
             if mutation_iterations > MAX_MUTATION_ITERATIONS:
@@ -425,24 +436,45 @@ class SpecGen:
 
             refuted_lineno_list = self._extract_lineno_from_err_info(err_info)
             # replace each error spec with mutated spec
+            code_changed = False
             for lineno in refuted_lineno_list:
                 index = lineno - 1
+                old_line = current_code_list[index]
                 if self._is_assert(current_code_list[index]):
                     current_code_list[index] = " "
-                    continue
-                if not self._is_invariant_or_postcondition(current_code_list[index]):
-                    continue
-                # Find mutated spec with same lineno
-                found_flag = False
-                for item in mutated_spec_list:
-                    if item.index == index:
-                        # replace error spec with mutated spec
-                        current_code_list[index] = item.content
-                        mutated_spec_list.remove(item)
-                        found_flag = True
-                        break
-                if not found_flag:
-                    current_code_list[index] = " "
+                elif not self._is_invariant_or_postcondition(current_code_list[index]):
+                    pass
+                else:
+                    # Find mutated spec with same lineno
+                    found_flag = False
+                    for item in mutated_spec_list:
+                        if item.index == index:
+                            # replace error spec with mutated spec
+                            current_code_list[index] = item.content
+                            mutated_spec_list.remove(item)
+                            found_flag = True
+                            break
+                    if not found_flag:
+                        current_code_list[index] = " "
+                if current_code_list[index] != old_line:
+                    code_changed = True
+
+            # Eagerly blank any spec line whose mutation pool is exhausted,
+            # avoiding a dedicated verifier call per line when it eventually fails.
+            indices_with_mutations = {item.index for item in mutated_spec_list}
+            for idx, line in enumerate(current_code_list):
+                if (
+                    self._is_invariant_or_postcondition(line)
+                    and idx not in indices_with_mutations
+                ):
+                    current_code_list[idx] = " "
+                    code_changed = True
+
+            if not code_changed:
+                self.logger.debug(
+                    f"[{class_name}] No lines changed after applying mutations. Aborting mutation phase."
+                )
+                break
 
             current_code = ""
             for line in current_code_list:

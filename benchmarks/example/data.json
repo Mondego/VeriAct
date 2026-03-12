@@ -84,5 +84,30 @@
     "javadoc": "N/A",
     "category": "N/A",
     "origin_id": "MBJP/470"
+  },
+  {
+    "task_id": "FB_FindMissing",
+    "code": "public class Solution {\n\n    public static int solve(int[] ar, int n) {\n        int missing = 1;\n        if (n == 0 || n == 1) {\n            return missing;\n        }\n        for (int i = 1; i <= n; i++) {\n            if (ar[i - 1] == i) {\n                missing = i;\n            } else if (ar[i - 1] != i) {\n                return i;\n            }\n        }\n        return missing;\n    }\n}\n\n",
+    "test_code": "import java.util.*;\n\npublic class Test {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        int[] p0 = java.util.Arrays.stream(scanner.nextLine().trim().split(\"\\\\s+\")).mapToInt(Integer::parseInt).toArray();\n        int p1 = Integer.parseInt(scanner.nextLine().trim());\n        var result = Solution.solve(p0, p1);\n        System.out.println(result);\n    }\n}",
+    "test_inputs": [
+      {
+        "input": "1 2 3 5\n4",
+        "output": "4"
+      },
+      {
+        "input": "1 3 4 5\n4",
+        "output": "2"
+      },
+      {
+        "input": "1 2 3 5 6 7\n5",
+        "output": "4"
+      }
+    ],
+    "generated_test_cases": [],
+    "class_name": "Solution",
+    "test_name": "Test",
+    "javadoc": "N/A",
+    "category": "N/A",
+    "origin_id": "MBJP/34"
   }
 ]
