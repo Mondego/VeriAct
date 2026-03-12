@@ -1,4 +1,5 @@
 import os
+import json
 import logging
 import threading
 import time
@@ -13,7 +14,7 @@ from baselines.formalbench.infer.spec_infer import FormalBench, VALID_PROMPT_TYP
 
 from baselines.utils.logger import create_logger
 from baselines.utils.verifier import verify_with_openjml
-from baselines.utils.file_utility import load_json, dump_json, dump_jsonl
+from baselines.utils.file_utility import load_json, load_jsonl, dump_json
 from baselines.utils.models import (
     create_model_config,
     request_llm_engine,
@@ -349,6 +350,8 @@ class FBSpecRunner:
         self.verbose = verbose
         self.strict_mode = strict_mode
         self.input_length: int = 0
+        self._results_lock = threading.Lock()
+        self._results_file: str = ""
 
     def _run_fb_spec(self, task: Task) -> WorkerResult:
         class_name: str = task.class_name
@@ -442,6 +445,12 @@ class FBSpecRunner:
                 log_file=log_file,
             )
 
+    def _append_result(self, result: WorkerResult) -> None:
+        """Append a single result to the JSONL file (thread-safe)."""
+        with self._results_lock:
+            with open(self._results_file, "a") as f:
+                f.write(json.dumps(result) + "\n")
+
     def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
         verified = [r for r in results if r["status"] == "verified"]
         unverified = [r for r in results if r["status"] == "unverified"]
@@ -529,7 +538,6 @@ class FBSpecRunner:
             ],
         }
 
-        dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
         print(
             f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
         )
@@ -570,8 +578,12 @@ class FBSpecRunner:
         output_dir: str = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
+        self._results_file = os.path.join(output_dir, f"{self.name}_results_all.jsonl")
+        # Clear/create the results file
+        with open(self._results_file, "w") as f:
+            pass
+
         start_time: float = time.time()
-        results: list[WorkerResult] = []
         completed_count: int = 0
 
         print(f"Starting processing with {self.threads} thread(s)...")
@@ -585,8 +597,8 @@ class FBSpecRunner:
                 task = future_tasks[future]
                 try:
                     result = future.result()
-                    results.append(result)
                     completed_count += 1
+                    self._append_result(result)
 
                     status: str = result["status"]
                     name: str = result["class_name"]
@@ -617,15 +629,14 @@ class FBSpecRunner:
                         )
 
                 except Exception as exc:
-                    results.append(
-                        WorkerResult(
-                            task_id=task.task_id,
-                            status="unknown",
-                            message=str(exc),
-                            class_name=task.class_name,
-                        )
+                    error_result = WorkerResult(
+                        task_id=task.task_id,
+                        status="unknown",
+                        message=str(exc),
+                        class_name=task.class_name,
                     )
                     completed_count += 1
+                    self._append_result(error_result)
                     print(
                         f"[ERROR]       [{completed_count}/{self.input_length}] {task.class_name} - {exc}"
                     )
@@ -633,4 +644,7 @@ class FBSpecRunner:
         end_time: float = time.time()
         duration: float = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
+
+        # Load results from JSONL file for summary generation
+        results = load_jsonl(self._results_file)
         self._save_results(duration, results)

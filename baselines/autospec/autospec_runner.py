@@ -1,4 +1,5 @@
 import os
+import json
 import time
 import logging
 import threading
@@ -9,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from baselines.autospec import javalang
 from baselines.utils.logger import create_logger
-from baselines.utils.file_utility import dump_json, dump_jsonl, load_json
+from baselines.utils.file_utility import dump_json, load_json, load_jsonl
 from baselines.utils.verifier import verify_with_openjml, validate_with_openjml
 from baselines.autospec.prompts import get_fewshot_context, get_request_msg
 from baselines.utils.models import (
@@ -582,6 +583,8 @@ class AutoSpecRunner:
         self.prompt_type = prompt_type
         self.simplify = simplify
         self.input_length: int = 0
+        self._results_lock = threading.Lock()
+        self._results_file: str = ""
 
     def _run_autospec(self, task: Task) -> WorkerResult:
         classname: str = task.class_name
@@ -672,6 +675,12 @@ class AutoSpecRunner:
                 log_file=log_file,
             )
 
+    def _append_result(self, result: WorkerResult) -> None:
+        """Append a single result to the JSONL file (thread-safe)."""
+        with self._results_lock:
+            with open(self._results_file, "a") as f:
+                f.write(json.dumps(result) + "\n")
+
     def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
         """Save summary statistics to a JSON file"""
         verified = [r for r in results if r["status"] == "verified"]
@@ -756,7 +765,6 @@ class AutoSpecRunner:
             f"Total tokens used: {total_input_tokens} input / {total_output_tokens} output ({total_input_tokens + total_output_tokens} total)"
         )
 
-        dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
         print(
             f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
         )
@@ -778,8 +786,12 @@ class AutoSpecRunner:
         output_dir: str = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
+        self._results_file = os.path.join(output_dir, f"{self.name}_results_all.jsonl")
+        # Clear/create the results file
+        with open(self._results_file, "w") as f:
+            pass
+
         start_time: float = time.time()
-        results: list[WorkerResult] = []
         completed_count: int = 0
 
         print(f"Starting processing with {self.threads} threads...")
@@ -793,8 +805,8 @@ class AutoSpecRunner:
                 task = future_tasks[future]
                 try:
                     result = future.result()
-                    results.append(result)
                     completed_count += 1
+                    self._append_result(result)
 
                     if result["status"] == "verified":
                         print(
@@ -814,20 +826,22 @@ class AutoSpecRunner:
                         )
 
                 except Exception as exc:
-                    results.append(
-                        WorkerResult(
-                            task_id=task.task_id,
-                            status="unknown",
-                            message=str(exc),
-                            class_name=task.class_name,
-                        )
+                    error_result = WorkerResult(
+                        task_id=task.task_id,
+                        status="unknown",
+                        message=str(exc),
+                        class_name=task.class_name,
                     )
+                    completed_count += 1
+                    self._append_result(error_result)
                     print(
                         f"✗ [{completed_count}/{self.input_length}] {task.class_name} - Exception: {exc}"
                     )
-                    completed_count += 1
 
         end_time: float = time.time()
         duration: float = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
+
+        # Load results from JSONL file for summary generation
+        results = load_jsonl(self._results_file)
         self._save_results(duration, results)

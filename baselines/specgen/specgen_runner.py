@@ -1,4 +1,5 @@
 import os
+import json
 import time
 import logging
 import threading
@@ -22,8 +23,8 @@ from baselines.utils.models import (
 )
 from baselines.utils.file_utility import (
     load_json,
+    load_jsonl,
     dump_json,
-    dump_jsonl,
 )
 
 
@@ -405,7 +406,7 @@ class SpecGen:
         )
         # MAX_MUTATION_ITERATIONS: int = len(mutated_spec_list) + num_spec_lines
         MAX_MUTATION_ITERATIONS: int = (
-            100  # Absolute upper bound to prevent infinite verifier calls
+            50  # Absolute upper bound to prevent infinite verifier calls
         )
         mutation_iterations: int = 0
 
@@ -483,6 +484,7 @@ class SpecGen:
             if self.verbose:
                 self.logger.debug(f"[{class_name}] {current_code}")
             self.logger.debug(current_code + "\n")
+            self.logger.info(f"[{class_name}] Mutation iteration {mutation_iterations} applied. Verifying mutated code...")
             err_info, returncode = verify_with_openjml(
                 current_code, class_name, self.timeout, self.output_dir, self.logger
             )
@@ -556,6 +558,8 @@ class SpecGenRunner:
         self.verbose = verbose
         self.prompt_type = prompt_type
         self.input_length: int = 0
+        self._results_lock = threading.Lock()
+        self._results_file: str = ""
 
     def _run_specgen(self, task: Task) -> WorkerResult:
         class_name: str = task.class_name
@@ -644,6 +648,12 @@ class SpecGenRunner:
                 log_file=log_file,
             )
 
+    def _append_result(self, result: WorkerResult) -> None:
+        """Append a single result to the JSONL file (thread-safe)."""
+        with self._results_lock:
+            with open(self._results_file, "a") as f:
+                f.write(json.dumps(result) + "\n")
+
     def _save_results(self, duration: float, results: list[WorkerResult]) -> None:
         """Save summary statistics to a JSON file"""
         verified = [r for r in results if r["status"] == "verified"]
@@ -713,7 +723,6 @@ class SpecGenRunner:
             ],
         }
 
-        dump_jsonl(results, os.path.join(self.output, f"{self.name}_results_all.jsonl"))
         print(
             f"All results saved to: {os.path.join(self.output, f'{self.name}_results_all.jsonl')}"
         )
@@ -751,8 +760,12 @@ class SpecGenRunner:
         output_dir: str = os.path.abspath(self.output)
         Path(output_dir).mkdir(parents=True, exist_ok=True)
 
+        self._results_file = os.path.join(output_dir, f"{self.name}_results_all.jsonl")
+        # Clear/create the results file
+        with open(self._results_file, "w") as f:
+            pass
+
         start_time: float = time.time()
-        results: list[WorkerResult] = []
         completed_count: int = 0
 
         print(f"Starting processing with {self.threads} threads...")
@@ -766,8 +779,8 @@ class SpecGenRunner:
                 task = future_tasks[future]
                 try:
                     result = future.result()
-                    results.append(result)
                     completed_count += 1
+                    self._append_result(result)
 
                     if result["status"] == "verified":
                         print(
@@ -787,20 +800,22 @@ class SpecGenRunner:
                         )
 
                 except Exception as exc:
-                    results.append(
-                        WorkerResult(
-                            task_id=task.task_id,
-                            status="unknown",
-                            message=str(exc),
-                            class_name=task.class_name,
-                        )
+                    error_result = WorkerResult(
+                        task_id=task.task_id,
+                        status="unknown",
+                        message=str(exc),
+                        class_name=task.class_name,
                     )
+                    completed_count += 1
+                    self._append_result(error_result)
                     print(
                         f"✗ [{completed_count}/{self.input_length}] {task.class_name} - Exception: {exc}"
                     )
-                    completed_count += 1
 
         end_time: float = time.time()
         duration: float = end_time - start_time
         print(f"\nAll tasks completed in {duration:.2f} seconds")
+
+        # Load results from JSONL file for summary generation
+        results = load_jsonl(self._results_file)
         self._save_results(duration, results)
