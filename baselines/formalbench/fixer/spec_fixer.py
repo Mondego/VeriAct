@@ -145,14 +145,14 @@ class SpecFixer:
         curr_spec: str,
         err_info: str,
         error_info: str,
-        history: list[dict[str, Any]],
     ) -> list[dict[str, Any]]:
         """
-        Build the full message list for a fix request.
+        Build the message list for a fix request.
 
-        history is a flat list of prior {"role", "content"} dicts accumulated
-        across iterations (user turns + assistant turns, no system message).
-        The system message is always prepended here.
+        Following the original FormalBench implementation, each fix attempt
+        is stateless: the LLM sees only the system message and the current
+        error — no prior conversation history is included in the prompt.
+        History is tracked externally for logging/counting purposes only.
         """
         system_role: str = "user" if self.model == "o1-mini" else "system"
 
@@ -165,11 +165,10 @@ class SpecFixer:
             ),
         }
 
-        return (
-            [{"role": system_role, "content": FIX_SYS_MESSAGE}]
-            + history
-            + [new_user_msg]
-        )
+        return [
+            {"role": system_role, "content": FIX_SYS_MESSAGE},
+            new_user_msg,
+        ]
 
     # ------------------------------------------------------------------
     # Main repair loop
@@ -217,7 +216,7 @@ class SpecFixer:
                 )
 
             messages: list[dict[str, Any]] = self._build_fix_messages(
-                curr_spec, err_info, error_info, history
+                curr_spec, err_info, error_info
             )
             config: dict[str, Any] = create_model_config(
                 messages, self.model, self.temperature

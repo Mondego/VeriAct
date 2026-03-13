@@ -198,7 +198,7 @@ class FBSpec:
                 )
                 error_info = self._fixer._analyze_failures(curr_err)
                 messages = self._fixer._build_fix_messages(
-                    curr_spec, curr_err, error_info, fix_history
+                    curr_spec, curr_err, error_info
                 )
 
             config: dict[str, Any] = create_model_config(
