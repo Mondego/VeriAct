@@ -21,7 +21,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/825"
   },
   {
@@ -46,7 +46,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/503"
   },
   {
@@ -71,7 +71,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/902"
   },
   {
@@ -96,7 +96,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/363"
   },
   {
@@ -121,7 +121,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/106"
   },
   {
@@ -146,7 +146,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/401"
   },
   {
@@ -171,7 +171,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/470"
   },
   {
@@ -196,7 +196,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/750"
   },
   {
@@ -221,7 +221,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/366"
   },
   {
@@ -246,7 +246,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/884"
   },
   {
@@ -271,7 +271,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/281"
   },
   {
@@ -296,7 +296,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/429"
   },
   {
@@ -321,7 +321,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/177"
   },
   {
@@ -346,7 +346,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/335"
   },
   {
@@ -371,7 +371,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/650"
   },
   {
@@ -396,7 +396,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/871"
   },
   {
@@ -421,7 +421,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/488"
   },
   {
@@ -446,7 +446,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/163"
   },
   {
@@ -471,7 +471,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/742"
   },
   {
@@ -496,7 +496,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/848"
   },
   {
@@ -521,7 +521,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/164"
   },
   {
@@ -546,7 +546,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/598"
   },
   {
@@ -567,7 +567,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/241"
   },
   {
@@ -592,7 +592,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/269"
   },
   {
@@ -617,7 +617,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/146"
   },
   {
@@ -642,7 +642,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/664"
   },
   {
@@ -667,7 +667,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/509"
   },
   {
@@ -692,7 +692,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/615"
   },
   {
@@ -717,7 +717,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/246"
   },
   {
@@ -742,7 +742,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/608"
   },
   {
@@ -767,7 +767,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/588"
   },
   {
@@ -792,7 +792,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/476"
   },
   {
@@ -817,7 +817,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/492"
   },
   {
@@ -842,7 +842,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/24"
   },
   {
@@ -867,7 +867,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/494"
   },
   {
@@ -892,7 +892,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/28"
   },
   {
@@ -917,7 +917,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/486"
   },
   {
@@ -942,7 +942,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/399"
   },
   {
@@ -967,7 +967,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/448"
   },
   {
@@ -992,7 +992,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/965"
   },
   {
@@ -1017,7 +1017,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/748"
   },
   {
@@ -1042,7 +1042,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/526"
   },
   {
@@ -1067,7 +1067,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/583"
   },
   {
@@ -1092,7 +1092,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/86"
   },
   {
@@ -1117,7 +1117,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/928"
   },
   {
@@ -1142,7 +1142,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/332"
   },
   {
@@ -1167,7 +1167,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/56"
   },
   {
@@ -1192,7 +1192,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/541"
   },
   {
@@ -1217,7 +1217,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/860"
   },
   {
@@ -1242,7 +1242,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/396"
   },
   {
@@ -1267,7 +1267,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/874"
   },
   {
@@ -1292,7 +1292,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/472"
   },
   {
@@ -1317,7 +1317,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/394"
   },
   {
@@ -1342,7 +1342,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/774"
   },
   {
@@ -1367,7 +1367,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/53"
   },
   {
@@ -1392,7 +1392,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/51"
   },
   {
@@ -1417,7 +1417,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/855"
   },
   {
@@ -1442,7 +1442,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/771"
   },
   {
@@ -1467,7 +1467,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/695"
   },
   {
@@ -1492,7 +1492,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/811"
   },
   {
@@ -1517,7 +1517,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/113"
   },
   {
@@ -1542,7 +1542,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/669"
   },
   {
@@ -1567,7 +1567,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/521"
   },
   {
@@ -1592,7 +1592,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/808"
   },
   {
@@ -1617,7 +1617,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/26"
   },
   {
@@ -1642,7 +1642,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/186"
   },
   {
@@ -1667,7 +1667,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/751"
   },
   {
@@ -1692,7 +1692,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/336"
   },
   {
@@ -1717,7 +1717,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/820"
   },
   {
@@ -1742,7 +1742,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/866"
   },
   {
@@ -1767,7 +1767,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/455"
   },
   {
@@ -1792,7 +1792,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/191"
   },
   {
@@ -1817,7 +1817,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/762"
   },
   {
@@ -1842,7 +1842,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/744"
   },
   {
@@ -1867,7 +1867,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/237"
   },
   {
@@ -1892,7 +1892,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/768"
   },
   {
@@ -1917,7 +1917,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/532"
   },
   {
@@ -1942,7 +1942,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/809"
   },
   {
@@ -1967,7 +1967,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/880"
   },
   {
@@ -1992,7 +1992,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/737"
   },
   {
@@ -2017,7 +2017,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/523"
   },
   {
@@ -2042,7 +2042,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/651"
   },
   {
@@ -2067,7 +2067,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/823"
   },
   {
@@ -2092,7 +2092,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/449"
   },
   {
@@ -2117,7 +2117,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/121"
   },
   {
@@ -2142,7 +2142,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/878"
   },
   {
@@ -2167,7 +2167,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/826"
   },
   {
@@ -2192,7 +2192,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/713"
   },
   {
@@ -2217,7 +2217,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/334"
   },
   {
@@ -2242,7 +2242,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/464"
   },
   {
@@ -2267,7 +2267,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/667"
   },
   {
@@ -2292,7 +2292,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/950"
   },
   {
@@ -2317,7 +2317,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/201"
   },
   {
@@ -2342,7 +2342,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/921"
   },
   {
@@ -2367,7 +2367,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/139"
   },
   {
@@ -2392,7 +2392,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/89"
   },
   {
@@ -2417,7 +2417,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/71"
   },
   {
@@ -2442,7 +2442,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/943"
   },
   {
@@ -2467,7 +2467,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/111"
   },
   {
@@ -2492,7 +2492,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/181"
   },
   {
@@ -2517,7 +2517,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/47"
   },
   {
@@ -2542,7 +2542,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/500"
   },
   {
@@ -2567,7 +2567,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/972"
   },
   {
@@ -2592,7 +2592,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/213"
   },
   {
@@ -2617,7 +2617,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/708"
   },
   {
@@ -2642,7 +2642,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/204"
   },
   {
@@ -2667,7 +2667,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/828"
   },
   {
@@ -2692,7 +2692,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/165"
   },
   {
@@ -2717,7 +2717,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/242"
   },
   {
@@ -2742,7 +2742,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/365"
   },
   {
@@ -2767,7 +2767,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/781"
   },
   {
@@ -2792,7 +2792,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/819"
   },
   {
@@ -2817,7 +2817,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/714"
   },
   {
@@ -2842,7 +2842,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/107"
   },
   {
@@ -2867,7 +2867,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/190"
   },
   {
@@ -2892,7 +2892,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/792"
   },
   {
@@ -2917,7 +2917,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/575"
   },
   {
@@ -2942,7 +2942,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/291"
   },
   {
@@ -2967,7 +2967,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/211"
   },
   {
@@ -2992,7 +2992,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/172"
   },
   {
@@ -3017,7 +3017,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/258"
   },
   {
@@ -3042,7 +3042,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/344"
   },
   {
@@ -3067,7 +3067,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/831"
   },
   {
@@ -3092,7 +3092,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/256"
   },
   {
@@ -3117,7 +3117,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/355"
   },
   {
@@ -3142,7 +3142,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/757"
   },
   {
@@ -3167,7 +3167,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/802"
   },
   {
@@ -3192,7 +3192,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/142"
   },
   {
@@ -3217,7 +3217,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/707"
   },
   {
@@ -3242,7 +3242,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/347"
   },
   {
@@ -3267,7 +3267,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/338"
   },
   {
@@ -3292,7 +3292,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/61"
   },
   {
@@ -3317,7 +3317,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/929"
   },
   {
@@ -3342,7 +3342,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/903"
   },
   {
@@ -3367,7 +3367,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/810"
   },
   {
@@ -3392,7 +3392,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/5"
   },
   {
@@ -3417,7 +3417,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/78"
   },
   {
@@ -3442,7 +3442,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/250"
   },
   {
@@ -3467,7 +3467,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/54"
   },
   {
@@ -3492,7 +3492,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/837"
   },
   {
@@ -3517,7 +3517,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/614"
   },
   {
@@ -3542,7 +3542,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/934"
   },
   {
@@ -3567,7 +3567,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/99"
   },
   {
@@ -3592,7 +3592,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/467"
   },
   {
@@ -3617,7 +3617,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/670"
   },
   {
@@ -3642,7 +3642,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/214"
   },
   {
@@ -3667,7 +3667,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/499"
   },
   {
@@ -3692,7 +3692,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/277"
   },
   {
@@ -3717,7 +3717,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/72"
   },
   {
@@ -3742,7 +3742,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/345"
   },
   {
@@ -3767,7 +3767,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/594"
   },
   {
@@ -3792,7 +3792,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/6"
   },
   {
@@ -3817,7 +3817,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/555"
   },
   {
@@ -3842,7 +3842,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/343"
   },
   {
@@ -3867,7 +3867,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/558"
   },
   {
@@ -3892,7 +3892,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/38"
   },
   {
@@ -3917,7 +3917,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/883"
   },
   {
@@ -3942,7 +3942,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/745"
   },
   {
@@ -3967,7 +3967,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/261"
   },
   {
@@ -3992,7 +3992,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/96"
   },
   {
@@ -4017,7 +4017,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/150"
   },
   {
@@ -4042,7 +4042,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/264"
   },
   {
@@ -4067,7 +4067,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/465"
   },
   {
@@ -4092,7 +4092,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/913"
   },
   {
@@ -4117,7 +4117,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/701"
   },
   {
@@ -4142,7 +4142,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/103"
   },
   {
@@ -4167,7 +4167,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/274"
   },
   {
@@ -4192,7 +4192,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/235"
   },
   {
@@ -4217,7 +4217,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/383"
   },
   {
@@ -4242,7 +4242,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/387"
   },
   {
@@ -4267,7 +4267,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/790"
   },
   {
@@ -4292,7 +4292,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/634"
   },
   {
@@ -4317,7 +4317,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/648"
   },
   {
@@ -4342,7 +4342,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/460"
   },
   {
@@ -4367,7 +4367,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/551"
   },
   {
@@ -4392,7 +4392,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/898"
   },
   {
@@ -4417,7 +4417,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/400"
   },
   {
@@ -4442,7 +4442,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/754"
   },
   {
@@ -4467,7 +4467,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/832"
   },
   {
@@ -4492,7 +4492,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/219"
   },
   {
@@ -4517,7 +4517,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/424"
   },
   {
@@ -4542,7 +4542,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/140"
   },
   {
@@ -4567,7 +4567,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/450"
   },
   {
@@ -4592,7 +4592,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/873"
   },
   {
@@ -4617,7 +4617,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/655"
   },
   {
@@ -4642,7 +4642,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/542"
   },
   {
@@ -4667,7 +4667,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/502"
   },
   {
@@ -4692,7 +4692,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/356"
   },
   {
@@ -4717,7 +4717,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/330"
   },
   {
@@ -4742,7 +4742,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/7"
   },
   {
@@ -4767,7 +4767,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/780"
   },
   {
@@ -4792,7 +4792,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/321"
   },
   {
@@ -4817,7 +4817,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/540"
   },
   {
@@ -4842,7 +4842,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/339"
   },
   {
@@ -4867,7 +4867,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/304"
   },
   {
@@ -4892,7 +4892,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/166"
   },
   {
@@ -4917,7 +4917,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/197"
   },
   {
@@ -4942,7 +4942,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/890"
   },
   {
@@ -4967,7 +4967,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/22"
   },
   {
@@ -4992,7 +4992,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/627"
   },
   {
@@ -5017,7 +5017,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/733"
   },
   {
@@ -5042,7 +5042,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/908"
   },
   {
@@ -5067,7 +5067,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/739"
   },
   {
@@ -5092,7 +5092,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/645"
   },
   {
@@ -5117,7 +5117,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/597"
   },
   {
@@ -5142,7 +5142,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/316"
   },
   {
@@ -5167,7 +5167,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/125"
   },
   {
@@ -5192,7 +5192,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/319"
   },
   {
@@ -5217,7 +5217,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/863"
   },
   {
@@ -5242,7 +5242,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/207"
   },
   {
@@ -5267,7 +5267,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/389"
   },
   {
@@ -5292,7 +5292,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/550"
   },
   {
@@ -5317,7 +5317,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/315"
   },
   {
@@ -5342,7 +5342,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/562"
   },
   {
@@ -5367,7 +5367,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/57"
   },
   {
@@ -5392,7 +5392,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/663"
   },
   {
@@ -5417,7 +5417,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/225"
   },
   {
@@ -5442,7 +5442,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/763"
   },
   {
@@ -5467,7 +5467,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/95"
   },
   {
@@ -5492,7 +5492,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/656"
   },
   {
@@ -5517,7 +5517,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/856"
   },
   {
@@ -5542,7 +5542,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/34"
   },
   {
@@ -5567,7 +5567,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/36"
   },
   {
@@ -5592,7 +5592,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/556"
   },
   {
@@ -5617,7 +5617,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/406"
   },
   {
@@ -5642,7 +5642,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/466"
   },
   {
@@ -5667,7 +5667,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/846"
   },
   {
@@ -5692,7 +5692,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/660"
   },
   {
@@ -5717,7 +5717,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/25"
   },
   {
@@ -5742,7 +5742,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/35"
   },
   {
@@ -5767,7 +5767,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/471"
   },
   {
@@ -5792,7 +5792,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/382"
   },
   {
@@ -5817,7 +5817,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/9"
   },
   {
@@ -5842,7 +5842,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/268"
   },
   {
@@ -5867,7 +5867,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/91"
   },
   {
@@ -5892,7 +5892,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/777"
   },
   {
@@ -5917,7 +5917,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/916"
   },
   {
@@ -5942,7 +5942,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/14"
   },
   {
@@ -5967,7 +5967,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/195"
   },
   {
@@ -5992,7 +5992,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/657"
   },
   {
@@ -6017,7 +6017,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/351"
   },
   {
@@ -6038,7 +6038,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/221"
   },
   {
@@ -6063,7 +6063,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/189"
   },
   {
@@ -6088,7 +6088,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/395"
   },
   {
@@ -6109,7 +6109,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/807"
   },
   {
@@ -6134,7 +6134,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/602"
   },
   {
@@ -6159,7 +6159,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/537"
   },
   {
@@ -6184,7 +6184,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/544"
   },
   {
@@ -6209,7 +6209,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/370"
   },
   {
@@ -6234,7 +6234,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/894"
   },
   {
@@ -6259,7 +6259,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/968"
   },
   {
@@ -6284,7 +6284,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/609"
   },
   {
@@ -6309,7 +6309,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/212"
   },
   {
@@ -6334,7 +6334,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/88"
   },
   {
@@ -6359,7 +6359,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/168"
   },
   {
@@ -6384,7 +6384,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/97"
   },
   {
@@ -6409,7 +6409,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/489"
   },
   {
@@ -6434,7 +6434,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/384"
   },
   {
@@ -6459,7 +6459,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/710"
   },
   {
@@ -6484,7 +6484,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/498"
   },
   {
@@ -6509,7 +6509,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/360"
   },
   {
@@ -6534,7 +6534,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/83"
   },
   {
@@ -6559,7 +6559,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/630"
   },
   {
@@ -6584,7 +6584,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/70"
   },
   {
@@ -6609,7 +6609,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/957"
   },
   {
@@ -6634,7 +6634,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/45"
   },
   {
@@ -6659,7 +6659,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/841"
   },
   {
@@ -6684,7 +6684,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/833"
   },
   {
@@ -6709,7 +6709,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/603"
   },
   {
@@ -6734,7 +6734,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/480"
   },
   {
@@ -6759,7 +6759,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/392"
   },
   {
@@ -6784,7 +6784,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/325"
   },
   {
@@ -6809,7 +6809,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/844"
   },
   {
@@ -6834,7 +6834,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/29"
   },
   {
@@ -6859,7 +6859,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/767"
   },
   {
@@ -6884,7 +6884,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/169"
   },
   {
@@ -6909,7 +6909,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/385"
   },
   {
@@ -6934,7 +6934,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/275"
   },
   {
@@ -6959,7 +6959,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/239"
   },
   {
@@ -6984,7 +6984,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/184"
   },
   {
@@ -7009,7 +7009,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/203"
   },
   {
@@ -7034,7 +7034,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/704"
   },
   {
@@ -7059,7 +7059,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/135"
   },
   {
@@ -7084,7 +7084,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/388"
   },
   {
@@ -7109,7 +7109,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/680"
   },
   {
@@ -7134,7 +7134,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/621"
   },
   {
@@ -7159,7 +7159,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/445"
   },
   {
@@ -7184,7 +7184,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/251"
   },
   {
@@ -7209,7 +7209,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/958"
   },
   {
@@ -7234,7 +7234,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/578"
   },
   {
@@ -7259,7 +7259,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/249"
   },
   {
@@ -7284,7 +7284,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/205"
   },
   {
@@ -7309,7 +7309,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/955"
   },
   {
@@ -7334,7 +7334,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/210"
   },
   {
@@ -7359,7 +7359,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/151"
   },
   {
@@ -7384,7 +7384,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/759"
   },
   {
@@ -7409,7 +7409,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/600"
   },
   {
@@ -7434,7 +7434,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/885"
   },
   {
@@ -7459,7 +7459,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/703"
   },
   {
@@ -7484,7 +7484,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/477"
   },
   {
@@ -7509,7 +7509,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/223"
   },
   {
@@ -7534,7 +7534,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/68"
   },
   {
@@ -7559,7 +7559,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/641"
   },
   {
@@ -7584,7 +7584,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/3"
   },
   {
@@ -7609,7 +7609,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/279"
   },
   {
@@ -7634,7 +7634,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/179"
   },
   {
@@ -7659,7 +7659,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/59"
   },
   {
@@ -7684,7 +7684,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/887"
   },
   {
@@ -7709,7 +7709,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/803"
   },
   {
@@ -7734,7 +7734,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/804"
   },
   {
@@ -7759,7 +7759,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/74"
   },
   {
@@ -7784,7 +7784,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/576"
   },
   {
@@ -7809,7 +7809,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/69"
   },
   {
@@ -7834,7 +7834,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/706"
   },
   {
@@ -7859,7 +7859,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/481"
   },
   {
@@ -7884,7 +7884,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/138"
   },
   {
@@ -7909,7 +7909,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/850"
   },
   {
@@ -7934,7 +7934,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/914"
   },
   {
@@ -7959,7 +7959,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/92"
   },
   {
@@ -7984,7 +7984,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/624"
   },
   {
@@ -8009,7 +8009,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/175"
   },
   {
@@ -8034,7 +8034,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/403"
   },
   {
@@ -8059,7 +8059,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/20"
   },
   {
@@ -8084,7 +8084,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/897"
   },
   {
@@ -8109,7 +8109,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/567"
   },
   {
@@ -8134,7 +8134,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/529"
   },
   {
@@ -8159,7 +8159,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/752"
   },
   {
@@ -8184,7 +8184,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/969"
   },
   {
@@ -8209,7 +8209,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/101"
   },
   {
@@ -8234,7 +8234,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/232"
   },
   {
@@ -8259,7 +8259,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/308"
   },
   {
@@ -8284,7 +8284,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/443"
   },
   {
@@ -8305,7 +8305,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/485"
   },
   {
@@ -8330,7 +8330,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/517"
   },
   {
@@ -8355,7 +8355,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/620"
   },
   {
@@ -8380,7 +8380,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/793"
   },
   {
@@ -8405,7 +8405,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/435"
   },
   {
@@ -8430,7 +8430,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/577"
   },
   {
@@ -8455,7 +8455,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/692"
   },
   {
@@ -8480,7 +8480,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/233"
   },
   {
@@ -8505,7 +8505,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/731"
   },
   {
@@ -8530,7 +8530,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/266"
   },
   {
@@ -8555,7 +8555,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/369"
   },
   {
@@ -8580,7 +8580,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/522"
   },
   {
@@ -8605,7 +8605,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/876"
   },
   {
@@ -8630,7 +8630,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/847"
   },
   {
@@ -8655,7 +8655,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/747"
   },
   {
@@ -8680,7 +8680,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/736"
   },
   {
@@ -8705,7 +8705,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/973"
   },
   {
@@ -8730,7 +8730,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/688"
   },
   {
@@ -8755,7 +8755,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/947"
   },
   {
@@ -8780,7 +8780,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/868"
   },
   {
@@ -8805,7 +8805,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/117"
   },
   {
@@ -8830,7 +8830,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/587"
   },
   {
@@ -8855,7 +8855,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/857"
   },
   {
@@ -8880,7 +8880,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/128"
   },
   {
@@ -8905,7 +8905,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/187"
   },
   {
@@ -8930,7 +8930,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/548"
   },
   {
@@ -8955,7 +8955,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/149"
   },
   {
@@ -8980,7 +8980,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/818"
   },
   {
@@ -9005,7 +9005,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/247"
   },
   {
@@ -9030,7 +9030,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/129"
   },
   {
@@ -9055,7 +9055,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/145"
   },
   {
@@ -9080,7 +9080,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/937"
   },
   {
@@ -9105,7 +9105,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/63"
   },
   {
@@ -9130,7 +9130,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/60"
   },
   {
@@ -9155,7 +9155,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/658"
   },
   {
@@ -9180,7 +9180,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/611"
   },
   {
@@ -9205,7 +9205,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/672"
   },
   {
@@ -9230,7 +9230,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/924"
   },
   {
@@ -9255,7 +9255,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/147"
   },
   {
@@ -9280,7 +9280,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/32"
   },
   {
@@ -9305,7 +9305,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/468"
   },
   {
@@ -9330,7 +9330,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/120"
   },
   {
@@ -9355,7 +9355,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/469"
   },
   {
@@ -9380,7 +9380,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/806"
   },
   {
@@ -9405,7 +9405,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/951"
   },
   {
@@ -9430,7 +9430,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/836"
   },
   {
@@ -9455,7 +9455,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/286"
   },
   {
@@ -9480,7 +9480,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/463"
   },
   {
@@ -9505,7 +9505,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/231"
   },
   {
@@ -9530,7 +9530,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/524"
   },
   {
@@ -9555,7 +9555,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/805"
   },
   {
@@ -9580,7 +9580,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/661"
   },
   {
@@ -9605,7 +9605,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/571"
   },
   {
@@ -9630,7 +9630,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/895"
   },
   {
@@ -9655,7 +9655,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/318"
   },
   {
@@ -9680,7 +9680,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/721"
   },
   {
@@ -9705,7 +9705,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/259"
   },
   {
@@ -9730,7 +9730,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/309"
   },
   {
@@ -9755,7 +9755,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/971"
   },
   {
@@ -9780,7 +9780,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/23"
   },
   {
@@ -9805,7 +9805,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/397"
   },
   {
@@ -9830,7 +9830,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/263"
   },
   {
@@ -9855,7 +9855,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/821"
   },
   {
@@ -9880,7 +9880,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/87"
   },
   {
@@ -9905,7 +9905,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/152"
   },
   {
@@ -9930,7 +9930,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/531"
   },
   {
@@ -9955,7 +9955,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/1"
   },
   {
@@ -9980,7 +9980,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/875"
   },
   {
@@ -10005,7 +10005,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/364"
   },
   {
@@ -10030,7 +10030,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/689"
   },
   {
@@ -10055,7 +10055,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/867"
   },
   {
@@ -10080,7 +10080,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/227"
   },
   {
@@ -10105,7 +10105,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/970"
   },
   {
@@ -10130,7 +10130,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/158"
   },
   {
@@ -10155,7 +10155,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/409"
   },
   {
@@ -10180,7 +10180,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/974"
   },
   {
@@ -10205,7 +10205,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/404"
   },
   {
@@ -10230,7 +10230,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/288"
   },
   {
@@ -10255,7 +10255,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/159"
   },
   {
@@ -10280,7 +10280,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/326"
   },
   {
@@ -10305,7 +10305,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/378"
   },
   {
@@ -10330,7 +10330,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/665"
   },
   {
@@ -10355,7 +10355,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/619"
   },
   {
@@ -10380,7 +10380,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/632"
   },
   {
@@ -10405,7 +10405,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/690"
   },
   {
@@ -10430,7 +10430,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/784"
   },
   {
@@ -10455,7 +10455,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/380"
   },
   {
@@ -10480,7 +10480,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/73"
   },
   {
@@ -10505,7 +10505,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/439"
   },
   {
@@ -10530,7 +10530,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/21"
   },
   {
@@ -10555,7 +10555,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/726"
   },
   {
@@ -10580,7 +10580,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/127"
   },
   {
@@ -10605,7 +10605,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/919"
   },
   {
@@ -10630,7 +10630,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/98"
   },
   {
@@ -10655,7 +10655,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/925"
   },
   {
@@ -10680,7 +10680,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/952"
   },
   {
@@ -10705,7 +10705,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/329"
   },
   {
@@ -10730,7 +10730,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/436"
   },
   {
@@ -10755,7 +10755,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/788"
   },
   {
@@ -10780,7 +10780,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/260"
   },
   {
@@ -10805,7 +10805,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/244"
   },
   {
@@ -10830,7 +10830,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/167"
   },
   {
@@ -10855,7 +10855,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/646"
   },
   {
@@ -10880,7 +10880,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/236"
   },
   {
@@ -10905,7 +10905,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/637"
   },
   {
@@ -10930,7 +10930,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/536"
   },
   {
@@ -10955,7 +10955,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/623"
   },
   {
@@ -10980,7 +10980,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/865"
   },
   {
@@ -11005,7 +11005,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/501"
   },
   {
@@ -11030,7 +11030,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/944"
   },
   {
@@ -11055,7 +11055,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/764"
   },
   {
@@ -11080,7 +11080,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/238"
   },
   {
@@ -11105,7 +11105,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/194"
   },
   {
@@ -11130,7 +11130,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/48"
   },
   {
@@ -11155,7 +11155,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/289"
   },
   {
@@ -11180,7 +11180,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/109"
   },
   {
@@ -11205,7 +11205,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/782"
   },
   {
@@ -11230,7 +11230,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/770"
   },
   {
@@ -11255,7 +11255,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/775"
   },
   {
@@ -11280,7 +11280,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/226"
   },
   {
@@ -11305,7 +11305,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/58"
   },
   {
@@ -11330,7 +11330,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/414"
   },
   {
@@ -11355,7 +11355,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/633"
   },
   {
@@ -11380,7 +11380,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/766"
   },
   {
@@ -11405,7 +11405,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/864"
   },
   {
@@ -11430,7 +11430,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/141"
   },
   {
@@ -11455,7 +11455,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/430"
   },
   {
@@ -11480,7 +11480,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/185"
   },
   {
@@ -11505,7 +11505,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/153"
   },
   {
@@ -11530,7 +11530,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/525"
   },
   {
@@ -11555,7 +11555,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/52"
   },
   {
@@ -11580,7 +11580,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/882"
   },
   {
@@ -11605,7 +11605,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/822"
   },
   {
@@ -11630,7 +11630,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/589"
   },
   {
@@ -11655,7 +11655,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/112"
   },
   {
@@ -11680,7 +11680,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/171"
   },
   {
@@ -11705,7 +11705,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/789"
   },
   {
@@ -11730,7 +11730,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/176"
   },
   {
@@ -11755,7 +11755,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/506"
   },
   {
@@ -11780,7 +11780,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/374"
   },
   {
@@ -11805,7 +11805,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/66"
   },
   {
@@ -11830,7 +11830,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/200"
   },
   {
@@ -11855,7 +11855,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/322"
   },
   {
@@ -11880,7 +11880,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/93"
   },
   {
@@ -11905,7 +11905,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/909"
   },
   {
@@ -11930,7 +11930,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/605"
   },
   {
@@ -11955,7 +11955,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/188"
   },
   {
@@ -11980,7 +11980,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/711"
   },
   {
@@ -12005,7 +12005,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/606"
   },
   {
@@ -12030,7 +12030,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/516"
   },
   {
@@ -12055,7 +12055,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/229"
   },
   {
@@ -12080,7 +12080,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/936"
   },
   {
@@ -12105,7 +12105,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/505"
   },
   {
@@ -12130,7 +12130,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/915"
   },
   {
@@ -12155,7 +12155,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/458"
   },
   {
@@ -12180,7 +12180,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/654"
   },
   {
@@ -12205,7 +12205,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/687"
   },
   {
@@ -12230,7 +12230,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/702"
   },
   {
@@ -12255,7 +12255,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/27"
   },
   {
@@ -12280,7 +12280,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/800"
   },
   {
@@ -12305,7 +12305,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/727"
   },
   {
@@ -12330,7 +12330,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/353"
   },
   {
@@ -12355,7 +12355,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/18"
   },
   {
@@ -12380,7 +12380,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/932"
   },
   {
@@ -12405,7 +12405,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/674"
   },
   {
@@ -12430,7 +12430,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/161"
   },
   {
@@ -12455,7 +12455,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/824"
   },
   {
@@ -12480,7 +12480,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/610"
   },
   {
@@ -12505,7 +12505,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/772"
   },
   {
@@ -12530,7 +12530,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/869"
   },
   {
@@ -12555,7 +12555,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/495"
   },
   {
@@ -12580,7 +12580,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/484"
   },
   {
@@ -12605,7 +12605,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/693"
   },
   {
@@ -12630,7 +12630,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/852"
   },
   {
@@ -12655,7 +12655,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/11"
   },
   {
@@ -12680,7 +12680,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/437"
   },
   {
@@ -12705,7 +12705,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/640"
   },
   {
@@ -12730,7 +12730,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/892"
   },
   {
@@ -12755,7 +12755,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/173"
   },
   {
@@ -12780,7 +12780,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/193"
   },
   {
@@ -12805,7 +12805,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/459"
   },
   {
@@ -12830,7 +12830,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/451"
   },
   {
@@ -12855,7 +12855,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/570"
   },
   {
@@ -12880,7 +12880,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/593"
   },
   {
@@ -12905,7 +12905,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/659"
   },
   {
@@ -12930,7 +12930,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/368"
   },
   {
@@ -12955,7 +12955,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/474"
   },
   {
@@ -12980,7 +12980,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/220"
   },
   {
@@ -13005,7 +13005,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/631"
   },
   {
@@ -13030,7 +13030,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/732"
   },
   {
@@ -13055,7 +13055,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/796"
   },
   {
@@ -13080,7 +13080,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/644"
   },
   {
@@ -13105,7 +13105,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/889"
   },
   {
@@ -13130,7 +13130,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/456"
   },
   {
@@ -13155,7 +13155,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/131"
   },
   {
@@ -13180,7 +13180,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/604"
   },
   {
@@ -13205,7 +13205,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/786"
   },
   {
@@ -13230,7 +13230,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/812"
   },
   {
@@ -13255,7 +13255,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/961"
   },
   {
@@ -13280,7 +13280,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/814"
   },
   {
@@ -13305,7 +13305,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/716"
   },
   {
@@ -13330,7 +13330,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/328"
   },
   {
@@ -13355,7 +13355,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/375"
   },
   {
@@ -13380,7 +13380,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/891"
   },
   {
@@ -13405,7 +13405,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/639"
   },
   {
@@ -13430,7 +13430,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/717"
   },
   {
@@ -13455,7 +13455,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/119"
   },
   {
@@ -13480,7 +13480,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/534"
   },
   {
@@ -13505,7 +13505,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/829"
   },
   {
@@ -13530,7 +13530,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/552"
   },
   {
@@ -13555,7 +13555,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/84"
   },
   {
@@ -13580,7 +13580,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/935"
   },
   {
@@ -13605,7 +13605,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/302"
   },
   {
@@ -13630,7 +13630,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/311"
   },
   {
@@ -13655,7 +13655,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/341"
   },
   {
@@ -13680,7 +13680,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/428"
   },
   {
@@ -13705,7 +13705,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/2"
   },
   {
@@ -13730,7 +13730,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/10"
   },
   {
@@ -13755,7 +13755,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/681"
   },
   {
@@ -13780,7 +13780,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/371"
   },
   {
@@ -13805,7 +13805,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/901"
   },
   {
@@ -13830,7 +13830,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/62"
   },
   {
@@ -13855,7 +13855,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/122"
   },
   {
@@ -13880,7 +13880,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/411"
   },
   {
@@ -13905,7 +13905,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/303"
   },
   {
@@ -13930,7 +13930,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/815"
   },
   {
@@ -13955,7 +13955,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/12"
   },
   {
@@ -13980,7 +13980,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/877"
   },
   {
@@ -14005,7 +14005,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/569"
   },
   {
@@ -14030,7 +14030,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/154"
   },
   {
@@ -14051,7 +14051,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/629"
   },
   {
@@ -14076,7 +14076,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/586"
   },
   {
@@ -14101,7 +14101,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/956"
   },
   {
@@ -14126,7 +14126,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/647"
   },
   {
@@ -14151,7 +14151,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/518"
   },
   {
@@ -14176,7 +14176,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/8"
   },
   {
@@ -14201,7 +14201,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/17"
   },
   {
@@ -14226,7 +14226,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/287"
   },
   {
@@ -14251,7 +14251,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/305"
   },
   {
@@ -14276,7 +14276,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/715"
   },
   {
@@ -14301,7 +14301,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/813"
   },
   {
@@ -14326,7 +14326,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/538"
   },
   {
@@ -14351,7 +14351,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/178"
   },
   {
@@ -14376,7 +14376,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/118"
   },
   {
@@ -14401,7 +14401,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/310"
   },
   {
@@ -14426,7 +14426,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/282"
   },
   {
@@ -14451,7 +14451,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/953"
   },
   {
@@ -14476,7 +14476,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/888"
   },
   {
@@ -14501,7 +14501,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/849"
   },
   {
@@ -14526,7 +14526,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/827"
   },
   {
@@ -14551,7 +14551,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/320"
   },
   {
@@ -14576,7 +14576,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/566"
   },
   {
@@ -14601,7 +14601,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/295"
   },
   {
@@ -14626,7 +14626,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/514"
   },
   {
@@ -14651,7 +14651,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/962"
   },
   {
@@ -14676,7 +14676,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/270"
   },
   {
@@ -14701,7 +14701,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/881"
   },
   {
@@ -14726,7 +14726,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/491"
   },
   {
@@ -14751,7 +14751,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/797"
   },
   {
@@ -14776,7 +14776,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/728"
   },
   {
@@ -14801,7 +14801,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/133"
   },
   {
@@ -14826,7 +14826,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/886"
   },
   {
@@ -14851,7 +14851,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/675"
   },
   {
@@ -14876,7 +14876,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/324"
   },
   {
@@ -14901,7 +14901,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/853"
   },
   {
@@ -14926,7 +14926,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/685"
   },
   {
@@ -14951,7 +14951,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/504"
   },
   {
@@ -14976,7 +14976,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/734"
   },
   {
@@ -15001,7 +15001,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/144"
   },
   {
@@ -15026,7 +15026,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/870"
   },
   {
@@ -15051,7 +15051,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/649"
   },
   {
@@ -15076,7 +15076,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/931"
   },
   {
@@ -15101,7 +15101,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/683"
   },
   {
@@ -15126,7 +15126,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/340"
   },
   {
@@ -15151,7 +15151,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/453"
   },
   {
@@ -15176,7 +15176,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/923"
   },
   {
@@ -15201,7 +15201,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/581"
   },
   {
@@ -15226,7 +15226,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/497"
   },
   {
@@ -15251,7 +15251,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/441"
   },
   {
@@ -15276,7 +15276,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/379"
   },
   {
@@ -15301,7 +15301,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/574"
   },
   {
@@ -15326,7 +15326,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/85"
   },
   {
@@ -15351,7 +15351,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/625"
   },
   {
@@ -15376,7 +15376,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/257"
   },
   {
@@ -15401,7 +15401,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/46"
   },
   {
@@ -15426,7 +15426,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/19"
   },
   {
@@ -15451,7 +15451,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/801"
   },
   {
@@ -15476,7 +15476,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/80"
   },
   {
@@ -15501,7 +15501,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/16"
   },
   {
@@ -15526,7 +15526,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/930"
   },
   {
@@ -15551,7 +15551,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/434"
   },
   {
@@ -15576,7 +15576,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/44"
   },
   {
@@ -15601,7 +15601,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/787"
   },
   {
@@ -15626,7 +15626,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/285"
   },
   {
@@ -15651,7 +15651,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/337"
   },
   {
@@ -15676,7 +15676,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/454"
   },
   {
@@ -15701,7 +15701,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/643"
   },
   {
@@ -15726,7 +15726,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/756"
   },
   {
@@ -15751,7 +15751,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/794"
   },
   {
@@ -15776,7 +15776,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/917"
   },
   {
@@ -15801,7 +15801,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/354"
   },
   {
@@ -15826,7 +15826,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/55"
   },
   {
@@ -15851,7 +15851,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/557"
   },
   {
@@ -15876,7 +15876,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/535"
   },
   {
@@ -15901,7 +15901,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/547"
   },
   {
@@ -15926,7 +15926,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/626"
   },
   {
@@ -15951,7 +15951,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/132"
   },
   {
@@ -15976,7 +15976,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/156"
   },
   {
@@ -16001,7 +16001,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/616"
   },
   {
@@ -16026,7 +16026,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/785"
   },
   {
@@ -16051,7 +16051,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/740"
   },
   {
@@ -16076,7 +16076,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/553"
   },
   {
@@ -16101,7 +16101,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/116"
   },
   {
@@ -16126,7 +16126,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/945"
   },
   {
@@ -16151,7 +16151,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/572"
   },
   {
@@ -16176,7 +16176,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/560"
   },
   {
@@ -16201,7 +16201,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/352"
   },
   {
@@ -16226,7 +16226,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/760"
   },
   {
@@ -16251,7 +16251,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/573"
   },
   {
@@ -16276,7 +16276,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "multi_path_loop",
     "origin_id": "MBJP/283"
   },
   {
@@ -16301,7 +16301,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/677"
   },
   {
@@ -16326,7 +16326,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/312"
   },
   {
@@ -16351,7 +16351,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/234"
   },
   {
@@ -16376,7 +16376,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/373"
   },
   {
@@ -16401,7 +16401,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/276"
   },
   {
@@ -16426,7 +16426,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "sequential",
     "origin_id": "MBJP/82"
   },
   {
@@ -16451,7 +16451,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/964"
   },
   {
@@ -16476,7 +16476,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "nested",
     "origin_id": "MBJP/254"
   },
   {
@@ -16501,7 +16501,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "branch",
     "origin_id": "MBJP/346"
   },
   {
@@ -16526,7 +16526,7 @@
     "class_name": "Solution",
     "test_name": "Test",
     "javadoc": "N/A",
-    "category": "N/A",
+    "category": "single_path_loop",
     "origin_id": "MBJP/81"
   }
 ]
