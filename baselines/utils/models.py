@@ -54,6 +54,10 @@ _PROVIDERS: dict[str, dict] = {
         "base_url": "http://localhost:8000/v1",
         "api_key_env": "VLLM_API_KEY",
     },
+    "codellama": {
+        "base_url": "http://localhost:8000/v1",
+        "api_key_env": "VLLM_API_KEY",
+    },
     "deepseek-ai": {
         "base_url": "http://localhost:8000/v1",
         "api_key_env": "VLLM_API_KEY",
