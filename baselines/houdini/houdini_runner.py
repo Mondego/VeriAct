@@ -70,7 +70,7 @@ class MergedLine:
 
 class HoudiniResult(TypedDict):
     status: str
-    annotated_code: str
+    final_code: str
     verified: bool
     timed_out: bool
     final_error: str
@@ -86,7 +86,7 @@ class _WorkerResultRequired(TypedDict):
 class WorkerResult(_WorkerResultRequired, total=False):
     verifier_calls: int
     log_file: str
-    annotated_code: str
+    final_code: str
     verified: bool
     final_error: str
     message: str
@@ -253,10 +253,11 @@ class Houdini:
         err_info: str = "anything"
         merged_code: str = ""
         _verifier_calls_count: int = 0
+        returncode = 1
 
         # Main loop of houdini algorithm
         max_iterations: int = (
-            1000  # Add hardcoded max iterations to avoid `while True` infinite loop
+            100  # Add hardcoded max iterations to avoid `while True` infinite loop
         )
         iteration_count: int = 0
         while iteration_count < max_iterations:
@@ -308,7 +309,7 @@ class Houdini:
         self.logger.debug(merged_code)
 
         timed_out: bool = "Timeout:" in err_info or "timeout" in err_info.lower()
-        verified_flag: bool = returncode == 0
+        verified_flag: bool = returncode == 0 and err_info.strip() == ""
 
         if verified_flag:
             status = "verified"
@@ -320,8 +321,8 @@ class Houdini:
 
         return HoudiniResult(
             status=status,
-            annotated_code=merged_code,
             verified=verified_flag,
+            final_code=merged_code,
             timed_out=timed_out,
             final_error=err_info,
             verifier_calls=_verifier_calls_count,
@@ -417,10 +418,10 @@ class HoudiniRunner:
                 status=_result["status"],
                 class_name=class_name,
                 verifier_calls=_result["verifier_calls"],
-                log_file=log_file,
-                annotated_code=_result["annotated_code"],
                 verified=_result.get("verified", False),
+                final_code=_result["final_code"],
                 final_error=_result["final_error"],
+                log_file=log_file,
             )
 
         except Exception as e:
