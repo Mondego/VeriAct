@@ -368,11 +368,15 @@ def evaluate_problem(
     solution_src = task.code
     test_src = task.test_code
     io_pairs = [{"input": tc.input, "output": tc.output} for tc in task.test_inputs]
-    _io_pairs_len = len(io_pairs)
+    io_pairs_gen = [
+        {"input": tc.input, "output": tc.output} for tc in task.generated_test_cases
+    ]
+
     if max_pairs > 0:
-        if _io_pairs_len < max_pairs:
-            max_pairs = _io_pairs_len
         io_pairs = io_pairs[:max_pairs]
+        remaining = max_pairs - len(io_pairs)
+        if remaining > 0:
+            io_pairs.extend(io_pairs_gen[:remaining])
 
     # ---- parse method signature from benchmark Solution.java ---------------
     parser = JavaMethodParser()
@@ -382,9 +386,15 @@ def evaluate_problem(
 
     # ---- extract JML spec from LLM code ------------------------------------
     spec = extract_jml_spec(llm_code)
-    if spec.precondition is None and spec.postcondition is None:
+    # if spec.precondition is None and spec.postcondition is None:
+    #     print(
+    #         f"WARNING [{task.task_id}]: no JML requires/ensures found", file=sys.stderr
+    #     )
+    # ---- extract JML spec from LLM code ------------------------------------
+    spec = extract_jml_spec(llm_code)
+    if spec.postcondition is None: # preconditions are optional, but postconditions are required
         print(
-            f"WARNING [{task.task_id}]: no JML requires/ensures found", file=sys.stderr
+            f"WARNING [{task.task_id}]: no JML ensures found", file=sys.stderr
         )
 
     # ---- parse LLM method signature ----------------------------------------
@@ -611,6 +621,9 @@ def run_batch(
     max_pairs  : number of test pairs to use per task (0 = all);
                  also the number of inner threads per task
     """
+    result_base = os.path.splitext(os.path.basename(llm_response_path))[0]
+    result_file = path = os.path.join(output_dir, f"{result_base}_spec_harness.json")
+    output_dir = os.path.join(output_dir, f"{result_base}")
     os.makedirs(output_dir, exist_ok=True)
 
     task_lookup = load_benchmark(benchmark_path)
@@ -685,13 +698,13 @@ def run_batch(
                 "pre_completeness": r["pre_completeness"]["score"],
             }
         )
-    summary_path = os.path.join(output_dir, "summary.json")
-    with open(summary_path, "w") as f:
+
+    with open(result_file, "w") as f:
         json.dump(summary, f, indent=2)
 
     print(f"\n{'=' * 60}")
     print(f"  Batch complete: {len(all_results)}/{len(work)} tasks evaluated")
-    print(f"  Summary -> {summary_path}")
+    print(f"  Summary -> {result_file}")
     print(f"{'=' * 60}")
 
     return all_results
@@ -724,13 +737,13 @@ def main():
     ap.add_argument(
         "--threads",
         type=int,
-        default=1,
-        help="Number of tasks to evaluate concurrently " "(default: 1)",
+        default=8,
+        help="Number of tasks to evaluate concurrently " "(default: 8)",
     )
     ap.add_argument(
         "--max-pairs",
         type=int,
-        default=1,
+        default=5,
         help="Number of test pairs from benchmark test_inputs "
         "to use (0 = all); each pair gets its own thread "
         "for computing all 4 metrics",
