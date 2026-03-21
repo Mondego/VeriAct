@@ -72,6 +72,7 @@ class DaikonResult(TypedDict):
     jml_verified: bool
     timed_out: bool
     final_error: str
+    final_code: str
 
 
 class _WorkerResultRequired(TypedDict):
@@ -83,6 +84,7 @@ class _WorkerResultRequired(TypedDict):
 class WorkerResult(_WorkerResultRequired, total=False):
     verifier_calls: int
     log_file: str
+    final_code: str
     esc_annotated_code: str
     jml_annotated_code: str
     esc_verified: bool
@@ -241,6 +243,7 @@ class Daikon:
                 status=_status,
                 esc_annotated_code="",
                 jml_annotated_code="",
+                final_code="",
                 esc_verified=False,
                 jml_verified=False,
                 timed_out=_status == "timed_out",
@@ -268,6 +271,7 @@ class Daikon:
                 jml_verified=False,
                 timed_out=False,
                 final_error="Daikon produced no annotated output files.",
+                final_code="",
             )
 
         code_with_escspec: str = (
@@ -312,6 +316,7 @@ class Daikon:
             status=status,
             esc_annotated_code=code_with_escspec,
             jml_annotated_code=code_with_jmlspec,
+            final_code=code_with_jmlspec if code_with_jmlspec else code_with_escspec,
             esc_verified=esc_verified,
             jml_verified=jml_verified,
             timed_out=timed_out,
@@ -407,6 +412,7 @@ class DaikonRunner:
                 log_file=log_file,
                 esc_annotated_code=_result["esc_annotated_code"],
                 jml_annotated_code=_result["jml_annotated_code"],
+                final_code=_result["jml_annotated_code"],
                 esc_verified=_result.get("esc_verified", False),
                 jml_verified=_result.get("jml_verified", False),
                 final_error=_result.get("final_error", ""),
