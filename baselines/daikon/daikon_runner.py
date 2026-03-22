@@ -353,6 +353,7 @@ class DaikonRunner:
         task_id: str = task.task_id
         test_code: str = task.test_code
         test_inputs: list[TestCase] = task.test_inputs
+        all__test_inputs: list[TestCase] = test_inputs + task.generated_test_cases
 
         _BASE_DIR: str = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         output_dir: str = os.path.abspath(self.output)
@@ -380,7 +381,7 @@ class DaikonRunner:
             run_id=f"{task_id}_{_thread_id}",
             code=input_code,
             test_code=test_code,
-            test_inputs=test_inputs,
+            test_inputs=all__test_inputs,
             class_name=class_name,
             test_name=task.test_name,
             out_dir=_thread_daikon_artifacts,
