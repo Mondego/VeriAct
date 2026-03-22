@@ -1,3 +1,4 @@
+import os
 import json
 from typing import Any
 
@@ -31,7 +32,9 @@ def load_json(file: str) -> Any:
     except FileNotFoundError as e:
         raise FileNotFoundError(f"JSON file not found: {file}")
     except json.JSONDecodeError as e:
-        raise json.JSONDecodeError(f"Invalid JSON in file {file}: {e.msg}", e.doc, e.pos)
+        raise json.JSONDecodeError(
+            f"Invalid JSON in file {file}: {e.msg}", e.doc, e.pos
+        )
     except Exception as e:
         raise Exception(f"Unexpected error loading JSON from {file}: {e}")
 
@@ -58,9 +61,7 @@ def load_jsonl(file: str) -> list[Any]:
                         data.append(json.loads(line))
                     except json.JSONDecodeError as e:
                         raise json.JSONDecodeError(
-                            f"Line {line_num} in file {file}: {e.msg}", 
-                            e.doc, 
-                            e.pos
+                            f"Line {line_num} in file {file}: {e.msg}", e.doc, e.pos
                         )
         return data
     except FileNotFoundError as e:
@@ -78,7 +79,9 @@ def dump_jsonl(data: list[Any], file_name: str) -> None:
                 try:
                     j.write(json.dumps(item) + "\n")
                 except TypeError as e:
-                    raise TypeError(f"Item at index {idx} is not JSON serializable: {e}")
+                    raise TypeError(
+                        f"Item at index {idx} is not JSON serializable: {e}"
+                    )
     except IOError as e:
         raise IOError(f"Failed to write JSONL to file {file_name}: {e}")
     except TypeError:
@@ -87,4 +90,26 @@ def dump_jsonl(data: list[Any], file_name: str) -> None:
         raise Exception(f"Unexpected error dumping JSONL to {file_name}: {e}")
 
 
+_REDACT_KEYS = {"api_key", "authorization", "token", "secret", "key"}
 
+
+def _redact(obj):
+    if isinstance(obj, dict):
+        out = {}
+        for k, v in obj.items():
+            if k.lower() in _REDACT_KEYS:
+                out[k] = "***REDACTED***"
+            else:
+                out[k] = _redact(v)
+        return out
+    if isinstance(obj, list):
+        return [_redact(x) for x in obj]
+    return obj
+
+
+def _dump_config_json(_config: dict, save_dir: str, filename: str) -> str:
+    os.makedirs(save_dir, exist_ok=True)
+    path = os.path.join(save_dir, filename)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(_redact(_config), f, indent=2, ensure_ascii=True)
+    return path

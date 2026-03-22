@@ -3,10 +3,8 @@
 import os
 import time
 import threading
-
 from openai import APIConnectionError, APIError, OpenAI, OpenAIError, RateLimitError
-
-import baselines.utils.config  # noqa: F401 (loads .env)
+import baselines.utils.config
 
 # ---------------------------------------------------------------------------
 # Provider registry: prefix → (base_url, env_var_for_api_key)
