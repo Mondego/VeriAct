@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an JML specification generator for java programs."
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class CopyArray {\n \n    public static void CopyArray(int[] b, int iBegin, int iEnd, int[] a) {\n        int k = iBegin;\n\n        while (iEnd - k > 0) {\n            a[k] = b[k];\n            k = k + 1 ;\n        }\n    }\n}\n\n\n```\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\npublic class CopyArray {\n    //@ requires 0 < a.length && 0 < b.length;\n    //@ requires 0 <= iBegin && 0 <= iEnd && iBegin <= iEnd;\n    //@ requires iBegin < a.length && iBegin < b.length && iEnd < a.length && iEnd < b.length;\n    //@ ensures (\\forall int i; iBegin <= i && i < iEnd; a[i] == b[i]);\n    public static void CopyArray(int[] b, int iBegin, int iEnd, int[] a) {\n        int k = iBegin;\n        //@ maintaining iBegin <= k && k <= iEnd;\n        //@ maintaining (\\forall int i; iBegin <= i && i < k; a[i] == b[i]);\n        //@ decreases iEnd  - k;\n        while (iEnd - k > 0) {\n            a[k] = b[k];\n            k = k + 1 ;\n        }\n    }\n}\n\n\n```"
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class Smallest {\n\n    static public int Smallest(int[] a) {\n        if (a.length == 0) return -1;\n\n        int index = 0;\n        int smallest = 0;\n\n        while (a.length - index > 0) {\n            if (a[index] < a[smallest]) {\n                smallest = index;\n            }\n            index = index + 1;\n        }\n        return smallest;\n    }\n}\n\n\n```\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\npublic class Smallest {\n    //@ ensures \\result == -1 <==> a.length == 0;\n    //@ ensures -1 < \\result ==> (\\forall int i; 0 <= i && i < a.length; a[\\result] <= a[i]);\n    static public int Smallest(int[] a) {\n        if (a.length == 0) return -1;\n\n        int index = 0;\n        int smallest = 0;\n        //@ maintaining 0 <= index && index <= a.length;\n        //@ maintaining 0 <= smallest && smallest < a.length;\n        //@ maintaining (\\forall int i; 0 <= i && i < index; a[smallest] <= a[i]);\n        //@ decreases a.length - index;\n        while (a.length - index > 0) {\n            if (a[index] < a[smallest]) {\n                smallest = index;\n            }\n            index = index + 1;\n        }\n        return smallest;\n    }\n}\n\n\n```"
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class Solution {\n\n    public static int[] solve(int[] testTup) {\n        int length = testTup.length;\n        if (length < 2) {\n            return new int[0];\n        }\n        int[] result = new int[length - 1];\n        for (int i = 0; i < length - 1; i++) {\n            result[i] = testTup[i] + testTup[i + 1];\n        }\n        return result;\n    }\n}\n\n\n```\n"
+    }
+  ]
+}

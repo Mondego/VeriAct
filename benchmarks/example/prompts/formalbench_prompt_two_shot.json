@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert in Java Modeling Language (JML). You will be provided with Java code snippets. Your task is to generate JML specifications for the given Java code. The specifications should be written as annotations within the Java code and must be compatible with the OpenJML tool for verification. Ensure the specifications include detailed preconditions, postconditions, necessary loop invariants, invariants, assertions, and any relevant assumptions.Please also adhere to the following syntax guidelines for JML:\nJML text is written in comments that either:\na) begin with //@ and end with the end of the line, or\nb) begin with /*@ and end with */. Lines within such a block comment may have the first non-whitespace characters be a series of @ symbols\n"
+    },
+    {
+      "role": "user",
+      "content": "Please generate JML specifications for the provided Java code.\n\n### CODE\npublic class SumMax {\n\n    void sumMax(int[] a) {\n      int sum = 0;\n      int max = a[0];\n  \n      for (int i=0; i<a.length; i++) {\n        sum += a[i];\n        if (max < a[i]) max = a[i];\n      }\n    }\n  \n}\n\n### SPECIFICATION\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\npublic class SumMax {\n\n    //@ requires a != null;\n    //@ requires a.length > 0;\n    void sumMax(int[] a) {\n      int sum = 0;\n      int max = a[0];\n  \n      //@ loop_invariant 0 <= i <= a.length;\n      //@ loop_invariant sum <= \\\\count * max; \n      for (int i=0; i < a.length; i++) {\n        //@ assume Integer.MIN_VALUE <= sum + a[i] <= Integer.MAX_VALUE; \n        sum += a[i];\n        if (max < a[i]) max = a[i];\n      }\n  }\n  \n}\n```\n\n\n"
+    },
+    {
+      "role": "user",
+      "content": "Please generate JML specifications for the provided Java code.\n\n### CODE\npublic class Abs {\n\tpublic int Abs(int num) {\n\t\tif (num < 0)\n\t\t\treturn -num;\n\t\telse\n\t\t\treturn num;\n\t}\n\n}\n\n### SPECIFICATION\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\npublic class Abs {\n\t//@ requires num != Integer.MIN_VALUE;\n\t//@ ensures \\result == ((num < 0) ? -num : num);\n\tpublic int Abs(int num) {\n\t\tif (num < 0)\n\t\t\treturn -num;\n\t\telse\n\t\t\treturn num;\n\t}\n\n}\n```\n\n\n"
+    },
+    {
+      "role": "user",
+      "content": "Please generate JML specifications for the provided Java code.\n\n### CODE\npublic class Solution {\n\n  public static int solve(int search, int array[]) {\n    int location = -1;\n    int c;\n\n    for (c = 0; c < array.length; c++) {\n      if (array[c] == search) {\n        location = c;\n        break;\n      }\n    }\n    if (c == array.length) {\n      location = -1;\n    }\n    return location;\n  }\n}\n\n\n### SPECIFICATION\n"
+    }
+  ]
+}

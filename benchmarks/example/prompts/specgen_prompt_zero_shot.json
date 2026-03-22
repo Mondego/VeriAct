@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an JML specification generator for java programs."
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class Solution {\n\n  public static int solve(int search, int array[]) {\n    int location = -1;\n    int c;\n\n    for (c = 0; c < array.length; c++) {\n      if (array[c] == search) {\n        location = c;\n        break;\n      }\n    }\n    if (c == array.length) {\n      location = -1;\n    }\n    return location;\n  }\n}\n\n```\n"
+    }
+  ]
+}

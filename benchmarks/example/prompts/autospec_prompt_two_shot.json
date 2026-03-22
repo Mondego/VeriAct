@@ -1,0 +1,28 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an JML specification generator for Java programs."
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class increment_arr {\n    //@ requires n == arr.length;\n    // >>>INFILL<<<\n    void increment_array_by(int[] arr, int n, int c) {\n        //@ maintaining 0 <= i && i <= n;\n        //@ maintaining (\\forall int k; 0 <= k && k < i; arr[k] == \\old(arr[k]) + c);\n        //@ decreases n - i;\n        for (int i = 0; i < n; i++) {\n            arr[i] = arr[i] + c;\n        }\n    } \n}\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "\n```\n//@ ensures (\\forall int k; 0 <= k && k < n; arr[k] == \\old(arr[k]) + c);\n\n```\n"
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class increment_arr {\n    // >>>INFILL<<<\n    void increment_array_by(int[] arr, int n, int c) {\n        for (int i = 0; i < n; i++) {\n            arr[i] = arr[i] + c;\n        }\n    } \n}\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "\n```\n//@ requires n > 0 && n == arr.length;\n//@ ensures (\\forall int k; 0 <= k && k < n; arr[k] == \\old(arr[k]) + c);\n\n```\n"
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class Solution {\n\n  // >>>INFILL<<<\n  public static int solve(int search, int array[]) {\n    int location = -1;\n    int c;\n\n    for (c = 0; c < array.length; c++) {\n      if (array[c] == search) {\n        location = c;\n        break;\n      }\n    }\n    if (c == array.length) {\n      location = -1;\n    }\n    return location;\n  }\n}\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    }
+  ]
+}

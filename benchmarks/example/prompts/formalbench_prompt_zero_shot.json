@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert in Java Modeling Language (JML). You will be provided with Java code snippets.Your task is to generate JML specifications for the given Java code. The specifications should be written as annotations within the Java code and must be compatible with the OpenJML tool for verification. Ensure the specifications include detailed preconditions, postconditions, necessary loop invariants, invariants, assertions, and any relevant assumptions. "
+    },
+    {
+      "role": "user",
+      "content": "Please generate JML specifications for the provided Java code.\n\n### CODE\npublic class Solution {\n\n  public static int solve(int search, int array[]) {\n    int location = -1;\n    int c;\n\n    for (c = 0; c < array.length; c++) {\n      if (array[c] == search) {\n        location = c;\n        break;\n      }\n    }\n    if (c == array.length) {\n      location = -1;\n    }\n    return location;\n  }\n}\n\n\n"
+    }
+  ]
+}

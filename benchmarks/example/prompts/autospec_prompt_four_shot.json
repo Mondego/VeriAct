@@ -1,0 +1,44 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an JML specification generator for Java programs."
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class increment_arr {\n    //@ requires n == arr.length;\n    // >>>INFILL<<<\n    void increment_array_by(int[] arr, int n, int c) {\n        //@ maintaining 0 <= i && i <= n;\n        //@ maintaining (\\forall int k; 0 <= k && k < i; arr[k] == \\old(arr[k]) + c);\n        //@ decreases n - i;\n        for (int i = 0; i < n; i++) {\n            arr[i] = arr[i] + c;\n        }\n    } \n}\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "\n```\n//@ ensures (\\forall int k; 0 <= k && k < n; arr[k] == \\old(arr[k]) + c);\n\n```\n"
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class increment_arr {\n    // >>>INFILL<<<\n    void increment_array_by(int[] arr, int n, int c) {\n        for (int i = 0; i < n; i++) {\n            arr[i] = arr[i] + c;\n        }\n    } \n}\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "\n```\n//@ requires n > 0 && n == arr.length;\n//@ ensures (\\forall int k; 0 <= k && k < n; arr[k] == \\old(arr[k]) + c);\n\n```\n"
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class max {\n    //@ requires n == a.length;\n    // >>>INFILL<<<\n    int arraymax(int[] a, int n) {\n        int i = 1;\n        int max = a[0];\n    \n        //@ maintaining \\forall int k;  0 <= k && k < i; max >= a[k];\n        //@ maintaining \\exists int k;  0 <= k && k < i; max == a[k];\n        //@ maintaining 0 <= i && i <= n;\n        //@ decreases n - i;\n        while (i < n) {\n            // Beginning of loop\n            if (max < a[i])\n                max = a[i];\n            i = i + 1;\n            // End of loop: Loop invariant comes here\n        }\n        return max;\n    }  \n}\n\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "\n```\n//@ ensures (\\forall int k;  0 <= k && k < n; \\result >= a[k]);\n//@ ensures (\\exists int k;  0 <= k && k < n; \\result == a[k]);\n\n\n```\n"
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class max {\n\n    // >>>INFILL<<<\n    int arraymax(int[] a, int n) {\n        int i = 1;\n        int max = a[0];\n\n        while (i < n) {\n            // Beginning of loop\n            if (max < a[i])\n                max = a[i];\n            i = i + 1;\n            // End of loop: Loop invariant comes here\n        }\n        return max;\n    }  \n}\n\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    },
+    {
+      "role": "assistant",
+      "content": "\n```\n//@ requires n > 0 && n == a.length;\n//@ ensures (\\forall int k;  0 <= k && k < n; \\result >= a[k]);\n//@ ensures (\\exists int k;  0 <= k && k < n; \\result == a[k]);\n\n\n```\n"
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class Solution {\n\n    // >>>INFILL<<<\n    public static int[] solve(int[] testTup) {\n        int length = testTup.length;\n        if (length < 2) {\n            return new int[0];\n        }\n        int[] result = new int[length - 1];\n        for (int i = 0; i < length - 1; i++) {\n            result[i] = testTup[i] + testTup[i + 1];\n        }\n        return result;\n    }\n}\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    }
+  ]
+}

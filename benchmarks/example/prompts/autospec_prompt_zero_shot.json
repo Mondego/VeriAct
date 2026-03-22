@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an JML specification generator for Java programs."
+    },
+    {
+      "role": "user",
+      "content": "\nYou are provided with the following Java code:\n```\npublic class Solution {\n\n  // >>>INFILL<<<\n  public static int solve(int search, int array[]) {\n    int location = -1;\n    int c;\n\n    for (c = 0; c < array.length; c++) {\n      if (array[c] == search) {\n        location = c;\n        break;\n      }\n    }\n    if (c == array.length) {\n      location = -1;\n    }\n    return location;\n  }\n}\n\n```\nWithin the code, there exists a piece of annotation in the form of `// >>>INFILL<<<`, which is acting as a placeholder. Please reply me with appropriate JML specifications (namely `requires` and `ensures` statements) to fill in the place that can fully articulate the behaviors of the corresponding method.\nNote that:\n1. You SHOULD only reply me with the specifications with nothing else. You CANNOT add other comments to the specifications you generated.\n2. You SHOULD specify each `requires` or `ensures` statement in a single line. You CANNOT split the content of an identical statement into multiple lines.\n3. There could be cases where there already exists some specifications around the placeholder, BUT you SHOULD always come up with NEW specifications, and CANNOT repeat the specifications already exists within the code given to you.\n"
+    }
+  ]
+}

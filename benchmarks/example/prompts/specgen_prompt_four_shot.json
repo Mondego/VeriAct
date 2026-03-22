@@ -1,0 +1,44 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an JML specification generator for java programs."
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class StrPalindrome {\n   private  String reverse = \"\";\n   \n   public boolean isPalindrome(String str) {\n      \n      int length = str.length();\n\n      for (int i = length - 1; 0 <= i; i--) {\n         reverse = reverse + str.charAt(i);\n\t \n      }\n      \n      return reverse.equals(str);\n   }\n} \n\n```\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\npublic class StrPalindrome {\n   private /*@ spec_public @*/ String reverse = \"\";\n   /*@ public normal_behavior\n     @    requires (\\forall int i; 0 <= i && i < str.length(); (int)Character.MIN_VALUE <= (int)str.charAt(i) && (int)str.charAt(i) <= (int)Character.MAX_VALUE);\n     @    assignable reverse;\n     @    ensures \\result <==> reverse.equals(str); @*/\n   public boolean isPalindrome(String str) {\n      \n      int length = str.length();\n\t\n      //@ ghost int i_counter;\n      //@ set i_counter = 0;\n      //@ maintaining -1 <= i && i < str.length(); \n      //@ decreases i;\n      //@ maintaining i_counter + i + 1 == length;\n      for (int i = length - 1; 0 <= i; i--) {\n         reverse = reverse + str.charAt(i);\n\t //@ set i_counter = i_counter + 1;\n       }\n      //@ assert i_counter == length;   \n      return reverse.equals(str);\n   }\n} \n\n```"
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\n\npublic class FIND_FIRST_IN_SORTED {\n\n    public static int find_first_in_sorted(int[] arr, int x) {\n        int lo = 0;\n        int hi = arr.length;\n\n        while (lo < hi) {\n            int mid = (lo + hi) / 2; \n            if (x == arr[mid] && (mid == 0 || x != arr[mid-1])) {\n                return mid;\n            } else if (x <= arr[mid]) {\n                hi = mid;\n            } else { \n                lo = mid + 1;\n            }\n        }\n\t\n        return -1;\n    }\n}\n\n```\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\n//arr.length should be less than half of Integer.MAX_VALUE. Array size greater than ((Integer.MAX_VALUE/2)+1) can lead to sum overfllowing  for \"int mid = (lo + hi) / 2;\". When argument \"X\" is not in the array and it is value is larger than all numbers in the array. \npublic class FIND_FIRST_IN_SORTED {\n    //@ requires 0 <= arr.length && arr.length <= (Integer.MAX_VALUE/2)+1; \n    /*@ requires (\\forall int j; 0 <= j && j < arr.length;\n      @             (\\forall int i; 0 <= i && i < j ; arr[i] <= arr[j])); @*/\n    //@ ensures \\result < arr.length;\n    //@ ensures 0 <= \\result && \\result < arr.length ==> arr[\\result] == x && (\\forall int i; 0 <= i && i < \\result; arr[i] != x);\n    //@ ensures \\result == -1 ==> (\\forall int i; 0 <= i && i < arr.length; arr[i] != x);\n    public static int find_first_in_sorted(int[] arr, int x) {\n        int lo = 0;\n        int hi = arr.length;\n\n\t//@ maintaining 0 <= lo && lo <= arr.length; \n        //@ maintaining 0 <= hi && hi <= arr.length;\n\t//@ maintaining lo <= hi;\n        //@ maintaining (\\forall int i; 0 <= i && i < lo; arr[i] < x);\n        //@ maintaining (\\forall int i; hi < i && i < arr.length; x <= arr[i]);\n        while (lo < hi) {\n            int mid = (lo + hi) / 2; // check if this is floor division\n            if (x == arr[mid] && (mid == 0 || x != arr[mid-1])) {\n                return mid;\n            } else if (x <= arr[mid]) {\n                hi = mid;\n            } else { \n                lo = mid + 1;\n            }\n        }\n\t//@ assume (\\forall int i; 0 <= i && i < arr.length; arr[i] != x);\n        return -1;\n    }\n}\n\n```"
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class CopyArray {\n \n    public static void CopyArray(int[] b, int iBegin, int iEnd, int[] a) {\n        int k = iBegin;\n\n        while (iEnd - k > 0) {\n            a[k] = b[k];\n            k = k + 1 ;\n        }\n    }\n}\n\n\n```\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\npublic class CopyArray {\n    //@ requires 0 < a.length && 0 < b.length;\n    //@ requires 0 <= iBegin && 0 <= iEnd && iBegin <= iEnd;\n    //@ requires iBegin < a.length && iBegin < b.length && iEnd < a.length && iEnd < b.length;\n    //@ ensures (\\forall int i; iBegin <= i && i < iEnd; a[i] == b[i]);\n    public static void CopyArray(int[] b, int iBegin, int iEnd, int[] a) {\n        int k = iBegin;\n        //@ maintaining iBegin <= k && k <= iEnd;\n        //@ maintaining (\\forall int i; iBegin <= i && i < k; a[i] == b[i]);\n        //@ decreases iEnd  - k;\n        while (iEnd - k > 0) {\n            a[k] = b[k];\n            k = k + 1 ;\n        }\n    }\n}\n\n\n```"
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class Perimeter\n{   \n\n     long Perimeter(short x)\n    {\n\tlong squarePerimeter = 4 * (long)x;\n\treturn squarePerimeter;\n    }\n\n     long Perimeter(int x)\n    {\n\tlong pentagonPerimeter = 5 * (long)x;\n\treturn pentagonPerimeter;\n    }\n\n     long Perimeter(long x)\n    {\n\tlong hexagonalPerimeter = 6 * x;\n\treturn hexagonalPerimeter;\n    }\n\n     long Perimeter(int x, int y)\n    {\n\tlong perimeterRectangle = 2*((long)x + (long)y);\n\treturn perimeterRectangle;\n    }\n\n     long Perimeter(int x, int y, int z)\n    {\n\tlong trianglePerimeter = (long)x + (long)y + (long)z;\n\treturn trianglePerimeter;\n    }\n\n     long Perimeter(int w, int x, int y, int z)\n    {\n\tlong trapeziumPerimeter = (long)w + (long)x + (long)y + (long)z;\n\treturn trapeziumPerimeter;\n    }\n}\n\n```\n"
+    },
+    {
+      "role": "assistant",
+      "content": "```\npublic class Perimeter\n{   \n    //@ requires 0 < x && x <= Short.MAX_VALUE;\n    //@ ensures \\result == 4*x;\n    /*@ pure @*/ long Perimeter(short x)\n    {\n\tlong squarePerimeter = 4 * (long)x;\n\treturn squarePerimeter;\n    }\n\n    //@ requires 0 < x && x <= Integer.MAX_VALUE;\n    //@ ensures \\result == 5*x;\n    /*@ pure @*/ long Perimeter(int x)\n    {\n\tlong pentagonPerimeter = 5 * (long)x;\n\treturn pentagonPerimeter;\n    }\n\n    //@ requires 0 < x && 6*x <= Long.MAX_VALUE;\n    //@ ensures \\result == 6*x;\n    /*@ pure @*/ long Perimeter(long x)\n    {\n\tlong hexagonalPerimeter = 6 * x;\n\treturn hexagonalPerimeter;\n    }\n\n    //@ requires 0 < x && 0 < y && 2*x + 2*y <= Integer.MAX_VALUE;\n    //@ ensures \\result == 2*x + 2*y;\n    /*@ pure @*/ long Perimeter(int x, int y)\n    {\n\tlong perimeterRectangle = 2*((long)x + (long)y);\n\treturn perimeterRectangle;\n    }\n\n    //@ requires 0 < x && 0 < y && 0 < z && x + y + z <= Integer.MAX_VALUE;\n    //@ ensures \\result == x + y + z;\n    /*@ pure @*/ long Perimeter(int x, int y, int z)\n    {\n\tlong trianglePerimeter = (long)x + (long)y + (long)z;\n\treturn trianglePerimeter;\n    }\n  \n    //@ requires 0 < w && 0 < x && 0 < y && 0 < z && w + x + y + z <= Integer.MAX_VALUE;\n    //@ ensures \\result == w + x + y + z;\n    /*@ pure @*/ long Perimeter(int w, int x, int y, int z)\n    {\n\tlong trapeziumPerimeter = (long)w + (long)x + (long)y + (long)z;\n\treturn trapeziumPerimeter;\n    }\n}\n\n```"
+    },
+    {
+      "role": "user",
+      "content": "\nPlease generate JML specifications for the Java program given below.\n```\npublic class Solution {\n\n    public static int[] solve(int[] testTup) {\n        int length = testTup.length;\n        if (length < 2) {\n            return new int[0];\n        }\n        int[] result = new int[length - 1];\n        for (int i = 0; i < length - 1; i++) {\n            result[i] = testTup[i] + testTup[i + 1];\n        }\n        return result;\n    }\n}\n\n\n```\n"
+    }
+  ]
+}
