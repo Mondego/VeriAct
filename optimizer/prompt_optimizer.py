@@ -18,7 +18,7 @@ Usage:
     python prompt_optimizer.py \
         --formalbench_path ./data/formalbench_tasks.json \
         --specgenbench_path ./data/specgenbench_tasks.json \
-        --best_seed formalbench_ltm \
+        --best_seed zero \
         --model openai/gpt-4o \
         --reflection_model openai/gpt-4o
 """
@@ -754,7 +754,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--best_seed",
         type=str,
-        default="formalbench_ltm",
+        default="zero",
         help="Seed prompt name from (zero/cot/ltm)",
     )
     parser.add_argument(
