@@ -18,10 +18,11 @@ dependencies = [
   "pyyaml",
   "pytest",
   "ruff",
+  "dspy",
 ]
 
 [tool.setuptools.packages.find]
-include = ["specsyns*", "baselines*", "config*"]
+include = ["specsyns*", "baselines*", "config*", "optimizer*"]
 
 [tool.pytest.ini_options]
 # Add the specified `OPTS` to the set of command line arguments as if they had been specified by the user.

@@ -1,27 +1,26 @@
 """
-Prompt Optimization for Formal Specification Synthesis
-============================================================
+Prompt Optimization Comparison for Formal Specification Synthesis
+======================================================================
 
-Compares three DSPy optimizers (COPRO, MIPROv2, GEPA) on improving
-the instruction prompt for JML specification generation.
+Compares COPRO vs MIPROv2 vs GEPA on optimizing the best-performing
+instruction prompt from baselines.
 
-Uses ONLY the `dspy` package — no standalone `gepa` package.
+Design:
+    - Optimize on FormalBench train (100 tasks, stratified by category)
+    - Validate on FormalBench val (50 tasks)
+    - Evaluate on FormalBench test (512 tasks) + SpecGenBench (120 tasks)
+    - Graduated scoring during optimization, binary for final reporting
 
 Setup:
-    pip install dspy-ai --break-system-packages
+    pip install dspy python-dotenv --break-system-packages
 
 Usage:
-    # Run all 3 optimizers from 3 representative seeds
-    python rq3_prompt_optimization.py \
-        --benchmark_path ./benchmark/tasks.json \
+    python prompt_optimizer.py \
+        --formalbench_path ./data/formalbench_tasks.json \
+        --specgenbench_path ./data/specgenbench_tasks.json \
+        --best_seed formalbench_ltm \
         --model openai/gpt-4o \
         --reflection_model openai/gpt-4o
-
-    # Run a single optimizer from a single seed
-    python rq3_prompt_optimization.py \
-        --benchmark_path ./benchmark/tasks.json \
-        --optimizers gepa \
-        --seeds specgen_4shot
 """
 
 import json
@@ -29,19 +28,21 @@ import os
 import random
 import argparse
 import logging
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 import dspy
 from dotenv import load_dotenv
 
-from specgent.run.optimizer_utils import (
+from optimizer.optimizer_utils import (
     Task,
-    compute_graduated_score,
+    VerificationResult,
     verify_with_openjml,
+    compute_graduated_score,
     clean_code_fences,
     format_error_feedback,
 )
+import baselines.utils.config
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,143 +50,156 @@ logging.basicConfig(
 )
 logger = logging.getLogger("prompt_optimizer")
 
+DEFAULT_NUM_THREADS = 8
+OPENJML_OUTPUT_DIR: str | None = None
+
 
 # ============================================================================
-# 1. SEED PROMPTS — 11 instruction-only texts from 3 approaches
+# 1. SEED PROMPTS — 4 unique instructions from SpecGen + FormalBench
 # ============================================================================
-# TODO: Replace with the EXACT instruction text from each approach.
+# Extracted from the actual prompt JSON files.
+# System message + user template guidance merged into one instruction.
+# Set --best_seed to whichever performed best accross the baselinse
 
 SEED_PROMPTS: dict[str, str] = {
-    # --- SpecGen (3) ---
-    "specgen_0shot": (
-        "You are a JML specification generator for Java programs. "
-        "Given a Java program, generate complete JML specifications including "
-        "preconditions (requires), postconditions (ensures), and loop invariants "
-        "(maintaining). The specifications must be syntactically valid JML and "
-        "semantically consistent with the program behavior."
+    "zero": (
+        "You are an JML specification generator for java programs. "
+        "Please generate JML specifications for the Java program given below."
     ),
-    "specgen_2shot": (
-        "You are a JML specification generator for Java programs. "
-        "Generate JML specifications for the given Java program. Include "
-        "preconditions (@requires), postconditions (@ensures), and loop "
-        "invariants (@maintaining) where applicable. Ensure the generated "
-        "specifications are verifiable by OpenJML."
+    "cot": (
+        "You are an expert in Java Modeling Language (JML). You will be provided "
+        "with Java code snippets. Your task is to generate JML specifications for "
+        "the given Java code. The specifications should be written as annotations "
+        "within the Java code and must be compatible with the OpenJML tool for "
+        "verification. Ensure the specifications include detailed preconditions, "
+        "postconditions, necessary loop invariants, invariants, assertions, and "
+        "any relevant assumptions. Think step by step."
     ),
-    "specgen_4shot": (
-        "You are a JML specification generator for Java programs. "
-        "Generate comprehensive JML specifications for the given Java program. "
-        "Include @requires clauses for preconditions, @ensures clauses for "
-        "postconditions, and @maintaining clauses for loop invariants. "
-        "Pay attention to boundary conditions, null checks, and array bounds. "
-        "The specifications must pass OpenJML verification."
-    ),
-    # --- AutoSpec (3) ---
-    "autospec_0shot": (
-        "You are an expert in formal verification. Given a Java method, "
-        "generate JML annotations that formally specify the method's behavior. "
-        "Decompose the method into logical components and specify each component "
-        "before combining them into the overall specification."
-    ),
-    "autospec_2shot": (
-        "You are an expert in formal verification and JML specification. "
-        "Analyze the given Java method by decomposing it into components. "
-        "For each component, generate corresponding JML specifications. "
-        "Combine all component specifications to produce the complete "
-        "method-level specification with @requires, @ensures, and loop invariants."
-    ),
-    "autospec_4shot": (
-        "You are an expert in formal verification and JML specification. "
-        "For the given Java method: (1) identify all logical components, "
-        "(2) generate JML specifications for each component including "
-        "preconditions and postconditions, (3) synthesize loop invariants "
-        "for any loops, (4) combine into a complete verifiable specification. "
-        "Ensure consistency across all specification clauses."
-    ),
-    # --- FormalBench (5) ---
-    "formalbench_0shot": (
-        "Generate JML specifications for the following Java program. "
-        "Include preconditions, postconditions, and loop invariants."
-    ),
-    "formalbench_fewshot": (
-        "Generate JML (Java Modeling Language) specifications for the "
-        "following Java program. JML specifications are written as special "
-        "comments starting with //@. Use @requires for preconditions, "
-        "@ensures for postconditions, @maintaining for loop invariants, "
-        "and @decreases for termination metrics."
-    ),
-    "formalbench_0shot_cot": (
-        "Generate JML specifications for the following Java program. "
-        "Think step by step: first analyze the method signature and parameters, "
-        "then identify preconditions that must hold before execution, "
-        "then determine postconditions that hold after execution, "
-        "and finally derive loop invariants for any loops."
-    ),
-    "formalbench_fewshot_cot": (
-        "Generate JML specifications for the following Java program. "
-        "Follow this reasoning process: (1) Analyze inputs and their valid ranges, "
-        "(2) Trace the control flow and identify key program states, "
-        "(3) Write @requires clauses for input constraints, "
-        "(4) Write @ensures clauses capturing the output relationship, "
-        "(5) For each loop, derive an @maintaining invariant and @decreases variant."
-    ),
-    "formalbench_fewshot_ltm": (
-        "Generate JML specifications for the following Java program. "
-        "Break the problem into subproblems: First, what are the valid inputs? "
-        "Second, what does the method compute or return? Third, what properties "
-        "are preserved in each loop iteration? Solve each subproblem, then "
-        "combine the answers into complete JML annotations with @requires, "
-        "@ensures, @maintaining, and @decreases clauses."
+    "ltm": (
+        "You are an expert in Java Modeling Language (JML). You will be provided "
+        "with Java code snippets. Your task is to generate JML specifications for "
+        "the given Java code. The specifications should be written as annotations "
+        "within the Java code and must be compatible with the OpenJML tool for "
+        "verification. Ensure the specifications include detailed preconditions, "
+        "postconditions, necessary loop invariants, invariants, assertions, and "
+        "any relevant assumptions. Break down the problem: First, identify the "
+        "weakest preconditions including nullness and arithmetic bounds. Second, "
+        "determine the strongest postconditions. Third, derive necessary loop "
+        "invariants, assertions, assumptions, and ranking functions."
     ),
 }
 
 
 # ============================================================================
-# 2. FIXED 2-SHOT DEMOS — neutral, independent of all approaches
+# 2. FIXED 2-SHOT DEMOS — from SpecGenBench with verified ground-truth specs
 # ============================================================================
-# TODO: Replace with your actual selected examples.
+# These 2 tasks are excluded from SpecGenBench evaluation to prevent leakage.
+# Demo 1: Smallest element (sequential + loop)
+# Demo 2: Binary search (branched + loop)
+
+# Used to exclude demo tasks from SpecGenBench test set.
+DEMO_TASK_IDS = {"SGB_Smallest", "SGB_BinarySearch"}
 
 DEMO_EXAMPLES = [
+    # Demo 1: Find smallest element in array (sequential + loop)
     dspy.Example(
         java_program=(
-            "public class Max {\n"
-            "    public static int max(int a, int b) {\n"
-            "        if (a >= b) { return a; }\n"
-            "        else { return b; }\n"
+            "public class Solution {\n"
+            "    static public int solve(int[] a) {\n"
+            "        if (a.length == 0) return -1;\n"
+            "\n"
+            "        int index = 0;\n"
+            "        int smallest = 0;\n"
+            "        while (a.length - index > 0) {\n"
+            "            if (a[index] < a[smallest]) {\n"
+            "                smallest = index;\n"
+            "            }\n"
+            "            index = index + 1;\n"
+            "        }\n"
+            "        return smallest;\n"
             "    }\n"
             "}"
         ),
         jml_specification=(
-            "public class Max {\n"
-            "    //@ ensures \\\\result >= a && \\\\result >= b;\n"
-            "    //@ ensures \\\\result == a || \\\\result == b;\n"
-            "    public static int max(int a, int b) {\n"
-            "        if (a >= b) { return a; }\n"
-            "        else { return b; }\n"
+            "public class Solution {\n"
+            "    //@ ensures \\result == -1 <==> a.length == 0;\n"
+            "    //@ ensures -1 < \\result ==> (\\forall int i; 0 <= i && i < a.length; a[\\result] <= a[i]);\n"
+            "    static public int solve(int[] a) {\n"
+            "        if (a.length == 0) return -1;\n"
+            "\n"
+            "        int index = 0;\n"
+            "        int smallest = 0;\n"
+            "        //@ maintaining 0 <= index && index <= a.length;\n"
+            "        //@ maintaining 0 <= smallest && smallest < a.length;\n"
+            "        //@ maintaining (\\forall int i; 0 <= i && i < index; a[smallest] <= a[i]);\n"
+            "        //@ decreases a.length - index;\n"
+            "        while (a.length - index > 0) {\n"
+            "            if (a[index] < a[smallest]) {\n"
+            "                smallest = index;\n"
+            "            }\n"
+            "            index = index + 1;\n"
+            "        }\n"
+            "        return smallest;\n"
             "    }\n"
             "}"
         ),
     ).with_inputs("java_program"),
+    # Demo 2: Binary search (branched + loop)
     dspy.Example(
         java_program=(
-            "public class Sum {\n"
-            "    public static int sum(int[] arr) {\n"
-            "        int s = 0;\n"
-            "        for (int i = 0; i < arr.length; i++) { s += arr[i]; }\n"
-            "        return s;\n"
+            "public class Solution {\n"
+            "    public static int solve(int[] arr, int key) {\n"
+            "        if (arr.length == 0) {\n"
+            "            return -1;\n"
+            "        } else {\n"
+            "            int low = 0;\n"
+            "            int high = arr.length;\n"
+            "            int mid =  high / 2;\n"
+            "            while (low < high && arr[mid] != key) {\n"
+            "                if (arr[mid] < key) {\n"
+            "                    low = mid + 1;\n"
+            "                } else {\n"
+            "                    high = mid;\n"
+            "                }\n"
+            "                mid = low + (high - low) / 2;\n"
+            "            }\n"
+            "            if (low >= high) {\n"
+            "                return -1;\n"
+            "            }\n"
+            "            return mid;\n"
+            "        }\n"
             "    }\n"
             "}"
         ),
         jml_specification=(
-            "public class Sum {\n"
-            "    //@ requires arr != null;\n"
-            "    //@ ensures \\\\result == (\\\\sum int j; 0 <= j && j < arr.length; arr[j]);\n"
-            "    public static int sum(int[] arr) {\n"
-            "        int s = 0;\n"
-            "        //@ maintaining 0 <= i && i <= arr.length;\n"
-            "        //@ maintaining s == (\\\\sum int j; 0 <= j && j < i; arr[j]);\n"
-            "        //@ decreases arr.length - i;\n"
-            "        for (int i = 0; i < arr.length; i++) { s += arr[i]; }\n"
-            "        return s;\n"
+            "public class Solution {\n"
+            "    //@ requires \\forall int j; 0 <= j && j < arr.length; \\forall int i; 0 <= i && i < j ;arr[i] <= arr[j];\n"
+            "    //@ ensures \\result == -1 <==> (\\forall int i; 0 <= i && i < arr.length; arr[i] != key) || arr.length == 0;\n"
+            "    //@ ensures 0 <= \\result && \\result < arr.length ==> arr[\\result] == key;\n"
+            "    public static int solve(int[] arr, int key) {\n"
+            "        if (arr.length == 0) {\n"
+            "            return -1;\n"
+            "        } else {\n"
+            "            int low = 0;\n"
+            "            int high = arr.length;\n"
+            "            int mid =  high / 2;\n"
+            "            //@ maintaining 0 <= low && low <= high  && high <= arr.length && mid == low + (high - low) / 2;\n"
+            "            //@ maintaining (\\forall int i; 0 <= i && i < low; arr[i] < key);\n"
+            "            //@ maintaining (\\forall int i; high <= i && i < arr.length; key < arr[i]);\n"
+            "            //@ decreases high - low;\n"
+            "            while (low < high && arr[mid] != key) {\n"
+            "                if (arr[mid] < key) {\n"
+            "                    low = mid + 1;\n"
+            "                } else {\n"
+            "                    high = mid;\n"
+            "                }\n"
+            "                mid = low + (high - low) / 2;\n"
+            "            }\n"
+            "            if (low >= high) {\n"
+            "                return -1;\n"
+            "            }\n"
+            "            return mid;\n"
+            "        }\n"
             "    }\n"
             "}"
         ),
@@ -200,20 +214,18 @@ DEMO_EXAMPLES = [
 
 class GenerateJMLSpec(dspy.Signature):
     """Generate JML specifications for a Java program.
-    Return ONLY the annotated Java code with JML comments, no explanation."""
+    Return ONLY the complete annotated Java code with JML comments."""
 
     java_program: str = dspy.InputField(
         desc="Java source code to annotate with JML specifications"
     )
     jml_specification: str = dspy.OutputField(
-        desc="The Java program annotated with JML @requires, @ensures, "
+        desc="Complete Java program annotated with JML @requires, @ensures, "
         "@maintaining, and @decreases clauses"
     )
 
 
 class SpecSynthesizer(dspy.Module):
-    """DSPy module for JML specification generation."""
-
     def __init__(self):
         super().__init__()
         self.generate = dspy.Predict(GenerateJMLSpec)
@@ -223,22 +235,19 @@ class SpecSynthesizer(dspy.Module):
 
 
 # ============================================================================
-# 4. BENCHMARK LOADER
+# 4. BENCHMARK LOADING
 # ============================================================================
 
 
-def load_tasks(benchmark_path: str) -> list[Task]:
-    """Load tasks from a JSON file using the Task dataclass."""
-    with open(benchmark_path, "r") as f:
+def load_tasks(path: str) -> list[Task]:
+    with open(path, "r") as f:
         data = json.load(f)
-    # Support both list of tasks and dict with "tasks" key
     if isinstance(data, dict):
         data = data.get("tasks", data.get("data", []))
     return [Task.from_dict(t) for t in data]
 
 
 def tasks_to_dspy_examples(tasks: list[Task]) -> list[dspy.Example]:
-    """Convert Task objects to DSPy Examples."""
     examples = []
     for task in tasks:
         ex = dspy.Example(
@@ -251,59 +260,120 @@ def tasks_to_dspy_examples(tasks: list[Task]) -> list[dspy.Example]:
     return examples
 
 
-def stratified_split_tasks(
-    tasks: list[Task], seed: int
+def stratified_split(
+    tasks: list[Task],
+    train_size: int,
+    val_size: int,
+    seed: int = 42,
 ) -> tuple[list[Task], list[Task], list[Task]]:
     """
-    Stratified split by category for the 662-task distribution.
-    Returns (train_tasks, val_tasks, test_tasks).
+    Stratified split by category into train / val / test.
+    train_size and val_size are targets; remaining goes to test.
     """
-    random.seed(seed)
+    rng = random.Random(seed)
+
+    # Group by category
     by_category: dict[str, list[Task]] = defaultdict(list)
     for task in tasks:
         by_category[task.category].append(task)
 
-    # Per-category counts for 100/50/512 split (train/val/test).
-    # Total: train=100, val=50, test=512
-    counts = {
-        "branch": (12, 6, 61),
-        "multi_path_loop": (36, 18, 183),
-        "nested": (15, 8, 80),
-        "sequential": (16, 8, 82),
-        "single_path_loop": (21, 10, 106),
-    }
+    # Shuffle within each category
+    for cat in by_category:
+        rng.shuffle(by_category[cat])
 
-    train_tasks: list[Task] = []
-    val_tasks: list[Task] = []
-    test_tasks: list[Task] = []
+    total = len(tasks)
+    train_frac = train_size / total
+    val_frac = val_size / total
 
-    for category, items in by_category.items():
-        if category not in counts:
-            raise ValueError(f"Unknown category '{category}' for stratified split.")
+    train, val, test = [], [], []
 
-        random.shuffle(items)
-        train_n, val_n, test_n = counts[category]
-        total_needed = train_n + val_n + test_n
-        if len(items) < total_needed:
-            raise ValueError(
-                f"Category '{category}' has {len(items)} tasks,"
-                f" but {total_needed} are required for the split."
-            )
+    for cat, cat_tasks in by_category.items():
+        n = len(cat_tasks)
+        n_train = max(1, round(n * train_frac))
+        n_val = max(1, round(n * val_frac))
 
-        train_tasks.extend(items[:train_n])
-        val_tasks.extend(items[train_n : train_n + val_n])
-        test_tasks.extend(items[train_n + val_n : train_n + val_n + test_n])
+        train.extend(cat_tasks[:n_train])
+        val.extend(cat_tasks[n_train : n_train + n_val])
+        test.extend(cat_tasks[n_train + n_val :])
 
-    random.shuffle(train_tasks)
-    random.shuffle(val_tasks)
-    random.shuffle(test_tasks)
+    rng.shuffle(train)
+    rng.shuffle(val)
+    rng.shuffle(test)
 
-    return train_tasks, val_tasks, test_tasks
+    return train, val, test
 
 
 # ============================================================================
 # 5. METRICS
 # ============================================================================
+
+
+def spec_metric_graduated(example, prediction, trace=None) -> float:
+    """Graduated metric for COPRO and MIPROv2 optimization."""
+    class_name = example.class_name
+    generated = getattr(prediction, "jml_specification", "")
+    generated = clean_code_fences(generated)
+
+    if not generated.strip():
+        return 0.0
+
+    result = verify_with_openjml(
+        code_with_spec=generated,
+        classname=class_name,
+        output_dir=OPENJML_OUTPUT_DIR,
+    )
+    return compute_graduated_score(result)
+
+
+def spec_metric_with_feedback(
+    example, prediction, trace=None, pred_name=None, pred_trace=None
+):
+    """Graduated metric + rich feedback for GEPA reflection."""
+    class_name = example.class_name
+    task_id = getattr(example, "task_id", class_name)
+    generated = getattr(prediction, "jml_specification", "")
+    generated = clean_code_fences(generated)
+
+    if not generated.strip():
+        feedback = (
+            f"[FAIL] Task '{task_id}': LLM returned empty or unparseable output. "
+            f"The instruction must clearly ask for annotated Java code with "
+            f"JML comments in //@ format. Do not include natural language "
+            f"explanations - only the Java code with JML annotations."
+        )
+        return dspy.Prediction(score=0.0, feedback=feedback)
+
+    result = verify_with_openjml(
+        code_with_spec=generated,
+        classname=class_name,
+        output_dir=OPENJML_OUTPUT_DIR,
+    )
+
+    score = compute_graduated_score(result)
+    feedback = format_error_feedback(result, task_id)
+
+    # Enrich feedback with score explanation for GEPA
+    if score == 0.3:
+        feedback += (
+            f"\n--- Score: 0.3 (1 verification error) ---\n"
+            f"The specification is almost correct. Focus on fixing the single "
+            f"failing clause identified above."
+        )
+    elif score == 0.1:
+        feedback += (
+            f"\n--- Score: 0.1 ({len(result.classified_errors)} errors) ---\n"
+            f"JML syntax is valid but multiple clauses are semantically wrong. "
+            f"Reconsider the overall specification strategy."
+        )
+    elif score == 0.0 and result.classified_errors:
+        feedback += (
+            f"\n--- Score: 0.0 (syntax errors) ---\n"
+            f"Output contains JML syntax errors. Ensure correct use of "
+            f"@requires, @ensures, @maintaining, @decreases with proper "
+            f"JML operators (\\result, \\old, \\forall, \\exists)."
+        )
+
+    return dspy.Prediction(score=score, feedback=feedback)
 
 
 def spec_metric_binary(example, prediction, trace=None) -> float:
@@ -318,80 +388,9 @@ def spec_metric_binary(example, prediction, trace=None) -> float:
     result = verify_with_openjml(
         code_with_spec=generated,
         classname=class_name,
+        output_dir=OPENJML_OUTPUT_DIR,
     )
     return 1.0 if result.success else 0.0
-
-
-def spec_metric(example, prediction, trace=None) -> float:
-    """
-    Graduated metric for COPRO and MIPROv2.
-    Returns partial credit based on error classification.
-    """
-    class_name = example.class_name
-    generated = getattr(prediction, "jml_specification", "")
-    generated = clean_code_fences(generated)
-
-    if not generated.strip():
-        return 0.0
-
-    result = verify_with_openjml(
-        code_with_spec=generated,
-        classname=class_name,
-    )
-    return compute_graduated_score(result)
-
-
-def spec_metric_with_feedback(
-    example, prediction, trace=None, pred_name=None, pred_trace=None
-):
-    """
-    Graduated metric + rich textual feedback for GEPA.
-    GEPA uses both the score AND the feedback for reflective mutation.
-    """
-    class_name = example.class_name
-    task_id = getattr(example, "task_id", class_name)
-    generated = getattr(prediction, "jml_specification", "")
-    generated = clean_code_fences(generated)
-
-    if not generated.strip():
-        feedback = (
-            f"[FAIL] Task '{task_id}': LLM returned empty or unparseable output. "
-            f"The instruction must clearly ask for annotated Java code with "
-            f"JML comments in //@ format. Do not include natural language "
-            f"explanations — only the Java code with JML annotations."
-        )
-        return dspy.Prediction(score=0.0, feedback=feedback)
-
-    result = verify_with_openjml(
-        code_with_spec=generated,
-        classname=class_name,
-    )
-
-    score = compute_graduated_score(result)
-    feedback = format_error_feedback(result, task_id)
-
-    # Enrich feedback with score explanation so GEPA understands the gradient
-    if score == 0.3:
-        feedback += (
-            f"\n--- Score: 0.3 (1 verification error) ---\n"
-            f"The specification is almost correct. Focus on fixing the single "
-            f"failing clause identified above."
-        )
-    elif score == 0.1:
-        feedback += (
-            f"\n--- Score: 0.1 ({len(result.classified_errors)} verification errors) ---\n"
-            f"The JML syntax is valid but multiple clauses are semantically wrong. "
-            f"Reconsider the overall specification strategy."
-        )
-    elif score == 0.0 and result.classified_errors:
-        feedback += (
-            f"\n--- Score: 0.0 (syntax errors) ---\n"
-            f"The output contains JML syntax errors. Ensure correct use of "
-            f"@requires, @ensures, @maintaining, @decreases with proper "
-            f"JML operators (\\result, \\old, \\forall, \\exists)."
-        )
-
-    return dspy.Prediction(score=score, feedback=feedback)
 
 
 # ============================================================================
@@ -401,56 +400,48 @@ def spec_metric_with_feedback(
 
 def create_optimizer(
     name: str,
-    task_model: dspy.LM,
     prompt_model: dspy.LM,
-    log_dir: str = "./rq3_logs",
+    task_model: dspy.LM,
+    log_dir: str,
 ) -> tuple:
-    """
-    Create a DSPy optimizer by name.
+    """Create a DSPy optimizer. Returns (optimizer, compile_kwargs)."""
 
-    Returns: (optimizer, compile_kwargs)
-    """
     if name == "copro":
-        # COPRO: coordinate ascent hill-climbing on instructions only
         optimizer = dspy.COPRO(
             prompt_model=prompt_model,
-            metric=spec_metric,
-            depth=3,  # 3 rounds of iterative refinement
-            breadth=5,  # 5 candidate instructions per round
-            init_temperature=1.0,
+            metric=spec_metric_graduated,
+            depth=3,
+            breadth=5,
+            init_temperature=0.7,
         )
-        # COPRO.compile requires eval_kwargs (dict passed to dspy.Evaluate)
         compile_kwargs = {
             "eval_kwargs": {
-                "num_threads": 4,
+                "num_threads": DEFAULT_NUM_THREADS,
                 "display_progress": True,
             },
         }
         return optimizer, compile_kwargs
 
     elif name == "miprov2":
-        # MIPROv2: Bayesian optimization over instructions + few-shot
         optimizer = dspy.MIPROv2(
-            metric=spec_metric,
+            metric=spec_metric_graduated,
             prompt_model=prompt_model,
             task_model=task_model,
-            auto="medium",
-            init_temperature=1.0,
+            auto="light",
+            init_temperature=0.7,
+            num_threads=DEFAULT_NUM_THREADS,
             log_dir=os.path.join(log_dir, "miprov2"),
         )
-        compile_kwargs = {
-            "max_bootstrapped_demos": 0,  # use our fixed demos only
-            "max_labeled_demos": 2,
-            "requires_permission_to_run": False,
-        }
+        compile_kwargs = {"max_bootstrapped_demos": 0, "max_labeled_demos": 0}
         return optimizer, compile_kwargs
 
     elif name == "gepa":
-        # GEPA: evolutionary + LLM reflection on error traces
         optimizer = dspy.GEPA(
             metric=spec_metric_with_feedback,
+            # max_metric_calls=10,  # for debugging; increase for final runs
             auto="medium",
             reflection_lm=prompt_model,
+            num_threads=DEFAULT_NUM_THREADS,
             log_dir=os.path.join(log_dir, "gepa"),
             track_stats=True,
         )
@@ -458,7 +449,7 @@ def create_optimizer(
         return optimizer, compile_kwargs
 
     else:
-        raise ValueError(f"Unknown optimizer: {name}. Use copro/miprov2/gepa.")
+        raise ValueError(f"Unknown optimizer: {name}")
 
 
 # ============================================================================
@@ -466,65 +457,60 @@ def create_optimizer(
 # ============================================================================
 
 
-def run_single_optimization(
-    optimizer_name: str,
-    seed_name: str,
-    seed_instruction: str,
-    trainset: list[dspy.Example],
-    valset: list[dspy.Example],
-    task_model: dspy.LM,
-    prompt_model: dspy.LM,
-    log_dir: str,
-) -> dict:
-    """Run one optimizer from one seed. Returns the optimized module + metadata."""
-
-    logger.info(f"{'='*60}")
-    logger.info(f"  Optimizer: {optimizer_name} | Seed: {seed_name}")
-    logger.info(f"{'='*60}")
-
-    # Build fresh student module with the seed instruction
+def build_student(seed_instruction: str) -> SpecSynthesizer:
+    """Create a fresh student module with seed instruction and fixed demos."""
     student = SpecSynthesizer()
     student.generate.signature = student.generate.signature.with_instructions(
         seed_instruction
     )
-    student.generate.demos = list(DEMO_EXAMPLES)  # fixed 2-shot demos
+    student.generate.demos = list(DEMO_EXAMPLES)
+    return student
 
-    # Create optimizer
+
+def run_optimization(
+    optimizer_name: str,
+    seed_instruction: str,
+    trainset: list[dspy.Example],
+    valset: list[dspy.Example],
+    prompt_model: dspy.LM,
+    task_model: dspy.LM,
+    log_dir: str,
+) -> dict:
+    """Run one optimizer. Returns metadata + optimized module."""
+
+    logger.info(f"  Running {optimizer_name.upper()}...")
+
+    student = build_student(seed_instruction)
     optimizer, compile_kwargs = create_optimizer(
-        optimizer_name, task_model, prompt_model, log_dir
+        optimizer_name, prompt_model, task_model, log_dir
     )
 
-    # Run optimization
     try:
-        compile_args = {"trainset": trainset, **compile_kwargs}
-        if optimizer_name == "gepa":
-            compile_args["valset"] = valset
+        # GEPA and MIPROv2 accept valset; COPRO does not
+        if optimizer_name in ("gepa", "miprov2"):
+            optimized = optimizer.compile(
+                student, trainset=trainset, valset=valset, **compile_kwargs
+            )
+        else:
+            optimized = optimizer.compile(student, trainset=trainset, **compile_kwargs)
 
-        optimized = optimizer.compile(student, **compile_args)
-
-        # Extract the optimized instruction
         optimized_instruction = optimized.generate.signature.instructions
-        logger.info(
-            f"  Done. Optimized instruction:\n    {optimized_instruction[:200]}..."
-        )
+        logger.info(f"  {optimizer_name.upper()} done.")
+        logger.info(f"  Instruction: {optimized_instruction[:150]}...")
 
         return {
             "optimizer": optimizer_name,
-            "seed_name": seed_name,
-            "seed_instruction": seed_instruction,
             "optimized_instruction": optimized_instruction,
             "optimized_module": optimized,
             "status": "success",
         }
 
     except Exception as e:
-        logger.error(f"  Optimization failed: {e}", exc_info=True)
+        logger.error(f"  {optimizer_name.upper()} failed: {e}", exc_info=True)
         return {
             "optimizer": optimizer_name,
-            "seed_name": seed_name,
-            "seed_instruction": seed_instruction,
-            "optimized_instruction": seed_instruction,  # fallback
-            "optimized_module": student,
+            "optimized_instruction": seed_instruction,
+            "optimized_module": build_student(seed_instruction),
             "status": f"failed: {str(e)}",
         }
 
@@ -534,47 +520,37 @@ def run_single_optimization(
 # ============================================================================
 
 
-def evaluate_instruction(
-    instruction: str,
+def evaluate_module(
+    module: SpecSynthesizer,
     testset: list[dspy.Example],
     label: str,
+    num_threads: int = DEFAULT_NUM_THREADS,
 ) -> dict:
-    """Evaluate a single instruction on the test set."""
-    module = SpecSynthesizer()
-    module.generate.signature = module.generate.signature.with_instructions(instruction)
-    module.generate.demos = list(DEMO_EXAMPLES)
+    """Evaluate a module on a test set using binary pass/fail."""
+    evaluator = dspy.Evaluate(
+        devset=testset,
+        metric=spec_metric_binary,
+        num_threads=num_threads,
+        display_progress=True,
+        provide_traceback=True,
+    )
+    result = evaluator(module)
+    score = getattr(result, "score", None)
+    if score is None:
+        score = getattr(result, "avg", None)
+    if score is None:
+        score = getattr(result, "average", None)
+    if score is None and isinstance(result, (int, float)):
+        score = float(result)
+    if score is None:
+        metrics = getattr(result, "metrics", None)
+        if isinstance(metrics, dict):
+            score = metrics.get("score") or metrics.get("avg") or metrics.get("average")
+    if score is None:
+        raise TypeError(f"Unexpected evaluation result type: {type(result).__name__}")
 
-    passed = 0
-    total = len(testset)
-    per_category: dict[str, dict] = {}
-
-    for ex in testset:
-        category = getattr(ex, "category", "unknown")
-        if category not in per_category:
-            per_category[category] = {"passed": 0, "total": 0}
-        per_category[category]["total"] += 1
-
-        try:
-            pred = module(java_program=ex.java_program)
-            score = spec_metric_binary(ex, pred)
-            if score >= 1.0:
-                passed += 1
-                per_category[category]["passed"] += 1
-        except Exception as e:
-            logger.debug(f"  Eval error for {getattr(ex, 'task_id', '?')}: {e}")
-
-    rate = passed / total if total > 0 else 0.0
-    logger.info(f"  [{label:<45}] {passed:>4}/{total} = {rate:.2%}")
-
-    return {
-        "passed": passed,
-        "total": total,
-        "success_rate": rate,
-        "per_category": {
-            cat: {**v, "rate": v["passed"] / v["total"] if v["total"] > 0 else 0.0}
-            for cat, v in per_category.items()
-        },
-    }
+    logger.info(f"  [{label:<45}] {score:.2%}")
+    return {"success_rate": score}
 
 
 # ============================================================================
@@ -583,159 +559,176 @@ def evaluate_instruction(
 
 
 def run_experiment(args):
+    global OPENJML_OUTPUT_DIR
+    # --- Load API keys ---
+    load_dotenv(dotenv_path=args.env_path)
+
+    OPENJML_OUTPUT_DIR = args.openjml_output_dir
 
     # --- Configure DSPy ---
-    task_lm = dspy.LM(
-        model=args.model,
-        temperature=0.7,
-        max_tokens=2048,
-        api_key=os.getenv("OPENAI_API_KEY"),
-    )
-    prompt_lm = dspy.LM(
-        model=args.reflection_model,
-        temperature=1.0,
-        max_tokens=4096,
-        api_key=os.getenv("OPENAI_API_KEY"),
-    )
+    task_lm = dspy.LM(model=args.model, temperature=0.7, max_tokens=8192)
+    prompt_lm = dspy.LM(model=args.reflection_model, temperature=0.7, max_tokens=8192)
+    dspy.configure_cache(enable_disk_cache=False, enable_memory_cache=True)
     dspy.configure(lm=task_lm)
 
-    # --- Load benchmark ---
-    tasks = load_tasks(args.benchmark_path)
-    logger.info(f"Loaded {len(tasks)} tasks from {args.benchmark_path}")
-
-    # --- Train / test split ---
-    if len(tasks) == 662:
-        train_tasks, val_tasks, test_tasks = stratified_split_tasks(
-            tasks, seed=args.seed
+    # --- Validate seed ---
+    if args.best_seed not in SEED_PROMPTS:
+        raise ValueError(
+            f"Unknown seed '{args.best_seed}'. Options: {list(SEED_PROMPTS.keys())}"
         )
-    else:
-        random.seed(args.seed)
-        random.shuffle(tasks)
+    seed_instruction = SEED_PROMPTS[args.best_seed]
+    logger.info(f"Best seed: {args.best_seed}")
 
-        split_idx = int(len(tasks) * 0.7)
-        train_tasks = tasks[:split_idx]
-        test_tasks = tasks[split_idx:]
-        val_tasks = []
+    # --- Load benchmarks ---
+    fb_tasks = load_tasks(args.formalbench_path)
+    sgb_tasks_raw = load_tasks(args.specgenbench_path)
 
-    trainset = tasks_to_dspy_examples(train_tasks)
-    valset = tasks_to_dspy_examples(val_tasks)
-    testset = tasks_to_dspy_examples(test_tasks)
+    # Exclude demo tasks from SpecGenBench to prevent leakage
+    sgb_tasks = [t for t in sgb_tasks_raw if t.task_id not in DEMO_TASK_IDS]
+    n_excluded = len(sgb_tasks_raw) - len(sgb_tasks)
+    assert n_excluded == 2, (
+        f"Expected to exclude 2 demo tasks, but excluded {n_excluded}. "
+        f"Check that DEMO_TASK_IDS match your SpecGenBench task_ids."
+    )
+    logger.info(f"FormalBench: {len(fb_tasks)} tasks")
+    logger.info(
+        f"SpecGenBench: {len(sgb_tasks)} tasks ({n_excluded} demo tasks excluded)"
+    )
 
-    logger.info(f"  Train: {len(trainset)} | Val: {len(valset)} | Test: {len(testset)}")
+    # --- Stratified split of FormalBench ---
+    fb_train, fb_val, fb_test = stratified_split(
+        fb_tasks,
+        train_size=args.train_size,
+        val_size=args.val_size,
+        seed=args.seed,
+    )
 
-    # --- Determine which seeds to run ---
-    seed_names = [s.strip() for s in args.seeds.split(",")]
-    for s in seed_names:
-        if s not in SEED_PROMPTS:
-            raise ValueError(
-                f"Unknown seed '{s}'. Options: {list(SEED_PROMPTS.keys())}"
-            )
+    trainset = tasks_to_dspy_examples(fb_train)
+    valset = tasks_to_dspy_examples(fb_val)
+    fb_testset = tasks_to_dspy_examples(fb_test)
+    sgb_testset = tasks_to_dspy_examples(sgb_tasks)
 
+    logger.info(f"  FormalBench train: {len(trainset)}")
+    logger.info(f"  FormalBench val:   {len(valset)}")
+    logger.info(f"  FormalBench test:  {len(fb_testset)}")
+    logger.info(f"  SpecGenBench test: {len(sgb_testset)}")
+
+    # --- Log category distribution ---
+    for split_name, split in [("train", fb_train), ("val", fb_val), ("test", fb_test)]:
+        cats = defaultdict(int)
+        for t in split:
+            cats[t.category] += 1
+        logger.info(f"  {split_name} categories: {dict(cats)}")
+
+    # --- Run 3 optimizers from best seed ---
     optimizer_names = [o.strip() for o in args.optimizers.split(",")]
     for o in optimizer_names:
         if o not in ("copro", "miprov2", "gepa"):
             raise ValueError(f"Unknown optimizer '{o}'. Use copro/miprov2/gepa.")
+    results = {}
 
-    # --- Run optimizations ---
-    all_results = []
+    print(f"\n{'='*65}")
+    print(f" Optimizer Comparison (seed={args.best_seed})")
+    print(f"{'='*65}\n")
+
     for opt_name in optimizer_names:
-        for seed_name in seed_names:
-            result = run_single_optimization(
-                optimizer_name=opt_name,
-                seed_name=seed_name,
-                seed_instruction=SEED_PROMPTS[seed_name],
-                trainset=trainset,
-                valset=valset,
-                task_model=task_lm,
-                prompt_model=prompt_lm,
-                log_dir=str(Path(args.log_dir) / opt_name / seed_name),
-            )
-            all_results.append(result)
-
-    # --- Evaluate on held-out test set ---
-    logger.info(f"\n{'='*60}")
-    logger.info(f"  Test Set Evaluation ({len(testset)} programs)")
-    logger.info(f"{'='*60}")
-
-    # Evaluate optimized prompts
-    optimized_eval = {}
-    for r in all_results:
-        label = f">> {r['optimizer'].upper()} (seed={r['seed_name']})"
-        key = f"{r['optimizer']}_{r['seed_name']}"
-        optimized_eval[key] = evaluate_instruction(
-            r["optimized_instruction"], testset, label
+        results[opt_name] = run_optimization(
+            optimizer_name=opt_name,
+            seed_instruction=seed_instruction,
+            trainset=trainset,
+            valset=valset,
+            prompt_model=prompt_lm,
+            task_model=task_lm,
+            log_dir=os.path.join(args.log_dir, opt_name),
         )
-        optimized_eval[key]["optimized_instruction"] = r["optimized_instruction"]
-        optimized_eval[key]["status"] = r["status"]
 
-    logger.info(f"  {'-'*60}")
+    # --- Evaluate on held-out test sets ---
+    print(f"\n{'='*65}")
+    print(f"  Final Evaluation (binary pass/fail)")
+    print(f"{'='*65}\n")
 
-    # Evaluate all 11 original baselines
-    baseline_eval = {}
-    for name, instruction in SEED_PROMPTS.items():
-        baseline_eval[name] = evaluate_instruction(instruction, testset, name)
+    eval_results = {}
+
+    # 1. Baseline (original prompt, no optimization)
+    baseline_module = build_student(seed_instruction)
+
+    print(f"  --- FormalBench Test ({len(fb_testset)} tasks) ---")
+    eval_results["baseline_fb"] = evaluate_module(
+        baseline_module, fb_testset, f"Baseline ({args.best_seed})"
+    )
+    for opt_name, r in results.items():
+        eval_results[f"{opt_name}_fb"] = evaluate_module(
+            r["optimized_module"], fb_testset, f"{opt_name.upper()} optimized"
+        )
+
+    print(f"\n  --- SpecGenBench ({len(sgb_testset)} tasks) ---")
+    eval_results["baseline_sgb"] = evaluate_module(
+        baseline_module, sgb_testset, f"Baseline ({args.best_seed})"
+    )
+    for opt_name, r in results.items():
+        eval_results[f"{opt_name}_sgb"] = evaluate_module(
+            r["optimized_module"], sgb_testset, f"{opt_name.upper()} optimized"
+        )
 
     # --- Save results ---
     output = {
-        "optimized": {
-            k: {kk: vv for kk, vv in v.items() if kk != "per_category"}
-            for k, v in optimized_eval.items()
+        "seed": args.best_seed,
+        "seed_instruction": seed_instruction,
+        "optimizers": {
+            opt_name: {
+                "optimized_instruction": r["optimized_instruction"],
+                "status": r["status"],
+                "formalbench_test": eval_results[f"{opt_name}_fb"],
+                "specgenbench_test": eval_results[f"{opt_name}_sgb"],
+            }
+            for opt_name, r in results.items()
         },
-        "optimized_per_category": {
-            k: v.get("per_category", {}) for k, v in optimized_eval.items()
-        },
-        "baselines": {
-            k: {kk: vv for kk, vv in v.items() if kk != "per_category"}
-            for k, v in baseline_eval.items()
-        },
-        "baselines_per_category": {
-            k: v.get("per_category", {}) for k, v in baseline_eval.items()
+        "baseline": {
+            "formalbench_test": eval_results["baseline_fb"],
+            "specgenbench_test": eval_results["baseline_sgb"],
         },
         "config": {
             "model": args.model,
             "reflection_model": args.reflection_model,
-            "optimizers": optimizer_names,
-            "seeds": seed_names,
-            "random_seed": args.seed,
             "train_size": len(trainset),
             "val_size": len(valset),
-            "test_size": len(testset),
+            "formalbench_test_size": len(fb_testset),
+            "specgenbench_test_size": len(sgb_testset),
+            "random_seed": args.seed,
         },
     }
 
-    output_path = Path(args.output_dir) / "prompt_optimizer_results.json"
+    output_path = Path(args.output_dir) / "optimizer_results.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
 
-    # --- Print summary table ---
-    print(f"\n{'='*70}")
-    print(f"  Optimization Summary")
-    print(f"{'='*70}")
-    print(f"\n  {'Approach':<45} {'Passed':>7} {'Total':>7} {'Rate':>9}")
-    print(f"  {'-'*68}")
-
-    # Optimized results (sorted by rate)
-    sorted_opt = sorted(
-        optimized_eval.items(), key=lambda x: x[1]["success_rate"], reverse=True
+    # --- Summary table ---
+    print(f"\n{'='*65}")
+    print(f" Results Summary (seed={args.best_seed})")
+    print(f"{'='*65}")
+    print(f"\n  {'Approach':<25} {'FormalBench':>15} {'SpecGenBench':>15}")
+    print(f"  {'-'*55}")
+    print(
+        f"  {'Baseline':<25} "
+        f"{eval_results['baseline_fb']['success_rate']:>14.2%} "
+        f"{eval_results['baseline_sgb']['success_rate']:>14.2%}"
     )
-    for key, r in sorted_opt:
+    for opt_name in optimizer_names:
         print(
-            f"  >> {key:<41} {r['passed']:>7} {r['total']:>7} {r['success_rate']:>9.2%}"
-        )
-
-    print(f"  {'-'*68}")
-
-    # Baselines (sorted by rate)
-    sorted_base = sorted(
-        baseline_eval.items(), key=lambda x: x[1]["success_rate"], reverse=True
-    )
-    for name, r in sorted_base:
-        print(
-            f"  {name:<45} {r['passed']:>7} {r['total']:>7} {r['success_rate']:>9.2%}"
+            f"  {'+ ' + opt_name.upper():<25} "
+            f"{eval_results[f'{opt_name}_fb']['success_rate']:>14.2%} "
+            f"{eval_results[f'{opt_name}_sgb']['success_rate']:>14.2%}"
         )
 
     print(f"\n  Results saved to: {output_path}\n")
+
+    # --- Save optimized modules for reuse ---
+    for opt_name, r in results.items():
+        if r["status"] == "success":
+            module_path = Path(args.output_dir) / f"optimized_{opt_name}.json"
+            r["optimized_module"].save(str(module_path))
+            logger.info(f"  Saved {opt_name} module to {module_path}")
 
 
 # ============================================================================
@@ -744,19 +737,37 @@ def run_experiment(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Prompt Optimization Comparison (COPRO vs MIPROv2 vs GEPA)"
+        description="Optimizer Comparison for Formal Spec Synthesis"
     )
     parser.add_argument(
-        "--benchmark_path",
+        "--formalbench_path",
         type=str,
         required=True,
-        help="Path to benchmark JSON file (list of Task dicts)",
+        help="Path to FormalBench tasks JSON",
+    )
+    parser.add_argument(
+        "--specgenbench_path",
+        type=str,
+        required=True,
+        help="Path to SpecGenBench tasks JSON (fully held out)",
+    )
+    parser.add_argument(
+        "--best_seed",
+        type=str,
+        default="formalbench_ltm",
+        help="Seed prompt name from (zero/cot/ltm)",
+    )
+    parser.add_argument(
+        "--optimizers",
+        type=str,
+        default="copro,miprov2,gepa",
+        help="Comma-separated optimizers to run (copro,miprov2,gepa)",
     )
     parser.add_argument(
         "--model",
         type=str,
         default="openai/gpt-4o",
-        help="Target LLM for spec generation (DSPy model string)",
+        help="Target LLM for spec generation",
     )
     parser.add_argument(
         "--reflection_model",
@@ -765,34 +776,43 @@ if __name__ == "__main__":
         help="Strong LLM for GEPA reflection / MIPROv2 proposals",
     )
     parser.add_argument(
-        "--optimizers",
-        type=str,
-        default="copro,miprov2,gepa",
-        help="Comma-separated optimizer names to run",
+        "--train_size",
+        type=int,
+        default=100,
+        help="Number of FormalBench tasks for optimization training",
     )
     parser.add_argument(
-        "--seeds",
-        type=str,
-        default="specgen_4shot,autospec_2shot,formalbench_0shot",
-        help="Comma-separated seed prompt names (best,mid,worst from RQ1)",
+        "--val_size",
+        type=int,
+        default=50,
+        help="Number of FormalBench tasks for optimization validation",
     )
     parser.add_argument(
         "--seed",
         type=int,
         default=42,
-        help="Random seed for reproducibility",
+    )
+    parser.add_argument(
+        "--env_path",
+        type=str,
+        default="config/.env",
+        help="Path to .env file with API keys",
     )
     parser.add_argument(
         "--log_dir",
         type=str,
-        default="./prompt_optimizer_logs",
-        help="Directory for optimizer logs",
+        default="./optimizer_logs",
     )
     parser.add_argument(
         "--output_dir",
         type=str,
-        default="./prompt_optimizer_results",
-        help="Directory for final results JSON",
+        default="./optimizer_results",
+    )
+    parser.add_argument(
+        "--openjml_output_dir",
+        type=str,
+        default=None,
+        help="Directory for OpenJML temp files (defaults to per-run temp dir)",
     )
     args = parser.parse_args()
     run_experiment(args)

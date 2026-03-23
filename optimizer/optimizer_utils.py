@@ -4,13 +4,15 @@ import re
 import signal
 import subprocess
 import tempfile
+import uuid
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
-logger = logging.getLogger("optimizer_utils")
+logger = logging.getLogger("prompt_optimizer")
+
 
 # ============================================================================
-# 1. TASK SCHEMA (from your benchmark)
+# 1. TASK SCHEMA
 # ============================================================================
 
 
@@ -56,7 +58,7 @@ class Task:
 
 
 # ============================================================================
-# 2. ERROR CLASSIFICATION (from your error_utils.py)
+# 2. ERROR CLASSIFICATION
 # ============================================================================
 
 
@@ -113,8 +115,8 @@ def verification_failure_map(error_message: str) -> str:
         ("UndefinedNullUnbox", "NullUnbox"),
         ("PossiblyLargeShift", "LargeShift"),
     ]
-    for pattern, failure_type in mapping:
-        if pattern in error_message:
+    for pat, failure_type in mapping:
+        if pat in error_message:
             return failure_type
     return "UnknownVerificationFailure"
 
@@ -150,12 +152,13 @@ def write_to_file(content: str, filepath: str) -> None:
 def verify_with_openjml(
     code_with_spec: str,
     classname: str,
-    timeout: int = 300,
-    output_dir: Optional[str] = None,
+    timeout: int = 180,
+    output_dir: str = "tmp/openjml_results",
 ) -> VerificationResult:
-    """Run OpenJML ESC verification and classify errors."""
-    if output_dir is None:
-        output_dir = tempfile.mkdtemp()
+
+    run_id = uuid.uuid4().hex
+    output_dir = os.path.join(output_dir, f"prompt_optimize_{run_id}")
+    os.makedirs(output_dir, exist_ok=True)
 
     tmp_filename = os.path.join(output_dir, f"{classname}.java")
     write_to_file(code_with_spec, tmp_filename)
@@ -184,41 +187,34 @@ def verify_with_openjml(
         stdout, stderr = proc.communicate(timeout=timeout)
         raw_output = stdout + stderr
         return_code = proc.returncode
+        return return_verification_result(raw_output, return_code)
     except subprocess.TimeoutExpired:
         raw_output = "Timeout: OpenJML verification exceeded time limit"
         return_code = 1
+        return return_verification_result(raw_output, return_code)
     except Exception as e:
         raw_output = f"Error: {str(e)}"
         return_code = 1
+        return return_verification_result(raw_output, return_code)
     finally:
         try:
             os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
         except ProcessLookupError:
             pass
 
-    # Classify errors
+
+def return_verification_result(raw_output: str, return_code: int) -> VerificationResult:
     classified_errors = []
     if return_code != 0 and raw_output.strip():
         try:
             errors = extract_errors(raw_output)
             for error_level, error_msg in errors:
                 error_type = classify_failures(error_level, error_msg)
-                classified_errors.append(
-                    {
-                        "type": error_type,
-                        "raw": error_msg[:500],
-                    }
-                )
+                classified_errors.append({"type": error_type, "raw": error_msg[:500]})
         except Exception:
-            classified_errors.append(
-                {
-                    "type": "ParseError",
-                    "raw": raw_output[:500],
-                }
-            )
+            classified_errors.append({"type": "ParseError", "raw": raw_output[:500]})
 
     success = return_code == 0 and len(classified_errors) == 0
-
     return VerificationResult(
         success=success,
         error_log=raw_output,
@@ -228,19 +224,48 @@ def verify_with_openjml(
 
 
 # ============================================================================
-# 4. HELPERS
+# 4. GRADUATED SCORING
+# ============================================================================
+
+
+def compute_graduated_score(result: VerificationResult) -> float:
+    """
+    Graduated scoring for optimization. Gives the optimizer a gradient.
+
+        1.0  - Verification passes
+        0.3  - 1 verification error (almost correct)
+        0.1  - 2+ verification errors (valid JML, semantically wrong)
+        0.0  - Syntax error or empty output
+    """
+    if result.success:
+        return 1.0
+    if not result.classified_errors:
+        return 0.0
+
+    syntax_errors = [e for e in result.classified_errors if e["type"] == "SyntaxError"]
+    verification_errors = [
+        e for e in result.classified_errors if e["type"] != "SyntaxError"
+    ]
+
+    if syntax_errors:
+        return 0.0
+    if len(verification_errors) == 1:
+        return 0.3
+    return 0.1
+
+
+# ============================================================================
+# 5. HELPERS
 # ============================================================================
 
 
 def clean_code_fences(text: str) -> str:
-    """Remove markdown code fences from LLM output."""
     text = re.sub(r"```java\s*\n?", "", text)
     text = re.sub(r"```\s*$", "", text)
     return text.strip()
 
 
 def format_error_feedback(result: VerificationResult, task_id: str) -> str:
-    """Format classified errors as structured feedback for GEPA reflection."""
     if result.success:
         return f"[PASS] Task '{task_id}': Specification verified by OpenJML."
 
@@ -263,48 +288,9 @@ def format_error_feedback(result: VerificationResult, task_id: str) -> str:
         f"--- Fix Guidance ---\n"
         f"SyntaxError: Fix JML syntax (missing semicolons, wrong keywords).\n"
         f"PostconditionFailure: The @ensures clause is logically incorrect.\n"
-        f"LoopInvariantFailure: The @maintaining clause doesn't hold at loop entry or is not preserved.\n"
-        f"RankingFunctionFailure: The @decreases expression is wrong or not non-negative.\n"
+        f"LoopInvariantFailure: The @maintaining clause doesn't hold.\n"
+        f"RankingFunctionFailure: The @decreases expression is wrong.\n"
         f"ArrayIndex: Missing array bounds check in @requires.\n"
         f"NullDeReference: Missing null check in @requires.\n"
         f"ArithmeticOperationRange: Integer overflow not guarded."
     )
-
-
-# ============================================================================
-# 5. GRADUATED SCORING
-# ============================================================================
-
-
-def compute_graduated_score(result: VerificationResult) -> float:
-    """
-    Graduated scoring based on error classification.
-    Gives the optimizer a gradient to climb instead of sparse binary signal.
-
-    Scoring:
-        1.0  — Verification passes (correct spec)
-        0.3  — 1 verification error (almost correct, e.g., one wrong postcondition)
-        0.1  — 2+ verification errors (structurally valid JML, semantically wrong)
-        0.0  — Syntax error or empty output (LLM didn't produce valid JML)
-    """
-    if result.success:
-        return 1.0
-
-    if not result.classified_errors:
-        return 0.0
-
-    # Separate syntax errors from verification failures
-    syntax_errors = [e for e in result.classified_errors if e["type"] == "SyntaxError"]
-    verification_errors = [
-        e for e in result.classified_errors if e["type"] != "SyntaxError"
-    ]
-
-    # Any syntax error → 0.0 (spec is not even valid JML)
-    if syntax_errors:
-        return 0.0
-
-    # Only verification failures from here
-    if len(verification_errors) == 1:
-        return 0.3  # almost correct
-    else:
-        return 0.1  # structurally ok, semantically wrong
