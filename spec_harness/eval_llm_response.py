@@ -1,6 +1,4 @@
 """
-eval_spec_with_model_benchmark_response.py
--------------------------------------------
 Batch-evaluate LLM-generated JML annotations from a JSONL response file
 against a benchmark JSON, with two levels of threading:
 
@@ -56,9 +54,8 @@ from eval_spec import (
 )
 
 
-# ============================================================
 # Data classes
-# ============================================================
+
 
 
 @dataclass
@@ -123,9 +120,9 @@ class LLMResponse:
         )
 
 
-# ============================================================
+
 # Loaders
-# ============================================================
+
 
 
 def load_benchmark(benchmark_path: str) -> dict[str, Task]:
@@ -149,10 +146,8 @@ def load_verified_responses(jsonl_path: str) -> list[LLMResponse]:
     return responses
 
 
-# ============================================================
-# OpenJML runner — writes stubs to a persistent directory
-# ============================================================
 
+# OpenJML runner — writes stubs to a persistent directory
 
 class OpenJMLRunnerPersistent:
     """Runs OpenJML ESC, writing harness stubs to an actual directory."""
@@ -199,16 +194,16 @@ class OpenJMLRunnerPersistent:
             preexec_fn=os.setsid,
         )
         try:
-            returncode = proc.returncode
             stdout, stderr = proc.communicate(timeout=self.timeout)
+            returncode = proc.returncode
             out = stdout + stderr
             return self._parse(returncode, out), out
         except subprocess.TimeoutExpired:
             return VerifyResult.UNKNOWN, "timeout"
-        except Exception as e:
-            return VerifyResult.UNKNOWN, f"Error: {str(e)}"
         except FileNotFoundError:
             raise RuntimeError(f"OpenJML binary not found at '{self.openjml_path}'.")
+        except Exception as e:
+            return VerifyResult.UNKNOWN, f"Error: {str(e)}"
         finally:
             try:
                 os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
@@ -229,11 +224,8 @@ class OpenJMLRunnerPersistent:
         return VerifyResult.UNKNOWN
 
 
-# ============================================================
+
 # Per-pair result — returned by each inner thread
-# ============================================================
-
-
 @dataclass
 class PairResult:
     """All 4 metric results for a single test pair."""
@@ -249,10 +241,8 @@ class PairResult:
     pre_complete_details: list[dict] = field(default_factory=list)
 
 
-# ============================================================
-# Inner thread: compute all 4 metrics for one test pair
-# ============================================================
 
+# Inner thread: compute all 4 metrics for one test pair
 
 def _evaluate_one_pair(
     pair_idx: int,
@@ -273,7 +263,7 @@ def _evaluate_one_pair(
     """Compute all 4 metrics for a single test pair in its own thread."""
     result = PairResult(pair_idx=pair_idx)
 
-    # ---- PostCorrectness ---------------------------------------------------
+    # PostCorrectness
     if spec.postcondition is not None:
         stub = builder.post_correctness_stub(parsed, spec, pair)
         verdict, _ = runner.verify(stub, cname, f"post_correct_{pair.label}")
@@ -286,7 +276,7 @@ def _evaluate_one_pair(
         }
         _log(verbose, task_id, "PostCorrectness", pair.label, verdict, ok)
 
-    # ---- PostCompleteness --------------------------------------------------
+    # PostCompleteness
     if spec.postcondition is not None:
         for mut_out in mutator.mutate(rtype, pair.output):
             stub = builder.post_completeness_stub(parsed, spec, pair, mut_out)
@@ -312,7 +302,7 @@ def _evaluate_one_pair(
                 f"mutant={mut_out}",
             )
 
-    # ---- PreCorrectness ----------------------------------------------------
+    # PreCorrectness
     if spec.precondition is not None:
         stub = builder.pre_correctness_stub(
             parsed, spec, valid_input_case, original_source=java_source
@@ -327,7 +317,7 @@ def _evaluate_one_pair(
         }
         _log(verbose, task_id, "PreCorrectness", valid_input_case.label, verdict, ok)
 
-    # ---- PreCompleteness ---------------------------------------------------
+    # PreCompleteness
     if spec.precondition is not None:
         for case in invalid_cases:
             stub = builder.pre_completeness_stub(
@@ -348,10 +338,8 @@ def _evaluate_one_pair(
     return result
 
 
-# ============================================================
-# Main evaluation — one thread per test pair
-# ============================================================
 
+# Main evaluation — one thread per test pair
 
 def evaluate_problem(
     task: Task,
@@ -378,26 +366,22 @@ def evaluate_problem(
         if remaining > 0:
             io_pairs.extend(io_pairs_gen[:remaining])
 
-    # ---- parse method signature from benchmark Solution.java ---------------
+    # parse method signature from benchmark Solution.java 
     parser = JavaMethodParser()
     bench_parsed = parser.parse(solution_src)
     bench_params = bench_parsed["params"]
     return_type = bench_parsed["return_type"]
 
-    # ---- extract JML spec from LLM code ------------------------------------
+    # extract JML spec from LLM code 
     spec = extract_jml_spec(llm_code)
-    # if spec.precondition is None and spec.postcondition is None:
-    #     print(
-    #         f"WARNING [{task.task_id}]: no JML requires/ensures found", file=sys.stderr
-    #     )
-    # ---- extract JML spec from LLM code ------------------------------------
+    # extract JML spec from LLM code 
     spec = extract_jml_spec(llm_code)
     if spec.postcondition is None: # preconditions are optional, but postconditions are required
         print(
             f"WARNING [{task.task_id}]: no JML ensures found", file=sys.stderr
         )
 
-    # ---- parse LLM method signature ----------------------------------------
+    # ---- parse LLM method signature ----
     try:
         llm_parsed = parser.parse(llm_code)
         llm_params = llm_parsed["params"]
@@ -405,10 +389,10 @@ def evaluate_problem(
         llm_parsed = bench_parsed
         llm_params = bench_params
 
-    # ---- detect input format from Test.java --------------------------------
+    # detect input format from Test.java
     read_ops = detect_input_format(test_src, bench_params)
 
-    # ---- parse io_pairs into TestPair / InputCase objects -------------------
+    # parse io_pairs into TestPair / InputCase objects
     test_pairs: list[TestPair] = []
     valid_inputs: list[dict] = []
 
@@ -435,11 +419,11 @@ def evaluate_problem(
         print(f"ERROR [{task.task_id}]: no test pairs could be parsed", file=sys.stderr)
         return {}
 
-    # ---- build InputCases for Pre metrics ----------------------------------
+    # build InputCases for Pre metrics
     valid_input_cases = [InputCase(tp.inputs, True, tp.label) for tp in test_pairs]
     invalid_input_cases = generate_invalid_inputs(llm_params, valid_inputs)
 
-    # ---- setup -------------------------------------------------------------
+    # setup
     builder = StubBuilder()
     mutator = OutputMutator(k=5)
     parsed = llm_parsed
@@ -450,12 +434,12 @@ def evaluate_problem(
     stubs_dir = os.path.join(output_dir, "stubs", safe_task_id)
     runner = OpenJMLRunnerPersistent(openjml_path, stubs_dir)
 
-    # ---- distribute invalid cases round-robin across test pairs ------------
+    # distribute invalid cases round-robin across test pairs 
     invalid_per_pair: list[list[InputCase]] = [[] for _ in test_pairs]
     for i, ic in enumerate(invalid_input_cases):
         invalid_per_pair[i % len(test_pairs)].append(ic)
 
-    # ---- launch one thread per test pair -----------------------------------
+    # launch one thread per test pair
     n_threads = len(test_pairs)
     pair_results: list[PairResult] = [None] * n_threads  # type: ignore
 
@@ -487,7 +471,7 @@ def evaluate_problem(
             except Exception as e:
                 print(f"ERROR [{task.task_id}] pair {idx}: {e}", file=sys.stderr)
 
-    # ---- aggregate PairResults into HarnessResults -------------------------
+    # aggregate PairResults into HarnessResults
     pc_details: list[dict] = []
     pcl_details: list[dict] = []
     prc_details: list[dict] = []
@@ -529,7 +513,7 @@ def evaluate_problem(
     hr.details = prl_details
     results["pre_completeness"] = hr
 
-    # ---- summary -----------------------------------------------------------
+    # summary
     sep = "=" * 60
     print(f"\n{sep}")
     print(
@@ -541,7 +525,7 @@ def evaluate_problem(
         print(f"  {r}")
     print(sep)
 
-    # ---- build output dict -------------------------------------------------
+    # build output dict 
     output: dict[str, Any] = {"task_id": task.task_id}
     for k, v in results.items():
         output[k] = {
@@ -569,10 +553,8 @@ def _log(
     print(f"  [{task_id}] [{metric:20s}] {label}{ex}" f"  →  {verdict.value}  {status}")
 
 
-# ============================================================
-# Outer-level batch processing with threading
-# ============================================================
 
+# Outer-level batch processing with threading
 
 def process_one(
     task: Task,
@@ -682,7 +664,7 @@ def run_batch(
                 except Exception as e:
                     print(f"ERROR [{tid}]: {e}", file=sys.stderr)
 
-    # ---- write summary -----------------------------------------------------
+    # write summary 
     summary = {
         "total_evaluated": len(all_results),
         "total_verified_responses": len(responses),
@@ -710,10 +692,8 @@ def run_batch(
     return all_results
 
 
-# ============================================================
-# CLI
-# ============================================================
 
+# CLI
 
 def main():
     ap = argparse.ArgumentParser(
