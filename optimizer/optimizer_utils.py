@@ -3,17 +3,12 @@ import os
 import re
 import signal
 import subprocess
-import tempfile
 import uuid
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
 logger = logging.getLogger("prompt_optimizer")
 
-
-# ============================================================================
-# 1. TASK SCHEMA
-# ============================================================================
 
 
 @dataclass
@@ -56,10 +51,6 @@ class Task:
             ],
         )
 
-
-# ============================================================================
-# 2. ERROR CLASSIFICATION
-# ============================================================================
 
 
 def extract_errors(error_message: str) -> list[tuple[str, str]]:
@@ -128,11 +119,6 @@ def classify_failures(error_level: str, error_message: str) -> str:
         return verification_failure_map(error_message)
     else:
         return "UnknownError"
-
-
-# ============================================================================
-# 3. OPENJML VERIFICATION
-# ============================================================================
 
 
 @dataclass
@@ -223,10 +209,6 @@ def return_verification_result(raw_output: str, return_code: int) -> Verificatio
     )
 
 
-# ============================================================================
-# 4. GRADUATED SCORING
-# ============================================================================
-
 
 def compute_graduated_score(result: VerificationResult) -> float:
     """
@@ -252,11 +234,6 @@ def compute_graduated_score(result: VerificationResult) -> float:
     if len(verification_errors) == 1:
         return 0.3
     return 0.1
-
-
-# ============================================================================
-# 5. HELPERS
-# ============================================================================
 
 
 def clean_code_fences(text: str) -> str:

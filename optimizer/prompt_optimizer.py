@@ -1,9 +1,4 @@
-"""
-Prompt Optimization Comparison for Formal Specification Synthesis
-======================================================================
-
-Compares COPRO vs MIPROv2 vs GEPA on optimizing the best-performing
-instruction prompt from baselines.
+"""Prompt Optimizer for Formal Specification Synthesis
 
 Design:
     - Optimize on FormalBench train (100 tasks, stratified by category)
@@ -16,8 +11,8 @@ Setup:
 
 Usage:
     python prompt_optimizer.py \
-        --formalbench_path ./data/formalbench_tasks.json \
-        --specgenbench_path ./data/specgenbench_tasks.json \
+        --formalbench_path /path/benchmarks/formalbench/fb.json \
+        --specgenbench_path /path/benchmarks/specgenbench/sgb.json\
         --best_seed zero \
         --model openai/gpt-4o \
         --reflection_model openai/gpt-4o
@@ -42,7 +37,7 @@ from optimizer.optimizer_utils import (
     clean_code_fences,
     format_error_feedback,
 )
-import baselines.utils.config
+import config
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,12 +49,7 @@ DEFAULT_NUM_THREADS = 8
 OPENJML_OUTPUT_DIR: str | None = None
 
 
-# ============================================================================
-# 1. SEED PROMPTS — 4 unique instructions from SpecGen + FormalBench
-# ============================================================================
-# Extracted from the actual prompt JSON files.
-# System message + user template guidance merged into one instruction.
-# Set --best_seed to whichever performed best accross the baselinse
+# 1. SEED PROMPTS —
 
 SEED_PROMPTS: dict[str, str] = {
     "zero": (
@@ -90,9 +80,7 @@ SEED_PROMPTS: dict[str, str] = {
 }
 
 
-# ============================================================================
-# 2. FIXED 2-SHOT DEMOS — from SpecGenBench with verified ground-truth specs
-# ============================================================================
+# FIXED 2-SHOT DEMOS — from SpecGenBench with verified ground-truth specs
 # These 2 tasks are excluded from SpecGenBench evaluation to prevent leakage.
 # Demo 1: Smallest element (sequential + loop)
 # Demo 2: Binary search (branched + loop)
@@ -207,10 +195,8 @@ DEMO_EXAMPLES = [
 ]
 
 
-# ============================================================================
-# 3. DSPy SIGNATURE & MODULE
-# ============================================================================
 
+# DSPy SIGNATURE & MODULE
 
 class GenerateJMLSpec(dspy.Signature):
     """Generate JML specifications for a Java program.
@@ -234,10 +220,8 @@ class SpecSynthesizer(dspy.Module):
         return self.generate(java_program=java_program)
 
 
-# ============================================================================
-# 4. BENCHMARK LOADING
-# ============================================================================
 
+# 4. BENCHMARK LOADING
 
 def load_tasks(path: str) -> list[Task]:
     with open(path, "r") as f:
@@ -303,10 +287,8 @@ def stratified_split(
     return train, val, test
 
 
-# ============================================================================
-# 5. METRICS
-# ============================================================================
 
+# 5. METRICS
 
 def spec_metric_graduated(example, prediction, trace=None) -> float:
     """Graduated metric for COPRO and MIPROv2 optimization."""
@@ -393,11 +375,8 @@ def spec_metric_binary(example, prediction, trace=None) -> float:
     return 1.0 if result.success else 0.0
 
 
-# ============================================================================
-# 6. OPTIMIZER FACTORY
-# ============================================================================
 
-
+# OPTIMIZER FACTORY
 def create_optimizer(
     name: str,
     prompt_model: dspy.LM,
@@ -452,11 +431,8 @@ def create_optimizer(
         raise ValueError(f"Unknown optimizer: {name}")
 
 
-# ============================================================================
-# 7. SINGLE OPTIMIZATION RUN
-# ============================================================================
 
-
+# SINGLE OPTIMIZATION RUN
 def build_student(seed_instruction: str) -> SpecSynthesizer:
     """Create a fresh student module with seed instruction and fixed demos."""
     student = SpecSynthesizer()
@@ -515,11 +491,7 @@ def run_optimization(
         }
 
 
-# ============================================================================
-# 8. EVALUATION
-# ============================================================================
-
-
+# EVALUATION
 def evaluate_module(
     module: SpecSynthesizer,
     testset: list[dspy.Example],
@@ -553,25 +525,22 @@ def evaluate_module(
     return {"success_rate": score}
 
 
-# ============================================================================
-# 9. MAIN EXPERIMENT
-# ============================================================================
-
+# MAIN EXPERIMENT
 
 def run_experiment(args):
     global OPENJML_OUTPUT_DIR
-    # --- Load API keys ---
+    # Load API keys
     load_dotenv(dotenv_path=args.env_path)
 
     OPENJML_OUTPUT_DIR = args.openjml_output_dir
 
-    # --- Configure DSPy ---
+    # Configure DSPy
     task_lm = dspy.LM(model=args.model, temperature=0.7, max_tokens=8192)
     prompt_lm = dspy.LM(model=args.reflection_model, temperature=0.7, max_tokens=8192)
     dspy.configure_cache(enable_disk_cache=False, enable_memory_cache=True)
     dspy.configure(lm=task_lm)
 
-    # --- Validate seed ---
+    # Validate seed
     if args.best_seed not in SEED_PROMPTS:
         raise ValueError(
             f"Unknown seed '{args.best_seed}'. Options: {list(SEED_PROMPTS.keys())}"
@@ -579,7 +548,7 @@ def run_experiment(args):
     seed_instruction = SEED_PROMPTS[args.best_seed]
     logger.info(f"Best seed: {args.best_seed}")
 
-    # --- Load benchmarks ---
+    # Load benchmarks
     fb_tasks = load_tasks(args.formalbench_path)
     sgb_tasks_raw = load_tasks(args.specgenbench_path)
 
@@ -595,7 +564,7 @@ def run_experiment(args):
         f"SpecGenBench: {len(sgb_tasks)} tasks ({n_excluded} demo tasks excluded)"
     )
 
-    # --- Stratified split of FormalBench ---
+    # Stratified split of FormalBench
     fb_train, fb_val, fb_test = stratified_split(
         fb_tasks,
         train_size=args.train_size,
@@ -613,14 +582,14 @@ def run_experiment(args):
     logger.info(f"  FormalBench test:  {len(fb_testset)}")
     logger.info(f"  SpecGenBench test: {len(sgb_testset)}")
 
-    # --- Log category distribution ---
+    # Log category distribution
     for split_name, split in [("train", fb_train), ("val", fb_val), ("test", fb_test)]:
         cats = defaultdict(int)
         for t in split:
             cats[t.category] += 1
         logger.info(f"  {split_name} categories: {dict(cats)}")
 
-    # --- Run 3 optimizers from best seed ---
+    # Run optimizers from best seed
     optimizer_names = [o.strip() for o in args.optimizers.split(",")]
     for o in optimizer_names:
         if o not in ("copro", "miprov2", "gepa"):
@@ -642,7 +611,7 @@ def run_experiment(args):
             log_dir=os.path.join(args.log_dir, opt_name),
         )
 
-    # --- Evaluate on held-out test sets ---
+    # Evaluate on held-out test sets
     print(f"\n{'='*65}")
     print(f"  Final Evaluation (binary pass/fail)")
     print(f"{'='*65}\n")
@@ -670,7 +639,7 @@ def run_experiment(args):
             r["optimized_module"], sgb_testset, f"{opt_name.upper()} optimized"
         )
 
-    # --- Save results ---
+    # Save results
     output = {
         "seed": args.best_seed,
         "seed_instruction": seed_instruction,
@@ -703,7 +672,7 @@ def run_experiment(args):
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
 
-    # --- Summary table ---
+    # Summary table
     print(f"\n{'='*65}")
     print(f" Results Summary (seed={args.best_seed})")
     print(f"{'='*65}")
@@ -723,7 +692,7 @@ def run_experiment(args):
 
     print(f"\n  Results saved to: {output_path}\n")
 
-    # --- Save optimized modules for reuse ---
+    # Save optimized modules for reuse
     for opt_name, r in results.items():
         if r["status"] == "success":
             module_path = Path(args.output_dir) / f"optimized_{opt_name}.json"
@@ -731,10 +700,8 @@ def run_experiment(args):
             logger.info(f"  Saved {opt_name} module to {module_path}")
 
 
-# ============================================================================
-# 10. CLI
-# ============================================================================
 
+# CLI
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Optimizer Comparison for Formal Spec Synthesis"

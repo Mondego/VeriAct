@@ -56,8 +56,6 @@ from eval_spec import (
 
 # Data classes
 
-
-
 @dataclass
 class TestCase:
     input: str
