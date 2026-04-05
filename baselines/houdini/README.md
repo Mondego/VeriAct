@@ -2,7 +2,7 @@
 [Houdini, an annotation assistant for esc/java](https://link.springer.com/chapter/10.1007/3-540-45251-6_29)
 
 
-# Changes and Improvements 
+## Changes & Improvements
 
 - Restructured from a flat procedural script into an object-oriented design with separate Houdini (core algorithm) and HoudiniRunner (orchestration) classes
 - Introduced typed data models using dataclasses (Task, Annotation, MergedLine) and TypedDicts (HoudiniResult, WorkerResult) to replace untyped dictionaries
@@ -19,3 +19,29 @@
 - Changed verification success detection from empty-string output comparison to return code checking for more reliable behavior across OpenJML versions
 - Added structured JSON logging (per-thread log files) with colored console output
 - Added result aggregation with JSONL output of all results and a JSON summary including verification rates, timing, and per-case breakdowns
+
+
+
+## Usage
+
+```bash
+
+cd VeriAct
+
+python -m baselines.houdini.run \
+    --name <experiment_name> \
+    --input <path/to/benchmark.json> \
+    --output <output_dir> \
+    --openjml_timeout 300 \
+    --threads 4 \
+    --verbose
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--name` | required | Experiment name |
+| `--input` | required | Dataset JSON path |
+| `--output` | required | Output directory |
+| `--openjml_timeout` | 300 | OpenJML timeout in seconds |
+| `--threads` | 1 | Parallel workers |
+| `--verbose` | off | Enable verbose logging |

@@ -1,4 +1,6 @@
-## Setup API keys:
+# API keys Setup:
+
+Set all API keys in a ```.env`` file as follows:
 
 ```bash
 

@@ -2,7 +2,7 @@
 [Enchanting program specification synthesis by large language models using static analysis and program verification](https://dl.acm.org/doi/10.1007/978-3-031-65630-9_16)
 
 
-# Changes and Improvements
+## Changes & Improvements
 
 - Ported from C/Frama-C to Java/OpenJML, adapting the verification pipeline to JML specification language and OpenJML tooling
 Fixed verification success condition: replaced fragile empty-output check (err_info.strip() == "") with process exit code (returncode == 0) for reliable verification detection
@@ -19,3 +19,37 @@ Fixed AttributeError crash when processing field declarations: replaced deferred
 - Added jml code fence stripping alongside java fences to handle varied LLM response formats
 - Removed duplicate invariant keyword check in the spec line detector
 - Added structured JSON summary output with per-task results, verification rates, verifier call statistics, and token usage
+
+
+## Usage
+
+```bash
+cd VeriAct
+
+python -m baselines.autospec.run \
+    --name <experiment_name> \
+    --input <path/to/benchmark.json> \
+    --output <output_dir> \
+    --model gpt-4o \
+    --temperature 0.7 \
+    --prompt_type zero_shot \
+    --max_iterations 10 \
+    --openjml_timeout 300 \
+    --threads 4 \
+    --verbose \
+    --simplify
+```
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--name` | required | Experiment name |
+| `--input` | required | Dataset JSON path |
+| `--output` | required | Output directory |
+| `--model` | required | LLM model ID |
+| `--temperature` | required | Sampling temperature |
+| `--prompt_type` | `zero_shot` | `zero_shot`, `two_shot`, `four_shot` |
+| `--max_iterations` | 10 | Max repair iterations per task |
+| `--openjml_timeout` | 300 | OpenJML timeout in seconds |
+| `--threads` | 1 | Parallel workers |
+| `--simplify` | off | Remove redundant specs after verification |
+| `--verbose` | off | Enable verbose logging |
