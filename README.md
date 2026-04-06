@@ -41,7 +41,7 @@ For full details, see the [paper](https://arxiv.org/pdf/2604.00280).
 ```bash
 git clone https://github.com/Mondego/VeriAct.git
 cd VeriAct
-uv sync --group all 
+uv sync --all-extras
 source .venv/bin/activate
 ```
 ### 🔑 API Keys
