@@ -1,6 +1,7 @@
 # VeriAct: Beyond Verifiability 
 
 <div align="center">
+
 [![arXiv](https://img.shields.io/badge/arXiv-2604.01193-b31b1b.svg)](https://arxiv.org/pdf/2604.00280)
 [![License](https://img.shields.io/badge/License-GNU_GPL_v3-blue)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://www.python.org/)
@@ -228,7 +229,7 @@ python -m veriact.run_batch.py \
 │   ├── formalbench         # Prompt based, advance prompting with repair guidance
 ├── benchmarks              # Normalized benchamrk datasets
 │   └── specgenbench        # 120 tasks from Leetcode and JML examples
-│   ├── formalbench         # 662 tasks from MBJP
+│   ├── formalbench         # 662 tasks from FormalBench and MBJP
 ├── config                  # API keys in .env file
 ├── optimizer               # Prompt optimizer implementation
 ├── spec_harness            # Spec-Harness implementation
@@ -244,7 +245,7 @@ python -m veriact.run_batch.py \
 ## 📝 Citation
 
 ```bibtex
-@misc{veriact2026,
+@misc{mrhmisu/veriact2026,
       title={VeriAct: Beyond Verifiability  Agentic Synthesis of Correct and Complete Formal Specifications},
       author={Md Rakib Hossain, Iris Ma, and Cristina V. Lopes},
       year={2026},
