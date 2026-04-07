@@ -46,7 +46,7 @@ source .venv/bin/activate
 ```
 ### 🔑 API Keys
 
-Create a `.env` file in [config](./config/)` with the keys for the models you intend to use:
+Create a `.env` file in [config](./config/) with the keys for the models you intend to use:
 
 <details>
 <summary> API Keys</summary>
@@ -64,7 +64,7 @@ VLLM_API_BASE=...        # e.g. http://localhost:8000/v1
 </details>
 
 
-### ▶️ Run Command
+### 💣  Run Command
 
 <details>
 <summary>Run Daikon</summary>
@@ -169,9 +169,10 @@ python -m baselines.formalbench.run \
 <summary>Run Optimizer</summary>
 
 ```bash
-python -m optimizer.prompt_optimizer.py \
-    --formalbench_path benchmarks/formalbench/fb.json \
-    --specgenbench_path benchmarks/specgenbench/sgb.json \
+python -m optimizer.prompt_optimizer \
+    --formalbench_path <path/to/benchmarks/formalbench/fb.json> \
+    --specgenbench_path <path/to/benchmarks/specgenbench/sgb.json> \
+    --optimizers gepa \
     --best_seed zero \           
     --model openai/gpt-4o \
     --reflection_model openai/gpt-4o \
@@ -186,7 +187,20 @@ python -m optimizer.prompt_optimizer.py \
 <details>
 <summary>Run Spec-Harness</summary>
 
-> **Note:** Note
+```bash
+python -m spec_harness.eval_llm_response \
+  --benchmark_path benchmarks/formalbench/fb.json \
+  --llm_response_path path/to/responses.jsonl \
+  --openjml openjml \
+  --output spec_harness_results \
+  --threads 8 \
+  --max-pairs 5 \
+  -verbose
+```
+
+> **Note:** `responses.jsonl` is the output file of running the baselines approaches
+
+> **Note:** `--max-pairs` is the max input/output test pairs to use in mutation
 </details>
 
 <details>
@@ -195,21 +209,20 @@ python -m optimizer.prompt_optimizer.py \
 
 
 ```bash
-
 # Sequential (one task at a time)
-python -m veriact.run_single.py \
-    --benchmark benchmarks/specgenbench/sgb.json \
+python -m veriact.run_single \
+    --benchmark <path/to/benchmark.json> \
     --model gpt-4o \
-    --output-dir veriact_output \
+    --output-dir <output_dir> \
     --max-steps 12 \
     --planning_interval 3
 
 # Parallel
-python -m veriact.run_batch.py \
-    --benchmark benchmarks/specgenbench/sgb.json \
+python -m veriact.run_batch \
+    --benchmark <path/to/benchmark.json> \
     --model gpt-4o \
     --threads 4 \
-    --output-dir veriact_output \
+    --output-dir <output_dir> \
     --max-steps 12 \
     --planning_interval 3
 ```

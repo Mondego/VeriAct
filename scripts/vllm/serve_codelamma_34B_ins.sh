@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ################################################################################
-# vLLM Server Launcher for Qwen/Qwen3-32B
+# vLLM Server Launcher for codellama/CodeLlama-34b-Instruct-hf"
 # This script starts a vLLM OpenAI-compatible API server with optimal settings
 ################################################################################
 
@@ -20,7 +20,7 @@ NC='\033[0m' # No Color
 
 # Model configuration
 MODEL_NAME="codellama/CodeLlama-34b-Instruct-hf"
-#MODEL_NAME="Qwen/Qwen3-32B-AWQ" # AQW
+#MODEL_NAME="codellama/CodeLlama-34b-Instruct-hf-AWQ" # AQW
 
 
 MODEL_DTYPE="bfloat16"  # Options: half, float16, bfloat16, float32
@@ -191,7 +191,7 @@ print_usage_instructions() {
   )
   
   response = client.chat.completions.create(
-      model="Qwen/Qwen3-32B",
+      model="codellama/CodeLlama-34b-Instruct-hf",
       messages=[
           {"role": "user", "content": "Write a Python hello world"}
       ]
