@@ -1,13 +1,14 @@
-# API keys Setup:
+# Setup API Keys:
 
-Set all API keys in a ```.env`` file as follows:
+> **Note:**  Set all API keys in a `.env` file as follows:
 
 ```bash
-
-OPENAI_API_KEY=sk-proj-
-GEMINI_API_KEY=
-ANTHROPIC_API_KEY=sk-ant-api03-
-VLLM_API_KEY=
-DEEPSEEK_API_KEY=sk-...
+OPENAI_API_KEY=...       # GPT-4o 
+ANTHROPIC_API_KEY=...    # Claude models
+GOOGLE_API_KEY=...       # Gemini models
+DEEPSEEK_API_KEY=...     # DeepSeek API
+MISTRAL_API_KEY=...      # Mistral API
+VLLM_API_KEY=...         # Local vLLM server
+VLLM_API_BASE=...        # e.g. http://localhost:8000/v1
 
 ```
