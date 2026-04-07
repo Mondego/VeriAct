@@ -24,5 +24,5 @@ python -m spec_harness.eval_llm_response \
   --output spec_harness_results \
   --threads 8 \
   --max-pairs 5
-  -v
+  --verbose
 ```
