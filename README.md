@@ -258,14 +258,22 @@ python -m veriact.run_batch \
 ## 📝 Citation
 
 ```bibtex
-@misc{misu2026veriactverifiabilityagentic,
-      title={VeriAct: Beyond Verifiability -- Agentic Synthesis of Correct and Complete Formal Specifications}, 
-      author={Md Rakib Hossain Misu and Iris Ma and Cristina V. Lopes},
-      year={2026},
-      eprint={2604.00280},
-      archivePrefix={arXiv},
-      primaryClass={cs.SE},
-      url={https://arxiv.org/abs/2604.00280}, 
+@article{DBLP:journals/corr/abs-2604-00280,
+  author       = {Md Rakib Hossain Misu and
+                  Iris Ma and
+                  Cristina V. Lopes},
+  title        = {VeriAct: Beyond Verifiability - Agentic Synthesis of Correct and Complete
+                  Formal Specifications},
+  journal      = {CoRR},
+  volume       = {abs/2604.00280},
+  year         = {2026},
+  url          = {https://doi.org/10.48550/arXiv.2604.00280},
+  doi          = {10.48550/ARXIV.2604.00280},
+  eprinttype   = {arXiv},
+  eprint       = {2604.00280},
+  timestamp    = {Thu, 07 May 2026 09:02:12 +0200},
+  biburl       = {https://dblp.org/rec/journals/corr/abs-2604-00280.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
 }
 ```
 
