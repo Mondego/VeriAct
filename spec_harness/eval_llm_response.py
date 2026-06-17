@@ -34,7 +34,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from typing import Any
 
-from harness import (
+from spec_harness.harness import (
     MethodSpec,
     TestPair,
     InputCase,
@@ -45,7 +45,7 @@ from harness import (
     StubBuilder,
     OutputMutator,
 )
-from eval_spec import (
+from spec_harness.eval_spec import (
     extract_jml_spec,
     detect_input_format,
     parse_input,

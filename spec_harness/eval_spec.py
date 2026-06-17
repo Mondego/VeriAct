@@ -6,7 +6,7 @@ from typing import Any, Optional
 import javalang
 import javalang.tree as jtree
 
-from harness import (
+from spec_harness.harness import (
     MethodSpec,
     InputCase,
     JType,
