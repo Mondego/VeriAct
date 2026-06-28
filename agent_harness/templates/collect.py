@@ -20,7 +20,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 METRICS = ["post_correctness", "post_completeness", "pre_correctness", "pre_completeness"]
-THRESHOLD = 0.50
+THRESHOLD = 0.75
 
 
 def _score_offline(task_dir: str) -> dict | None:
