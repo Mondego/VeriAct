@@ -11,16 +11,18 @@ the whole out-root can be handed to an external coding agent.
 The package is self-contained: it copies everything from ``templates/`` and never
 imports ``veriact``, so it can live in its own repository.
 
+Both benchmarks are already the final 120-task sets and are loaded the same way —
+no sampling here.
+
 Examples
 --------
-    # SpecGenBench — all 120 tasks
+    # SpecGenBench (120 tasks)
     python -m agent_harness.scaffold \
         --benchmark benchmarks/specgenbench/sgb.json --out-root out/sgb
 
-    # FormalBench — 120 tasks matching SGB's per-category distribution
+    # FormalBench (the pre-sampled 120 tasks)
     python -m agent_harness.scaffold \
-        --benchmark benchmarks/formalbench/fb.json --out-root out/fb \
-        --sample-n 120 --match-distribution benchmarks/specgenbench/sgb.json --seed 0
+        --benchmark benchmarks/formalbench/fb_120.json --out-root out/fb
 """
 
 from __future__ import annotations
@@ -29,7 +31,6 @@ import argparse
 import collections
 import json
 import os
-import random
 import shutil
 import stat
 import sys
@@ -73,53 +74,12 @@ def load_benchmark(path: str) -> list[dict]:
     return json.loads(raw)
 
 
-def stratified_sample(
-    tasks: list[dict],
-    target_counts: dict[str, int],
-    seed: int,
-    key: str = "category",
-) -> list[dict]:
-    """Pick tasks so per-category counts match *target_counts* exactly."""
-    rng = random.Random(seed)
-    by_cat: dict[str, list[dict]] = collections.defaultdict(list)
-    for t in tasks:
-        by_cat[t.get(key, "")].append(t)
-
-    chosen: list[dict] = []
-    for cat, want in target_counts.items():
-        pool = list(by_cat.get(cat, []))
-        rng.shuffle(pool)
-        if len(pool) < want:
-            print(
-                f"WARNING: category '{cat}' has {len(pool)} tasks but "
-                f"{want} requested; taking all available.",
-                file=sys.stderr,
-            )
-        chosen.extend(pool[:want])
-    rng.shuffle(chosen)
-    return chosen
-
-
-def proportional_sample(
-    tasks: list[dict], n: int, seed: int, key: str = "category"
-) -> list[dict]:
-    """Pick *n* tasks proportional to the dataset's own category distribution."""
-    rng = random.Random(seed)
-    by_cat: dict[str, list[dict]] = collections.defaultdict(list)
-    for t in tasks:
-        by_cat[t.get(key, "")].append(t)
-    total = len(tasks)
-    chosen: list[dict] = []
-    for cat, pool in by_cat.items():
-        pool = list(pool)
-        rng.shuffle(pool)
-        want = round(n * len(pool) / total)
-        chosen.extend(pool[:want])
-    rng.shuffle(chosen)
-    return chosen[:n]
-
-
 def select_tasks(tasks: list[dict], args: argparse.Namespace) -> list[dict]:
+    """Scaffold all tasks in the benchmark, optionally filtered.
+
+    Both sgb.json and fb_120.json are already the final 120-task sets, so no
+    sampling happens here — they are loaded the same way.
+    """
     if args.task_id:
         sel = [t for t in tasks if t.get("task_id") == args.task_id]
         if not sel:
@@ -130,14 +90,6 @@ def select_tasks(tasks: list[dict], args: argparse.Namespace) -> list[dict]:
         with open(args.task_ids) as fh:
             wanted = {ln.strip() for ln in fh if ln.strip()}
         return [t for t in tasks if t.get("task_id") in wanted]
-
-    if args.match_distribution:
-        ref = load_benchmark(args.match_distribution)
-        counts = collections.Counter(t.get("category", "") for t in ref)
-        return stratified_sample(tasks, dict(counts), args.seed)
-
-    if args.sample_n:
-        return proportional_sample(tasks, args.sample_n, args.seed)
 
     if args.limit:
         return tasks[: args.limit]
@@ -278,13 +230,6 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--task-id", help="scaffold a single task by id")
     p.add_argument("--task-ids", help="file with task ids (one per line)")
     p.add_argument("--limit", type=int, help="scaffold only the first N tasks")
-    p.add_argument("--sample-n", type=int, help="sample N tasks (proportional by category)")
-    p.add_argument(
-        "--match-distribution",
-        help="benchmark whose per-category counts the sample should match",
-    )
-    p.add_argument("--stratify-by", default="category", help="record key to stratify on")
-    p.add_argument("--seed", type=int, default=0, help="sampling seed (default: 0)")
     p.add_argument("--threshold", type=float, default=0.50, help="pass threshold")
     p.add_argument(
         "--no-harness",
@@ -315,7 +260,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     write_root_helpers(args.out_root, args.benchmark, len(selected), with_harness)
 
-    counts = collections.Counter(t.get(args.stratify_by, "") for t in selected)
+    counts = collections.Counter(t.get("category", "") for t in selected)
     mode = "with-harness" if with_harness else "no-harness (ablation)"
     print(f"Scaffolded {len(selected)} task(s) [{mode}] -> {args.out_root}")
     for cat, n in counts.most_common():

@@ -22,15 +22,18 @@ repository with no dependency on `veriact/`. Generated dirs need only the
 ## Scaffold
 
 ```bash
-# SpecGenBench — all 120 tasks
+# SpecGenBench (120 tasks)
 python -m agent_harness.scaffold \
     --benchmark benchmarks/specgenbench/sgb.json --out-root out/sgb
 
-# FormalBench — 120 tasks matching SGB's per-category distribution
+# FormalBench (the pre-sampled 120 tasks)
 python -m agent_harness.scaffold \
-    --benchmark benchmarks/formalbench/fb.json --out-root out/fb \
-    --sample-n 120 --match-distribution benchmarks/specgenbench/sgb.json --seed 0
+    --benchmark benchmarks/formalbench/fb_120.json --out-root out/fb
 ```
+
+Both benchmarks are already the final 120-task sets (`fb_120.json` is the
+category-matched FormalBench sample), so scaffold loads them identically — no
+sampling step.
 
 Each task dir gets exactly **5** IO pairs: from `test_inputs` first, topped up from
 `generated_test_cases` (same selection the harness scores with `max_pairs=5`).
@@ -155,7 +158,7 @@ don't overwrite each other, then diff the tables.
 
 ```
 agent_harness/
-├── scaffold.py     # generator (selection, 5-pair pick, stratified sampling)
+├── scaffold.py     # generator (selection, 5-pair pick)
 ├── templates/
 │   ├── cli.py              # the 4-subcommand CLI (vendored into each dir's harness/)
 │   ├── harness_tool.py     # vendored scorer (copy of veriact/harness_tool.py)
