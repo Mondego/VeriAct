@@ -42,11 +42,12 @@ Each task dir gets exactly **5** IO pairs: from `test_inputs` first, topped up f
 
 Each task has a fixed budget of tool attempts (`verify` + `harness` calls combined),
 enforced by the vendored CLI so it's identical across VeriAct / Claude Code / Codex.
-Set it at scaffold time with `--max-attempts N` (default **15**, matching VeriAct's
-`--max-steps`; `0` = unlimited); it is stored in each dir's `harness/config.json`
-and can be overridden per run with `AGENT_MAX_ATTEMPTS`. When the budget is reached
-the tools refuse further calls and tell the agent to submit; `attempts` is recorded
-in `submission.json`.
+Set it at scaffold time with `--max-attempts N` (default **10**; `0` = unlimited).
+This matches VeriAct's `--max-steps 11` (10 verify/harness calls + the final
+submit step). It is stored in each dir's `harness/config.json` and can be overridden
+per run with `AGENT_MAX_ATTEMPTS`. When the budget is reached the tools refuse
+further calls and tell the agent to submit; `attempts` is recorded in
+`submission.json`.
 
 ### Ablation: with vs without the harness tool
 
@@ -80,7 +81,13 @@ From an out-root:
 ```bash
 python run_agents.py --agent claude --threads 4   # fan out, 1 session per task
 python collect.py                                  # comparison.json / comparison.csv
+python aggregate.py                                # pass@{0.25,0.5,0.75,1.0} + mean metrics
 ```
+
+`aggregate.py` reads `harness_scores.json` (from `score_all.py`) if present, else
+the per-task `submission.json` scores, and writes `aggregate.json`. The pass
+threshold is **0.75** by default (`--threshold`); pass@ is reported at 0.25/0.5/0.75/1.0
+so you aren't tied to one cutoff.
 
 See the generated `out-root/README.md` for the per-root details.
 
@@ -167,7 +174,7 @@ agent_harness/
 │   ├── verify.sh run_specharness.sh submit.sh
 │   ├── AGENTS.md.tmpl AGENTS_no_harness.md.tmpl   # per-task prompt (both arms)
 │   ├── requirements.txt    # javalang
-│   ├── run_agents.py collect.py score_all.py   # parent-root helpers
+│   ├── run_agents.py collect.py score_all.py aggregate.py   # parent-root helpers
 │   └── root_README.md.tmpl
 └── README.md
 ```

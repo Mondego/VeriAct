@@ -63,7 +63,7 @@ REPAIR_HINTS: dict[str, str] = {
 }
 
 # Threshold for a "passed" submission (mirrors veriact HARNESS_PASS_THRESHOLD).
-HARNESS_PASS_THRESHOLD = 0.50
+HARNESS_PASS_THRESHOLD = 0.75
 
 # Sibling artifact paths.
 TASK_JSON = os.path.join(HARNESS_DIR, "task.json")
@@ -165,6 +165,17 @@ def _budget_info() -> dict:
     return {"attempts": _read_attempts(), "max_attempts": mx if mx > 0 else None}
 
 
+# Cap the OpenJML log returned to the agent (chars). Override with $MAX_RAW_OUTPUT.
+MAX_RAW_OUTPUT = int(os.environ.get("MAX_RAW_OUTPUT", "1200"))
+
+
+def _tail(s: str, n: int) -> str:
+    s = s or ""
+    if n <= 0 or len(s) <= n:
+        return s
+    return "...[truncated]...\n" + s[-n:]
+
+
 def _analyze(classified_errors: list[dict]) -> dict:
     """Turn OpenJML classified errors into failure modes + repair hints."""
     failure_modes: list[str] = []
@@ -196,10 +207,11 @@ def _analyze(classified_errors: list[dict]) -> dict:
 # ---------------------------------------------------------------------------
 
 def cmd_verify(args: argparse.Namespace) -> int:
-    exhausted = _check_budget()
-    if exhausted is not None:
-        _emit(exhausted)
-        return 2
+    if not getattr(args, "no_budget", False):
+        exhausted = _check_budget()
+        if exhausted is not None:
+            _emit(exhausted)
+            return 2
     _resolve_openjml(_default_openjml(args.openjml))
     code = _read_code(args.code)
     try:
@@ -217,11 +229,13 @@ def cmd_verify(args: argparse.Namespace) -> int:
     out = {
         "verified": result.success,
         "return_code": result.return_code,
-        "errors": result.classified_errors,
+        # Analyzed view only (not the full classified-error list) to keep the
+        # agent's context small: failure modes + targeted repair hints + summary.
         "failure_modes": analysis["failure_modes"],
         "repair_hints": analysis["repair_hints"],
         "summary": analysis["summary"],
-        "raw_output": result.error_log,
+        # Truncated tail of the OpenJML log for context (override $MAX_RAW_OUTPUT).
+        "raw_output": _tail(result.error_log, MAX_RAW_OUTPUT),
         **_budget_info(),
     }
     with open(LAST_VERIFY, "w") as fh:
@@ -359,6 +373,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pv.add_argument("--code", help="path to Java source (default: ../Solution.java)")
     pv.add_argument("--openjml", help="OpenJML binary path (default: $OPENJML or 'openjml')")
+    pv.add_argument("--no-budget", action="store_true",
+                    help="don't count this run against the attempt budget "
+                         "(for offline experimenter verification)")
     pv.set_defaults(func=cmd_verify)
 
     ph = sub.add_parser("harness", help="score the spec on the 4 spec-harness metrics")

@@ -13,7 +13,9 @@ output.
 ```
 .
 ├── run_agents.py      # fan out one fresh agent session per task dir
-├── collect.py         # aggregate every submission.json -> comparison.{json,csv}
+├── collect.py         # gather every submission.json -> comparison.{json,csv}
+├── score_all.py       # (re)score each Solution.java -> harness_scores.{json,csv}
+├── aggregate.py       # pass@{0.25,0.5,0.75,1.0} + mean metrics -> aggregate.json
 ├── README.md
 └── <TASK_ID>/         # one self-contained dir per task
     ├── Solution.java  # agent edits this (add JML; class stays `Solution`)
@@ -50,8 +52,16 @@ This also fills in each `submission.json`'s scores, so `python collect.py`
 afterwards reflects them. (`collect.py --score-missing` does the same on the fly for
 submissions that still lack scores.)
 
+**Aggregate metrics.** For pass-rate at several thresholds plus mean metrics:
+
+```bash
+python aggregate.py     # pass@{0.25,0.5,0.75,1.0} + mean metrics -> aggregate.json
+```
+
+It reads `harness_scores.json` if present, else each `submission.json`.
+
 Compare agents by running each into its **own** out-root (scaffold once per agent,
-or copy this root), then diff the `comparison.csv` files.
+or copy this root), then diff the `comparison.csv` / `aggregate.json` files.
 
 ## Dependencies
 
@@ -63,8 +73,9 @@ interpreter and skip bootstrapping; set `OPENJML=/path/to/openjml` (or pass
 
 ## Success criterion
 
-A task passes when `post_correctness >= 0.5` AND `post_completeness >= 0.5`
-(recorded as `passed` in each `submission.json`).
+A task passes when `post_correctness >= 0.75` AND `post_completeness >= 0.75`
+(recorded as `passed` in each `submission.json`). `aggregate.py` also reports
+pass-rate at 0.25 / 0.5 / 0.75 / 1.0 so you aren't tied to a single cutoff.
 
 ## Attempt budget
 

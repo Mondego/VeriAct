@@ -34,7 +34,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 METRICS = ["post_correctness", "post_completeness", "pre_correctness", "pre_completeness"]
-THRESHOLD = 0.50
+THRESHOLD = 0.75
 
 
 def find_task_dirs() -> list[str]:
@@ -49,12 +49,26 @@ def find_task_dirs() -> list[str]:
 def score_dir(task_dir: str, python: str, openjml: str | None, timeout: int) -> dict:
     task_id = os.path.basename(task_dir)
     cli = os.path.join(task_dir, "harness", "cli.py")
-    cmd = [python, cli, "harness", "--no-budget"]
-    if openjml:
-        cmd += ["--openjml", openjml]
-    row: dict = {"task_id": task_id, **{m: None for m in METRICS}, "passed": False,
-                 "error": None}
+    row: dict = {"task_id": task_id, "verified": False,
+                 **{m: 0.0 for m in METRICS}, "passed": False, "error": None}
     try:
+        # 1) Verify gate — the spec-harness only applies to verifier-accepted specs.
+        vcmd = [python, cli, "verify", "--no-budget"]
+        if openjml:
+            vcmd += ["--openjml", openjml]
+        vproc = subprocess.run(
+            vcmd, cwd=task_dir, capture_output=True, text=True, timeout=timeout
+        )
+        verified = bool(json.loads(vproc.stdout).get("verified"))
+        row["verified"] = verified
+        if not verified:
+            # Unverified spec: counts as a failure (0 scores); skip the harness.
+            return row
+
+        # 2) Spec-harness scoring (only when verified).
+        cmd = [python, cli, "harness", "--no-budget"]
+        if openjml:
+            cmd += ["--openjml", openjml]
         proc = subprocess.run(
             cmd, cwd=task_dir, capture_output=True, text=True, timeout=timeout
         )
@@ -122,11 +136,16 @@ def main(argv: list[str] | None = None) -> int:
         for fut in as_completed(futs):
             row = fut.result()
             rows.append(row)
-            tag = "err:" + row["error"] if row["error"] else f"pass={row['passed']}"
+            if row["error"]:
+                tag = "err:" + row["error"]
+            elif not row["verified"]:
+                tag = "unverified"
+            else:
+                tag = f"pass={row['passed']}"
             print(f"  [{tag}] {row['task_id']}")
 
     rows.sort(key=lambda r: r["task_id"])
-    fields = ["task_id", *METRICS, "passed", "error"]
+    fields = ["task_id", "verified", *METRICS, "passed", "error"]
     with open(args.out + ".json", "w") as fh:
         json.dump(rows, fh, indent=2)
     with open(args.out + ".csv", "w", newline="") as fh:
@@ -135,13 +154,14 @@ def main(argv: list[str] | None = None) -> int:
         w.writerows(rows)
 
     scored = [r for r in rows if r["error"] is None]
+    verified = sum(1 for r in scored if r["verified"])
     passed = sum(1 for r in scored if r["passed"])
     avg = {
         m: round(sum(r[m] for r in scored if r[m] is not None) / len(scored), 3)
         if scored else 0.0
         for m in METRICS
     }
-    print(f"Scored {len(scored)}/{len(rows)} (passed={passed}); avg: {avg}")
+    print(f"Scored {len(scored)}/{len(rows)} (verified={verified}, passed={passed}); avg: {avg}")
     print(f"  -> {args.out}.json / {args.out}.csv")
     return 0
 

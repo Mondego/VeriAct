@@ -50,7 +50,7 @@ HARNESS_FILES = [
 WRAPPER_FILES_BASE = ["verify.sh", "submit.sh"]
 HARNESS_WRAPPER = "run_specharness.sh"
 # Parent-root helpers dropped once into the out-root.
-ROOT_FILES = ["run_agents.py", "collect.py", "score_all.py"]
+ROOT_FILES = ["run_agents.py", "collect.py", "score_all.py", "aggregate.py"]
 
 MAX_PAIRS = 5
 
@@ -135,7 +135,7 @@ def scaffold_task(
     out_root: str,
     threshold: float,
     with_harness: bool = True,
-    max_attempts: int = 15,
+    max_attempts: int = 10,
 ) -> str:
     task_id = task["task_id"]
     task_dir = os.path.join(out_root, _safe_name(task_id))
@@ -192,7 +192,6 @@ def scaffold_task(
             "TASK_ID": task_id,
             "THRESHOLD": f"{threshold:g}",
             "MAX_ATTEMPTS": str(max_attempts),
-            "SOLUTION_CODE": task.get("code", ""),
         },
     )
     _write(os.path.join(task_dir, "AGENTS.md"), agents_md)
@@ -230,7 +229,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--task-id", help="scaffold a single task by id")
     p.add_argument("--task-ids", help="file with task ids (one per line)")
     p.add_argument("--limit", type=int, help="scaffold only the first N tasks")
-    p.add_argument("--threshold", type=float, default=0.50, help="pass threshold")
+    p.add_argument("--threshold", type=float, default=0.75, help="pass threshold (default: 0.75)")
     p.add_argument(
         "--no-harness",
         action="store_true",
@@ -240,9 +239,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--max-attempts",
         type=int,
-        default=15,
+        default=10,
         help="attempt budget per task (verify+harness calls; 0 = unlimited; "
-        "default: 15, matching VeriAct --max-steps)",
+        "default: 10 — matches VeriAct --max-steps 11, i.e. 10 tool calls + submit)",
     )
     return p
 

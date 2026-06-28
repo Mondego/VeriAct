@@ -12,8 +12,11 @@ Work in a **verify → fix → score → submit** loop, using the three tools be
 
 - Edit **`Solution.java`** in place. Keep the method body unchanged; only add JML
   annotations. The class **MUST** stay named `Solution`.
-- `Test.java` and `tests/case_*.json` show how inputs/outputs are formatted — read
-  them to understand the method's behavior. Do not edit them.
+- **You only need TWO files: this prompt and `Solution.java`.** Do **NOT** open,
+  read, or list any other file or directory — not `Test.java`, not `tests/`, not
+  `harness/`, nothing. `Solution.java` has the full method implementation — infer the
+  spec from it. Verification needs only the source, and the spec-harness reads the
+  test inputs for you. Reading anything else only wastes context.
 - Run every tool from **this directory**.
 - You have a budget of **{{MAX_ATTEMPTS}}** tool attempts (`verify` + `run_specharness`
   calls combined). Each call reports `attempts`/`max_attempts`. When the budget is
@@ -24,7 +27,7 @@ Work in a **verify → fix → score → submit** loop, using the three tools be
 ### `./verify.sh`
 Run OpenJML Extended Static Checking on `Solution.java`, **with built-in error
 analysis**. Prints JSON:
-`{"verified": bool, "return_code": int, "errors": [{"type","raw"}], "failure_modes": [...], "repair_hints": [...], "summary": str, "raw_output": str}`
+`{"verified": bool, "return_code": int, "failure_modes": [...], "repair_hints": [...], "summary": str, "raw_output": str}`
 and saves it to `harness/last_verify.json`.
 Use at every verification attempt; read `repair_hints`/`summary` to fix failures. If
 `raw_output` contains `Timeout`: STOP and **simplify** the spec before retrying —
@@ -46,7 +49,7 @@ scores, and a `passed` flag). Call once you meet the success threshold.
 
 ## Workflow
 
-1. Read `Solution.java`, `Test.java`, and a few `tests/case_*.json`. Infer behavior.
+1. Read `Solution.java` and infer the method's behavior.
 2. Add JML to `Solution.java`.
 3. `./verify.sh`
    - failed  → read `repair_hints`/`summary`, refine the spec, go to 3.
@@ -65,6 +68,5 @@ Once both meet the threshold, submit right away.
 
 ## The program
 
-```java
-{{SOLUTION_CODE}}
-```
+The method to specify is in `Solution.java` (class `Solution`) in this directory —
+read it first. Add JML annotations to it; do not change the method body.

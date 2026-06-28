@@ -12,8 +12,11 @@ shell scripts in this directory).
 
 - Edit **`Solution.java`** in place. Keep the method body unchanged; only add JML
   annotations. The class **MUST** stay named `Solution`.
-- `Test.java` and `tests/case_*.json` show how inputs/outputs are formatted — read
-  them to understand the method's behavior. Do not edit them.
+- **You only need TWO files: this prompt and `Solution.java`.** Do **NOT** open,
+  read, or list any other file or directory — not `Test.java`, not `tests/`, not
+  `harness/`, nothing. `Solution.java` has the full method implementation — infer the
+  spec from it. Verification needs only the source. Reading anything else only wastes
+  context.
 - Run every tool from **this directory**.
 - You have a budget of **{{MAX_ATTEMPTS}}** `verify` attempts. Each call reports
   `attempts`/`max_attempts`. When the budget is exhausted `verify` refuses and you
@@ -24,7 +27,7 @@ shell scripts in this directory).
 ### `./verify.sh`
 Run OpenJML Extended Static Checking on `Solution.java`, **with built-in error
 analysis**. Prints JSON:
-`{"verified": bool, "return_code": int, "errors": [{"type","raw"}], "failure_modes": [...], "repair_hints": [...], "summary": str, "raw_output": str}`
+`{"verified": bool, "return_code": int, "failure_modes": [...], "repair_hints": [...], "summary": str, "raw_output": str}`
 and saves it to `harness/last_verify.json`.
 Use at every verification attempt; read `repair_hints`/`summary` to fix failures. If
 `raw_output` contains `Timeout`: STOP and **simplify** the spec before retrying —
@@ -36,7 +39,7 @@ once verification passes.
 
 ## Workflow
 
-1. Read `Solution.java`, `Test.java`, and a few `tests/case_*.json`. Infer behavior.
+1. Read `Solution.java` and infer the method's behavior.
 2. Add JML to `Solution.java`. Aim for a spec that is both **correct** (true for the
    method) and **strong** (captures the full input/output relationship), not a
    trivially-true one.
@@ -51,6 +54,5 @@ once verification passes.
 
 ## The program
 
-```java
-{{SOLUTION_CODE}}
-```
+The method to specify is in `Solution.java` (class `Solution`) in this directory —
+read it first. Add JML annotations to it; do not change the method body.
