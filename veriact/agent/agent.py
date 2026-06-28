@@ -51,7 +51,7 @@ class VeriActAgent:
         dataset_path="",
         output_dir="veriact_outputs",
         planning_interval=5,
-        max_steps=15,
+        max_steps=11,
         harness_threshold=HARNESS_PASS_THRESHOLD,
         no_harness: bool = False,
         _run_dir: str | None = None,

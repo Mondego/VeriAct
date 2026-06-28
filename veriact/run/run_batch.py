@@ -8,7 +8,7 @@ Usage:
         --model gpt-4o \
         --output-dir veriact_outputs \
         --openjml-path openjml \
-        --max-steps 15 \
+        --max-steps 11 \
         --planning_interval 3
 """
 
@@ -118,7 +118,7 @@ def main():
     parser.add_argument("--model", default="gpt-4o", help="Model ID (default: gpt-4o)")
     parser.add_argument("--output-dir", default="veriact_outputs", help="Output directory (default: veriact_outputs)")
     parser.add_argument("--openjml-path", default="openjml", help="Path to OpenJML binary (default: openjml)")
-    parser.add_argument("--max-steps", type=int, default=15, help="Max agent steps per task (default: 15)")
+    parser.add_argument("--max-steps", type=int, default=11, help="Max agent steps per task (default: 11 = 10 tool calls + submit, matching agent_harness --max-attempts 10)")
     parser.add_argument("--planning_interval", type=int, default=5, help="Planning interval (default: 5)")
     parser.add_argument("--no-harness", action="store_true", help="Ablation: run with verify + task_complete only (no run_spec_harness); success = verification passes")
     parser.add_argument("--task-ids", default=None, help="Path to a text file with one task_id per line to filter the benchmark")
