@@ -12,8 +12,8 @@ from dataclasses import asdict, dataclass
 from enum import Enum
 from typing import Any
 
-from veriact.tools_base import Tool
-from veriact.utility import _is_package_available, encode_image_base64, make_image_url, parse_json_blob
+from veriact.tools.base import Tool
+from veriact.core.utility import _is_package_available, encode_image_base64, make_image_url, parse_json_blob
 
 logger = logging.getLogger(__name__)
 

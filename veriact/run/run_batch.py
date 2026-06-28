@@ -28,8 +28,8 @@ from veriact import (
     VeriActAgent,
     VLLMModel,
 )
-from veriact.data_types import Task
-from veriact.file_utility import dump_json, load_json, load_jsonl
+from veriact.core.data_types import Task
+from veriact.core.file_utility import dump_json, load_json, load_jsonl
 import veriact.config
 
 logger = logging.getLogger(__name__)
@@ -86,6 +86,7 @@ def run_single_task(
     run_dir: str,
     max_steps: int,
     planning_interval: int,
+    no_harness: bool = False,
 ) -> dict:
     """Run a fresh VeriActAgent for a single task, sharing the same run directory."""
     agent = VeriActAgent(
@@ -94,6 +95,7 @@ def run_single_task(
         dataset_path=dataset_path,
         max_steps=max_steps,
         planning_interval=planning_interval,
+        no_harness=no_harness,
         _run_dir=run_dir,
     )
     return agent.run(task)
@@ -118,6 +120,7 @@ def main():
     parser.add_argument("--openjml-path", default="openjml", help="Path to OpenJML binary (default: openjml)")
     parser.add_argument("--max-steps", type=int, default=15, help="Max agent steps per task (default: 15)")
     parser.add_argument("--planning_interval", type=int, default=5, help="Planning interval (default: 5)")
+    parser.add_argument("--no-harness", action="store_true", help="Ablation: run with verify + task_complete only (no run_spec_harness); success = verification passes")
     parser.add_argument("--task-ids", default=None, help="Path to a text file with one task_id per line to filter the benchmark")
     args = parser.parse_args()
 
@@ -162,6 +165,7 @@ def main():
                 run_dir=run_dir,
                 max_steps=args.max_steps,
                 planning_interval=args.planning_interval,
+                no_harness=args.no_harness,
             ): task
             for task in tasks
         }

@@ -1,95 +1,135 @@
-"""VeriActAgent: CODEACT mode entry point."""
+"""VeriActAgent — CLI-ReAct entry point (drop-in replacement for VeriActAgent).
+
+Per task it materializes a small workspace (Solution.java placeholder, Test.java,
+harness/task.json), runs the CLIAgent ReAct loop (which drives the tool CLI as
+subprocesses), and records the same trajectory / memory / monitoring artifacts as
+the original VeriAct.
+"""
 
 from __future__ import annotations
+
 import json
 import logging
 import os
 from datetime import datetime
 
-from veriact.codeact import CodeAgent
-from veriact.default_tools import TaskCompletionTool
-from veriact.data_types import Task, HARNESS_PASS_THRESHOLD
-from veriact.file_utility import dump_json
-from veriact.memory import ActionStep
-from veriact.tools import get_veriact_tools
-from veriact.utility import AgentMaxStepsError
+from veriact.agent.cli_agent import CLIAgent
+from veriact.core.data_types import HARNESS_PASS_THRESHOLD, Task
+from veriact.core.file_utility import dump_json
+from veriact.core.memory import ActionStep
+from veriact.tools.descriptors import RunHarnessTool, VerifyTool
+from veriact.core.utility import AgentMaxStepsError
 
 logger = logging.getLogger(__name__)
 
 
-class VeriActAgent:
-    """Verification-Guided Agentic Framework for Formal Specification Synthesis.
+def _task_to_record(task: Task) -> dict:
+    """Serialize a Task to the dict shape harness_tool.Task.from_dict expects."""
+    return {
+        "task_id": task.task_id,
+        "code": task.code,
+        "class_name": task.class_name,
+        "test_name": task.test_name,
+        "javadoc": task.javadoc,
+        "category": task.category,
+        "origin_id": task.origin_id,
+        "test_code": task.test_code,
+        "test_inputs": [{"input": tc.input, "output": tc.output} for tc in task.test_inputs],
+        "generated_test_cases": [
+            {"input": tc.input, "output": tc.output} for tc in task.generated_test_cases
+        ],
+    }
 
-    Args:
-        model: Any veriact Model (OpenAIServerModel, AnthropicModel, GeminiModel, VLLMModel).
-        openjml_path: Path to OpenJML binary.
-        dataset_path: Path to the dataset used by the harness/retrieval tools.
-        output_dir: Directory for outputs.
-    """
+
+class VeriActAgent:
+    """CLI-driven verification-guided spec synthesis agent."""
 
     def __init__(
         self,
         model,
         openjml_path="openjml",
-        dataset_path="../benchmarks/example/data.json",
+        dataset_path="",
         output_dir="veriact_outputs",
         planning_interval=5,
         max_steps=15,
         harness_threshold=HARNESS_PASS_THRESHOLD,
+        no_harness: bool = False,
         _run_dir: str | None = None,
         **kwargs,
     ):
         self.model = model
+        self.openjml_path = openjml_path
+        self.dataset_path = dataset_path
+        self.max_steps = max_steps
+        self.planning_interval = planning_interval
+        self.harness_threshold = harness_threshold
+        self.no_harness = no_harness
+        self._kwargs = kwargs
+
         if _run_dir:
-            # Use a pre-computed run directory (e.g. from batch mode)
             self.output_dir = _run_dir
         else:
             model_id = getattr(model, "model_id", "unknown") or "unknown"
             safe_model_id = model_id.replace("/", "_")
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            self.output_dir = os.path.join(output_dir, f"veriact__{safe_model_id}__{timestamp}")
+            self.output_dir = os.path.join(
+                output_dir, f"veriact__{safe_model_id}__{timestamp}"
+            )
         os.makedirs(self.output_dir, exist_ok=True)
 
-        self._tools = get_veriact_tools(
-            openjml_path=openjml_path,
-            dataset_path=dataset_path,
-            output_dir=self.output_dir,
-        )
-        self._codeact_kwargs = {
-            "planning_interval": planning_interval,
-            "max_steps": max_steps,
-            "harness_threshold": harness_threshold,
-            **kwargs,
-        }
+    def _setup_workspace(self, task: Task) -> tuple[str, str]:
+        safe_id = task.task_id.replace("/", "_").replace("\\", "_")
+        ws = os.path.join(self.output_dir, "workspaces", safe_id)
+        os.makedirs(os.path.join(ws, "harness"), exist_ok=True)
+        # Test.java for the agent / harness; Solution.java seeded with the bare code.
+        with open(os.path.join(ws, "Test.java"), "w") as fh:
+            fh.write(task.test_code or "")
+        with open(os.path.join(ws, "Solution.java"), "w") as fh:
+            fh.write(task.code or "")
+        task_json = os.path.join(ws, "harness", "task.json")
+        with open(task_json, "w") as fh:
+            json.dump(_task_to_record(task), fh, indent=2)
+        return ws, task_json
 
     def run(self, task: Task) -> dict:
-        agent = CodeAgent(
-            tools=self._tools + [TaskCompletionTool()],
+        workspace, task_json = self._setup_workspace(task)
+
+        # Ablation: no-harness arm exposes only verify (+ task_complete) and uses
+        # the harness-free prompt; success = verification passes.
+        tools = [VerifyTool()] if self.no_harness else [VerifyTool(), RunHarnessTool()]
+        prompt_name = (
+            "veriact_cli_no_harness_prompt.yaml"
+            if self.no_harness
+            else "veriact_cli_prompt.yaml"
+        )
+        agent = CLIAgent(
+            tools=tools,
             model=self.model,
-            **self._codeact_kwargs,
+            task_id=task.task_id,
+            workspace_dir=workspace,
+            task_json=task_json,
+            openjml_path=self.openjml_path,
+            max_steps=self.max_steps,
+            planning_interval=self.planning_interval,
+            harness_threshold=self.harness_threshold,
+            prompt_name=prompt_name,
+            **self._kwargs,
         )
 
-        task_str = f"task_id: {task.task_id}\n\n" f"java_code:\n{task.code}\n\n"
+        task_str = f"task_id: {task.task_id}\n\njava_code:\n{task.code}\n\n"
         result = agent.run(task=task_str)
-        _last_attempted_code = agent.get_last_jml_code()
+        last_code = agent.get_last_jml_code()
 
-        # Determine success: True only if the agent called task_complete
-        # voluntarily (not forced by hitting max_steps) AND the last
-        # run_spec_harness scores met the threshold.
         action_steps = [
-            s
-            for s in agent.memory.steps
+            s for s in agent.memory.steps
             if isinstance(s, ActionStep) and s.step_number is not None
         ]
-        hit_max_steps = any(
-            isinstance(s.error, AgentMaxStepsError) for s in action_steps
-        )
-        harness_passed = self._check_harness_passed(
-            action_steps, self._codeact_kwargs.get("harness_threshold", HARNESS_PASS_THRESHOLD)
-        )
-        success = result is not None and not hit_max_steps and harness_passed
-
-        # Count only real agent steps (exclude the forced max-steps step)
+        hit_max_steps = any(isinstance(s.error, AgentMaxStepsError) for s in action_steps)
+        if self.no_harness:
+            passed = self._check_verified(action_steps)
+        else:
+            passed = self._check_harness_passed(action_steps, self.harness_threshold)
+        success = result is not None and not hit_max_steps and passed
         iterations = sum(
             1 for s in action_steps if not isinstance(s.error, AgentMaxStepsError)
         )
@@ -100,7 +140,7 @@ class VeriActAgent:
             "iterations": iterations,
             "agent_output": result,
             "agent_dict": agent.to_dict(),
-            "_last_attempted_code": _last_attempted_code,
+            "_last_attempted_code": last_code,
         }
 
         trajectories_dir = os.path.join(self.output_dir, "trajectories")
@@ -109,37 +149,51 @@ class VeriActAgent:
             trajectory,
             os.path.join(trajectories_dir, f"{task.task_id}_veriact_trajectory.json"),
         )
-
         return trajectory
 
     @staticmethod
     def _check_harness_passed(action_steps: list[ActionStep], threshold: float) -> bool:
-        """Return True if the last run_spec_harness call met the threshold."""
+        """True if the last run_spec_harness call met the threshold."""
         for step in reversed(action_steps):
             for tool_out in reversed(step.tool_outputs or []):
                 if tool_out.get("tool_name") != "run_spec_harness":
                     continue
-                # Parse the harness output (JSON string with scores)
                 raw = tool_out.get("output", "")
                 try:
                     scores = json.loads(raw) if isinstance(raw, str) else raw
                 except (json.JSONDecodeError, TypeError):
                     continue
-                # scores is {task_id: {metric: value, ...}}
                 if isinstance(scores, dict):
                     for _tid, metrics in scores.items():
                         if not isinstance(metrics, dict):
                             continue
                         pc = metrics.get("post_correctness", 0.0)
                         pcm = metrics.get("post_completeness", 0.0)
-                        if pc >= threshold and pcm >= threshold:
-                            return True
-                        return False  # found last harness call but didn't pass
-        return False  # no harness call found
+                        return pc >= threshold and pcm >= threshold
+        return False
+
+    @staticmethod
+    def _check_verified(action_steps: list[ActionStep]) -> bool:
+        """No-harness success: True if the last verify call reported verified=True."""
+        for step in reversed(action_steps):
+            for tool_out in reversed(step.tool_outputs or []):
+                if tool_out.get("tool_name") != "verify":
+                    continue
+                raw = tool_out.get("output", "")
+                try:
+                    data = json.loads(raw) if isinstance(raw, str) else raw
+                except (json.JSONDecodeError, TypeError):
+                    continue
+                if isinstance(data, dict):
+                    return bool(data.get("verified"))
+        return False
 
     def to_dict(self):
+        tools = ["verify", "task_complete"] if self.no_harness else [
+            "verify", "run_spec_harness", "task_complete"
+        ]
         return {
-            "mode": "codeact",
+            "mode": "cli-react" + ("-no-harness" if self.no_harness else ""),
             "model_id": getattr(self.model, "model_id", "?"),
-            "tools": [t.name for t in self._tools],
+            "tools": tools,
         }

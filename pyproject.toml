@@ -77,4 +77,4 @@ lines-after-imports = 2
 "veriact.prompts" = ["*.yaml"]
 
 [project.scripts]
-veriact = "veriact.cli:main"
+veriact = "veriact.tools.cli:main"

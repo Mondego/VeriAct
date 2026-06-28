@@ -1,5 +1,20 @@
-from pathlib import Path
-from dotenv import load_dotenv
+"""Load environment variables for veriact.
 
-_BASE_DIR = Path(__file__).parent.parent  # base directory of the project veriact
-load_dotenv(dotenv_path=str(_BASE_DIR / "config" / ".env"))
+Loads, in order: a .env discovered from the cwd upward, and the VeriAct repo's
+``config/.env`` if present (so existing API keys keep working). Real environment
+variables always take precedence.
+"""
+
+from pathlib import Path
+
+from dotenv import find_dotenv, load_dotenv
+
+# 1) nearest .env from cwd upward (no error if missing)
+load_dotenv(find_dotenv(usecwd=True))
+
+# 2) repo config/.env relative to this package, if it exists
+for base in (Path(__file__).resolve().parent, *Path(__file__).resolve().parents):
+    candidate = base / "config" / ".env"
+    if candidate.exists():
+        load_dotenv(dotenv_path=str(candidate))
+        break

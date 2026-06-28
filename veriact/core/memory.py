@@ -6,9 +6,9 @@ import time
 from dataclasses import asdict, dataclass, field
 from typing import Any, Dict, List, Optional, TypedDict, Union
 
-from veriact.models import ChatMessage, MessageRole
-from veriact.monitoring import AgentLogger, LogLevel
-from veriact.utility import AgentError, make_json_serializable
+from veriact.core.models import ChatMessage, MessageRole
+from veriact.core.monitoring import AgentLogger, LogLevel
+from veriact.core.utility import AgentError, make_json_serializable
 
 logger = logging.getLogger(__name__)
 

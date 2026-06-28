@@ -23,8 +23,8 @@ from veriact import (
     VeriActAgent,
     VLLMModel,
 )
-from veriact.data_types import Task
-from veriact.file_utility import dump_json, load_json, load_jsonl
+from veriact.core.data_types import Task
+from veriact.core.file_utility import dump_json, load_json, load_jsonl
 import veriact.config
 
 logger = logging.getLogger(__name__)
@@ -79,6 +79,7 @@ def main():
     parser.add_argument("--openjml-path", default="openjml", help="Path to OpenJML binary (default: openjml)")
     parser.add_argument("--max-steps", type=int, default=15, help="Max agent steps per task (default: 15)")
     parser.add_argument("--planning_interval", type=int, default=5, help="Planning interval (default: 5)")
+    parser.add_argument("--no-harness", action="store_true", help="Ablation: run with verify + task_complete only (no run_spec_harness); success = verification passes")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -107,6 +108,7 @@ def main():
                 output_dir=args.output_dir,
                 max_steps=args.max_steps,
                 planning_interval=args.planning_interval,
+                no_harness=args.no_harness,
             )
             result = agent.run(task)
             completed.append(task.task_id)
