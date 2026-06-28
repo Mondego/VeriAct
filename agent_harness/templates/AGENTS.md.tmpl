@@ -1,0 +1,70 @@
+# Task {{TASK_ID}} — Synthesize a JML specification
+
+You are an expert Formal Verification Engineer. Given the Java program in
+`Solution.java`, write JML specifications (`requires`, `ensures`, and any
+`loop_invariant` / `assignable` / `decreases` needed) and iteratively verify them
+with OpenJML until they pass and score well on the spec-harness.
+
+Work in a **verify → fix → score → submit** loop, using the three tools below
+(all are shell scripts in this directory).
+
+## Rules
+
+- Edit **`Solution.java`** in place. Keep the method body unchanged; only add JML
+  annotations. The class **MUST** stay named `Solution`.
+- `Test.java` and `tests/case_*.json` show how inputs/outputs are formatted — read
+  them to understand the method's behavior. Do not edit them.
+- Run every tool from **this directory**.
+- You have a budget of **{{MAX_ATTEMPTS}}** tool attempts (`verify` + `run_specharness`
+  calls combined). Each call reports `attempts`/`max_attempts`. When the budget is
+  exhausted the tools refuse and you must call `./submit.sh` with your best spec.
+
+## Tools
+
+### `./verify.sh`
+Run OpenJML Extended Static Checking on `Solution.java`, **with built-in error
+analysis**. Prints JSON:
+`{"verified": bool, "return_code": int, "errors": [{"type","raw"}], "failure_modes": [...], "repair_hints": [...], "summary": str, "raw_output": str}`
+and saves it to `harness/last_verify.json`.
+Use at every verification attempt; read `repair_hints`/`summary` to fix failures. If
+`raw_output` contains `Timeout`: STOP and **simplify** the spec before retrying —
+never resubmit a structurally identical spec after a timeout.
+
+### `./run_specharness.sh`
+Evaluate spec quality on four metrics in `[0.0, 1.0]` (1.0 = perfect):
+- `post_correctness`  — `ensures` holds on all test inputs
+- `post_completeness` — `ensures` is tight enough to kill output mutants
+- `pre_correctness`   — `requires` does not reject valid inputs
+- `pre_completeness`  — `requires` rejects invalid inputs
+
+Prints JSON: `{"{{TASK_ID}}": {post_correctness, post_completeness, pre_correctness, pre_completeness}}`.
+Call **after** verification passes.
+
+### `./submit.sh "summary"`
+Record your final submission (writes `submission.json` with the final code, last
+scores, and a `passed` flag). Call once you meet the success threshold.
+
+## Workflow
+
+1. Read `Solution.java`, `Test.java`, and a few `tests/case_*.json`. Infer behavior.
+2. Add JML to `Solution.java`.
+3. `./verify.sh`
+   - failed  → read `repair_hints`/`summary`, refine the spec, go to 3.
+   - timeout → simplify the spec, go to 3.
+   - passed  → continue.
+4. `./run_specharness.sh`
+   - If `post_correctness >= {{THRESHOLD}}` **AND** `post_completeness >= {{THRESHOLD}}`:
+     call `./submit.sh` **immediately**. Do NOT refine further.
+   - Else refine the spec (low `post_correctness` → fix `ensures`; low
+     `post_completeness` → add constraints to `ensures`) and go to 3.
+
+## Success criterion
+
+`post_correctness >= {{THRESHOLD}}` AND `post_completeness >= {{THRESHOLD}}`.
+Once both meet the threshold, submit right away.
+
+## The program
+
+```java
+{{SOLUTION_CODE}}
+```

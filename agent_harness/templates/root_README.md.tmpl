@@ -1,0 +1,74 @@
+# Agent comparison root — {{BENCHMARK}} ({{N_TASKS}} tasks, {{MODE}})
+
+Self-contained working dirs (one per task) plus a driver and aggregator, for
+running and comparing coding agents on JML-spec synthesis. Each task dir holds the
+problem (`Solution.java`, `Test.java`, `tests/`) and the four tools as shell
+scripts (`verify.sh`, `run_specharness.sh`, `submit.sh`). The agent edits
+`Solution.java`, iterates verify → fix → score, then submits. `verify.sh` runs
+OpenJML and includes the error analysis (failure modes + repair hints) in its
+output.
+
+## Layout
+
+```
+.
+├── run_agents.py      # fan out one fresh agent session per task dir
+├── collect.py         # aggregate every submission.json -> comparison.{json,csv}
+├── README.md
+└── <TASK_ID>/         # one self-contained dir per task
+    ├── Solution.java  # agent edits this (add JML; class stays `Solution`)
+    ├── Test.java
+    ├── tests/case_*.json
+    ├── AGENTS.md      # the prompt/instructions for the agent
+    ├── verify.sh  run_specharness.sh  submit.sh
+    └── harness/       # vendored CLI + tools (+ task.json, .venv on first run)
+```
+
+## Run
+
+```bash
+# one agent over all tasks (built-in templates: claude, codex)
+python run_agents.py --agent claude --threads 4
+
+# or a custom agent command (tokens: {agents_md} {agents_md_path} {task_dir} {task_id})
+python run_agents.py --cmd 'mytool run --prompt-file {agents_md_path}' --timeout 1200
+
+# then aggregate
+python collect.py        # -> comparison.json / comparison.csv
+```
+
+**Ablation (no-harness root):** the agent runs with `verify` + `submit` only (no
+`run_specharness.sh`). After all agents finish, score every dir's agent-written
+`Solution.java` with the spec-harness it never had access to:
+
+```bash
+VERIACT_PYTHON=/path/to/python OPENJML=/path/to/openjml \
+  python score_all.py --threads 8     # -> harness_scores.json / harness_scores.csv
+```
+
+This also fills in each `submission.json`'s scores, so `python collect.py`
+afterwards reflects them. (`collect.py --score-missing` does the same on the fly for
+submissions that still lack scores.)
+
+Compare agents by running each into its **own** out-root (scaffold once per agent,
+or copy this root), then diff the `comparison.csv` files.
+
+## Dependencies
+
+Each dir needs only the `javalang` pip package and the `openjml` binary on PATH.
+The `*.sh` scripts self-bootstrap a `harness/.venv` on first run if `javalang`
+isn't importable. Set `VERIACT_PYTHON=/path/to/python` to reuse an existing
+interpreter and skip bootstrapping; set `OPENJML=/path/to/openjml` (or pass
+`--openjml`) if it isn't on PATH.
+
+## Success criterion
+
+A task passes when `post_correctness >= 0.5` AND `post_completeness >= 0.5`
+(recorded as `passed` in each `submission.json`).
+
+## Attempt budget
+
+Each task allows a fixed number of tool attempts (`verify` + `run_specharness`
+calls), set at scaffold time and stored in `harness/config.json`. When exhausted,
+the tools refuse and instruct the agent to submit. Override per run with
+`AGENT_MAX_ATTEMPTS=N` (0 = unlimited). `submission.json` records `attempts` used.
