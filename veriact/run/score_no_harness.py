@@ -25,6 +25,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from veriact.core.data_types import HARNESS_PASS_THRESHOLD
 from veriact.tools.harness_tool import Task, evaluate_problem
+from veriact.tools.verifier_tool import verify_with_openjml
 
 METRICS = ["post_correctness", "post_completeness", "pre_correctness", "pre_completeness"]
 
@@ -51,7 +52,8 @@ def find_workspaces(run_dir: str) -> list[str]:
 
 def score_workspace(ws: str, openjml: str, max_pairs: int, threshold: float) -> dict:
     task_id = os.path.basename(ws)
-    row = {"task_id": task_id, **{m: None for m in METRICS}, "passed": False, "error": None}
+    row = {"task_id": task_id, "verified": False,
+           **{m: None for m in METRICS}, "passed": False, "error": None}
     sol = os.path.join(ws, "Solution.java")
     tj = os.path.join(ws, "harness", "task.json")
     if not os.path.exists(tj):
@@ -60,6 +62,17 @@ def score_workspace(ws: str, openjml: str, max_pairs: int, threshold: float) -> 
     try:
         code = open(sol).read()
         task = Task.from_dict(json.load(open(tj)))
+        # Verify gate — the spec-harness only applies to verifier-accepted specs.
+        vr = verify_with_openjml(
+            code, classname="Solution",
+            output_dir=os.path.join(ws, "harness", "verify_tmp"),
+        )
+        row["verified"] = vr.success
+        if not vr.success:
+            # Unverified spec: counts as a failure (0 scores); skip the harness.
+            for m in METRICS:
+                row[m] = 0.0
+            return row
         scores = evaluate_problem(
             task,
             llm_code=code,
@@ -112,11 +125,16 @@ def main(argv: list[str] | None = None) -> int:
         for fut in as_completed(futs):
             row = fut.result()
             rows.append(row)
-            tag = "err:" + row["error"] if row["error"] else f"pass={row['passed']}"
+            if row["error"]:
+                tag = "err:" + row["error"]
+            elif not row["verified"]:
+                tag = "unverified"
+            else:
+                tag = f"pass={row['passed']}"
             print(f"  [{tag}] {row['task_id']}")
 
     rows.sort(key=lambda r: r["task_id"])
-    fields = ["task_id", *METRICS, "passed", "error"]
+    fields = ["task_id", "verified", *METRICS, "passed", "error"]
     with open(out_prefix + ".json", "w") as fh:
         json.dump(rows, fh, indent=2)
     with open(out_prefix + ".csv", "w", newline="") as fh:
@@ -125,13 +143,14 @@ def main(argv: list[str] | None = None) -> int:
         w.writerows(rows)
 
     scored = [r for r in rows if r["error"] is None]
+    verified = sum(1 for r in scored if r["verified"])
     passed = sum(1 for r in scored if r["passed"])
     avg = {
         m: round(sum(r[m] for r in scored if r[m] is not None) / len(scored), 3)
         if scored else 0.0
         for m in METRICS
     }
-    print(f"Scored {len(scored)}/{len(rows)} (passed={passed}); avg: {avg}")
+    print(f"Scored {len(scored)}/{len(rows)} (verified={verified}, passed={passed}); avg: {avg}")
     print(f"  -> {out_prefix}.json / {out_prefix}.csv")
     return 0
 

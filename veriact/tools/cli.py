@@ -74,6 +74,17 @@ def _emit(obj) -> None:
     print(json.dumps(obj, indent=2))
 
 
+# Cap the OpenJML log returned to the agent (chars). Override with $MAX_RAW_OUTPUT.
+MAX_RAW_OUTPUT = int(os.environ.get("MAX_RAW_OUTPUT", "1200"))
+
+
+def _tail(s: str, n: int) -> str:
+    s = s or ""
+    if n <= 0 or len(s) <= n:
+        return s
+    return "...[truncated]...\n" + s[-n:]
+
+
 def _analyze(classified_errors: list[dict]) -> dict:
     failure_modes, repair_hints, seen = [], [], set()
     for err in classified_errors:
@@ -104,11 +115,13 @@ def cmd_verify(args: argparse.Namespace) -> int:
         {
             "verified": result.success,
             "return_code": result.return_code,
-            "errors": result.classified_errors,
+            # Analyzed view only (not the full classified-error list) to keep the
+            # agent's context small: failure modes + targeted repair hints + summary.
             "failure_modes": analysis["failure_modes"],
             "repair_hints": analysis["repair_hints"],
             "summary": analysis["summary"],
-            "raw_output": result.error_log,
+            # Truncated tail of the OpenJML log for context (override $MAX_RAW_OUTPUT).
+            "raw_output": _tail(result.error_log, MAX_RAW_OUTPUT),
         }
     )
     return 0

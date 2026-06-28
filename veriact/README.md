@@ -35,12 +35,12 @@ Run from the repo root.
 python -m veriact.run.run_single \
     --benchmark benchmarks/specgenbench/sgb.json \
     --model gpt-4o --output-dir out --openjml-path openjml \
-    --max-steps 15 --planning_interval 5
+    --max-steps 11 --planning_interval 5
 
 # parallel
 python -m veriact.run.run_batch \
     --benchmark benchmarks/specgenbench/sgb.json \
-    --model gpt-4o --threads 4 --output-dir out --max-steps 15
+    --model gpt-4o --threads 4 --output-dir out --max-steps 11
 ```
 
 ### Ablation: no-harness
@@ -53,7 +53,7 @@ unavailable.
 
 ```bash
 python -m veriact.run.run_batch --benchmark benchmarks/specgenbench/sgb.json \
-    --model gpt-4o --threads 4 --output-dir out_nh --max-steps 15 --no-harness
+    --model gpt-4o --threads 4 --output-dir out_nh --max-steps 11 --no-harness
 ```
 
 **Scoring the no-harness output offline.** Since the no-harness arm never runs the
@@ -66,6 +66,20 @@ python -m veriact.run.score_no_harness \
     --run-dir out_nh/veriact__gpt-4o__<timestamp> \
     --openjml openjml --threads 4
 ```
+
+### Aggregate a run
+
+`pass@{0.25,0.5,0.75,1.0}` + mean metrics for a run. Reads `harness_scores.json`
+(no-harness arm) if present, else extracts the last `run_spec_harness` scores from
+`trajectories.jsonl` (with-harness arm):
+
+```bash
+python -m veriact.run.aggregate --run-dir out/veriact__gpt-4o__<timestamp>
+# -> aggregate.json
+```
+
+The pass threshold (`HARNESS_PASS_THRESHOLD`) is **0.75** by default; the aggregator
+reports pass-rate at 0.25/0.5/0.75/1.0 so the comparison isn't tied to one cutoff.
 
 Outputs match VeriAct's layout: `out/<run>/trajectories.jsonl`,
 `out/<run>/trajectories/<task_id>_veriact_trajectory.json`, and per-task

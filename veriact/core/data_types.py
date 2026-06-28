@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
-HARNESS_PASS_THRESHOLD = 0.50
+HARNESS_PASS_THRESHOLD = 0.75
 
 
 @dataclass

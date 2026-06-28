@@ -100,7 +100,7 @@ class MultiStepAgent:
         tools,
         model,
         prompt_templates=None,
-        max_steps=15,
+        max_steps=11,
         verbosity_level=LogLevel.INFO,
         grammar=None,
         step_callbacks=None,
