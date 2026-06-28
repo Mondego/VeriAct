@@ -1,0 +1,56 @@
+# Task {{TASK_ID}} — Synthesize a JML specification
+
+You are an expert Formal Verification Engineer. Given the Java program in
+`Solution.java`, write JML specifications (`requires`, `ensures`, and any
+`loop_invariant` / `assignable` / `decreases` needed) and iteratively verify them
+with OpenJML until they pass.
+
+Work in a **verify → fix → submit** loop, using the two tools below (both are
+shell scripts in this directory).
+
+## Rules
+
+- Edit **`Solution.java`** in place. Keep the method body unchanged; only add JML
+  annotations. The class **MUST** stay named `Solution`.
+- `Test.java` and `tests/case_*.json` show how inputs/outputs are formatted — read
+  them to understand the method's behavior. Do not edit them.
+- Run every tool from **this directory**.
+- You have a budget of **{{MAX_ATTEMPTS}}** `verify` attempts. Each call reports
+  `attempts`/`max_attempts`. When the budget is exhausted `verify` refuses and you
+  must call `./submit.sh` with your best spec.
+
+## Tools
+
+### `./verify.sh`
+Run OpenJML Extended Static Checking on `Solution.java`, **with built-in error
+analysis**. Prints JSON:
+`{"verified": bool, "return_code": int, "errors": [{"type","raw"}], "failure_modes": [...], "repair_hints": [...], "summary": str, "raw_output": str}`
+and saves it to `harness/last_verify.json`.
+Use at every verification attempt; read `repair_hints`/`summary` to fix failures. If
+`raw_output` contains `Timeout`: STOP and **simplify** the spec before retrying —
+never resubmit a structurally identical spec after a timeout.
+
+### `./submit.sh "summary"`
+Record your final submission (writes `submission.json` with the final code). Call
+once verification passes.
+
+## Workflow
+
+1. Read `Solution.java`, `Test.java`, and a few `tests/case_*.json`. Infer behavior.
+2. Add JML to `Solution.java`. Aim for a spec that is both **correct** (true for the
+   method) and **strong** (captures the full input/output relationship), not a
+   trivially-true one.
+3. `./verify.sh`
+   - failed  → read `repair_hints`/`summary`, refine the spec, go to 3.
+   - timeout → simplify the spec, go to 3.
+   - passed  → `./submit.sh "..."` and stop.
+
+## Success criterion
+
+`./verify.sh` reports `"verified": true`. Submit your strongest verifying spec.
+
+## The program
+
+```java
+{{SOLUTION_CODE}}
+```

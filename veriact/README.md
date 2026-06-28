@@ -1,111 +1,100 @@
-# VeriAct
-Verification-guided correct & complete formal specification synthesis. The agent iteratively writes JML specifications, verifies them with OpenJML, and evaluates correctness/completeness with Spec-Harness until the specifications pass both checks.
+# veriact
 
-## How It Works
+A CLI-driven refactor of VeriAct. Same verification-guided JML spec-synthesis loop
+and the same memory / monitoring / trajectory recording, but the agent now drives
+**command-line tools** in a think → run-CLI → observe ReAct loop instead of
+executing Python via CodeAct.
 
-```
-run_single.py / run_batch.py
-        │
-        ▼
-  VeriActAgent          ← loads tools, wraps CodeAgent
-        │
-        ▼
-   CodeAgent            ← ReAct loop: think → execute Python code → observe
-        │
-   ┌────┴──────────────────────────┐
-   ▼                               ▼
-verify_with_openjml         run_spec_harness
-   (verifier_tool.py)         (harness_tool.py)
-        │                          │
-   OpenJML (ESC)           Spec-Harness evaluation
-                           post/pre correctness & completeness
-```
+## What changed vs `veriact/`
 
-Each step the agent outputs `{"thought": "...", "code": "..."}`. The code runs in a sandboxed Python environment and calls tools directly. The agent succeeds when `post_correctness ≥ 0.5` AND `post_completeness ≥ 0.5` and calls `task_complete`.
+| | `veriact/` (CodeAct) | `veriact/` (CLI-ReAct) |
+|---|---|---|
+| Agent action | emits `{thought, code}`; Python runs in a sandbox and calls tool objects | emits `{thought, tool, tool_input}`; the tool CLI runs as a **subprocess**, stdout is the observation |
+| Tools | 4 (`verify_with_openjml`, `analyze_openjml_errors`, `run_spec_harness`, `task_complete`) | **3** (`verify` with analyze merged in, `run_spec_harness`, `task_complete`) |
+| Code execution | in-process `exec` with AST safety checks | none — only CLI subprocesses |
+| Memory / monitoring / trajectory | preserved | **preserved, unchanged** |
 
-## Module Reference
+The three tools are the subcommands of [`cli.py`](veriact/cli.py):
 
-| File | What it does |
-|------|-------------|
-| `agent.py` | `VeriActAgent` — top-level entry point; wraps `CodeAgent`, checks harness threshold, writes output |
-| `codeact.py` | `CodeAgent` / `MultiStepAgent` — ReAct loop; executes agent-generated Python code in a sandboxed namespace |
-| `data_types.py` | `Task`, `TestCase`, `HARNESS_PASS_THRESHOLD = 0.5` |
-| `models.py` | LLM backends: `OpenAIServerModel`, `AnthropicModel`, `GeminiModel`, `VLLMModel` |
-| `tools.py` | `get_veriact_tools()` — returns the three agent tools (see below) |
-| `tools_base.py` | `Tool` base class with input validation and type checking |
-| `verifier_tool.py` | `verify_with_openjml()` — writes code to disk, runs OpenJML ESC, parses and classifies errors |
-| `harness_tool.py` | `evaluate_problem()` — runs Spec-Harness, returns the four metric scores |
-| `memory.py` | `ActionStep`, `AgentMemory` — records each agent step for logging and replay |
-| `agent_types.py` | `AgentText` type wrapper for agent I/O |
-| `prompts/veriact_prompt.yaml` | System prompt: role, tool descriptions, workflow, timeout strategy |
+- `verify` — OpenJML ESC; output includes the error analysis (`failure_modes`,
+  `repair_hints`, `summary`), so the separate analyze tool is gone.
+- `harness` — the four spec-harness metrics.
+- `submit` — records the final submission (`task_complete`).
 
-## Agent Tools
+The agent supplies the full annotated code in `tool_input.jml_annotated_code` each
+step; the agent writes it to `Solution.java` in a per-task workspace and runs the
+CLI against it. There is **no attempt budget** here — the loop is bounded by
+`--max-steps` (each tool call ≈ one step, matching VeriAct).
 
-| Tool name | Inputs | Returns |
-|-----------|--------|---------|
-| `verify_with_openjml` | `jml_annotated_code: str` | `{verified, return_code, errors, raw_output}` |
-| `analyze_openjml_errors` | `openjml_log: str` | `{failure_modes, repair_hints, summary}` |
-| `run_spec_harness` | `task_id: str`, `jml_annotated_code: str` | `{post_correctness, post_completeness, pre_correctness, pre_completeness}` |
-| `task_complete` | — | signals successful completion |
+## Run (same UX as VeriAct)
 
-
-## Usage
+Run from the repo root.
 
 ```bash
-cd VeriAct
-
-# Sequential — one task at a time
-python -m veriact.run_single.py \
+# one task at a time
+python -m veriact.run.run_single \
     --benchmark benchmarks/specgenbench/sgb.json \
-    --model gpt-4o \
-    --output-dir <output_dir> \
-    --max-steps 15 \
-    --planning_interval 3
+    --model gpt-4o --output-dir out --openjml-path openjml \
+    --max-steps 15 --planning_interval 5
 
-
-# Parallel
-python -m veriact.run_batch.py \
+# parallel
+python -m veriact.run.run_batch \
     --benchmark benchmarks/specgenbench/sgb.json \
-    --model gpt-4o \
-    --threads 4 \
-    --output-dir <output_dir> \
-    --max-steps 15
+    --model gpt-4o --threads 4 --output-dir out --max-steps 15
 ```
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--benchmark` | required | Dataset JSON/JSONL path |
-| `--model` | `gpt-4o` | LLM model ID — provider auto-detected from prefix (`gpt-`/`claude-`/`gemini-`) |
-| `--output-dir` | `veriact_outputs` | Output directory |
-| `--openjml-path` | `openjml` | Path to OpenJML binary |
-| `--max-steps` | 15 | Max agent iterations per task |
-| `--planning_interval` | 5 | Steps between planning phases |
-| `--threads` | 4 | Parallel workers (`run_batch.py` only) |
-| `--task-ids` | — | File with task IDs to filter (`run_batch.py` only) |
+### Ablation: no-harness
 
-Set `VLLM_API_BASE` environment variable to use a local vLLM server.
+Pass `--no-harness` to either runner to run with **only `verify` + `task_complete`**
+(no `run_spec_harness`). It uses `prompts/veriact_cli_no_harness_prompt.yaml` and
+success is defined as **verification passing** (last `verify` returns `verified:
+true`). If the model calls `run_spec_harness` anyway, the tool replies that it is
+unavailable.
 
-## Output
-
-Each run produces:
-
-```
-<output-dir>/
-├── trajectories.jsonl         # One JSON object per task
-├── trajectories/
-│   └── <task_id>_veriact_trajectory.json
-└── failed_tasks.json          # Tasks that errored (if any)
+```bash
+python -m veriact.run.run_batch --benchmark benchmarks/specgenbench/sgb.json \
+    --model gpt-4o --threads 4 --output-dir out_nh --max-steps 15 --no-harness
 ```
 
-Each entry in `trajectories.jsonl`:
+**Scoring the no-harness output offline.** Since the no-harness arm never runs the
+spec-harness, score its final specs afterward for comparison against the harness
+arm. `score_no_harness` walks `<run-dir>/workspaces/<task_id>/Solution.java` and
+writes `harness_scores.{json,csv}`:
 
-```json
-{
-  "task_id": "...",
-  "success": true,
-  "iterations": 7,
-  "agent_output": "...",
-  "agent_dict": { ... },
-  "_last_attempted_code": "..."
-}
+```bash
+python -m veriact.run.score_no_harness \
+    --run-dir out_nh/veriact__gpt-4o__<timestamp> \
+    --openjml openjml --threads 4
 ```
+
+Outputs match VeriAct's layout: `out/<run>/trajectories.jsonl`,
+`out/<run>/trajectories/<task_id>_veriact_trajectory.json`, and per-task
+workspaces under `out/<run>/workspaces/<task_id>/` (Solution.java, Test.java,
+harness/task.json, submission.json, stubs).
+
+## Layout
+
+```
+veriact/
+  __init__.py  config.py  README.md
+  agent/
+    agent.py          # VeriActAgent: workspace setup + trajectory (entry point)
+    cli_agent.py      # MultiStepAgent + CLIAgent (the ReAct-over-CLI loop)
+  tools/
+    cli.py            # the 3 tools as CLI subcommands (verify | harness | submit)
+    descriptors.py    # tool descriptors (name/description/inputs) for prompts
+    base.py           # Tool base class
+    default_tools.py  # task_complete
+    harness_tool.py   # spec-harness scorer
+    verifier_tool.py  # OpenJML verifier
+  run/
+    run_single.py  run_batch.py
+  prompts/
+    veriact_cli_prompt.yaml
+  core/
+    memory.py  monitoring.py  models.py  data_types.py
+    agent_types.py  file_utility.py  utility.py
+```
+
+The OpenJML flags, mutant budget (k=5), and `max_pairs=5` in `tools/harness_tool.py`
+and `tools/verifier_tool.py` match the original VeriAct scorer/verifier.

@@ -13,7 +13,7 @@ from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
 from dataclasses import dataclass, field
-from veriact.utility import escape_code_brackets
+from veriact.core.utility import escape_code_brackets
 
 YELLOW_HEX = "#d4b702"
 BLUE_HEX = "#1E90FF"

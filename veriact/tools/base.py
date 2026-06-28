@@ -1,19 +1,17 @@
-"""Tool base class and utilities for agent tool definitions."""
+"""Tool base class for agent tool definitions (trimmed for veriact).
 
-import ast
+Only what veriact needs: attribute/signature validation and a callable
+interface. The original ``to_dict``/``save``/``from_code`` serialization helpers
+(which pulled in extra type-hint/AST utilities) are omitted.
+"""
+
 import inspect
-import json
 import logging
-import sys
-import types
 from functools import wraps
-from pathlib import Path
 from typing import Dict, Union
 
-from veriact._function_type_hints_utils import get_imports
-from veriact.agent_types import handle_agent_input_types, handle_agent_output_types
-from veriact.tool_validation import MethodChecker
-from veriact.utility import get_source, instance_to_source, is_valid_name
+from veriact.core.agent_types import handle_agent_input_types, handle_agent_output_types
+from veriact.core.utility import is_valid_name
 
 logger = logging.getLogger(__name__)
 
@@ -23,10 +21,12 @@ CONVERSION_DICT = {"str": "string", "int": "integer", "float": "number"}
 
 def validate_after_init(cls):
     original_init = cls.__init__
+
     @wraps(original_init)
     def new_init(self, *args, **kwargs):
         original_init(self, *args, **kwargs)
         self.validate_arguments()
+
     cls.__init__ = new_init
     return cls
 
@@ -88,33 +88,3 @@ class Tool:
 
     def setup(self):
         self.is_initialized = True
-
-    def to_dict(self) -> dict:
-        cls_name = self.__class__.__name__
-        if cls_name == "SimpleTool":
-            source_code = get_source(self.forward).replace("@tool", "")
-            mc = MethodChecker(set())
-            mc.visit(ast.parse(source_code))
-            tool_code = "from typing import Any, Optional\n" + source_code
-        else:
-            tool_code = "from typing import Any, Optional\n" + instance_to_source(self, base_cls=Tool)
-        requirements = {el for el in get_imports(tool_code) if el not in sys.stdlib_module_names}
-        return {"name": self.name, "code": tool_code, "requirements": sorted(requirements)}
-
-    def save(self, output_dir: str | Path, tool_file_name: str = "tool", make_gradio_app: bool = True):
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-        (output_path / f"{tool_file_name}.py").write_text(self.to_dict()["code"], encoding="utf-8")
-
-    @classmethod
-    def from_code(cls, tool_code: str, **kwargs):
-        module = types.ModuleType("dynamic_tool")
-        exec(tool_code, module.__dict__)
-        tool_class = next((obj for _, obj in inspect.getmembers(module, inspect.isclass) if issubclass(obj, Tool) and obj is not Tool), None)
-        if tool_class is None:
-            raise ValueError("No Tool subclass found.")
-        if not isinstance(tool_class.inputs, dict):
-            tool_class.inputs = ast.literal_eval(tool_class.inputs)
-        return tool_class(**kwargs)
-
-
