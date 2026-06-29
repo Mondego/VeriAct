@@ -16,9 +16,13 @@ Default models
 
 Examples
 --------
-    # Claude Code (Sonnet 4.6 by default), headless, auto-approve:
+    # Claude Code (Sonnet 4.6), headless, auto-approve, NO MCP, minimal tools (fast):
     python run_agents.py --agent claude --threads 4 --only-missing
     #   expands to: claude -p {agents_md} --dangerously-skip-permissions --model claude-sonnet-4-6
+    #               --strict-mcp-config --mcp-config "" --tools Read,Edit,Write,Bash
+    #               --disable-slash-commands --no-session-persistence
+    #               --output-format stream-json --verbose   (streams to agent_run.log live)
+    #   (requires `claude /login` or ANTHROPIC_API_KEY)
 
     # Codex (model from ~/.codex/config.toml, no bwrap sandbox):
     python run_agents.py --agent codex --threads 4 --only-missing
@@ -52,7 +56,23 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 # isolated/sandboxed host. Override flags or the model with --cmd if your CLI version
 # differs.
 BUILTIN_AGENTS = {
-    "claude": "claude -p {agents_md} --dangerously-skip-permissions --model claude-sonnet-4-6",
+    # --bare + no-MCP + minimal tools cut Claude Code's per-launch startup overhead
+    # (MCP servers like Gmail/Drive, hooks, CLAUDE.md discovery, keychain, plugin
+    # sync) which otherwise makes batch runs much slower than Codex.
+    # --strict-mcp-config --mcp-config "" disables MCP servers (the big startup
+    # cost); --tools limits to what the task needs; --output-format stream-json
+    # --verbose streams events to stdout so harness/agent_run.log fills live (like
+    # codex) — add --include-partial-messages for token deltas.
+    # AUTH: authenticate first via `claude /login` OR `export ANTHROPIC_API_KEY=...`,
+    # otherwise you'll get "apiKeySource: none / Not logged in". Do NOT add --bare
+    # (it skips keychain reads, breaking `claude /login` auth) unless using
+    # ANTHROPIC_API_KEY.
+    "claude": (
+        "claude -p {agents_md} --dangerously-skip-permissions "
+        "--model claude-sonnet-4-6 --strict-mcp-config --mcp-config \"\" "
+        "--tools Read,Edit,Write,Bash --disable-slash-commands --no-session-persistence "
+        "--output-format stream-json --verbose"
+    ),
     # Codex runs WITHOUT its bubblewrap sandbox: in many containers/VMs bwrap cannot
     # create its loopback ("RTM_NEWADDR: Operation not permitted"), which makes every
     # file edit / command fail. --dangerously-bypass-approvals-and-sandbox avoids bwrap
