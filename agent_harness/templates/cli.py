@@ -24,6 +24,9 @@ import json
 import os
 import sys
 
+# Cap OpenJML's JVM heap (its default max heap is ~1/4 of RAM). Overridable.
+os.environ.setdefault("OPENJML_JVM", "-Xmx8g")
+
 # This file lives at <task_dir>/harness/cli.py
 HARNESS_DIR = os.path.dirname(os.path.abspath(__file__))
 TASK_DIR = os.path.dirname(HARNESS_DIR)
