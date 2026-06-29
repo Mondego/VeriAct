@@ -45,6 +45,9 @@ import javalang.tree as jtree
 
 logger = logging.getLogger(__name__)
 
+# Cap OpenJML's JVM heap (its default max heap is ~1/4 of RAM). Overridable via env.
+os.environ.setdefault("OPENJML_JVM", "-Xmx8g")
+
 
 
 # Result types  (from harness.py)

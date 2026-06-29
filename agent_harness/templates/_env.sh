@@ -4,6 +4,10 @@
 # Sourced by the task-dir wrapper scripts (verify.sh, analyze.sh, ...).
 set -euo pipefail
 
+# Cap OpenJML's JVM heap. Without this the JVM defaults its max heap to ~1/4 of
+# physical RAM (huge on big machines), and N parallel verifies multiply it.
+export OPENJML_JVM="${OPENJML_JVM:--Xmx8g}"
+
 _HARNESS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ -n "${VERIACT_PYTHON:-}" ]; then
