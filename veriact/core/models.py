@@ -157,8 +157,9 @@ def get_tool_call_from_text(text, tool_name_key, tool_arguments_key):
 
 
 def supports_stop_parameter(model_id: str) -> bool:
-    model_name = model_id.split("/")[-1]
-    return not re.match(r"^(o3[-\d]*|o4-mini[-\d]*)$", model_name)
+    """OpenAI reasoning / gpt-5 models reject the 'stop' parameter."""
+    model_name = model_id.split("/")[-1].lower()
+    return not re.match(r"^(o1|o3|o4|gpt-5)", model_name)
 
 
 
