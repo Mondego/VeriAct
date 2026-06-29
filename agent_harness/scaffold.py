@@ -33,6 +33,7 @@ import json
 import os
 import shutil
 import stat
+import subprocess
 import sys
 
 TEMPLATES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
@@ -218,6 +219,35 @@ def write_root_helpers(
     _write(os.path.join(out_root, "README.md"), readme)
 
 
+def ensure_shared_venv(out_root: str) -> bool:
+    """Create ONE shared venv at <out-root>/.venv with the harness deps, so each
+    task session loads it instead of bootstrapping its own. Idempotent."""
+    venv = os.path.join(out_root, ".venv")
+    py = os.path.join(venv, "bin", "python")
+    if os.path.exists(py):
+        print(f"  shared venv already exists: {venv}")
+        return True
+    req = os.path.join(TEMPLATES, "requirements.txt")
+    try:
+        if shutil.which("uv"):
+            subprocess.run(["uv", "venv", venv], check=True)
+            subprocess.run(
+                ["uv", "pip", "install", "--python", py, "-r", req], check=True
+            )
+        else:
+            subprocess.run([sys.executable, "-m", "venv", venv], check=True)
+            subprocess.run([py, "-m", "pip", "install", "-q", "-r", req], check=True)
+        print(f"  shared venv ready: {venv}")
+        return True
+    except (subprocess.CalledProcessError, OSError) as exc:
+        print(
+            f"WARNING: could not create shared venv ({exc}); task scripts will "
+            f"bootstrap it on first run, or set VERIACT_PYTHON.",
+            file=sys.stderr,
+        )
+        return False
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -243,6 +273,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="attempt budget per task (verify+harness calls; 0 = unlimited; "
         "default: 10 — matches VeriAct --max-steps 11, i.e. 10 tool calls + submit)",
     )
+    p.add_argument(
+        "--no-venv",
+        action="store_true",
+        help="don't create the shared <out-root>/.venv (use $VERIACT_PYTHON, or "
+        "let task scripts bootstrap it on first run)",
+    )
     return p
 
 
@@ -264,6 +300,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Scaffolded {len(selected)} task(s) [{mode}] -> {args.out_root}")
     for cat, n in counts.most_common():
         print(f"  {cat or '(none)'}: {n}")
+
+    if not args.no_venv:
+        ensure_shared_venv(args.out_root)
     return 0
 
 
