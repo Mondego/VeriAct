@@ -94,9 +94,10 @@ See the generated `out-root/README.md` for the per-root details.
 ## Running in a `screen` session
 
 Batch runs are long, so launch them inside `screen` (or `tmux`) and detach. The
-driver fans out one session per task dir; export `VERIACT_PYTHON` / `OPENJML` so
-the tool scripts skip venv bootstrapping and find OpenJML. Per-task agent logs land
-in `<task>/harness/agent_run.log`; the `tee` below also captures the driver log.
+driver fans out one session per task dir; sessions load the shared
+`<out-root>/.venv` created at scaffold time (set `OPENJML` so OpenJML is found, or
+`VERIACT_PYTHON` to use a specific interpreter). Per-task agent logs land in
+`<task>/harness/agent_run.log`; the `tee` below also captures the driver log.
 
 `screen` cheat-sheet: detach `Ctrl-a d` · reattach `screen -r <name>` · list
 `screen -ls` · kill `screen -X -S <name> quit`.
@@ -170,7 +171,7 @@ agent_harness/
 │   ├── cli.py              # the 4-subcommand CLI (vendored into each dir's harness/)
 │   ├── harness_tool.py     # vendored scorer (copy of veriact/harness_tool.py)
 │   ├── verifier_tool.py    # vendored verifier (copy of veriact/verifier_tool.py)
-│   ├── _env.sh             # interpreter resolver / venv bootstrap
+│   ├── _env.sh             # interpreter resolver (prefers shared <out-root>/.venv)
 │   ├── verify.sh run_specharness.sh submit.sh
 │   ├── AGENTS.md.tmpl AGENTS_no_harness.md.tmpl   # per-task prompt (both arms)
 │   ├── requirements.txt    # javalang

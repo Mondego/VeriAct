@@ -17,13 +17,14 @@ output.
 ├── score_all.py       # (re)score each Solution.java -> harness_scores.{json,csv}
 ├── aggregate.py       # pass@{0.25,0.5,0.75,1.0} + mean metrics -> aggregate.json
 ├── README.md
+├── .venv/             # ONE shared venv (javalang) used by every task session
 └── <TASK_ID>/         # one self-contained dir per task
     ├── Solution.java  # agent edits this (add JML; class stays `Solution`)
     ├── Test.java
     ├── tests/case_*.json
     ├── AGENTS.md      # the prompt/instructions for the agent
     ├── verify.sh  run_specharness.sh  submit.sh
-    └── harness/       # vendored CLI + tools (+ task.json, .venv on first run)
+    └── harness/       # vendored CLI + tools (+ task.json, config.json)
 ```
 
 ## Run
@@ -65,11 +66,13 @@ or copy this root), then diff the `comparison.csv` / `aggregate.json` files.
 
 ## Dependencies
 
-Each dir needs only the `javalang` pip package and the `openjml` binary on PATH.
-The `*.sh` scripts self-bootstrap a `harness/.venv` on first run if `javalang`
-isn't importable. Set `VERIACT_PYTHON=/path/to/python` to reuse an existing
-interpreter and skip bootstrapping; set `OPENJML=/path/to/openjml` (or pass
-`--openjml`) if it isn't on PATH.
+Only the `javalang` pip package and the `openjml` binary are needed. Scaffolding
+creates **one shared `.venv`** here at the out-root (with `javalang`); every task's
+`*.sh` scripts load it — no per-task venv, no repeated `pip install`. Resolution
+order in `_env.sh`: `$VERIACT_PYTHON` → `<out-root>/.venv` → a `python` that already
+has `javalang` → (last resort) build the shared `.venv`. Set
+`OPENJML=/path/to/openjml` if it isn't on PATH. OpenJML's JVM heap is capped via
+`OPENJML_JVM` (default `-Xmx8g`).
 
 ## Success criterion
 
